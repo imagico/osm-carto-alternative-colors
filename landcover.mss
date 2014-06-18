@@ -52,6 +52,8 @@
 @power: #bbb;
 @rest_area: #efc8c8; // also services
 @sand: #ffdf88;
+@scree: #CCBBAA;
+@rock: #B2A7A3;
 @school: #f0f0d8; // also university, college, hospital, kindergarten
 
 #landcover {
@@ -397,6 +399,15 @@
       line-width: 0.5;
       line-color: saturate(darken(@pitch, 40%), 20%);
     }
+  }
+}
+
+#bare-rock {
+  [zoom >= 6] {
+      polygon-fill: @rock;
+      ['natural' = 'scree'] {
+        polygon-fill: @scree;
+      }
   }
 }
 

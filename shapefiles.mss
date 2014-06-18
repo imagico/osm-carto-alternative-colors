@@ -29,7 +29,7 @@
     polygon-fill: @land-color;
   }
   [zoom >= 1][zoom < 10] {
-    polygon-pattern-file: url('symbols/glacier.png');
+    polygon-fill: #ddecec;
   }
 }
 
@@ -41,6 +41,7 @@
 
 #coast-poly-south {
   [zoom >= 10] {
+    polygon-fill: #ddecec;
     polygon-pattern-file: url('symbols/glacier2.png');
   }
 }

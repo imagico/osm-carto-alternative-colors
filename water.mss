@@ -2,13 +2,21 @@
 
 #water-areas {
   [natural = 'glacier']::natural {
-    [zoom >= 6] {
-      line-dasharray: 4,2;
-      line-width: 1.5;
-      line-color: #9cf;
-      polygon-pattern-file: url('symbols/glacier.png');
-      [zoom >= 8] {
-        polygon-pattern-file: url('symbols/glacier2.png');
+    ['glacier:type' = 'shelf'][zoom >= 2], 
+    ['glacier:type' = 'ice_tongue'][zoom >= 4] {
+      polygon-fill: #d4e6e6;
+    }
+    ['glacier:type' != 'shelf']['glacier:type' != 'ice_tongue'] {
+      ['glacier:type' = 'icecap'][zoom >= 4], 
+      [zoom >= 6] {
+        line-dasharray: 4,2;
+        line-width: 1.5;
+        line-color: #9cf;
+        polygon-fill: #ddecec;
+        [geological = 'moraine'] { polygon-fill: #D8DEDE; }
+        [zoom >= 8] {
+          polygon-pattern-file: url('symbols/glacier2.png');
+        }
       }
     }
   }
