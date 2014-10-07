@@ -3,10 +3,7 @@
 @glacier-line: #9cf;
 
 #water-areas {
-  [natural = 'glacier'] {
-    [way_area >= 15000000000000][zoom >= 2][zoom < 6] {
-      polygon-pattern-file: url('symbols/glacier.png');
-    }
+  [natural = 'glacier']::natural {
     [zoom >= 6] {
       line-dasharray: 4,2;
       line-width: 1.5;
