@@ -40,6 +40,44 @@
       "advanced": {}
     }, 
     {
+      "name": "antarctica-icesheet", 
+      "srs-name": "900913", 
+      "geometry": "polygon", 
+      "class": "", 
+      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over", 
+      "Datasource": {
+        "type": "shape", 
+        "file": "data/antarctica_icesheet/antarctica_icesheet_polygons_3857.shp"
+      }, 
+      "extent": [
+        -180, 
+        -85.05112877980659, 
+        180, 
+        85.05112877980659
+      ], 
+      "id": "antarctica-icesheet", 
+      "advanced": {}
+    }, 
+    {
+      "name": "antarctica-icesheet-outline", 
+      "srs-name": "900913", 
+      "geometry": "linestring", 
+      "class": "", 
+      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over", 
+      "Datasource": {
+        "type": "shape", 
+        "file": "data/antarctica_icesheet/antarctica_icesheet_outlines_3857.shp"
+      }, 
+      "extent": [
+        -180, 
+        -85.05112877980659, 
+        180, 
+        85.05112877980659
+      ], 
+      "id": "antarctica-icesheet-outline", 
+      "advanced": {}
+    }, 
+    {
       "name": "builtup", 
       "srs-name": "mercator", 
       "geometry": "polygon", 

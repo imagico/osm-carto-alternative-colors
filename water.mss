@@ -2,6 +2,23 @@
 @glacier: #ddecec;
 @glacier-line: #9cf;
 
+#antarctica-icesheet {
+  [zoom >= 6] {
+    polygon-pattern-file: url('symbols/glacier.png');
+    [zoom >= 8] {
+      polygon-pattern-file: url('symbols/glacier2.png');
+    }
+  }
+}
+
+#antarctica-icesheet-outline {
+  [zoom >= 6] {
+    line-dasharray: 4,2;
+    line-width: 0.75;
+    line-color: @glacier-line;
+  }
+}
+
 #water-areas {
   [natural = 'glacier']::natural {
     [zoom >= 6] {

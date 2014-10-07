@@ -72,6 +72,24 @@ Layer:
       file: "data/land-polygons-split-3857/land_polygons.shp"
       type: "shape"
     advanced: {}
+  - id: "antarctica-icesheet"
+    name: "antarctica-icesheet"
+    class: ""
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/antarctica_icesheet/antarctica_icesheet_polygons_3857.shp"
+      type: "shape"
+    advanced: {}
+  - id: "antarctica-icesheet-outline"
+    name: "antarctica-icesheet-outline"
+    class: ""
+    geometry: "linestring"
+    <<: *extents
+    Datasource:
+      file: "data/antarctica_icesheet/antarctica_icesheet_outlines_3857.shp"
+      type: "shape"
+    advanced: {}
   - id: "builtup"
     name: "builtup"
     geometry: "polygon"
