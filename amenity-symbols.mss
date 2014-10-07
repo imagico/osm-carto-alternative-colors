@@ -8,6 +8,7 @@
     text-face-name: @bold-fonts;
     text-halo-radius: 1;
     text-placement: interior;
+    text-wrap-width: 30;
   }
 
   [aeroway = 'aerodrome'][zoom >= 10][zoom < 13]::aeroway {
@@ -21,13 +22,14 @@
     text-face-name: @oblique-fonts;
     text-halo-radius: 1;
     text-placement: interior;
+    text-wrap-width: 30;
   }
 
   [railway = 'level_crossing'][zoom >= 14]::railway {
-    point-file: url('symbols/level_crossing.png');
+    point-file: url('symbols/level_crossing.svg');
     point-placement: interior;
     [zoom >= 16] {
-      point-file: url('symbols/level_crossing2.png');
+      point-file: url('symbols/level_crossing2.svg');
     }
   }
 
@@ -89,7 +91,7 @@
   }
 
   [barrier = 'gate']::barrier {
-    [zoom >= 15] {
+    [zoom >= 16] {
       point-file: url('symbols/gate2.png');
       point-placement: interior;
     }
