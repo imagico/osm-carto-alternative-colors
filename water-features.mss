@@ -162,3 +162,15 @@
     }
   }
 }
+
+#springs {
+  [natural = 'spring'][zoom >= 14] {
+    marker-file: url('symbols/spring_small.svg');
+    [zoom >= 15] {
+      marker-file: url('symbols/spring.svg');
+    }
+    marker-placement: interior;
+    marker-clip: false;
+    marker-fill: @water-color;
+  }
+}

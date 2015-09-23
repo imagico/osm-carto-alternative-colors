@@ -301,6 +301,26 @@ Layer:
     properties:
       minzoom: 4
     advanced: {}
+  - id: "springs"
+    name: "springs"
+    geometry: "point"
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+             St_Centroid(way) AS way, "natural"
+           FROM planet_osm_polygon
+           WHERE "natural" IN ('spring')
+         UNION ALL
+         SELECT
+             way, "natural"
+           FROM planet_osm_point
+           WHERE "natural" IN ('spring')
+        ) AS springs
+    properties:
+      minzoom: 14
+    advanced: {}
   - id: "water-lines"
     name: "water-lines"
     class: "water-lines"

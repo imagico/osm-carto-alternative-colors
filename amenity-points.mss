@@ -929,13 +929,14 @@
     point-file: url('symbols/poi_cave.p.16.png');
     point-placement: interior;
   }
-
+/*
   [feature = 'natural_spring'][zoom >= 14] {
     marker-file: url('symbols/spring.svg');
     marker-placement: interior;
     marker-clip: false;
+    marker-fill: @water-color;
   }
-
+*/
   [feature = 'power_generator']['generator:source' = 'wind'],
   [feature = 'power_generator'][power_source = 'wind'] {
     [zoom >= 15] {
