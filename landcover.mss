@@ -63,17 +63,6 @@
 #landcover-low-zoom[zoom < 10],
 #landcover[zoom >= 10] {
 
-  ::first {
-    [feature = 'wetland_mud'],
-    [feature = 'wetland_tidalflat'] {
-      [zoom >= 9] {
-        polygon-fill: @mud;
-        [way_pixels >= 4]  { polygon-gamma: 0.75; }
-        [way_pixels >= 64] { polygon-gamma: 0.3;  }
-      }
-    }
-  }
-
   [feature = 'leisure_swimming_pool'][zoom >= 14] {
     polygon-fill: @water-color;
     line-color: saturate(darken(@water-color, 40%), 30%);
@@ -568,6 +557,16 @@
 }
 
 #landcover-area-symbols {
+  ::first {
+    [natural = 'mud'],
+    [int_wetland = 'tidalflat'] {
+      [zoom >= 9] {
+        polygon-fill: @mud;
+        [way_pixels >= 4]  { polygon-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-gamma: 0.3;  }
+      }
+    }
+  }
   [int_wetland != null][zoom >= 10] {
     polygon-pattern-file: url('symbols/wetland.png');
     polygon-pattern-alignment: global;

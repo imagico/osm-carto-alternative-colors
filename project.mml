@@ -2,96 +2,6 @@
   "interactivity": false,
   "Layer": [
     {
-      "name": "ocean-lz",
-      "srs-name": "900913",
-      "geometry": "polygon",
-      "class": "ocean",
-      "id": "ocean-lz",
-      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
-      "Datasource": {
-        "type": "shape",
-        "file": "data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp"
-      },
-      "extent": [
-        -180,
-        -85.05112877980659,
-        180,
-        85.05112877980659
-      ],
-      "properties": {
-        "maxzoom": 9
-      },
-      "advanced": {}
-    },
-    {
-      "name": "ocean",
-      "srs-name": "900913",
-      "geometry": "polygon",
-      "class": "ocean",
-      "id": "ocean",
-      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
-      "Datasource": {
-        "type": "shape",
-        "file": "data/water-polygons-split-3857/water_polygons.shp"
-      },
-      "extent": [
-        -180,
-        -85.05112877980659,
-        180,
-        85.05112877980659
-      ],
-      "properties": {
-        "minzoom": 10
-      },
-      "advanced": {}
-    },
-    {
-      "name": "builtup",
-      "srs-name": "mercator",
-      "geometry": "polygon",
-      "class": "",
-      "id": "builtup",
-      "srs": "+proj=merc +datum=WGS84 +over",
-      "Datasource": {
-        "type": "shape",
-        "file": "data/world_boundaries/builtup_area.shp"
-      },
-      "extent": [
-        -180,
-        -85.05112877980659,
-        180,
-        85.05112877980659
-      ],
-      "properties": {
-        "maxzoom": 9,
-        "minzoom": 8
-      },
-      "advanced": {}
-    },
-    {
-      "name": "necountries",
-      "srs-name": "WGS84",
-      "geometry": "linestring",
-      "class": "",
-      "id": "necountries",
-      "srs": "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
-      "Datasource": {
-        "type": "shape",
-        "file": "data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp"
-      },
-      "extent": [
-        -180,
-        -85.05112877980659,
-        180,
-        85.05112877980659
-      ],
-      "properties": {
-        "maxzoom": 3,
-        "minzoom": 1
-      },
-      "advanced": {}
-    },
-    {
       "name": "landcover-low-zoom",
       "srs-name": "900913",
       "geometry": "polygon",
@@ -144,6 +54,29 @@
       "advanced": {}
     },
     {
+      "name": "builtup",
+      "srs-name": "mercator",
+      "geometry": "polygon",
+      "class": "",
+      "id": "builtup",
+      "srs": "+proj=merc +datum=WGS84 +over",
+      "Datasource": {
+        "type": "shape",
+        "file": "data/world_boundaries/builtup_area.shp"
+      },
+      "extent": [
+        -180,
+        -85.05112877980659,
+        180,
+        85.05112877980659
+      ],
+      "properties": {
+        "maxzoom": 9,
+        "minzoom": 8
+      },
+      "advanced": {}
+    },
+    {
       "name": "landcover-line",
       "srs-name": "900913",
       "geometry": "linestring",
@@ -166,6 +99,28 @@
       ],
       "properties": {
         "minzoom": 14
+      },
+      "advanced": {}
+    },
+    {
+      "name": "icesheet-poly",
+      "srs-name": "900913",
+      "geometry": "polygon",
+      "class": "",
+      "id": "icesheet-poly",
+      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
+      "Datasource": {
+        "type": "shape",
+        "file": "data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp"
+      },
+      "extent": [
+        -180,
+        -85.05112877980659,
+        180,
+        85.05112877980659
+      ],
+      "properties": {
+        "minzoom": 4
       },
       "advanced": {}
     },
@@ -223,15 +178,19 @@
       "advanced": {}
     },
     {
-      "name": "icesheet-poly",
+      "name": "water-lines",
       "srs-name": "900913",
-      "geometry": "polygon",
-      "class": "",
-      "id": "icesheet-poly",
+      "geometry": "linestring",
+      "class": "water-lines",
+      "id": "water-lines",
       "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
       "Datasource": {
-        "type": "shape",
-        "file": "data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp"
+        "extent": "-20037508,-20037508,20037508,20037508",
+        "table": "(SELECT\n    way, waterway, name, intermittent,\n    CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,\n    'no' AS bridge\n  FROM planet_osm_line\n  WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')\n    AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))\n  ORDER BY z_order\n) AS water_lines",
+        "geometry_field": "way",
+        "type": "postgis",
+        "key_field": "",
+        "dbname": "gis"
       },
       "extent": [
         -180,
@@ -240,7 +199,51 @@
         85.05112877980659
       ],
       "properties": {
-        "minzoom": 4
+        "minzoom": 12
+      },
+      "advanced": {}
+    },
+    {
+      "name": "ocean-lz",
+      "srs-name": "900913",
+      "geometry": "polygon",
+      "class": "ocean",
+      "id": "ocean-lz",
+      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
+      "Datasource": {
+        "type": "shape",
+        "file": "data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp"
+      },
+      "extent": [
+        -180,
+        -85.05112877980659,
+        180,
+        85.05112877980659
+      ],
+      "properties": {
+        "maxzoom": 9
+      },
+      "advanced": {}
+    },
+    {
+      "name": "ocean",
+      "srs-name": "900913",
+      "geometry": "polygon",
+      "class": "ocean",
+      "id": "ocean",
+      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
+      "Datasource": {
+        "type": "shape",
+        "file": "data/water-polygons-split-3857/water_polygons.shp"
+      },
+      "extent": [
+        -180,
+        -85.05112877980659,
+        180,
+        85.05112877980659
+      ],
+      "properties": {
+        "minzoom": 10
       },
       "advanced": {}
     },
@@ -279,7 +282,7 @@
       "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
       "Datasource": {
         "extent": "-20037508,-20037508,20037508,20037508",
-        "table": "(SELECT\n    way, surface, \n    COALESCE(CASE WHEN landuse = 'forest' THEN 'wood' ELSE NULL END, \"natural\") AS \"natural\",\n    CASE WHEN \"natural\" IN ('marsh', 'mud') \n        THEN \"natural\" \n        ELSE CASE WHEN (\"natural\" = 'wetland' AND wetland IS NULL) \n          THEN 'wetland' \n          ELSE CASE WHEN (\"natural\" = 'wetland')\n            THEN wetland\n            ELSE NULL\n            END \n        END\n      END AS int_wetland\n  FROM planet_osm_polygon\n  WHERE (\"natural\" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef') OR landuse = 'forest')\n    AND building IS NULL\n    AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real\n  ORDER BY z_order, way_area DESC\n) AS landcover_area_symbols",
+        "table": "(SELECT\n    way, surface, \n    COALESCE(CASE WHEN landuse = 'forest' THEN 'wood' ELSE NULL END, \"natural\") AS \"natural\",\n    CASE WHEN \"natural\" IN ('marsh', 'mud') \n        THEN \"natural\" \n        ELSE CASE WHEN (\"natural\" = 'wetland' AND wetland IS NULL) \n          THEN 'wetland' \n          ELSE CASE WHEN (\"natural\" = 'wetland')\n            THEN wetland\n            ELSE NULL\n            END \n        END\n      END AS int_wetland,\n    way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels\n  FROM planet_osm_polygon\n  WHERE (\"natural\" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef') OR landuse = 'forest')\n    AND building IS NULL\n    AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real\n  ORDER BY z_order, way_area DESC\n) AS landcover_area_symbols",
         "geometry_field": "way",
         "type": "postgis",
         "key_field": "",
@@ -315,32 +318,6 @@
       ],
       "properties": {
         "minzoom": 4
-      },
-      "advanced": {}
-    },
-    {
-      "name": "water-lines",
-      "srs-name": "900913",
-      "geometry": "linestring",
-      "class": "water-lines",
-      "id": "water-lines",
-      "srs": "+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over",
-      "Datasource": {
-        "extent": "-20037508,-20037508,20037508,20037508",
-        "table": "(SELECT\n    way, waterway, name, intermittent,\n    CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,\n    'no' AS bridge\n  FROM planet_osm_line\n  WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')\n    AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))\n  ORDER BY z_order\n) AS water_lines",
-        "geometry_field": "way",
-        "type": "postgis",
-        "key_field": "",
-        "dbname": "gis"
-      },
-      "extent": [
-        -180,
-        -85.05112877980659,
-        180,
-        85.05112877980659
-      ],
-      "properties": {
-        "minzoom": 12
       },
       "advanced": {}
     },
@@ -1045,6 +1022,29 @@
       ],
       "properties": {
         "minzoom": 13
+      },
+      "advanced": {}
+    },
+    {
+      "name": "necountries",
+      "srs-name": "WGS84",
+      "geometry": "linestring",
+      "class": "",
+      "id": "necountries",
+      "srs": "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs",
+      "Datasource": {
+        "type": "shape",
+        "file": "data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp"
+      },
+      "extent": [
+        -180,
+        -85.05112877980659,
+        180,
+        85.05112877980659
+      ],
+      "properties": {
+        "maxzoom": 3,
+        "minzoom": 1
       },
       "advanced": {}
     },

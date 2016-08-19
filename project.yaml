@@ -54,54 +54,6 @@ Stylesheet:
   - "admin.mss"
   - "addressing.mss"
 Layer:
-  - id: "ocean-lz"
-    name: "ocean-lz"
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp"
-      type: "shape"
-    advanced: {}
-    properties:
-      maxzoom: 9
-  - id: "ocean"
-    name: "ocean"
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/water-polygons-split-3857/water_polygons.shp"
-      type: "shape"
-    properties:
-      minzoom: 10
-    advanced: {}
-  - id: "builtup"
-    name: "builtup"
-    geometry: "polygon"
-    class: ""
-    extent: *world
-    srs-name: "mercator"
-    srs: "+proj=merc +datum=WGS84 +over"
-    Datasource:
-      file: "data/world_boundaries/builtup_area.shp"
-      type: "shape"
-    properties:
-      minzoom: 8
-      maxzoom: 9
-    advanced: {}
-  - id: "necountries"
-    name: "necountries"
-    class: ""
-    geometry: "linestring"
-    <<: *extents84
-    Datasource:
-      file: "data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp"
-      type: "shape"
-    properties:
-      minzoom: 1
-      maxzoom: 3
-    advanced: {}
   - id: "landcover-low-zoom"
     name: "landcover-low-zoom"
     class: ""
@@ -182,6 +134,20 @@ Layer:
     properties:
       minzoom: 10
     advanced: {}
+  - id: "builtup"
+    name: "builtup"
+    geometry: "polygon"
+    class: ""
+    extent: *world
+    srs-name: "mercator"
+    srs: "+proj=merc +datum=WGS84 +over"
+    Datasource:
+      file: "data/world_boundaries/builtup_area.shp"
+      type: "shape"
+    properties:
+      minzoom: 8
+      maxzoom: 9
+    advanced: {}
   - id: "landcover-line"
     name: "landcover-line"
     class: ""
@@ -198,6 +164,17 @@ Layer:
     advanced: {}
     properties:
       minzoom: 14
+  - id: "icesheet-poly"
+    name: "icesheet-poly"
+    class: ""
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp"
+      type: "shape"
+    properties:
+      minzoom: 4
+    advanced: {}
   - id: "water-lines-casing"
     name: "water-lines-casing"
     class: ""
@@ -231,16 +208,47 @@ Layer:
       minzoom: 8
       maxzoom: 11
     advanced: {}
-  - id: "icesheet-poly"
-    name: "icesheet-poly"
-    class: ""
+  - id: "water-lines"
+    name: "water-lines"
+    class: "water-lines"
+    geometry: "linestring"
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way, waterway, name, intermittent,
+            CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
+            'no' AS bridge
+          FROM planet_osm_line
+          WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
+            AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
+          ORDER BY z_order
+        ) AS water_lines
+    properties:
+      minzoom: 12
+    advanced: {}
+  - id: "ocean-lz"
+    name: "ocean-lz"
+    class: "ocean"
     geometry: "polygon"
     <<: *extents
     Datasource:
-      file: "data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp"
+      file: "data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp"
+      type: "shape"
+    advanced: {}
+    properties:
+      maxzoom: 9
+  - id: "ocean"
+    name: "ocean"
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/water-polygons-split-3857/water_polygons.shp"
       type: "shape"
     properties:
-      minzoom: 4
+      minzoom: 10
     advanced: {}
   - id: "water-areas"
     name: "water-areas"
@@ -289,7 +297,8 @@ Layer:
                     ELSE NULL
                     END 
                 END
-              END AS int_wetland
+              END AS int_wetland,
+            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
           FROM planet_osm_polygon
           WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef') OR landuse = 'forest')
             AND building IS NULL
@@ -309,26 +318,6 @@ Layer:
       type: "shape"
     properties:
       minzoom: 4
-    advanced: {}
-  - id: "water-lines"
-    name: "water-lines"
-    class: "water-lines"
-    geometry: "linestring"
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, waterway, name, intermittent,
-            CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
-            'no' AS bridge
-          FROM planet_osm_line
-          WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
-            AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
-          ORDER BY z_order
-        ) AS water_lines
-    properties:
-      minzoom: 12
     advanced: {}
   - id: "water-barriers-line"
     name: "water-barriers-line"
@@ -1334,6 +1323,18 @@ Layer:
         ) AS guideways
     properties:
       minzoom: 13
+    advanced: {}
+  - id: "necountries"
+    name: "necountries"
+    class: ""
+    geometry: "linestring"
+    <<: *extents84
+    Datasource:
+      file: "data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp"
+      type: "shape"
+    properties:
+      minzoom: 1
+      maxzoom: 3
     advanced: {}
   - name: "admin-low-zoom"
     id: "admin-low-zoom"
