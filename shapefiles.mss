@@ -11,16 +11,8 @@
   }
 }
 
-#world {
-  [zoom >= 0][zoom < 10] {
-    polygon-fill: @land-color;
-  }
-}
-
-#coast-poly {
-  [zoom >= 10] {
-    polygon-fill: @land-color;
-  }
+.ocean {
+  polygon-fill: @water-color;
 }
 
 #icesheet-poly {
