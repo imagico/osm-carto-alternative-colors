@@ -262,6 +262,7 @@ Layer:
             way,
             "natural",
             waterway,
+            water,
             landuse,
             name,
             way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels

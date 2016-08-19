@@ -15,5 +15,8 @@ Map {
                 "Mukti Narrow Regular", "Gargi Regular", "TSCu_Paranar Regular", "Tibetan Machine Uni Regular",
                 "Droid Sans Fallback Regular", "Unifont Medium", "unifont Medium";
 
-@water-color: #b5d0d0;
 @land-color: #f2efe9;
+
+@water-color: #a7cdd8;     // Lch(80,14,225)
+@ocean-color: #b6d0d9;     // Lch(82,10,225)
+@river-color: #97c9d8;     // Lch(78,18,225)

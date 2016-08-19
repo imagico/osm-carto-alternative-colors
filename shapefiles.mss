@@ -12,7 +12,7 @@
 }
 
 .ocean {
-  polygon-fill: @water-color;
+  polygon-fill: @ocean-color;
 }
 
 #icesheet-poly {

@@ -46,6 +46,11 @@
   [waterway = 'riverbank']::waterway {
     [zoom >= 6] {
       polygon-fill: @water-color;
+      [natural = 'water'][water = 'river'],
+      [natural = 'water'][water = 'canal'],
+      [waterway = 'riverbank'] {
+        polygon-fill: @river-color;
+      }
       [way_pixels >= 4] {
         polygon-gamma: 0.75;
       }
@@ -86,7 +91,7 @@
       line-join: round;
       line-clip: false;
     }
-    line-color: @water-color;
+    line-color: @river-color;
     line-width: 0.7;
     [zoom >= 9] { line-width: 1.2; }
     [zoom >= 10] { line-width: 1.6; }
@@ -122,7 +127,7 @@
       line-join: round;
       line-clip: false;
     }
-    line-color: @water-color;
+    line-color: @river-color;
     line-width: 2;
     [zoom >= 13] { line-width: 3; }
     [zoom >= 14] { line-width: 5; }
@@ -167,7 +172,7 @@
         line-clip: false;
       }
       line-width: 2;
-      line-color: @water-color;
+      line-color: @river-color;
       [waterway = 'stream'][zoom >= 15] {
         line-width: 3;
       }
