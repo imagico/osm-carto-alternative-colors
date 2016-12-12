@@ -53,54 +53,6 @@ Stylesheet:
   - "admin.mss"
   - "addressing.mss"
 Layer:
-  - id: "world"
-    name: "world"
-    class: ""
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/simplified-land-polygons-complete-3857/simplified_land_polygons.shp"
-      type: "shape"
-    advanced: {}
-    properties:
-      maxzoom: 9
-  - id: "coast-poly"
-    name: "coast-poly"
-    class: ""
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/land-polygons-split-3857/land_polygons.shp"
-      type: "shape"
-    properties:
-      minzoom: 10
-    advanced: {}
-  - id: "builtup"
-    name: "builtup"
-    geometry: "polygon"
-    class: ""
-    extent: *world
-    srs-name: "mercator"
-    srs: "+proj=merc +datum=WGS84 +over"
-    Datasource:
-      file: "data/world_boundaries/builtup_area.shp"
-      type: "shape"
-    properties:
-      minzoom: 8
-      maxzoom: 9
-    advanced: {}
-  - id: "necountries"
-    name: "necountries"
-    class: ""
-    geometry: "linestring"
-    <<: *extents84
-    Datasource:
-      file: "data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp"
-      type: "shape"
-    properties:
-      minzoom: 1
-      maxzoom: 3
-    advanced: {}
   - id: "landcover-low-zoom"
     name: "landcover-low-zoom"
     class: ""
@@ -182,6 +134,20 @@ Layer:
     properties:
       minzoom: 10
     advanced: {}
+  - id: "builtup"
+    name: "builtup"
+    geometry: "polygon"
+    class: ""
+    extent: *world
+    srs-name: "mercator"
+    srs: "+proj=merc +datum=WGS84 +over"
+    Datasource:
+      file: "data/world_boundaries/builtup_area.shp"
+      type: "shape"
+    properties:
+      minzoom: 8
+      maxzoom: 9
+    advanced: {}
   - id: "landcover-line"
     name: "landcover-line"
     class: ""
@@ -198,6 +164,17 @@ Layer:
     advanced: {}
     properties:
       minzoom: 14
+  - id: "icesheet-poly"
+    name: "icesheet-poly"
+    class: ""
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp"
+      type: "shape"
+    properties:
+      minzoom: 4
+    advanced: {}
   - id: "water-lines-casing"
     name: "water-lines-casing"
     class: ""
@@ -234,17 +211,220 @@ Layer:
       minzoom: 8
       maxzoom: 11
     advanced: {}
-  - id: "icesheet-poly"
-    name: "icesheet-poly"
-    class: ""
-    geometry: "polygon"
+  - id: "water-lines"
+    name: "water-lines"
+    class: "water-lines"
+    geometry: "linestring"
     <<: *extents
     Datasource:
-      file: "data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp"
-      type: "shape"
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way, waterway, name, intermittent,
+            CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
+            'no' AS bridge
+          FROM planet_osm_line
+          WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
+            AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
+          ORDER BY z_order
+        ) AS water_lines
+    properties:
+      minzoom: 12
+    advanced: {}
+  - id: "rivers-z0"
+    name: "rivers-z0"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z0.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      maxzoom: 0
+    advanced: 
+      band: 1
+  - id: "rivers-z1"
+    name: "rivers-z1"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z1.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 1
+      maxzoom: 1
+    advanced:
+      band: 1
+  - id: "rivers-z2"
+    name: "rivers-z2"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z2.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 2
+      maxzoom: 2
+    advanced:
+      band: 1
+  - id: "rivers-z3"
+    name: "rivers-z3"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z3.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 3
+      maxzoom: 3
+    advanced:
+      band: 1
+  - id: "rivers-z4"
+    name: "rivers-z4"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z4.tif"
+      type: "gdal"
+      band: 1
     properties:
       minzoom: 4
-    advanced: {}
+      maxzoom: 4
+    advanced:
+      band: 1
+  - id: "rivers-z5"
+    name: "rivers-z5"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z5.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 5
+      maxzoom: 5
+    advanced:
+      band: 1
+  - id: "rivers-z6"
+    name: "rivers-z6"
+    class: "rivers-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/river-raster-reduced-3857/river_raster_z6.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 6
+      maxzoom: 6
+    advanced:
+      band: 1
+  - id: "lakes-z0"
+    name: "lakes-z0"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z0.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      maxzoom: 0
+    advanced:
+      band: 1
+  - id: "lakes-z1"
+    name: "lakes-z1"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z1.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 1
+      maxzoom: 1
+    advanced:
+      band: 1
+  - id: "lakes-z2"
+    name: "lakes-z2"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z2.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 2
+      maxzoom: 2
+    advanced:
+      band: 1
+  - id: "lakes-z3"
+    name: "lakes-z3"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z3.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 3
+      maxzoom: 3
+    advanced:
+      band: 1
+  - id: "lakes-z4"
+    name: "lakes-z4"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z4.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 4
+      maxzoom: 4
+    advanced:
+      band: 1
+  - id: "lakes-z5"
+    name: "lakes-z5"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z5.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 5
+      maxzoom: 5
+    advanced:
+      band: 1
+  - id: "lakes-z6"
+    name: "lakes-z6"
+    class: "lakes-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-raster-reduced-3857/lakes_raster_z6.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 6
+      maxzoom: 6
+    advanced:
+      band: 1
   - id: "water-areas"
     name: "water-areas"
     class: ""
@@ -257,12 +437,13 @@ Layer:
             way,
             "natural",
             waterway,
+            water,
             landuse,
             name,
             way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
           FROM planet_osm_polygon
           WHERE
-            (waterway IN ('dock', 'riverbank', 'canal')
+            (waterway IN ('dock', 'riverbank')
               OR landuse IN ('reservoir', 'basin')
               OR "natural" IN ('water', 'glacier'))
             AND building IS NULL
@@ -270,7 +451,115 @@ Layer:
           ORDER BY z_order, way_area DESC
         ) AS water_areas
     properties:
+      minzoom: 7
+    advanced: {}
+  - id: "ocean-z0"
+    name: "ocean-z0"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z0.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      maxzoom: 0
+    advanced:
+      band: 1
+  - id: "ocean-z1"
+    name: "ocean-z1"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z1.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 1
+      maxzoom: 1
+    advanced:
+      band: 1
+  - id: "ocean-z2"
+    name: "ocean-z2"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z2.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 2
+      maxzoom: 2
+    advanced:
+      band: 1
+  - id: "ocean-z3"
+    name: "ocean-z3"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z3.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 3
+      maxzoom: 3
+    advanced:
+      band: 1
+  - id: "ocean-z4"
+    name: "ocean-z4"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z4.tif"
+      type: "gdal"
+      band: 1
+    properties:
       minzoom: 4
+      maxzoom: 4
+    advanced:
+      band: 1
+  - id: "ocean-z5"
+    name: "ocean-z5"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z5.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 5
+      maxzoom: 5
+    advanced:
+      band: 1
+  - id: "ocean-z6"
+    name: "ocean-z6"
+    class: "ocean-raster"
+    geometry: "raster"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-raster-reduced-3857/ocean_raster_z6.tif"
+      type: "gdal"
+      band: 1
+    properties:
+      minzoom: 6
+      maxzoom: 6
+    advanced:
+      band: 1
+  - id: "ocean"
+    name: "ocean"
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/water-polygons-split-3857/water_polygons.shp"
+      type: "shape"
+    properties:
+      minzoom: 7
     advanced: {}
   - id: "landcover-area-symbols"
     name: "landcover-area-symbols"
@@ -312,26 +601,6 @@ Layer:
       type: "shape"
     properties:
       minzoom: 4
-    advanced: {}
-  - id: "water-lines"
-    name: "water-lines"
-    class: "water-lines"
-    geometry: "linestring"
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, waterway, name, intermittent,
-            CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
-            'no' AS bridge
-          FROM planet_osm_line
-          WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
-            AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
-          ORDER BY z_order
-        ) AS water_lines
-    properties:
-      minzoom: 12
     advanced: {}
   - id: "water-barriers-line"
     name: "water-barriers-line"
@@ -1341,6 +1610,18 @@ Layer:
         ) AS guideways
     properties:
       minzoom: 13
+    advanced: {}
+  - id: "necountries"
+    name: "necountries"
+    class: ""
+    geometry: "linestring"
+    <<: *extents84
+    Datasource:
+      file: "data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp"
+      type: "shape"
+    properties:
+      minzoom: 1
+      maxzoom: 3
     advanced: {}
   - id: "admin-low-zoom"
     name: "admin-low-zoom"

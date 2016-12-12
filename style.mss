@@ -1,5 +1,5 @@
 Map {
-  background-color: @water-color;
+  background-color: @land-color;
 }
 
 /*
@@ -271,8 +271,11 @@ For a considerable number of labels this style will make no difference to the re
 
                 "Unifont Medium", "unifont Medium", "Unifont Upper Medium";
 
-@water-color: #b5d0d0;
 @land-color: #f2efe9;
+
+@water-color: #aad3df;     // Lch(82,15,224)
+@ocean-color: #b9d3dc;     // Lch(83,10,227)
+@river-color: #97c9d8;     // Lch(78,18,225)
 
 @standard-halo-radius: 1;
 @standard-halo-fill: rgba(255,255,255,0.6);

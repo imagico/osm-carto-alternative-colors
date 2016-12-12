@@ -82,6 +82,27 @@ settings = {
         'type': 'zip',
         'index': ['icesheet_outlines.shp'],
         'long_opt': '--icesheet-outlines'
+    },
+
+    7: {
+        'directory': 'ocean-raster-reduced-3857',
+        'url': 'http://data.openstreetmapdata.com/ocean-raster-reduced-3857.zip',  # noqa
+        'type': 'zip',
+        'long_opt': '--ocean-raster'
+    },
+
+    8: {
+        'directory': 'lakes-raster-reduced-3857',
+        'url': 'http://data.openstreetmapdata.com/lakes-raster-reduced-3857.zip',  # noqa
+        'type': 'zip',
+        'long_opt': '--lakes-raster'
+    },
+
+    9: {
+        'directory': 'river-raster-reduced-3857',
+        'url': 'http://data.openstreetmapdata.com/river-raster-reduced-3857.zip',  # noqa
+        'type': 'zip',
+        'long_opt': '--river-raster'
     }
 }
 

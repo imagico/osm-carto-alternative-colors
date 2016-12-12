@@ -11,16 +11,26 @@
   }
 }
 
-#world {
-  [zoom >= 0][zoom < 10] {
-    polygon-fill: @land-color;
-  }
+.ocean {
+  polygon-fill: @ocean-color;
 }
 
-#coast-poly {
-  [zoom >= 10] {
-    polygon-fill: @land-color;
-  }
+.ocean-raster {
+  raster-colorizer-stops:
+    stop(0, fadeout(@ocean-color,100.0))
+    stop(255, @ocean-color);
+}
+
+.lakes-raster {
+  raster-colorizer-stops:
+    stop(0, fadeout(@water-color,100.0))
+    stop(255, @water-color);
+}
+
+.rivers-raster {
+  raster-colorizer-stops:
+    stop(0, fadeout(@river-color,100.0))
+    stop(255, @river-color);
 }
 
 #icesheet-poly {
