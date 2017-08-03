@@ -54,42 +54,6 @@ Stylesheet:
   - admin.mss
   - addressing.mss
 Layer:
-  - id: world
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      file: data/simplified-land-polygons-complete-3857/simplified_land_polygons.shp
-      type: shape
-    properties:
-      maxzoom: 9
-  - id: coast-poly
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      file: data/land-polygons-split-3857/land_polygons.shp
-      type: shape
-    properties:
-      minzoom: 10
-  - id: builtup
-    geometry: polygon
-    extent: *world
-    srs-name: mercator
-    srs: "+proj=merc +datum=WGS84 +over"
-    Datasource:
-      file: data/world_boundaries/builtup_area.shp
-      type: shape
-    properties:
-      minzoom: 8
-      maxzoom: 9
-  - id: necountries
-    geometry: linestring
-    <<: *extents84
-    Datasource:
-      file: data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp
-      type: shape
-    properties:
-      minzoom: 1
-      maxzoom: 3
   - id: landcover-low-zoom
     geometry: polygon
     <<: *extents
@@ -165,6 +129,17 @@ Layer:
         ) AS features
     properties:
       minzoom: 10
+  - id: builtup
+    geometry: polygon
+    extent: *world
+    srs-name: mercator
+    srs: "+proj=merc +datum=WGS84 +over"
+    Datasource:
+      file: data/world_boundaries/builtup_area.shp
+      type: shape
+    properties:
+      minzoom: 8
+      maxzoom: 9
   - id: landcover-line
     geometry: linestring
     <<: *extents
@@ -177,7 +152,15 @@ Layer:
           WHERE man_made = 'cutline'
         ) AS landcover_line
     properties:
-      minzoom: 14
+    minzoom: 14
+  - id: icesheet-poly
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      file: data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp
+      type: shape
+    properties:
+      minzoom: 4
   - id: water-lines-casing
     geometry: linestring
     <<: *extents
@@ -208,73 +191,6 @@ Layer:
     properties:
       minzoom: 8
       maxzoom: 11
-  - id: icesheet-poly
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      file: data/antarctica-icesheet-polygons-3857/icesheet_polygons.shp
-      type: shape
-    properties:
-      minzoom: 4
-  - id: water-areas
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way,
-            "natural",
-            waterway,
-            landuse,
-            name,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
-          FROM planet_osm_polygon
-          WHERE
-            (waterway IN ('dock', 'riverbank')
-              OR landuse IN ('reservoir', 'basin')
-              OR "natural" IN ('water', 'glacier'))
-            AND building IS NULL
-            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
-          ORDER BY COALESCE(layer,0), way_area DESC
-        ) AS water_areas
-    properties:
-      minzoom: 4
-  - id: landcover-area-symbols
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, surface, 
-            COALESCE(CASE WHEN landuse = 'forest' THEN 'wood' ELSE NULL END, "natural") AS "natural",
-            CASE WHEN "natural" IN ('marsh', 'mud') 
-                THEN "natural" 
-                ELSE CASE WHEN ("natural" = 'wetland' AND NOT tags ? 'wetland') 
-                  THEN 'wetland' 
-                  ELSE CASE WHEN ("natural" = 'wetland')
-                    THEN tags->'wetland'
-                    ELSE NULL
-                    END 
-                END
-              END AS int_wetland
-          FROM planet_osm_polygon
-          WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef', 'scrub') OR landuse = 'forest')
-            AND building IS NULL
-            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
-          ORDER BY COALESCE(layer,0), way_area DESC
-        ) AS landcover_area_symbols
-    properties:
-      minzoom: 10
-  - id: icesheet-outlines
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      file: data/antarctica-icesheet-outlines-3857/icesheet_outlines.shp
-      type: shape
-    properties:
-      minzoom: 4
   - id: water-lines
     class: water-lines
     geometry: linestring
@@ -293,6 +209,87 @@ Layer:
         ) AS water_lines
     properties:
       minzoom: 12
+  - id: water-areas
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            "natural",
+            waterway,
+            water,
+            landuse,
+            name,
+            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE
+            (waterway IN ('dock', 'riverbank')
+              OR landuse IN ('reservoir', 'basin')
+              OR "natural" IN ('water', 'glacier'))
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS water_areas
+    properties:
+      minzoom: 4
+  - id: ocean-lz
+    name: "ocean-lz"
+    class: "ocean"
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      file: data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp
+      type: shape
+    properties:
+      maxzoom: 9
+  - id: ocean
+    name: "ocean"
+    class: "ocean"
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      file: data/water-polygons-split-3857/water_polygons.shp
+      type: shape
+    properties:
+      minzoom: 10
+  - id: landcover-area-symbols
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way, surface, 
+            COALESCE(CASE WHEN landuse = 'forest' THEN 'wood' ELSE NULL END, "natural") AS "natural",
+            CASE WHEN "natural" IN ('marsh', 'mud') 
+                THEN "natural" 
+                ELSE CASE WHEN ("natural" = 'wetland' AND NOT tags ? 'wetland') 
+                  THEN 'wetland' 
+                  ELSE CASE WHEN ("natural" = 'wetland')
+                    THEN tags->'wetland'
+                    ELSE NULL
+                    END 
+                END
+            END AS int_wetland,
+            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef', 'scrub') OR landuse = 'forest')
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS landcover_area_symbols
+    properties:
+      minzoom: 10
+  - id: icesheet-outlines
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      file: data/antarctica-icesheet-outlines-3857/icesheet_outlines.shp
+      type: shape
+    properties:
+      minzoom: 4
   - id: water-barriers-line
     geometry: linestring
     <<: *extents
@@ -1234,6 +1231,15 @@ Layer:
         ) AS guideways
     properties:
       minzoom: 13
+  - id: necountries
+    geometry: linestring
+    <<: *extents84
+    Datasource:
+      file: data/ne_110m_admin_0_boundary_lines_land/ne_110m_admin_0_boundary_lines_land.shp
+      type: shape
+    properties:
+      minzoom: 1
+      maxzoom: 3
   - id: admin-low-zoom
     geometry: linestring
     <<: *extents
