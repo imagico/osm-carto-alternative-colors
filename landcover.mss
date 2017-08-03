@@ -9,8 +9,7 @@
 
 // --- "Base" landuses ---
 
-@built-up-upper-lowzoom: #c0c0c0;
-@built-up-lower-lowzoom: #aaaaaa;
+@built-up-lowzoom: #d7d4d3;
 @residential: #e0dfdf;      // Lch(89,0,0)
 @residential-line: #b9b9b9; // Lch(75,0,0)
 @retail: #ffd6d1;           // Lch(89,16,30)
@@ -66,17 +65,6 @@
 
 #landcover-low-zoom[zoom < 10],
 #landcover[zoom >= 10] {
-  ::low-zoom[zoom < 10]                   { image-filters: scale-hsla(0,1,0,1,0.6,0.95,0,1); }
-  ::lower-mid-zoom[zoom >= 10][zoom < 11] { image-filters: scale-hsla(0,1,0,1,0.6,0.95,0,1); }
-  ::mid-zoom[zoom >= 11][zoom < 12]       { image-filters: scale-hsla(0,1,0,1,0.5,0.96,0,1); }
-  ::upper-mid-zoom[zoom >= 12][zoom < 13] { image-filters: scale-hsla(0,1,0,1,0.4,0.97,0,1); }
-  ::high-zoom[zoom >= 13]                 { image-filters: scale-hsla(0,1,0,1,0,  1,   0,1); }
-
-  ::low-zoom[zoom < 10],
-  ::lower-mid-zoom[zoom >= 10][zoom < 11],
-  ::mid-zoom[zoom >= 11][zoom < 12],
-  ::upper-mid-zoom[zoom >= 12][zoom < 13],
-  ::high-zoom[zoom >= 13] {
 
   ::first {
     [feature = 'wetland_mud'],
@@ -211,8 +199,7 @@
   }
 
   [feature = 'landuse_residential'][zoom >= 10] {
-    polygon-fill: @built-up-lower-lowzoom;
-    [zoom >= 11] { polygon-fill: @built-up-upper-lowzoom; }
+    polygon-fill: @built-up-lowzoom;
     [zoom >= 13] { polygon-fill: @residential; }
     [zoom >= 16] {
       line-width: .5;
@@ -339,8 +326,7 @@
   }
 
   [feature = 'landuse_retail'][zoom >= 10] {
-    polygon-fill: @built-up-lower-lowzoom;
-    [zoom >= 11] { polygon-fill: @built-up-upper-lowzoom; }
+    polygon-fill: @built-up-lowzoom;
     [zoom >= 13] { polygon-fill: @retail; }
     [zoom >= 16] {
       line-width: 0.5;
@@ -354,8 +340,7 @@
   }
 
   [feature = 'landuse_industrial'][zoom >= 10] {
-    polygon-fill: @built-up-lower-lowzoom;
-    [zoom >= 11] { polygon-fill: @built-up-upper-lowzoom; }
+    polygon-fill: @built-up-lowzoom;
     [zoom >= 13] { polygon-fill: @industrial; }
     [zoom >= 16] {
       line-width: .5;
@@ -369,7 +354,8 @@
   }
 
   [feature = 'landuse_railway'][zoom >= 10] {
-    polygon-fill: @railway;
+    polygon-fill: @built-up-lowzoom;
+    [zoom >= 13] { polygon-fill: @railway; }
     [zoom >= 16][name != ''] {
       line-width: 0.7;
       line-color: @railway-line;
@@ -398,8 +384,7 @@
   }
 
   [feature = 'landuse_commercial'][zoom >= 10] {
-    polygon-fill: @built-up-lower-lowzoom;
-    [zoom >= 11] { polygon-fill: @built-up-upper-lowzoom; }
+    polygon-fill: @built-up-lowzoom;
     [zoom >= 13] { polygon-fill: @commercial; }
     [zoom >= 16] {
       line-width: 0.5;
@@ -596,7 +581,6 @@
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
-}
 }
 
 /* man_made=cutline */
