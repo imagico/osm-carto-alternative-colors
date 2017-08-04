@@ -174,7 +174,7 @@ Layer:
           WHERE waterway IN ('stream', 'drain', 'ditch')
         ) AS water_lines_casing
     properties:
-      minzoom: 13
+      minzoom: 12
   - id: water-lines-low-zoom
     geometry: linestring
     <<: *extents

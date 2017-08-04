@@ -65,11 +65,20 @@
   [waterway = 'ditch'],
   [waterway = 'drain'] {
     [int_tunnel = 'no'] {
-      [zoom >= 13] {
-        line-width: 2.5;
+      [zoom >= 12] {
+        line-width: 2.0;
         line-color: white;
-        [waterway = 'stream'][zoom >= 15] {
-          line-width: 3.5;
+        line-opacity: .4;
+        [zoom >= 13] {
+          line-width: 2.4;
+          line-opacity: .75;
+          [zoom >= 14] {
+            line-width: 2.4;
+            line-opacity: 1;
+            [waterway = 'stream'][zoom >= 15] {
+              line-width: 3.4;
+            }
+          }
         }
         [intermittent = 'yes'] {
           line-dasharray: 4,3;
@@ -171,14 +180,20 @@
   [waterway = 'stream'],
   [waterway = 'ditch'],
   [waterway = 'drain'] {
-    [zoom >= 13] {
+    [zoom >= 12] {
       // the additional line of land color is used to provide a background for dashed casings
       [int_tunnel = 'yes'] {
         background/line-width: 2;
         background/line-color: @land-color;
       }
-      water/line-width: 2;
       water/line-color: @river-color;
+      water/line-width: 1.2;
+      [zoom >= 13] {
+        water/line-width: 1.8;
+        [zoom >= 14] {
+          water/line-width: 2;
+        }
+      }
 
       [bridge = 'yes'] {
         [zoom >= 14] {
