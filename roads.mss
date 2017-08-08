@@ -258,6 +258,8 @@
 @halo-color-for-minor-road:       white;
 @lowzoom-halo-color:              white;
 @lowzoom-halo-width:              1;
+@lowzoom-halo-width-unimportant:  1;
+@lowzoom-halo-unimportant-color:  #e5e2dd;
 
 @motorway-oneway-arrow-color:     darken(@motorway-casing, 25%);
 @trunk-oneway-arrow-color:        darken(@trunk-casing, 25%);
@@ -1072,6 +1074,29 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
       line-color: @lowzoom-halo-color;
       line-opacity: .4;
+    }
+    [feature = 'highway_secondary'][link != 'yes'][zoom >= 9][zoom < 12],
+    [feature = 'highway_tertiary'][link != 'yes'][zoom >= 10][zoom < 12],
+    [feature = 'highway_residential'][zoom = 12],
+    [feature = 'highway_unclassified'][zoom = 12] {
+      [feature = 'highway_secondary'] {
+        [zoom >= 9] { line-width: @secondary-width-z9 + 2 * @lowzoom-halo-width-unimportant; }
+        [zoom >= 10] { line-width: @secondary-width-z10 + 2 * @lowzoom-halo-width-unimportant; }
+        [zoom >= 11] { line-width: @secondary-width-z11 + 2 * @lowzoom-halo-width-unimportant; }
+      }
+      [feature = 'highway_tertiary'] {
+        [zoom >= 10] { line-width: @tertiary-width-z10 + 2 * @lowzoom-halo-width-unimportant; }
+        [zoom >= 11] { line-width: @tertiary-width-z11 + 2 * @lowzoom-halo-width-unimportant; }
+      }
+      [feature = 'highway_residential'][zoom = 12] {
+        line-width: @residential-width-z12 + 2 * @lowzoom-halo-width-unimportant;
+      }
+      [feature = 'highway_unclassified'][zoom = 12] {
+        line-width: @unclassified-width-z12 + 2 * @lowzoom-halo-width-unimportant;
+      }
+      line-color: @lowzoom-halo-unimportant-color;
+      line-opacity: 1;
+      line-comp-op: darken;
     }
   }
 
