@@ -1,4 +1,4 @@
-@water-text: #3b8ea2;       // Lch(55,26,224)
+@water-text: #32869b;       // Lch(52,26,225)
 @glacier: #ddecec;
 @glacier-line: #9cf;
 

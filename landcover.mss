@@ -64,7 +64,7 @@
 // --- low zoom colors ---
 
 @built-up-lowzoom: #d7d4d3;
-@vegetation-tall-lowzoom: #b5ddaa;
+@vegetation-tall-lowzoom: #b6dca6;
 @vegetation-low-lowzoom: #ddecbd;
 @bare_ground-lowzoom: #efe7d9;
 
