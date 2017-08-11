@@ -51,7 +51,8 @@
 @sand: #f5e9c6;
 @societal_amenities: #f0f0d8;
 @tourism: #734a08;
-@quarry: #c5c3c3;
+@quarry: #c2bba4;
+@landfill: @quarry;
 @military: #f55;
 @beach: #fff1ba;
 
@@ -105,14 +106,20 @@
   }
 
   [feature = 'landuse_quarry'][zoom >= 10] {
-    polygon-fill: @quarry;
-    polygon-pattern-file: url('symbols/quarry.svg');
-    [zoom >= 13] {
-      line-width: 0.5;
-      line-color: grey;
+    polygon-fill: @bare_ground-lowzoom;
+    [zoom >= 11] {
+      polygon-fill: @quarry;
+      [zoom >= 13] {
+        polygon-pattern-file: url('symbols/quarry.svg');
+        polygon-pattern-alignment: global;
+        [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        line-width: 0.5;
+        line-color: darken(@quarry, 30%);
+      }
     }
-    [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-    [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+    [way_pixels >= 4]  { polygon-gamma: 0.75; }
+    [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
 
   [feature = 'landuse_vineyard'] {
@@ -444,11 +451,20 @@
     }
   }
 
-  [feature = 'landuse_landfill'] {
-    [zoom >= 10] {
-      polygon-fill: #b6b592;
-      [way_pixels >= 4]  { polygon-gamma: 0.75; }
-      [way_pixels >= 64] { polygon-gamma: 0.3;  }
+  [feature = 'landuse_landfill'][zoom >= 10]  {
+    polygon-fill: @bare_ground-lowzoom;
+    [way_pixels >= 4]  { polygon-gamma: 0.75; }
+    [way_pixels >= 64] { polygon-gamma: 0.3;  }
+    [zoom >= 11] {
+      polygon-fill: @landfill;
+      [zoom >= 13] {
+        polygon-pattern-file: url('symbols/landfill.svg');
+        polygon-pattern-alignment: global;
+        [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        line-width: 0.5;
+        line-color: darken(@landfill, 30%);
+      }
     }
   }
 
