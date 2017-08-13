@@ -1052,8 +1052,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
   ::halo {
     [feature = 'highway_motorway'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
     [feature = 'highway_trunk'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
-    [feature = 'highway_primary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
-    [feature = 'highway_secondary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 11][zoom < 12] {
+    [feature = 'highway_primary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12] {
       [feature = 'highway_motorway'] {
         [zoom >= 8] { line-width: @motorway-width-z8 + 2 * @lowzoom-halo-width; }
         [zoom >= 9] { line-width: @motorway-width-z9 + 2 * @lowzoom-halo-width; }
