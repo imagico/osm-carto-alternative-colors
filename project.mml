@@ -823,9 +823,9 @@ Layer:
                   'handrail', 'hedge', 'kerb', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
             ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic
             FROM planet_osm_line
-            WHERE barrier IN ('chain', 'city_wall', 'embankment', 'ditch', 'fence', 'guard_rail',
+            WHERE (barrier IN ('chain', 'city_wall', 'embankment', 'ditch', 'fence', 'guard_rail',
                   'handrail', 'hedge', 'kerb', 'retaining_wall', 'wall')
-              OR historic = 'citywalls'
+                OR historic = 'citywalls')
               AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi'))
           ) AS features
         ) AS line_barriers
