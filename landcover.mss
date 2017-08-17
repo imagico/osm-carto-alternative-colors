@@ -40,7 +40,7 @@
 @campsite: #def6c0; // also caravan_site, picnic_site
 @cemetery: #aacbaf; // also grave_yard
 @danger_area: pink;
-@heath: #d6d99f;
+@heath: #d4dca3;            // Lch(86,30,114)
 @mud: rgba(203,177,154,0.3); // produces #e6dcd1 over @land
 @place_of_worship: #cdccc9;
 @place_of_worship_outline: #111;
@@ -50,7 +50,7 @@
 @sand: #f5e9c6;
 @societal_amenities: #f0f0d8;
 @tourism: #734a08;
-@quarry: #c2bba4;
+@quarry: #c5bea6;
 @landfill: @quarry;
 @construction: @quarry;
 @brownfield: @quarry;
