@@ -209,6 +209,157 @@ Layer:
         ) AS water_lines
     properties:
       minzoom: 12
+  - id: rivers-z0
+    class: "rivers"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z0.shp"
+      type: "shape"
+    properties:
+      maxzoom: 0
+    advanced: {}
+  - id: rivers-z1
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z1.shp"
+      type: "shape"
+    properties:
+      minzoom: 1
+      maxzoom: 1
+    advanced: {}
+  - id: rivers-z2
+    class: "rivers"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z2.shp"
+      type: "shape"
+    properties:
+      minzoom: 2
+      maxzoom: 2
+    advanced: {}
+  - id: rivers-z3
+    class: "rivers"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z3.shp"
+      type: "shape"
+    properties:
+      minzoom: 3
+      maxzoom: 3
+    advanced: {}
+  - id: rivers-z4
+    class: "rivers"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z4.shp"
+      type: "shape"
+    properties:
+      minzoom: 4
+      maxzoom: 4
+    advanced: {}
+  - id: rivers-z5
+    class: "rivers"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z5.shp"
+      type: "shape"
+    properties:
+      minzoom: 5
+      maxzoom: 5
+    advanced: {}
+  - id: rivers-z6
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/river-polygons-reduced-3857/river_reduced_z6.shp"
+      type: "shape"
+    properties:
+      minzoom: 6
+      maxzoom: 6
+    advanced: {}
+  - id: lakes-z0
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z0.shp"
+      type: "shape"
+    properties:
+      maxzoom: 0
+    advanced: {}
+  - id: lakes-z1
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z1.shp"
+      type: "shape"
+    properties:
+      minzoom: 1
+      maxzoom: 1
+    advanced: {}
+  - id: lakes-z2
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z2.shp"
+      type: "shape"
+    properties:
+      minzoom: 2
+      maxzoom: 2
+    advanced: {}
+  - id: lakes-z3
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z3.shp"
+      type: "shape"
+    properties:
+      minzoom: 3
+      maxzoom: 3
+    advanced: {}
+  - id: lakes-z4
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z4.shp"
+      type: "shape"
+    properties:
+      minzoom: 4
+      maxzoom: 4
+    advanced: {}
+  - id: lakes-z5
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z5.shp"
+      type: "shape"
+    properties:
+      minzoom: 5
+      maxzoom: 5
+    advanced: {}
+  - id: lakes-z6
+    class: "lakes"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z6.shp"
+      type: "shape"
+    properties:
+      minzoom: 6
+      maxzoom: 6
+    advanced: {}
   - id: water-areas
     geometry: polygon
     <<: *extents
@@ -233,7 +384,83 @@ Layer:
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS water_areas
     properties:
+      minzoom: 7
+  - id: ocean-z0
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z0.shp"
+      type: "shape"
+    properties:
+      maxzoom: 0
+    advanced: {}
+  - id: ocean-z1
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z1.shp"
+      type: "shape"
+    properties:
+      minzoom: 1
+      maxzoom: 1
+    advanced: {}
+  - id: ocean-z2
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z2.shp"
+      type: "shape"
+    properties:
+      minzoom: 2
+      maxzoom: 2
+    advanced: {}
+  - id: ocean-z3
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z3.shp"
+      type: "shape"
+    properties:
+      minzoom: 3
+      maxzoom: 3
+    advanced: {}
+  - id: ocean-z4
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z4.shp"
+      type: "shape"
+    properties:
       minzoom: 4
+      maxzoom: 4
+    advanced: {}
+  - id: ocean-z5
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z5.shp"
+      type: "shape"
+    properties:
+      minzoom: 5
+      maxzoom: 5
+    advanced: {}
+  - id: ocean-z6
+    class: "ocean"
+    geometry: "polygon"
+    <<: *extents
+    Datasource:
+      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z6.shp"
+      type: "shape"
+    properties:
+      minzoom: 6
+      maxzoom: 6
+    advanced: {}
   - id: ocean-lz
     class: "ocean"
     geometry: polygon
@@ -242,6 +469,7 @@ Layer:
       file: data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp
       type: shape
     properties:
+      minzoom: 7
       maxzoom: 9
   - id: ocean
     class: "ocean"

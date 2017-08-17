@@ -15,6 +15,14 @@
   polygon-fill: @ocean-color;
 }
 
+.lakes {
+  polygon-fill: @water-color;
+}
+
+.rivers {
+  polygon-fill: @river-color;
+}
+
 #icesheet-poly {
   [zoom >= 6] {
     polygon-fill: @glacier;
