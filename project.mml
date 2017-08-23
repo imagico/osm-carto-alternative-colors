@@ -168,7 +168,10 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, waterway, tags->'intermittent' as intermittent,
+            way,
+            waterway,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
             CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel
           FROM planet_osm_line
           WHERE waterway IN ('stream', 'drain', 'ditch')
@@ -184,7 +187,8 @@ Layer:
         (SELECT
             way,
             waterway,
-            tags->'intermittent' as intermittent
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal
           FROM planet_osm_line
           WHERE waterway = 'river'
         ) AS water_lines_low_zoom
@@ -199,7 +203,11 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, waterway, name, tags->'intermittent' as intermittent,
+            way,
+            waterway,
+            name,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
             CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
             'no' AS bridge
           FROM planet_osm_line
@@ -371,6 +379,9 @@ Layer:
             "natural",
             waterway,
             water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            tags->'salt' as salt,
             landuse,
             name,
             way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
@@ -1307,6 +1318,7 @@ Layer:
             waterway,
             name,
             tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
             CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
             'yes' AS bridge
           FROM planet_osm_line
@@ -2525,6 +2537,7 @@ Layer:
             lock,
             name,
             tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
             CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel
           FROM planet_osm_line
           WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
