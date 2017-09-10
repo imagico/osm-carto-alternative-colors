@@ -24,14 +24,19 @@
 
 // --- Transport ----
 
-@aerodrome: #e9e7e2;
+@transportation: #dedeee;       // Lch(89,8,291)
+@transportation-line: #b7b7cd;  // Lch(75,12,291)
+
+@aerodrome: @transportation;
+@aerodrome-line: @transportation-line;
 @apron: #e9d1ff;
 @garages: #dfddce;
 @parking: #f7efb7;
 @railway: @industrial;
 @railway-line: @industrial-line;
 @rest_area: #efc8c8; // also services
-@station: #d4aaaa;
+@station: @transportation;
+@station-line: @transportation-line;
 
 // --- Other ----
 
@@ -83,8 +88,10 @@
 
   [feature = 'leisure_playground'][zoom >= 13] {
     polygon-fill: @playground;
-    line-color: darken(@playground, 40%);
-    line-width: 0.3;
+    [zoom >= 15] {
+      line-color: darken(@playground, 40%);
+      line-width: 0.3;
+    }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
@@ -96,7 +103,7 @@
       polygon-fill: @vegetation-low-lowzoom;
       [zoom >= 12] {
         polygon-fill: @campsite;
-        [zoom >= 13] {
+        [zoom >= 14] {
           line-color: saturate(darken(@campsite, 45%), 20%);
           line-width: 0.3;
         }
@@ -532,7 +539,7 @@
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
- 
+
   [feature = 'wetland_swamp'][zoom >= 8] {
     polygon-fill: @vegetation-tall-lowzoom;
     [zoom >= 12] { polygon-fill: @forest; }
@@ -594,15 +601,25 @@
 
   [feature = 'aeroway_apron'][zoom >= 10] {
     polygon-fill: @built-up-lowzoom;
+    [zoom >= 11] { polygon-fill: @aerodrome; }
     [zoom >= 12] { polygon-fill: @apron; }
+    [zoom >= 15] {
+      line-width: 0.3;
+      line-color: darken(@apron, 7%);
+    }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
 
   [feature = 'aeroway_aerodrome'][zoom >= 10] {
-    polygon-fill: @aerodrome;
-    line-width: 0.2;
-    line-color: saturate(darken(@aerodrome, 40%), 20%);
+    polygon-fill: @built-up-lowzoom;
+    [zoom >= 11] {
+      polygon-fill: @aerodrome;
+      [zoom >= 13] {
+        line-width: 0.5;
+        line-color: @aerodrome-line;
+      }
+    }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
@@ -627,7 +644,13 @@
 
   [feature = 'railway_station'][zoom >= 10] {
     polygon-fill: @built-up-lowzoom;
-    [zoom >= 13] { polygon-fill: @station; }
+    [zoom >= 13] {
+      polygon-fill: @station;
+      [zoom >= 16] {
+        line-width: 0.5;
+        line-color: @station-line;
+      }
+    }
   }
 
   [feature = 'leisure_fitness_centre'],
