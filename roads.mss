@@ -1114,7 +1114,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'highway_construction'] {
       [zoom >= 12] {
         line-width: 2;
-        line-color: #9cc;
+        line-color: @construction;
 
         [construction = 'motorway'],
         [construction = 'motorway_link'] {
@@ -1181,7 +1181,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           line-width: 3;
           line-opacity: 0.4;
           b/line-width: 1.2;
-          b/line-color: #69f;
+          b/line-color: @construction;
           b/line-dasharray: 2,6;
         }
       }
