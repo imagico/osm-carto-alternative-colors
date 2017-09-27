@@ -1,4 +1,4 @@
-@admin-boundaries: #ac46ac;
+@admin-boundaries: #51785e;
 
 /* For performance reasons, the admin border layers are split into three groups
 for low, middle and high zoom levels.
@@ -30,6 +30,14 @@ overlapping borders correctly.
       background/line-width: 2;
       line-width: 2;
     }
+    [zoom >= 8] {
+      background/line-width: 2.6;
+      line-width: 2.6;
+    }
+    [zoom >= 9] {
+      background/line-width: 4;
+      line-width: 4;
+    }
     [zoom >= 10] {
       background/line-width: 6;
       line-width: 6;
@@ -45,9 +53,25 @@ overlapping borders correctly.
       line-color: @admin-boundaries;
       line-width: 0.6;
     }
+    [zoom >= 5] {
+      background/line-width: 0.8;
+      line-width: 0.8;
+    }
+    [zoom >= 6] {
+      background/line-width: 1.0;
+      line-width: 1.0;
+    }
     [zoom >= 7] {
       background/line-width: 1.2;
       line-width: 1.2;
+    }
+    [zoom >= 8] {
+      background/line-width: 1.5;
+      line-width: 1.5;
+    }
+    [zoom >= 9] {
+      background/line-width: 2.5;
+      line-width: 2.5;
     }
     [zoom >= 10] {
       background/line-width: 4;
@@ -80,6 +104,10 @@ overlapping borders correctly.
       background/line-width: 1;
       line-width: 1;
     }
+    [zoom >= 8] {
+      background/line-width: 1.4;
+      line-width: 1.4;
+    }
     [zoom >= 9] {
       background/line-width: 1.8;
       line-width: 1.8;
@@ -87,6 +115,10 @@ overlapping borders correctly.
     [zoom >= 10] {
       background/line-width: 2.5;
       line-width: 2.5;
+    }
+    [zoom >= 11] {
+      background/line-width: 2.75;
+      line-width: 2.75;
     }
     [zoom >= 12] {
       background/line-width: 3;
