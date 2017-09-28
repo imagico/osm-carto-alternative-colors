@@ -384,6 +384,7 @@ Layer:
             tags->'intermittent' as intermittent,
             tags->'seasonal' as seasonal,
             tags->'salt' as salt,
+            tags->'glacier:type' as glacier_type,
             landuse,
             name,
             way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels

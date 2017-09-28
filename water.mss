@@ -1,5 +1,6 @@
 @water-text: #2f8099;       // Lch(50,26,231)
 @glacier: #ddecec;
+@glacier-shelf: #d4e6e6;
 @glacier-line: #9cf;
 
 @river-width-z8:               0.7;
@@ -28,6 +29,10 @@
       line-width: 0.75;
       line-color: @glacier-line;
       polygon-fill: @glacier;
+      [glacier_type = 'shelf'],
+      [glacier_type = 'ice_tongue'] {
+        polygon-fill: @glacier-shelf;
+      }
       [zoom >= 8] {
         line-width: 1.0;
       }
