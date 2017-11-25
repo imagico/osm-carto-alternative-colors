@@ -1,4 +1,5 @@
 @admin-boundaries: #51785e;
+@admin-boundaries-maritime: mix(@admin-boundaries, @water-color, 35%);
 
 /* For performance reasons, the admin border layers are split into three groups
 for low, middle and high zoom levels.
@@ -16,6 +17,9 @@ overlapping borders correctly.
       background/line-width: 1.2;
       line-join: bevel;
       line-color: @admin-boundaries;
+      [maritime = 'yes'] {
+        line-color: @admin-boundaries-maritime;
+      }
       line-width: 1.2;
     }
     [zoom >= 5] {
@@ -51,6 +55,9 @@ overlapping borders correctly.
       background/line-width: 0.6;
       line-join: bevel;
       line-color: @admin-boundaries;
+      [maritime = 'yes'] {
+        line-color: @admin-boundaries-maritime;
+      }
       line-width: 0.6;
     }
     [zoom >= 5] {
@@ -87,6 +94,9 @@ overlapping borders correctly.
       background/line-color: white;
       background/line-width: 0.4;
       line-color: @admin-boundaries;
+      [maritime = 'yes'] {
+        line-color: @admin-boundaries-maritime;
+      }
       line-join: bevel;
       line-width: 0.4;
       line-dasharray: 4,3;
@@ -148,6 +158,9 @@ overlapping borders correctly.
     background/line-width: 2;
     line-join: bevel;
     line-color: @admin-boundaries;
+    [maritime = 'yes'] {
+      line-color: @admin-boundaries-maritime;
+    }
     line-width: 2;
     line-dasharray: 6,3,2,3,2,3;
     line-clip: false;
@@ -158,6 +171,9 @@ overlapping borders correctly.
     background/line-width: 2;
     line-join: bevel;
     line-color: @admin-boundaries;
+    [maritime = 'yes'] {
+      line-color: @admin-boundaries-maritime;
+    }
     line-width: 2;
     line-dasharray: 6,3,2,3;
     line-clip: false;
@@ -170,6 +186,9 @@ overlapping borders correctly.
       background/line-width: 1.5;
       line-join: bevel;
       line-color: @admin-boundaries;
+      [maritime = 'yes'] {
+        line-color: @admin-boundaries-maritime;
+      }
       line-width: 1.5;
       line-dasharray: 5,2;
       line-clip: false;
@@ -188,6 +207,9 @@ overlapping borders correctly.
       background/line-width: 2;
       line-join: bevel;
       line-color: @admin-boundaries;
+      [maritime = 'yes'] {
+        line-color: @admin-boundaries-maritime;
+      }
       line-width: 2;
       line-dasharray: 2,3;
       line-clip: false;
