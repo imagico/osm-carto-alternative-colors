@@ -944,6 +944,7 @@ Layer:
               WHERE (tunnel IS NULL OR NOT tunnel IN ('yes', 'building_passage'))
                 AND (covered IS NULL OR NOT covered = 'yes')
                 AND (bridge IS NULL OR NOT bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct'))
+                AND NOT(tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones')
                 AND highway IS NOT NULL -- end of road select
             UNION ALL
             SELECT
@@ -1065,6 +1066,7 @@ Layer:
               WHERE (tunnel IS NULL OR NOT tunnel IN ('yes', 'building_passage'))
                 AND (covered IS NULL OR NOT covered = 'yes')
                 AND (bridge IS NULL OR NOT bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct'))
+                AND NOT(tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones')
                 AND highway IS NOT NULL -- end of road select
             UNION ALL
             SELECT
@@ -1216,13 +1218,13 @@ Layer:
             tracktype,
             int_surface,
             'no' AS int_tunnel,
-            'yes' AS int_bridge,
+            CASE WHEN ford = 'yes' OR ford = 'stepping_stones' THEN 'ford' WHEN ford = 'ford_node' THEN 'ford_node' ELSE 'yes' END AS int_bridge,
             access,
             construction,
             service,
             link,
             layernotnull
-          FROM ( -- subselect that contains both roads and rail/aero
+          FROM ( -- subselect that contains roads, rail/aero and node based fords
             SELECT
                 way,
                 ('highway_' || highway) AS feature, --only motorway to tertiary links are accepted later on
@@ -1230,6 +1232,7 @@ Layer:
                 foot,
                 bicycle,
                 tracktype,
+                tags->'ford' AS ford,
                 CASE WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                   WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -1252,7 +1255,9 @@ Layer:
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
-              WHERE bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
+              WHERE
+                (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
+                  OR tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones')
                 AND highway IS NOT NULL -- end of road select
             UNION ALL
             SELECT
@@ -1267,6 +1272,7 @@ Layer:
                 foot,
                 bicycle,
                 tracktype,
+                NULL AS ford,
                 'null',
                 CASE
                   WHEN access IN ('destination') THEN 'destination'::text
@@ -1281,12 +1287,66 @@ Layer:
               FROM planet_osm_line
               WHERE bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
                 AND (railway IS NOT NULL OR aeroway IS NOT NULL) -- end of rail/aero select
+            UNION ALL
+            SELECT 
+                ST_LineSubstring(way, GREATEST(0, position-length*2.5), LEAST(1, position+length*2.5)) AS way,
+                feature,
+                horse,
+                foot,
+                bicycle,
+                tracktype,
+                ford,
+                int_surface,
+                access,
+                construction,
+                service,
+                link,
+                layernotnull,
+                z_order
+                FROM
+                  (SELECT
+                      l.way AS way, -- this is the highway intersecting the ford node
+                      ST_LineLocatePoint(l.way, p.way) AS position, -- this is the position along the way
+                      sqrt(!pixel_width!::real*!pixel_height!::real)/ST_Length(l.way) AS length, -- this is the pixel size as a fraction of the way length
+                      ('highway_' || l.highway) AS feature,
+                      l.horse AS horse,
+                      l.foot AS foot,
+                      l.bicycle AS bicycle,
+                      l.tracktype AS tracktype,
+                      'ford_node' AS ford,
+                      CASE WHEN l.surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                                            'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
+                        WHEN l.surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                                            'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'
+                        ELSE NULL
+                      END AS int_surface,
+                      CASE WHEN l.access IN ('destination') THEN 'destination'::text
+                        WHEN l.access IN ('no', 'private') THEN 'no'::text
+                        ELSE NULL
+                      END AS access,
+                      l.construction AS construction,
+                      CASE
+                        WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text
+                        ELSE 'INT-normal'::text
+                      END AS service,
+                      CASE
+                        WHEN substr(l.highway, length(l.highway)-4, 5) = '_link' THEN 'yes'
+                        ELSE 'no'
+                      END AS link,
+                      COALESCE(l.layer,0) AS layernotnull,
+                      l.z_order AS z_order
+                    FROM planet_osm_point p
+                      JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1) -- Assumes Mercator
+                    WHERE p.tags @> 'ford=>yes' OR p.tags @> 'ford=>stepping_stones'
+                      AND l.highway IS NOT NULL -- end of fort point pseudo-line select
+                  ) AS fords
             ) AS features
           ORDER BY
             layernotnull,
             z_order,
             CASE WHEN access IN ('no', 'private') THEN 0 WHEN access IN ('destination') THEN 1 ELSE 2 END,
-            CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 2 END
+            CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 2 END,
+            CASE WHEN ford = 'yes' OR ford = 'stepping_stones' THEN 3 WHEN ford = 'ford_node' THEN 2 ELSE 1 END
         ) AS bridges
     properties:
       group-by: layernotnull
