@@ -771,16 +771,59 @@
       }
     }
     [natural = 'scrub'] {
-      polygon-pattern-file: url('symbols/scrub.svg');
+      polygon-pattern-file: url('symbols/scrub_unknown_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_unknown_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_unknown_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_unknown_mixed.png'); }
+      [leaf_type = "broadleaved"] {
+        polygon-pattern-file: url('symbols/scrub_broadleaved_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_broadleaved_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_broadleaved_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_broadleaved_mixed.png'); }
+      }
+      [leaf_type = "needleleaved"] {
+        polygon-pattern-file: url('symbols/scrub_needleleaved_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_needleleaved_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_needleleaved_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_needleleaved_mixed.png'); }
+      }
+      [leaf_type = "mixed"] {
+        polygon-pattern-file: url('symbols/scrub_mixed_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_mixed_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_mixed_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_mixed_mixed.png'); }
+      }
       polygon-pattern-alignment: global;
+      opacity: 0.8; 
     }
   }
 
   //Also landuse = forest, converted in the SQL
   [natural = 'wood'][zoom >= 13]::wood {
-    polygon-pattern-file: url('symbols/forest.svg'); // Lch(55,30,135)
-    polygon-pattern-alignment: global;
-    opacity: 0.4; // The entire layer has opacity to handle overlapping forests
+    [leaf_type = "broadleaved"] {
+      polygon-pattern-file: url('symbols/forest_broadleaved_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/forest_broadleaved_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/forest_broadleaved_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/forest_broadleaved_mixed.png'); }
+      polygon-pattern-alignment: global;
+      opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+    }
+    [leaf_type = "needleleaved"] {
+      polygon-pattern-file: url('symbols/forest_needleleaved_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/forest_needleleaved_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/forest_needleleaved_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/forest_needleleaved_mixed.png'); }
+      polygon-pattern-alignment: global;
+      opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+    }
+    [leaf_type = "mixed"] {
+      polygon-pattern-file: url('symbols/forest_mixed_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/forest_mixed_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/forest_mixed_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/forest_mixed_mixed.png'); }
+      polygon-pattern-alignment: global;
+      opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+    }
   }
 }
 

@@ -513,6 +513,8 @@ Layer:
                     END 
                 END
             END AS int_wetland,
+            tags->'leaf_type' AS leaf_type,
+            tags->'leaf_cycle' AS leaf_cycle,
             way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
           FROM planet_osm_polygon
           WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef', 'scrub') OR landuse = 'forest')
