@@ -1,65 +1,116 @@
 @breakwater-color: #aaa; /* Also for groyne */
 @dam: #adadad;
 @dam-line: #444444;
-@weir-line: #aaa;
-@lock-gate: #aaa;
-@lock-gate-line: #aaa;
+@dam-lz: #888;
+@weir-line: #999;
+@lock-gate-line: #888;
+@waterfall-line: saturate(darken(@water-color, 40%), 30%);
+@whitewater-line: lighten(@water-color, 5%);
 
-#water-barriers-point, #water-barriers-line, #water-barriers-poly {
+#water-barriers-line, #water-barriers-poly {
+
+  ::wwline {
+    [waterway = 'waterfall'],
+    [waterway = 'weir'] {
+      #water-barriers-line[zoom >= 14] {
+        line-width: 1.5;
+        line-offset: 1.5;
+        line-color: @whitewater-line;
+        line-comp-op: lighten;
+      }
+    }
+  }
+
   [waterway = 'dam'] {
-    #water-barriers-poly[zoom >= 13] {
-      line-width: 2;
-      line-color: @dam-line;
-      line-join: round;
-      line-cap: round;
-      polygon-fill: @dam;
+    #water-barriers-poly[zoom >= 12] {
+      polygon-fill: @dam-lz;
+      [zoom >= 13] {
+        line-width: 2;
+        line-color: @dam-line;
+        line-join: round;
+        line-cap: round;
+        polygon-fill: @dam;
+      }
     }
-    #water-barriers-line[zoom >= 13] {
-      line-width: 2;
-      line-color: @dam-line;
-      line-join: round;
-      line-cap: round;
-    }
-    #water-barriers-point[zoom >= 17] {
-      marker-fill: @dam;
-      marker-line-color: @dam-line;
-      marker-line-width: 1;
-      marker-width: 8;
-      [zoom >= 18] { marker-width: 10; }
-      marker-allow-overlap: true;
-      marker-ignore-placement: true;
+    #water-barriers-line {
+      [wtype = 'river'][zoom >= 11],
+      [wtype = 'canal'][zoom >= 12],
+      [wtype = 'line'][zoom >= 12],
+      [zoom >= 13] {
+        line-width: 1;
+        [wtype = 'river'][zoom >= 13],
+        [wtype = 'canal'][zoom >= 13],
+        [zoom >= 14] {
+          line-width: 1.5;
+          [zoom >= 16] {
+            line-width: 2;
+          }
+        }
+        line-color: @dam-line;
+        line-join: round;
+        line-cap: round;
+      }
     }
   }
 
   [waterway = 'weir'] {
-    #water-barriers-line[zoom >= 13] {
-      line-color: @weir-line;
-      line-width: 2;
-      line-dasharray: 2,2;
-    }
-    #water-barriers-point[zoom >= 17] {
-      marker-fill: @water-color;
-      marker-line-color: @weir-line;
-      marker-line-width: 1;
-      marker-width: 8;
-      [zoom >= 18] { marker-width: 10; }
-      marker-allow-overlap: true;
-      marker-ignore-placement: true;
+    #water-barriers-line {
+      [wtype = 'river'][zoom >= 11],
+      [wtype = 'canal'][zoom >= 12],
+      [wtype = 'line'][zoom >= 12],
+      [zoom >= 14] {
+        line-width: 1;
+        [wtype = 'river'][zoom >= 13],
+        [wtype = 'canal'][zoom >= 14],
+        [wtype = 'line'][zoom >= 14],
+        [zoom >= 14] {
+          line-width: 1.5;
+          [zoom >= 16] {
+            line-width: 2;
+            [wtype = 'river'][zoom >= 17],
+            [wtype = 'canal'][zoom >= 17],
+            [wtype = 'line'] {
+              line-dasharray: 2,2;
+            }
+          }
+        }
+        line-color: @weir-line;
+      }
     }
   }
 
   [waterway = 'lock_gate'] {
-    #water-barriers-line[zoom >= 13] {
-      line-color: @lock-gate-line;
-      line-width: 2;
+    #water-barriers-line {
+      [wtype = 'river'][zoom >= 11],
+      [wtype = 'canal'][zoom >= 12],
+      [wtype = 'line'][zoom >= 12],
+      [zoom >= 13] {
+        line-width: 1;
+        [wtype = 'river'][zoom >= 13],
+        [zoom >= 14] {
+          line-width: 1.5;
+          [zoom >= 16] {
+            line-width: 2;
+          }
+        }
+        line-color: @lock-gate-line;
+      }
     }
-    #water-barriers-point[zoom >= 17] {
-      marker-fill: @lock-gate;
-      marker-line-width: 0;
-      marker-width: 8;
-      [zoom >= 18] { marker-width: 10; }
-      marker-allow-overlap: true;
-      marker-ignore-placement: true;
+  }
+
+  [waterway = 'waterfall'] {
+    #water-barriers-line {
+      [wtype = 'river'][zoom >= 11],
+      [wtype = 'canal'][zoom >= 12],
+      [zoom >= 13] {
+        line-width: 1;
+        [wtype = 'river'][zoom >= 13],
+        [wtype = 'canal'][zoom >= 14],
+        [zoom >= 15] {
+          line-width: 1.5;
+        }
+        line-color: @waterfall-line;
+      }
     }
   }
 }
@@ -117,7 +168,8 @@
 .text,
 #text-line {
   [feature = 'waterway_dam'],
-  [feature = 'waterway_weir'] {
+  [feature = 'waterway_weir'],
+  [feature = 'waterway_lock_gate'] {
     #text-poly[zoom >= 15],
     #text-line[zoom >= 15],
     #text-point[zoom >= 17] {
@@ -161,5 +213,19 @@
         text-spacing: 400;
       }
     }
+  }
+}
+
+
+#text-point {
+  [feature = 'waterway_waterfall'][zoom >= 15] {
+    text-name: "[name]";
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+    text-fill: @water-text;
+    text-size: 10;
+    text-face-name: @book-fonts;
+    text-placement: point;
+    text-dy: 8;
   }
 }

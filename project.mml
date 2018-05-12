@@ -532,34 +532,17 @@ Layer:
       type: shape
     properties:
       minzoom: 4
-  - id: water-barriers-line
+  - id: cliffs
     geometry: linestring
     <<: *extents
     Datasource:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way,
-            waterway,
-            name
+            way, "natural", man_made
           FROM planet_osm_line
-          WHERE waterway IN ('dam', 'weir', 'lock_gate')
-        ) AS water_barriers_line
-    properties:
-      minzoom: 13
-  - id: water-barriers-poly
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way,
-            waterway,
-            name
-          FROM planet_osm_polygon
-          WHERE waterway IN ('dam', 'weir', 'lock_gate')
-        ) AS water_barriers_poly
+          WHERE "natural" = 'cliff' OR man_made = 'embankment'
+        ) AS cliffs
     properties:
       minzoom: 13
   - id: marinas-area
@@ -575,6 +558,94 @@ Layer:
         ) AS marinas_area
     properties:
       minzoom: 14
+  - id: water-barriers-line
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            waterway,
+            'line' AS wtype,
+            name
+          FROM planet_osm_line
+          WHERE waterway IN ('dam', 'weir', 'lock_gate')
+         UNION ALL
+         -- All of this assumes a metric coordinate system, won't work with geographic coordinates
+         SELECT
+            ST_MakeLine(ARRAY[
+              ST_Rotate(
+                ST_SetSRID(ST_MakePoint(
+                ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*width*0.5/ST_Length(line),
+                ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*width*0.5/ST_Length(line)
+              ), 900913), -angle, point),
+              point,
+              ST_Rotate(
+                ST_SetSRID(ST_MakePoint(
+                ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*width*0.5/ST_Length(line),
+                ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*width*0.5/ST_Length(line)
+              ), 900913), angle, point)
+            ]) AS way,
+            waterway,
+            wtype,
+            name
+          FROM
+          (SELECT
+              p.way AS point,
+              ST_LineSubstring(
+                 l.way,
+                 GREATEST(0.0, ST_LineLocatePoint(l.way, p.way)-1.0/ST_Length(l.way)),
+                 LEAST(1.0, ST_LineLocatePoint(l.way, p.way)+1.0/ST_Length(l.way))) AS line,
+              p.waterway AS waterway,
+              l.waterway AS wtype,
+              p.name AS name,
+              (CASE WHEN l.waterway IN ('river', 'canal') THEN
+                (CASE z(!scale_denominator!)
+                  WHEN 11 THEN 1.8
+                  WHEN 12 THEN 2.2
+                  WHEN 13 THEN 3
+                  WHEN 14 THEN 4.5
+                  WHEN 15 THEN 6
+                  WHEN 16 THEN 8
+                  WHEN 17 THEN 10
+                  ELSE 12
+                END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
+              ELSE
+                (CASE z(!scale_denominator!)
+                  WHEN 13 THEN 2.2
+                  WHEN 14 THEN 2.5
+                  WHEN 15 THEN 3
+                  WHEN 16 THEN 3.5
+                  WHEN 17 THEN 4
+                  ELSE 4.5
+                END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
+              END)*sqrt(!pixel_width!::real*!pixel_height!::real) AS width,
+              (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
+            FROM planet_osm_point p
+            JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
+            WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
+              AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+          ) AS plines
+          WHERE line IS NOT NULL
+        ) AS water_barriers_line
+    properties:
+      minzoom: 11
+  - id: water-barriers-poly
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            waterway,
+            name
+          FROM planet_osm_polygon
+          WHERE waterway IN ('dam', 'weir', 'lock_gate')
+        ) AS water_barriers_poly
+    properties:
+      minzoom: 12
   - id: piers-poly
     geometry: polygon
     <<: *extents
@@ -601,19 +672,6 @@ Layer:
         ) AS piers_line
     properties:
       minzoom: 12
-  - id: water-barriers-point
-    geometry: point
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, waterway
-          FROM planet_osm_point
-          WHERE waterway IN ('dam', 'weir', 'lock_gate')
-        ) AS water_barriers_points
-    properties:
-      minzoom: 17
   - id: bridge
     geometry: polygon
     <<: *extents
@@ -803,19 +861,6 @@ Layer:
         ) AS line_barriers
     properties:
       minzoom: 14
-  - id: cliffs
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, "natural", man_made
-          FROM planet_osm_line
-          WHERE "natural" = 'cliff' OR man_made = 'embankment'
-        ) AS cliffs
-    properties:
-      minzoom: 13
   - id: area-barriers
     class: barriers
     geometry: polygon
@@ -2246,7 +2291,7 @@ Layer:
             CASE WHEN building = 'no' OR building IS NULL THEN 'no' ELSE 'yes' END AS is_building
           FROM planet_osm_line
           WHERE (man_made IN ('pier', 'breakwater', 'groyne', 'embankment')
-              OR waterway IN ('dam', 'weir')
+              OR waterway IN ('dam', 'weir', 'lock_gate')
               OR "natural" IN ('cliff'))
             AND name IS NOT NULL
         ) AS text_line
@@ -2322,7 +2367,7 @@ Layer:
                   'historic_' || CASE WHEN historic IN ('memorial', 'monument', 'archaeological_site') THEN historic ELSE NULL END,
                   'highway_' || CASE WHEN highway IN ('services', 'rest_area', 'bus_stop', 'elevator', 'ford') THEN highway ELSE NULL END,
                   'boundary_' || CASE WHEN boundary IN ('national_park') THEN boundary ELSE NULL END,
-                  'waterway_' || CASE WHEN waterway IN ('dam', 'weir') THEN waterway ELSE NULL END,
+                  'waterway_' || CASE WHEN waterway IN ('dam', 'weir', 'lock_gate', 'waterfall') THEN waterway ELSE NULL END,
                   'tourism_' || CASE WHEN tourism IN ('viewpoint', 'attraction') THEN tourism ELSE NULL END,
                   'man_made_' || CASE WHEN man_made IN ('cross') THEN man_made ELSE NULL END,
                   'historic_' || CASE WHEN historic IN ('wayside_cross') THEN historic ELSE NULL END
@@ -2363,7 +2408,7 @@ Layer:
                   OR highway IN ('bus_stop', 'services', 'rest_area', 'elevator', 'ford')
                   OR power IN ('plant', 'station', 'generator', 'sub_station', 'substation')
                   OR boundary IN ('national_park')
-                  OR waterway IN ('dam', 'weir'))
+                  OR waterway IN ('dam', 'weir', 'lock_gate', 'waterfall'))
                 AND (name IS NOT NULL
                      OR (tags?'ele' AND ("natural" IN ('peak', 'volcano', 'saddle') OR tourism = 'alpine_hut' OR amenity = 'shelter'))
                      OR (ref IS NOT NULL AND aeroway IN ('gate'))
