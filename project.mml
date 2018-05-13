@@ -591,7 +591,7 @@ Layer:
             wtype,
             name
           FROM
-          (SELECT
+          (SELECT DISTINCT ON (p.osm_id)
               p.way AS point,
               ST_LineSubstring(
                  l.way,
@@ -626,6 +626,8 @@ Layer:
             JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
             WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
               AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+            ORDER BY p.osm_id, width DESC, 
+              ST_LineLocatePoint(l.way, p.way) ASC -- this gives downstream waterways priority
           ) AS plines
           WHERE line IS NOT NULL
         ) AS water_barriers_line
