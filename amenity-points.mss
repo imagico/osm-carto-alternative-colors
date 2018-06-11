@@ -216,33 +216,6 @@
     marker-clip: false;
   }
 
-  [feature = 'amenity_fountain'] {
-    ::basin {
-      [zoom = 17] {
-        marker-fill: @water-color;
-        marker-allow-overlap: true;
-        marker-line-width: 0;
-        marker-width: 10;
-        marker-height: 10;
-        marker-ignore-placement: true;
-      }
-    }
-    ::nozzle {
-      [zoom = 17] {
-        nozzle/marker-fill: @marina-text;
-        nozzle/marker-line-width: 0;
-        nozzle/marker-width: 3;
-        nozzle/marker-height: 3;
-      }
-      [zoom >= 18] {
-        nozzle/marker-file: url('symbols/fountain.svg');
-        nozzle/marker-fill: @marina-text;
-        nozzle/marker-placement: interior;
-        nozzle/marker-clip: false;
-      }
-    }
-  }
-
   [feature = 'amenity_charging_station'][zoom >= 17] {
     marker-file: url('symbols/charging_station.svg');
     marker-fill: @transportation-icon;
@@ -1190,6 +1163,93 @@
     marker-clip: false;
   }
 
+  [feature = 'amenity_fountain'][zoom >= 17] {
+    marker-file: url('symbols/fountain_small.svg');
+    [zoom >= 18] { marker-file: url('symbols/fountain.svg'); }
+    [drinking_water = 'yes'] {
+      supplement/marker-file: url('symbols/drinking.svg');
+      supplement/marker-fill: @water-icon;
+      supplement/marker-transform: 'translate(-9,-5)';
+      supplement/marker-placement: interior;
+      supplement/marker-clip: false;
+    }
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
+  [feature = 'man_made_water_well'][zoom >= 15] {
+    marker-file: url('symbols/well_small.svg');
+    [zoom >= 17] {
+      marker-file: url('symbols/well.svg');
+      [drinking_water = 'yes'] {
+        supplement/marker-file: url('symbols/drinking.svg');
+        supplement/marker-fill: @water-icon;
+        supplement/marker-transform: 'translate(-9,-5)';
+        supplement/marker-placement: interior;
+        supplement/marker-clip: false;
+      }
+    }
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
+  [feature = 'natural_spring'][zoom >= 14] {
+    marker-file: url('symbols/spring_small.svg');
+    [zoom >= 16] { marker-file: url('symbols/spring.svg'); }
+    [intermittent = 'yes'],
+    [seasonal = 'yes'] {
+      marker-file: url('symbols/spring_small_intermittent.svg');
+      [zoom >= 16] { marker-file: url('symbols/spring_intermittent.svg'); }
+    }
+    [drinking_water = 'yes'][zoom >= 17] {
+      supplement/marker-file: url('symbols/drinking.svg');
+      supplement/marker-fill: @water-icon;
+      supplement/marker-transform: 'translate(-9,-5)';
+      supplement/marker-placement: interior;
+      supplement/marker-clip: false;
+    }
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
+  [feature = 'natural_hot_spring'][zoom >= 14] {
+    marker-file: url('symbols/spring_small_hot.svg');
+    [zoom >= 16] { marker-file: url('symbols/spring_hot.svg'); }
+    [intermittent = 'yes'],
+    [seasonal = 'yes'] {
+      marker-file: url('symbols/spring_small_hot_intermittent.svg');
+      [zoom >= 16] { marker-file: url('symbols/spring_hot_intermittent.svg'); }
+    }
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
+  // this only adds the center dot to connected springs
+  // not quite right regarding drawing order but this avoids an additional combined query of points and lines
+  [feature = 'natural_spring_connected'],
+  [feature = 'natural_hot_spring_connected'] {
+    [zoom >= 14] {
+      marker-fill: @water-icon;
+      [feature = 'natural_hot_spring_connected'] { marker-fill: @water-hot; }
+      marker-allow-overlap: true;
+      marker-line-width: 0;
+      marker-width: 1.5;
+      marker-height: 1.5;
+      [zoom >= 16] {
+        marker-width: 2.5;
+        marker-height: 2.5;
+      }
+      marker-ignore-placement: true;
+      [drinking_water = 'yes'][zoom >= 17] {
+        supplement/marker-file: url('symbols/drinking.svg');
+        supplement/marker-fill: @water-icon;
+        supplement/marker-transform: 'translate(-9,-5)';
+        supplement/marker-placement: interior;
+        supplement/marker-clip: false;
+      }
+    }
+  }
+
   [feature = 'military_bunker'][zoom >= 17] {
     marker-file: url('symbols/bunker.svg');
     marker-fill: @man-made-icon;
@@ -2014,7 +2074,10 @@
   }
 
   [feature = 'natural_bay'][zoom >= 14],
-  [feature = 'natural_spring'][zoom >= 16] {
+  [feature = 'amenity_fountain'][zoom >= 17],
+  [feature = 'man_made_water_well'][zoom >= 16],
+  [feature = 'natural_spring'][zoom >= 16],
+  [feature = 'natural_hot_spring'][zoom >= 16] {
     text-name: "[name]";
     text-size: 10;
     text-wrap-width: @standard-wrap-width;
@@ -2024,8 +2087,14 @@
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
     text-placement: interior;
-    [feature = 'natural_spring'] {
+    [feature = 'amenity_fountain'],
+    [feature = 'man_made_water_well'],
+    [feature = 'natural_spring'],
+    [feature = 'natural_hot_spring'] {
       text-dy: 6;
+      [feature = 'amenity_fountain'][zoom >= 18] {
+        text-dy: 9;
+      }
     }
   }
 
@@ -2157,22 +2226,6 @@
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       text-placement: interior;
-    }
-  }
-
-  [feature = 'amenity_fountain'][zoom >= 17] {
-    text-name: "[name]";
-    text-size: @standard-font-size;
-    text-wrap-width: @standard-wrap-width;
-    text-line-spacing: @standard-line-spacing-size;
-    text-fill: @marina-text;
-    text-dy: 4;
-    text-face-name: @standard-font;
-    text-halo-radius: @standard-halo-radius;
-    text-halo-fill: @standard-halo-fill;
-    text-placement: interior;
-    [zoom >= 18] {
-      text-dy: 10;
     }
   }
 

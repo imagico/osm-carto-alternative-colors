@@ -5,6 +5,8 @@
 @weir-line: #999;
 @lock-gate-line: #888;
 @waterfall-line: saturate(darken(@water-color, 40%), 30%);
+@water-icon: saturate(darken(@water-color, 30%), 25%);  // #24a6cc - when changed here should be changed in SVGs too
+@water-hot: #ff4020;  // when changed here should be changed in SVGs too
 @whitewater-line: lighten(@water-color, 5%);
 
 #water-barriers-line, #water-barriers-poly {
@@ -112,6 +114,18 @@
         line-color: @waterfall-line;
       }
     }
+  }
+}
+
+#springs-connected {
+  [zoom >= 14] {
+    ::halo {
+      background/line-color: white;
+      background/line-width: 0.6;
+      background/line-cap: round;
+      background/line-join: round;
+    }
+    polygon-fill: @water-icon;
   }
 }
 
