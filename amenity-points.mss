@@ -615,7 +615,15 @@
 
   [feature = 'amenity_drinking_water'][zoom >= 17] {
     marker-file: url('symbols/drinking_water.svg');
-    marker-fill: @amenity-brown;
+    marker-fill: @water-icon;
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
+  [feature = 'man_made_water_tap'][zoom >= 17],
+  [feature = 'amenity_water_point'][zoom >= 17] {
+    marker-file: url('symbols/water_tap.svg');
+    marker-fill: @water-icon;
     marker-placement: interior;
     marker-clip: false;
   }
@@ -1212,6 +1220,13 @@
     marker-clip: false;
   }
 
+  [feature = 'natural_geyser'][zoom >= 14] {
+    marker-file: url('symbols/geyser_small.svg');
+    [zoom >= 16] { marker-file: url('symbols/geyser.svg'); }
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
   [feature = 'natural_hot_spring'][zoom >= 14] {
     marker-file: url('symbols/spring_small_hot.svg');
     [zoom >= 16] { marker-file: url('symbols/spring_hot.svg'); }
@@ -1566,7 +1581,6 @@
   }
 
   [feature = 'amenity_car_wash'][zoom >= 17],
-  [feature = 'amenity_drinking_water'][zoom >= 17],
   [feature = 'tourism_picnic_site'][zoom >= 17],
   [feature = 'leisure_beach_resort'][zoom >= 17],
   [feature = 'leisure_picnic_table'][zoom >= 17] {
@@ -2073,9 +2087,36 @@
     }
   }
 
-  [feature = 'natural_bay'][zoom >= 14],
+  [feature = 'natural_bay'][zoom >= 14] {
+    text-name: "[name]";
+    text-size: 10;
+    text-wrap-width: @standard-wrap-width;
+    text-line-spacing: @standard-line-spacing-size;
+    text-fill: @water-text;
+    text-face-name: @standard-font;
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+    text-placement: interior;
+  }
+
+  [feature = 'amenity_drinking_water'][zoom >= 17],
+  [feature = 'amenity_water_point'][zoom >= 17],
+  [feature = 'man_made_water_tap'][zoom >= 17] {
+    text-name: "[name]";
+    text-size: 10;
+    text-wrap-width: @standard-wrap-width;
+    text-line-spacing: @standard-line-spacing-size;
+    text-dy: 10;
+    text-fill: @water-text;
+    text-face-name: @standard-font;
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+    text-placement: interior;
+  }
+
   [feature = 'amenity_fountain'][zoom >= 17],
   [feature = 'man_made_water_well'][zoom >= 16],
+  [feature = 'natural_geyser'][zoom >= 16],
   [feature = 'natural_spring'][zoom >= 16],
   [feature = 'natural_hot_spring'][zoom >= 16] {
     text-name: "[name]";
@@ -2087,14 +2128,10 @@
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
     text-placement: interior;
-    [feature = 'amenity_fountain'],
-    [feature = 'man_made_water_well'],
-    [feature = 'natural_spring'],
-    [feature = 'natural_hot_spring'] {
-      text-dy: 6;
-      [feature = 'amenity_fountain'][zoom >= 18] {
-        text-dy: 9;
-      }
+    text-dy: 6;
+    [feature = 'natural_geyser'],
+    [feature = 'amenity_fountain'][zoom >= 18] {
+      text-dy: 9;
     }
   }
 
