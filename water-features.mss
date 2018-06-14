@@ -34,10 +34,10 @@
         polygon-fill: @dam;
       }
     }
-    #water-barriers-line {
-      [wtype = 'river'][zoom >= 11],
-      [wtype = 'canal'][zoom >= 12],
-      [wtype = 'line'][zoom >= 12],
+    #water-barriers-line[zoom >= 12] {
+      [wtype = 'river'],
+      [wtype = 'canal'],
+      [wtype = 'line'],
       [zoom >= 13] {
         line-width: 1;
         [wtype = 'river'][zoom >= 13],
@@ -55,11 +55,11 @@
     }
   }
 
-  [waterway = 'weir'] {
+  [waterway = 'weir'][zoom >= 12] {
     #water-barriers-line {
-      [wtype = 'river'][zoom >= 11],
-      [wtype = 'canal'][zoom >= 12],
-      [wtype = 'line'][zoom >= 12],
+      [wtype = 'river'],
+      [wtype = 'canal'],
+      [wtype = 'line'],
       [zoom >= 14] {
         line-width: 1;
         [wtype = 'river'][zoom >= 13],
@@ -81,11 +81,11 @@
     }
   }
 
-  [waterway = 'lock_gate'] {
+  [waterway = 'lock_gate'][zoom >= 12] {
     #water-barriers-line {
-      [wtype = 'river'][zoom >= 11],
-      [wtype = 'canal'][zoom >= 12],
-      [wtype = 'line'][zoom >= 12],
+      [wtype = 'river'],
+      [wtype = 'canal'],
+      [wtype = 'line'],
       [zoom >= 13] {
         line-width: 1;
         [wtype = 'river'][zoom >= 13],
