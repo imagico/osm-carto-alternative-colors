@@ -37,3 +37,87 @@ account.
 * **A rich map** - This style deliberately creating a fairly rich map showing a significant number of different features.  This way it shows the richness of OSM data and gives a broad recognition to the mappers' work.  The aim is not however to show all or even most of the OSM data.
 * **Maintainability** - The implementation of this style should not be too hard to maintain. This refers to both the volume and complexity of the code and how fast the style can be parsed when rendering it, which is very important for efficient development work. So the amount of code should be kept small and complex and fragile interdependencies should be avoided. If the code is difficult to maintain this would ultimately seriously affect all of the above goals.
 * **Adaptability and ease of use** - The style should be easy to customize, like for creating localized or special purpose maps. It is also important to keep demands on rendering infrastructure for serving the style low so it is not too difficult and costly to set up a tile server for this style or a specialized variant of it.
+
+## Design guidelines
+
+The following guidelines have been found to be useful design principles that 
+can help creating a better map in line with the above goals. Keep in mind that 
+none of these principles represents a goal on its own and most of them are 
+highly condensed summaries of more complex considerations.
+
+* The difference in rendering between different types of features should 
+  foremost be based on their difference in meaning and purpose for the target 
+  map users. Differences in physical appearance are only relevant as far as 
+  they also represent differences in meaning and purpose.
+
+* Design of symbols, area and line patterns should be in a way that avoids 
+  their geometries to be mistaken as mapped geometries.
+
+* The connection between data and appearance of features in the map needs to 
+  be comprehensible for the viewer.
+
+* When changes have a strong impact on the overall appearance of the map input 
+  should be sought from the broader OpenStreetMap community and particular 
+  consideration given to their comments and concerns.
+
+### Colors
+
+* Differentiating features through different colors only makes sense if this 
+  difference can actually be read by the map users.
+
+* For area colors we prefer light and low saturation tones. Lines, individual 
+  symbols and labels also can be stronger in color.
+
+* Stronger colors indicate fairly distinct and meaningful features as opposed 
+  to more general and less distinct features which use weaker colors.
+
+* Small areas work well with somewhat stronger colors while large areas tend 
+  to call for weaker tones.
+
+* Symbols of area patterns need to be relatively weak in color with little 
+  contrast towards the base color so they cannot be mistaken for an individual 
+  symbol.
+
+* Area outlines should - when used - be in colors that are not too strong and 
+  harmonic with the fill color. Care should be taken that area outlines are 
+  not mistaken for line features.
+
+* Use of blue for area and line colors should be reserved for water related 
+  features. Symbols and labels in blue color can also be used for other 
+  purposes but sparsely and in a tone clearly distinct from all water related 
+  features.
+
+* Use of green should be reserved for vegetation related features, in 
+  particular in case of area and line colors.
+
+* Use of red, orange, yellow and brown line colors should be reserved to roads 
+  and paths.
+
+* Transparency tends to lead to undesirable and ambiguous color mixing and 
+  should therefore be used very carefully.
+
+* It is generally advisable to design color relationships in perceptual color 
+  spaces.
+
+### Zoom levels
+
+* Styling of map elements should work for the entire range of displayed 
+  latitudes and the full bandwidth of geographic situations that exists on 
+  earth.
+
+* Design differences between subsequent zoom levels should be small. 
+  Continuous or small step changes over multiple levels is preferable in 
+  comparison to constant styling across multiple levels followed by a huge 
+  step.
+
+* Size increase (line widths, text sizes, icon sizes etc.) with increasing 
+  zoom level should not be larger than the scale ratio between the zoom levels 
+  so sizes do not increase relative to ground units at higher zoom levels.
+
+* Features can start to appear at a certain zoom level when zooming in but 
+  they should not disappear again at a later zoom level - except possibly for 
+  labels of features becoming very large.
+
+* If there is no meaningful measure used for prioritization between individual 
+  features starting zoom levels should be selected to show at least most of 
+  the features.
