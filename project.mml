@@ -1140,6 +1140,7 @@ Layer:
               FROM planet_osm_line
               WHERE bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
                 AND highway IS NOT NULL -- end of road select
+                AND way && !bbox!
             UNION ALL
             SELECT
                 ST_MakeEnvelope(-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244, 900913) AS way,
@@ -1156,17 +1157,16 @@ Layer:
                 layernotnull,
                 NULL AS z_order
               FROM
-                (SELECT DISTINCT
-                    layernotnull
-                  FROM
-                    (SELECT
-                        COALESCE(layer,0) AS layernotnull
+                (SELECT
+                    DISTINCT ON (COALESCE(layer,0))
+                    COALESCE(layer,0) AS layernotnull
                       FROM planet_osm_line
                       WHERE bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
                         AND highway IS NOT NULL
                         AND surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                             'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') -- end of road select
-                    ) AS roads
+                        AND way && !bbox!
+
                 ) AS layers_list
             UNION ALL
             SELECT
@@ -1193,6 +1193,7 @@ Layer:
               FROM planet_osm_line
               WHERE bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
                 AND railway IS NOT NULL -- end of rail select
+                AND way && !bbox!
             ) AS features
           ORDER BY
             layernotnull,
