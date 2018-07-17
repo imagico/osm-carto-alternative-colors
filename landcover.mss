@@ -53,7 +53,7 @@
 @power: darken(@industrial, 5%);
 @power-line: darken(@industrial-line, 5%);
 @sand: #f5e9c6;
-@societal_amenities: #fbecd7;   // Lch(94,12,80)
+@societal_amenities: #fdebd8;   // Lch(94,12,76)
 @tourism: #734a08;
 @quarry: #c5bea6;
 @landfill: @quarry;
@@ -66,7 +66,7 @@
 @pitch: #88e0be;            // Lch(83,35,166)
 @track: @pitch;
 @stadium: @societal_amenities; // also fitness_centre and sports_centre
-@golf_course: #b5e3b5;
+@golf_course: @campsite; 
 
 // --- low zoom colors ---
 
@@ -289,6 +289,10 @@
     polygon-fill: @vegetation-low-lowzoom;
     [zoom >= 12] {
       polygon-fill: @golf_course;
+      [zoom >= 16] {
+        line-width: 0.3;
+        line-color: darken(@golf_course, 35%);
+      }
     }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
