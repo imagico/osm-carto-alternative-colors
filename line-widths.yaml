@@ -1,0 +1,266 @@
+# This is the input for scripts/generate_line_widths.py
+
+mss:
+  waterway:
+    - river
+    - stream
+  road:
+    - motorway
+    - motorway-link
+    - trunk
+    - primary
+    - secondary
+    - tertiary
+    - residential
+    - unclassified
+    - service
+    - living-street
+    - pedestrian
+    - steps
+    - road
+    - bridleway
+    - footway
+    - cycleway
+    - path
+    - track
+
+sql:
+  waterway:
+    - river
+    - stream
+  embankment:
+    - river
+    - stream
+    - motorway
+    - motorway-link
+    - trunk
+    - primary
+    - secondary
+    - tertiary
+    - residential
+    - unclassified
+    - service
+    - living-street
+    - pedestrian
+    - steps
+    - road
+    - bridleway
+    - footway
+    - cycleway
+    - path
+    - track
+    - rail
+    - light_rail
+    - tram
+
+tags:
+  river: IN ('river', 'canal')
+  stream: IN ('stream', 'ditch', 'drain')
+  motorway-link: = 'motorway_link'
+  trunk: IN ('trunk', 'trunk_link')
+  primary: IN ('primary', 'primary_link')
+  secondary: IN ('secondary', 'secondary_link')
+  tertiary: IN ('tertiary', 'tertiary_link')
+  living-street: = 'living_street'
+
+classes:
+  river:
+    8: 0.7
+    9: 1.2
+    10: 1.5
+    11: 1.8
+    12: 2.2
+    13: 3
+    14: 4.5
+    15: 6
+    16: 8
+    17: 10
+    18: 12
+  stream:
+    12: 1.2
+    13: 1.8
+    14: 2
+    15: 2.5
+    16: 3
+    17: 3.5
+    18: 4
+  motorway:
+    5: 0.5
+    6: 0.6
+    7: 0.8
+    8: 1
+    9: 1.4
+    10: 1.9
+    11: 2.0
+    12: 3.5
+    13: 6
+    15: 10
+    17: 18
+    18: 21
+    19: 27
+  motorway-link:
+    12: 1.5
+    13: 4
+    15: 7.8
+    17: 12
+    18: 13
+    19: 16
+  trunk:
+    5: 0.4
+    6: 0.5
+    7: 0.6
+    8: 1
+    9: 1.4
+    10: 1.9
+    11: 1.9
+    12: 3.5
+    13: 6
+    15: 10
+    17: 18
+    18: 21
+    19: 27
+  primary:
+    8: 1
+    9: 1.4
+    10: 1.8
+    11: 1.8
+    12: 3.5
+    13: 5
+    15: 10
+    17: 18
+    18: 21
+    19: 27
+  secondary:
+    9: 1
+    10: 1.2
+    11: 1.3
+    12: 3.5
+    13: 5
+    14: 5
+    15: 9
+    16: 10
+    17: 18
+    18: 21
+    19: 27
+  tertiary:
+    10: 0.7
+    11: 0.7
+    12: 2.5
+    13: 4
+    14: 4
+    15: 7
+    16: 8
+    17: 16
+    18: 18
+    19: 23
+  residential:
+    12: 0.5
+    13: 2.5
+    14: 3
+    15: 5
+    16: 6
+    17: 12
+    18: 13
+    19: 17
+  unclassified:
+    12: 0.8
+    # unclassified uses residential width at z13+
+    13: 2.5
+    14: 3
+    15: 5
+    16: 6
+    17: 12
+    18: 13
+    19: 17
+  service:
+    13: 0.8
+    14: 2
+    16: 3.5
+    17: 7
+    18: 8.5
+    19: 11
+  # living_street and pedestrian are identical
+  living-street:
+    13: 2
+    14: 3
+    15: 5
+    16: 6
+    17: 12
+    18: 13
+    19: 17
+  pedestrian:
+    13: 2
+    14: 3
+    15: 5
+    16: 6
+    17: 12
+    18: 13
+    19: 17
+  steps:
+    13: 0.7
+    15: 3
+  road:
+    14: 2
+    16: 3.5
+    17: 7
+    18: 8.5
+    19: 11
+  bridleway:
+    13: 0.2
+    14: 0.35
+    15: 1.2
+  # footway and cycleway are identical
+  footway:
+    13: 0.2
+    14: 0.35
+    15: 0.85
+    16: 1.0
+    17: 1.1
+    18: 1.3
+    19: 1.5
+  cycleway:
+    13: 0.2
+    14: 0.35
+    15: 0.85
+    16: 1.0
+    17: 1.1
+    18: 1.3
+    19: 1.5
+  path:
+    13: 0.2
+    14: 0.35
+    15: 0.8
+    16: 0.9
+    17: 1.0
+    18: 1.1
+    19: 1.25
+  track:
+    13: 0.45
+    14: 0.85
+    15: 1.5
+  rail:
+    7: 0.5
+    8: 0.8
+    12: 0.9
+    13: 3
+    18: 4
+  light_rail:
+    8: 1
+    13: 2
+  tram:
+    12: 0.75
+    13: 1
+    15: 1.5
+    17: 2
+
+
+
+
+
+
+
+
+
+
+
+
