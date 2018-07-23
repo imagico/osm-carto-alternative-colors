@@ -608,7 +608,7 @@ Layer:
             ) AS l
         ) AS highway_embankments
     properties:
-      minzoom: 15
+      minzoom: 16
   - id: marinas-area
     geometry: polygon
     <<: *extents
