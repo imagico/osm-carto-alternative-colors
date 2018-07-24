@@ -13,6 +13,15 @@ roads:
 # representing red.
 hue: [-20, 106]
 
+# this sets a lower lightness limit for the colors generated
+# set to zero to not use this feature
+dark-limit:
+  fill: 68
+  casing: 50
+  low-zoom: 60
+  low-zoom-casing: 48
+  shield: 19
+
 # The lightness and chroma (also known as saturation) for each type of colour.
 # Lightness ranges from 0 to 100; dark to bright.
 # Chroma ranges from 0 to 100 too; unsaturated to fully saturated.

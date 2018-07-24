@@ -78,6 +78,8 @@ def generate_colours(settings, section):
         c = params['chroma']
         line_colour_infos[cls] = ColourInfo(start_l = l[0], end_l = l[1], start_c = c[0], end_c = c[1])
 
+    dark_limits = settings['dark-limit']
+
     # Colours for the MSS
     colours = OrderedDict()
 
@@ -89,7 +91,10 @@ def generate_colours(settings, section):
 
         colours[line_name] = OrderedDict()
         for name in road_classes:
-            colours[line_name][name] = Color((l, c, hues[name]))
+            l_mod = l
+            if (l < dark_limits[line_name]):
+                l_mod = dark_limits[line_name]
+            colours[line_name][name] = Color((l_mod, c, hues[name]))
             c += delta_c
             l += delta_l
 
