@@ -22,6 +22,7 @@ allows more conscious color design choices.
 * extensive redesign of waterbody rendering in general including distinct rendering of intermittent and 
 saltwater waterbodies and waterways.
 * different color for administrative boundaries, distinct rendering of maritime boundaries.
+* changed road colors with purple motorways and yellow tertiary roads
 * different color scheme and different design of path/footway/cycleway rendering as well as track rendering 
 at mid zoom levels.
 * more sophisticated rendering of waterway barriers (dams, lock gates, weirs and waterfalls) as well as fords.
