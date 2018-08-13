@@ -864,27 +864,7 @@ Layer:
             SELECT
               p.way AS point,
               l.way AS line,
-              (CASE WHEN l.waterway IN ('river', 'canal') THEN
-                (CASE z(!scale_denominator!)
-                  WHEN 12 THEN 2.2
-                  WHEN 13 THEN 3
-                  WHEN 14 THEN 4.5
-                  WHEN 15 THEN 6
-                  WHEN 16 THEN 8
-                  WHEN 17 THEN 10
-                  ELSE 12
-                END) + 1.5
-              ELSE
-                (CASE z(!scale_denominator!)
-                  WHEN 12 THEN 1.2
-                  WHEN 13 THEN 1.8
-                  WHEN 14 THEN 2
-                  WHEN 15 THEN 2.5
-                  WHEN 16 THEN 3
-                  WHEN 17 THEN 3.5
-                  ELSE 4
-                END) + 1.5
-              END) AS width
+              carto_waterway_line_width(l.waterway, z(!scale_denominator!)) + 1.5 AS width
             FROM planet_osm_point p
             JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
             WHERE p.natural IN ('spring', 'hot_spring')
