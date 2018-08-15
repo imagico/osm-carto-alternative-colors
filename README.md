@@ -42,4 +42,6 @@ fit into the design concept here.
 # Installation
 
 See [INSTALL.md](INSTALL.md) for the generic OSM-Carto installation instructions.  In addition you need to 
-install the `z()` function in PostGIS which is supplied in `z.sql`.
+install the `z()` function in PostGIS which is supplied in `z.sql` as well as the functions in 
+`line-widths-generated.sql`.
+
