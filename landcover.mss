@@ -156,6 +156,17 @@
     }
     [zoom >= 14] {
       polygon-pattern-file: url('symbols/orchard.png');
+      [zoom >= 15] {
+        [crop = 'olive_trees'] {
+          polygon-pattern-file: url('symbols/orchard_olive.png');
+        }
+        [crop = 'banana_plants'] {
+          polygon-pattern-file: url('symbols/orchard_banana.png');
+        }
+        [crop = 'oil_palms'] {
+          polygon-pattern-file: url('symbols/orchard_oilpalm.png');
+        }
+      }
       polygon-pattern-alignment: global;
       [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
       [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -349,6 +360,26 @@
       polygon-fill: @vegetation-low-lowzoom;
       [zoom >= 11] {
         polygon-fill: @farmland;
+        [zoom >= 14] {
+          [crop = 'rice'] {
+            polygon-pattern-file: url('symbols/farmland_rice.png');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+          }
+          [crop = 'tea'] {
+            polygon-pattern-file: url('symbols/farmland_tea.png');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+          }
+          [crop = 'hop'] {
+            polygon-pattern-file: url('symbols/farmland_hop.png');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+          }
+        }
         [zoom >= 16] {
           line-width: .5;
           line-color: @farmland-line;

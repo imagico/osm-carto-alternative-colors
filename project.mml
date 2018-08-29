@@ -92,10 +92,11 @@ Layer:
             way,
             name,
             religion,
+            crop,
             way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
             feature
           FROM (SELECT
-              way, name, religion, way_area, layer, prio,
+              way, name, religion, crop, way_area, layer, prio,
               COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, military, "natural", tourism, highway, railway) AS feature
             FROM (SELECT
                 way, COALESCE(name, '') AS name,
@@ -119,6 +120,7 @@ Layer:
                 ('highway_' || (CASE WHEN highway IN ('services', 'rest_area') THEN highway ELSE NULL END)) AS highway,
                 ('railway_' || (CASE WHEN railway = 'station' THEN railway ELSE NULL END)) AS railway,
                 CASE WHEN religion IN ('christian', 'jewish', 'muslim') THEN religion ELSE 'INT-generic'::text END AS religion,
+                CASE WHEN (tags->'crop') IN ('rice', 'tea', 'hop') THEN tags->'crop' ELSE tags->'trees' END AS crop,
                 way_area, layer, 0 AS prio
               FROM planet_osm_polygon
               WHERE (landuse IS NOT NULL
@@ -138,7 +140,7 @@ Layer:
             UNION ALL -- this is only needed because closed ways with a golf0* tag are by default not treated as polygons
             SELECT
                 way, COALESCE(name, '') AS name,
-                'INT-generic'::text AS religion, 0 AS way_area, layer,
+                'INT-generic'::text AS religion, '' AS crop, 0 AS way_area, layer,
                 (CASE WHEN (tags->'golf') = 'rough' THEN -1 WHEN (tags->'golf') = 'fairway' THEN 10 WHEN (tags->'golf') = 'green' THEN 20 WHEN (tags->'golf') = 'bunker' THEN 30 ELSE 40 END) AS prio,
                 ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS feature
               FROM planet_osm_line
