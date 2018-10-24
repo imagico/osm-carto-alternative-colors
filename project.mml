@@ -2522,7 +2522,7 @@ Layer:
                 AND name IS NOT NULL
              UNION ALL
              SELECT
-                ST_ClosestPoint(oway,ST_PointOnSurface(way))
+                ST_ClosestPoint(oway,ST_PointOnSurface(way)),
                 ST_Area(ST_Envelope(oway))/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
                 'place_archipelago' AS feature,
                 name,
@@ -2539,7 +2539,7 @@ Layer:
                       ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((0 -20037508, 0 20037508, 20037508 20037508, 20037508 -20037508, 0 -20037508))'), 900913)))
                     ))).geom
                   END AS way,
-                  way AS oway
+                  way AS oway,
                   name
                 FROM planet_osm_polygon
                 WHERE "place" IN ('archipelago')
@@ -2565,6 +2565,7 @@ Layer:
             way,
             way_pixels,
             feature,
+            access,
             name,
             operator,
             icao,
@@ -2673,7 +2674,7 @@ Layer:
                     )
              UNION ALL
              SELECT
-                ST_ClosestPoint(oway,ST_PointOnSurface(way))
+                ST_ClosestPoint(oway,ST_PointOnSurface(way)),
                 ST_Area(ST_Envelope(oway))/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
                 'place_archipelago' AS feature,
                 NULL AS access,
@@ -2700,7 +2701,7 @@ Layer:
                       ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((0 -20037508, 0 20037508, 20037508 20037508, 20037508 -20037508, 0 -20037508))'), 900913)))
                     ))).geom
                   END AS way,
-                  way AS oway
+                  way AS oway,
                   name
                 FROM planet_osm_polygon
                 WHERE "place" IN ('archipelago')
