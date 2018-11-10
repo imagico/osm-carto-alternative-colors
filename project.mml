@@ -580,7 +580,7 @@ Layer:
                   COALESCE(
                     ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
                       (0.5*carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway), z(!scale_denominator!)) + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real))),
-                      'GEOMETRYCOLLECTION EMPTY'::geometry
+                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 900913)
                   )
                 FROM planet_osm_line o
                 WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
