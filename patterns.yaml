@@ -1,9 +1,42 @@
 # This is the input for scripts/generate_patterns.py
+#
+# The script generates the pattern SVG and PNG files from the
+# source SVGs in symbols/patterns/sources.
+#
+# run
+#
+# scripts/generate_patterns.py -g
+#
+# or (to use Inkscape rather than ImageMagick for rasterization)
+#
+# scripts/generate_patterns.py -g -i
+#
+# to generate the pattern images.  See below for the parameters for pattern
+# image generation.  This also generates preview images for the patterns
+# with the matching background color in symbols/patterns/previews
+# You can also specify the pattern rasterizing resolution using the -d/--dpi
+# option.
+#
+# Using
+#
+# scripts/generate_patterns.py -s
+#
+# you can switch from using PNG pattern images to SVG images and using
+#
+# scripts/generate_patterns.py -p
+#
+# you can switch back to PNG images
+#
+
+
+# These are the mss files containing patterns that can be switched between PNG and SVG
 
 mss:
   - golf.mss
   - landcover.mss
   - water.mss
+
+# This is the list of pattern names that are to be automatically processed
 
 patterns:
   - allotments
@@ -81,6 +114,12 @@ patterns:
   - wetland_marsh
   - wetland_reed
   - wetland_fen
+
+# These are the pattern colors - first is the background, second the pattern
+# "native" as a pattern color means the source SVG file already contains
+# coloring, usually with multiple colors like with the wetland patterns so
+# it is not automatically colorized by the script.
+# Third optional value is opacity
 
 colors:
   allotments: ["#eecfb3", "#f2efe9"]
