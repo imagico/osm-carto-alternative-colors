@@ -118,7 +118,7 @@
     [zoom >= 11] {
       polygon-fill: @quarry;
       [zoom >= 13] {
-        polygon-pattern-file: url('symbols/quarry.png');
+        polygon-pattern-file: url('symbols/patterns/quarry.png');
         polygon-pattern-alignment: global;
         line-width: 0.5;
         line-color: darken(@quarry, 30%);
@@ -138,7 +138,7 @@
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
     }
     [zoom >= 14] {
-      polygon-pattern-file: url('symbols/vineyard.png');
+      polygon-pattern-file: url('symbols/patterns/vineyard.png');
       polygon-pattern-alignment: global;
       [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
       [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -155,16 +155,16 @@
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
     }
     [zoom >= 14] {
-      polygon-pattern-file: url('symbols/orchard.png');
+      polygon-pattern-file: url('symbols/patterns/orchard.png');
       [zoom >= 15] {
         [crop = 'olive_trees'] {
-          polygon-pattern-file: url('symbols/orchard_olive.png');
+          polygon-pattern-file: url('symbols/patterns/orchard_olive.png');
         }
         [crop = 'banana_plants'] {
-          polygon-pattern-file: url('symbols/orchard_banana.png');
+          polygon-pattern-file: url('symbols/patterns/orchard_banana.png');
         }
         [crop = 'oil_palms'] {
-          polygon-pattern-file: url('symbols/orchard_oilpalm.png');
+          polygon-pattern-file: url('symbols/patterns/orchard_oilpalm.png');
         }
       }
       polygon-pattern-alignment: global;
@@ -183,7 +183,7 @@
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
     }
     [zoom >= 14] {
-      polygon-pattern-file: url('symbols/plant_nursery.png');
+      polygon-pattern-file: url('symbols/patterns/plant_nursery.png');
       polygon-pattern-alignment: global;
       [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
       [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -201,10 +201,12 @@
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
     }
     [zoom >= 14] {
-      [religion = 'jewish'] { polygon-pattern-file: url('symbols/grave_yard_jewish.png'); }
-      [religion = 'christian'] { polygon-pattern-file: url('symbols/grave_yard_christian.png'); }
-      [religion = 'INT-generic'] { polygon-pattern-file: url('symbols/grave_yard_generic.png'); }
+      [religion = 'jewish'] { polygon-pattern-file: url('symbols/patterns/grave_yard_jewish.png'); }
+      [religion = 'muslim'] { polygon-pattern-file: url('symbols/patterns/grave_yard_muslim.png'); }
+      [religion = 'christian'] { polygon-pattern-file: url('symbols/patterns/grave_yard_christian.png'); }
+      [religion = 'INT-generic'] { polygon-pattern-file: url('symbols/patterns/grave_yard_generic.png'); }
       [religion = 'jewish'],
+      [religion = 'muslim'],
       [religion = 'christian'],
       [religion = 'INT-generic'] {
         [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
@@ -319,7 +321,7 @@
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
     }
     [zoom >= 14] {
-      polygon-pattern-file: url('symbols/allotments.png');
+      polygon-pattern-file: url('symbols/patterns/allotments.png');
       polygon-pattern-alignment: global;
       [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
       [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -362,19 +364,19 @@
         polygon-fill: @farmland;
         [zoom >= 14] {
           [crop = 'rice'] {
-            polygon-pattern-file: url('symbols/farmland_rice.png');
+            polygon-pattern-file: url('symbols/patterns/farmland_rice.png');
             polygon-pattern-alignment: global;
             [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
             [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'tea'] {
-            polygon-pattern-file: url('symbols/farmland_tea.png');
+            polygon-pattern-file: url('symbols/patterns/farmland_tea.png');
             polygon-pattern-alignment: global;
             [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
             [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'hop'] {
-            polygon-pattern-file: url('symbols/farmland_hop.png');
+            polygon-pattern-file: url('symbols/patterns/farmland_hop.png');
             polygon-pattern-alignment: global;
             [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
             [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -406,7 +408,7 @@
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
       [feature = 'leisure_garden'] {
         [zoom >= 14] {
-          polygon-pattern-file: url('symbols/garden.png');
+          polygon-pattern-file: url('symbols/patterns/garden.png');
           polygon-pattern-alignment: global;
           [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
           [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -498,7 +500,7 @@
       [zoom >= 13] {
         polygon-fill: @construction;
         [zoom >= 15] {
-          polygon-pattern-file: url('symbols/construction.png');
+          polygon-pattern-file: url('symbols/patterns/construction.png');
           polygon-pattern-alignment: global;
         }
       }
@@ -513,7 +515,7 @@
       [zoom >= 13] {
         polygon-fill: @brownfield;
         [zoom >= 15] {
-          polygon-pattern-file: url('symbols/brownfield.png');
+          polygon-pattern-file: url('symbols/patterns/brownfield.png');
           polygon-pattern-alignment: global;
         }
       }
@@ -527,7 +529,7 @@
     [zoom >= 11] {
       polygon-fill: @landfill;
       [zoom >= 13] {
-        polygon-pattern-file: url('symbols/landfill.png');
+        polygon-pattern-file: url('symbols/patterns/landfill.png');
         polygon-pattern-alignment: global;
         line-width: 0.5;
         line-color: darken(@landfill, 30%);
@@ -541,7 +543,7 @@
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
     [zoom >= 13] {
-      polygon-pattern-file: url('symbols/rock_overlay.png');
+      polygon-pattern-file: url('symbols/patterns/rock_overlay.png');
       [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
       [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
     }
@@ -555,7 +557,7 @@
       [way_pixels >= 4]  { polygon-gamma: 0.75; }
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
       [zoom >= 13] {
-        polygon-pattern-file: url('symbols/scree_overlay.png');
+        polygon-pattern-file: url('symbols/patterns/scree_overlay.png');
         [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
         [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
       }
@@ -764,61 +766,61 @@
   }
 
   [int_wetland != null][zoom >= 10] {
-    polygon-pattern-file: url('symbols/wetland.png');
+    polygon-pattern-file: url('symbols/patterns/wetland.png');
     polygon-pattern-alignment: global;
   }
   [natural = 'reef'][zoom >= 10] {
-    polygon-pattern-file: url('symbols/reef.png');
+    polygon-pattern-file: url('symbols/patterns/reef.png');
     polygon-pattern-alignment: global;
   }
   [zoom >= 14] {
     [int_wetland = 'marsh'],
     [int_wetland = 'saltmarsh'],
     [int_wetland = 'wet_meadow'] {
-      polygon-pattern-file: url('symbols/wetland_marsh.png');
+      polygon-pattern-file: url('symbols/patterns/wetland_marsh.png');
       polygon-pattern-alignment: global;
     }
     [int_wetland = 'reedbed'] {
-      polygon-pattern-file: url('symbols/wetland_reed.png');
+      polygon-pattern-file: url('symbols/patterns/wetland_reed.png');
       polygon-pattern-alignment: global;
     }
     [int_wetland = 'mangrove'] {
-      polygon-pattern-file: url('symbols/wetland_mangrove.png');
+      polygon-pattern-file: url('symbols/patterns/mangrove.png');
       polygon-pattern-alignment: global;
     }
     [int_wetland = 'swamp'] {
       [leaf_type = "broadleaved"] {
-        polygon-pattern-file: url('symbols/swamp_broadleaved_unknown.png');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/swamp_broadleaved_evergreen.png'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/swamp_broadleaved_deciduous.png'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/swamp_broadleaved_mixed.png'); }
+        polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_mixed.png'); }
         polygon-pattern-alignment: global;
       }
       [leaf_type = "needleleaved"] {
-        polygon-pattern-file: url('symbols/swamp_needleleaved_unknown.png');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/swamp_needleleaved_evergreen.png'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/swamp_needleleaved_deciduous.png'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/swamp_needleleaved_mixed.png'); }
+        polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_mixed.png'); }
         polygon-pattern-alignment: global;
       }
       [leaf_type = "mixed"] {
-        polygon-pattern-file: url('symbols/swamp_mixed_unknown.png');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/swamp_mixed_evergreen.png'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/swamp_mixed_deciduous.png'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/swamp_mixed_mixed.png'); }
+        polygon-pattern-file: url('symbols/patterns/swamp_mixed_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_mixed.png'); }
         polygon-pattern-alignment: global;
       }
     }
     [int_wetland = 'bog'],
     [int_wetland = 'fen'],
     [int_wetland = 'string_bog'] {
-      polygon-pattern-file: url('symbols/wetland_bog.png');
+      polygon-pattern-file: url('symbols/patterns/wetland_bog.png');
       polygon-pattern-alignment: global;
     }
     [natural = 'beach'],
     [natural = 'shoal'] {
       [surface = 'sand'] {
-        polygon-pattern-file: url('symbols/beach.png');
+        polygon-pattern-file: url('symbols/patterns/beach.png');
         polygon-pattern-alignment: global;
       }
       [surface = 'gravel'],
@@ -828,32 +830,32 @@
       [surface = 'shingle'],
       [surface = 'stones'],
       [surface = 'shells'] {
-        polygon-pattern-file: url('symbols/beach_coarse.png');
+        polygon-pattern-file: url('symbols/patterns/beach_coarse.png');
         polygon-pattern-alignment: global;
       }
     }
     [natural = 'scrub'] {
-      polygon-pattern-file: url('symbols/scrub_unknown_unknown.png');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_unknown_evergreen.png'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_unknown_deciduous.png'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_unknown_mixed.png'); }
+      polygon-pattern-file: url('symbols/patterns/scrub_unknown_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_mixed.png'); }
       [leaf_type = "broadleaved"] {
-        polygon-pattern-file: url('symbols/scrub_broadleaved_unknown.png');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_broadleaved_evergreen.png'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_broadleaved_deciduous.png'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_broadleaved_mixed.png'); }
+        polygon-pattern-file: url('symbols/patterns/scrub_broadleaved_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/scrub_broadleaved_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/scrub_broadleaved_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/scrub_broadleaved_mixed.png'); }
       }
       [leaf_type = "needleleaved"] {
-        polygon-pattern-file: url('symbols/scrub_needleleaved_unknown.png');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_needleleaved_evergreen.png'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_needleleaved_deciduous.png'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_needleleaved_mixed.png'); }
+        polygon-pattern-file: url('symbols/patterns/scrub_needleleaved_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/scrub_needleleaved_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/scrub_needleleaved_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/scrub_needleleaved_mixed.png'); }
       }
       [leaf_type = "mixed"] {
-        polygon-pattern-file: url('symbols/scrub_mixed_unknown.png');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/scrub_mixed_evergreen.png'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/scrub_mixed_deciduous.png'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/scrub_mixed_mixed.png'); }
+        polygon-pattern-file: url('symbols/patterns/scrub_mixed_unknown.png');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/scrub_mixed_evergreen.png'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/scrub_mixed_deciduous.png'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/scrub_mixed_mixed.png'); }
       }
       polygon-pattern-alignment: global;
       opacity: 0.8; 
@@ -863,26 +865,26 @@
   //Also landuse = forest, converted in the SQL
   [natural = 'wood'][zoom >= 13]::wood {
     [leaf_type = "broadleaved"] {
-      polygon-pattern-file: url('symbols/forest_broadleaved_unknown.png');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/forest_broadleaved_evergreen.png'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/forest_broadleaved_deciduous.png'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/forest_broadleaved_mixed.png'); }
+      polygon-pattern-file: url('symbols/patterns/forest_broadleaved_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_mixed.png'); }
       polygon-pattern-alignment: global;
       opacity: 0.8; // The entire layer has opacity to handle overlapping forests
     }
     [leaf_type = "needleleaved"] {
-      polygon-pattern-file: url('symbols/forest_needleleaved_unknown.png');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/forest_needleleaved_evergreen.png'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/forest_needleleaved_deciduous.png'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/forest_needleleaved_mixed.png'); }
+      polygon-pattern-file: url('symbols/patterns/forest_needleleaved_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_mixed.png'); }
       polygon-pattern-alignment: global;
       opacity: 0.8; // The entire layer has opacity to handle overlapping forests
     }
     [leaf_type = "mixed"] {
-      polygon-pattern-file: url('symbols/forest_mixed_unknown.png');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/forest_mixed_evergreen.png'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/forest_mixed_deciduous.png'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/forest_mixed_mixed.png'); }
+      polygon-pattern-file: url('symbols/patterns/forest_mixed_unknown.png');
+      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_evergreen.png'); }
+      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_deciduous.png'); }
+      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_mixed.png'); }
       polygon-pattern-alignment: global;
       opacity: 0.8; // The entire layer has opacity to handle overlapping forests
     }

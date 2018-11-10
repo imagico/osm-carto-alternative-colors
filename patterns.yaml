@@ -1,0 +1,162 @@
+# This is the input for scripts/generate_patterns.py
+
+mss:
+  - golf.mss
+  - landcover.mss
+  - water.mss
+
+patterns:
+  - allotments
+  - beach
+  - beach_coarse
+  - brownfield
+  - construction
+  - landfill
+  - quarry
+  - farmland_hop
+  - farmland_rice
+  - farmland_tea
+  - orchard
+  - orchard_banana
+  - orchard_oilpalm
+  - orchard_olive
+  - vineyard
+  - plant_nursery
+  - garden
+  - golf_rough
+  - grave_yard_generic
+  - grave_yard_christian
+  - grave_yard_jewish
+  - grave_yard_muslim
+  - forest_broadleaved_deciduous
+  - forest_broadleaved_evergreen
+  - forest_broadleaved_mixed
+  - forest_broadleaved_unknown
+  - forest_mixed_deciduous
+  - forest_mixed_evergreen
+  - forest_mixed_mixed
+  - forest_mixed_unknown
+  - forest_needleleaved_deciduous
+  - forest_needleleaved_evergreen
+  - forest_needleleaved_mixed
+  - forest_needleleaved_unknown
+  - scrub_broadleaved_deciduous
+  - scrub_broadleaved_evergreen
+  - scrub_broadleaved_mixed
+  - scrub_broadleaved_unknown
+  - scrub_mixed_deciduous
+  - scrub_mixed_evergreen
+  - scrub_mixed_mixed
+  - scrub_mixed_unknown
+  - scrub_needleleaved_deciduous
+  - scrub_needleleaved_evergreen
+  - scrub_needleleaved_mixed
+  - scrub_needleleaved_unknown
+  - scrub_unknown_deciduous
+  - scrub_unknown_evergreen
+  - scrub_unknown_mixed
+  - scrub_unknown_unknown
+  - reef
+  - rock_overlay
+  - scree_overlay
+  - river_intermittent
+  - water_intermittent
+  - water_intermittent_salt
+  - water_salt
+  - wetland
+  - swamp_broadleaved_deciduous
+  - swamp_broadleaved_evergreen
+  - swamp_broadleaved_mixed
+  - swamp_broadleaved_unknown
+  - swamp_mixed_deciduous
+  - swamp_mixed_evergreen
+  - swamp_mixed_mixed
+  - swamp_mixed_unknown
+  - swamp_needleleaved_deciduous
+  - swamp_needleleaved_evergreen
+  - swamp_needleleaved_mixed
+  - swamp_needleleaved_unknown
+  - mangrove
+  - wetland_bog
+  - wetland_marsh
+  - wetland_reed
+  - wetland_fen
+
+colors:
+  allotments: ["#eecfb3", "#f2efe9"]
+  beach_coarse: ["#fff1ba", "#969696"]
+  beach: ["#fff1ba", "#685d45", 0.61]
+  brownfield: ["#c5bea6", "#b5ae96"]
+  construction: ["#c5bea6", "#b4ae96"]
+  landfill: ["#c5bea6", "#aba388"]
+  quarry: ["#c5bea6", "#d9d4c3"]
+  farmland_hop: ["#eef0d5", "#c9d285"]
+  farmland_rice: ["#eef0d5", "#c9d285"]
+  farmland_tea: ["#eef0d5", "#c9d285"]
+  orchard: ["#aedea3", "#749d6c"]
+  orchard_banana: ["#aedea3", "#93c989"]
+  orchard_oilpalm: ["#aedea3", "#93c989"]
+  orchard_olive: ["#aedea3", "#96cc8b"]
+  vineyard: ["#aedea3", "#9bc991"]
+  plant_nursery: ["#aedea3", "#749d6c"]
+  garden: ["#cdebb0", "#95b973"]
+  golf_rough: ["#cdebb0", "#fdfae6"]
+  grave_yard_generic: ["#abccb0", "#8fbb97"]
+  grave_yard_christian: ["#abccb0", "#8fbb97"]
+  grave_yard_jewish: ["#abccb0", "#8fbb97"]
+  grave_yard_muslim: ["#abccb0", "#8fbb97"]
+  forest_broadleaved_deciduous: ["#add19e", "#a1ae79"]
+  forest_broadleaved_evergreen: ["#add19e", "#82b762"]
+  forest_broadleaved_mixed: ["#add19e", "#8bb37c"]
+  forest_broadleaved_unknown: ["#add19e", "#9cae95"]
+  forest_mixed_deciduous: ["#add19e", "#a1ae79"]
+  forest_mixed_evergreen: ["#add19e", "#82b762"]
+  forest_mixed_mixed: ["#add19e", "#8bb37c"]
+  forest_mixed_unknown: ["#add19e", "#9cae95"]
+  forest_needleleaved_deciduous: ["#add19e", "#a1ae79"]
+  forest_needleleaved_evergreen: ["#add19e", "#82b762"]
+  forest_needleleaved_mixed: ["#add19e", "#8bb37c"]
+  forest_needleleaved_unknown: ["#add19e", "#9cae95"]
+  scrub_broadleaved_deciduous: ["#b5e3b5", "#b8c48c"]
+  scrub_broadleaved_evergreen: ["#b5e3b5", "#79d27c"]
+  scrub_broadleaved_mixed: ["#b5e3b5", "#8dcd8f"]
+  scrub_broadleaved_unknown: ["#b5e3b5", "#9ebe9d"]
+  scrub_mixed_deciduous: ["#b5e3b5", "#b8c48c"]
+  scrub_mixed_evergreen: ["#b5e3b5", "#79d27c"]
+  scrub_mixed_mixed: ["#b5e3b5", "#8dcd8f"]
+  scrub_mixed_unknown: ["#b5e3b5", "#9ebe9d"]
+  scrub_needleleaved_deciduous: ["#b5e3b5", "#b8c48c"]
+  scrub_needleleaved_evergreen: ["#b5e3b5", "#79d27c"]
+  scrub_needleleaved_mixed: ["#b5e3b5", "#8dcd8f"]
+  scrub_needleleaved_unknown: ["#b5e3b5", "#9ebe9d"]
+  scrub_unknown_deciduous: ["#b5e3b5", "#b8c48c"]
+  scrub_unknown_evergreen: ["#b5e3b5", "#79d27c"]
+  scrub_unknown_mixed: ["#b5e3b5", "#8dcd8f"]
+  scrub_unknown_unknown: ["#b5e3b5", "#9ebe9d"]
+  reef: ["#a2d1e0", "#549ccd"]
+  rock_overlay: ["#eee5dc", "#c3beb9"]
+  scree_overlay: ["#eee5dc", "#c3beb9"]
+  river_intermittent: ["#f2efe9", "native"]
+  water_intermittent: ["#f2efe9", "native"]
+  water_intermittent_salt: ["#f2efe9", "native"]
+  water_salt: ["#a2d1e0", "native"]
+  wetland: ["#f2efe9", "#4aa5fa", 0.8]
+  swamp_broadleaved_deciduous: ["#add19e", "native"]
+  swamp_broadleaved_evergreen: ["#add19e", "native"]
+  swamp_broadleaved_mixed: ["#add19e", "native"]
+  swamp_broadleaved_unknown: ["#add19e", "native"]
+  swamp_mixed_deciduous: ["#add19e", "native"]
+  swamp_mixed_evergreen: ["#add19e", "native"]
+  swamp_mixed_mixed: ["#add19e", "native"]
+  swamp_mixed_unknown: ["#add19e", "native"]
+  swamp_needleleaved_deciduous: ["#add19e", "native"]
+  swamp_needleleaved_evergreen: ["#add19e", "native"]
+  swamp_needleleaved_mixed: ["#add19e", "native"]
+  swamp_needleleaved_unknown: ["#add19e", "native"]
+  mangrove: ["#f2efe9", "native"]
+  wetland_bog: ["#d4dca3", "native"]
+  wetland_marsh: ["#cdebb0", "native"]
+  wetland_reed: ["#f2efe9", "native"]
+  wetland_fen: ["#cdebb0", "native"]
+
+
