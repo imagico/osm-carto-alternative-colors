@@ -1,13 +1,37 @@
-// --- Parks, woods, other green things ---
+// --- vegetation related ---
 
-@grass: #cdebb0; // also meadow, common, garden, village_green
-@scrub: #b5e3b5;
-@forest: #add19e;       // Lch(80,30,135)
-@forest-text: #46673b;  // Lch(40,30,135)
-@park: #c8facc;         // Lch(94,30,145) also recreation_ground
-@orchard: #aedfa3; // also vineyard, plant_nursery
+@grass: #d1efb4;          // Lch(91,32,128) also meadow, common, garden, village_green
+@heath: #dae2ac;          // Lch(88,28,114)
+@scrub: #c4daa5;          // Lch(84,29,125) halfway between heath and forest
+@forest: #add19e;         // Lch(80,30,135)
+@forest-text: #46673b;    // Lch(40,30,135)
+@orchard: #addfa5;        // Lch(84,36,139) also vineyard, plant_nursery
+@allotments: #c9e1bf;     // Lch(87,20,135)
+@park: #c8facc;           // Lch(94,30,145) also recreation_ground
+@farmland: #eef0d5;       // Lch(94,14,112)
+@farmland-line: #c7c9ae;  // Lch(80,14,112)
 
-// --- "Base" landuses ---
+@campsite: #def6c0;       // also caravan_site, picnic_site
+@golf_course: @campsite;
+@cemetery: #aacbaf;       // also grave_yard
+@pitch: #88e0be;          // Lch(83,35,166)
+@track: @pitch;
+
+// --- bare ground ---
+
+@bare_ground: #eee5dc;
+@sand: #f5e9c6;
+@beach: #fff1ba;
+@mud: rgba(203,177,154,0.3); // produces #e6dcd1 over @land
+
+// --- industrial ---
+
+@quarry: #c5bea6;
+@landfill: @quarry;
+@construction: @quarry;
+@brownfield: @quarry;
+
+// --- Builtup landuses ---
 
 @residential: #e0dfdf;      // Lch(89,0,0)
 @residential-line: #b9b9b9; // Lch(75,0,0)
@@ -17,56 +41,37 @@
 @commercial-line: #d1b2b0;  // Lch(75,12,25)
 @industrial: #ebdbe8;       // Lch(89,9,330) (Also used for railway)
 @industrial-line: #c6b3c3;  // Lch(75,11,330) (Also used for railway-line)
-@farmland: #eef0d5;         // Lch(94,14,112)
-@farmland-line: #c7c9ae;    // Lch(80,14,112)
 @farmyard: #f5dcba;         // Lch(89,20,80)
 @farmyard-line: #d1b48c;    // Lch(75,25,80)
+
+@garages: #dfddce;
 
 // --- Transport ----
 
 @transportation: #dedeee;       // Lch(89,8,291)
 @transportation-line: #b7b7cd;  // Lch(75,12,291)
-
+@station: @transportation;
+@station-line: @transportation-line;
 @aerodrome: @transportation;
 @aerodrome-line: @transportation-line;
 @apron: #e9d1ff;
-@garages: #dfddce;
 @parking: #f7efb7;
 @railway: @industrial;
 @railway-line: @industrial-line;
 @rest_area: #efc8c8; // also services
-@station: @transportation;
-@station-line: @transportation-line;
 
 // --- Other ----
 
-@allotments: #eecfb3;       // Lch(85,19,70)
-@bare_ground: #eee5dc;
-@campsite: #def6c0; // also caravan_site, picnic_site
-@cemetery: #aacbaf; // also grave_yard
 @danger_area: pink;
-@heath: #d4dca3;            // Lch(86,30,114)
-@mud: rgba(203,177,154,0.3); // produces #e6dcd1 over @land
 @place_of_worship: #cdccc9;
 @place_of_worship_outline: #111;
 @playground: #b7f8e6;       // Lch(93,24,175)
 @power: darken(@industrial, 5%);
 @power-line: darken(@industrial-line, 5%);
-@sand: #f5e9c6;
 @societal_amenities: #fdebd8;   // Lch(94,12,76)
-@tourism: #734a08;
-@quarry: #c5bea6;
-@landfill: @quarry;
-@construction: @quarry;
-@brownfield: @quarry;
-@military: #f55;
-@beach: #fff1ba;
-
-// --- Sports ---
-@pitch: #88e0be;            // Lch(83,35,166)
-@track: @pitch;
 @stadium: @societal_amenities; // also fitness_centre and sports_centre
-@golf_course: @campsite; 
+@tourism: #734a08;
+@military: #f55;
 
 // --- low zoom colors ---
 
