@@ -542,6 +542,20 @@
     }
   }
 
+  [feature = 'landuse_salt_pond'][zoom >= 10]  {
+    polygon-fill: @ocean-color;
+    [way_pixels >= 4]  { polygon-gamma: 0.75; }
+    [way_pixels >= 64] { polygon-gamma: 0.3;  }
+    [zoom >= 11] {
+      a/polygon-pattern-file: url('symbols/patterns/water_salt.png');
+      a/polygon-pattern-alignment: global;
+      [zoom >= 13] {
+        b/polygon-pattern-file: url('symbols/patterns/salt_pond.png');
+        b/polygon-pattern-alignment: global;
+      }
+    }
+  }
+
   [feature = 'natural_bare_rock'][zoom >= 9] {
     polygon-fill: @bare_ground-lowzoom;
     [zoom >= 12] { polygon-fill: @bare_ground; }
