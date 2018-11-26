@@ -929,6 +929,12 @@
       line-pattern-file: url('symbols/cliff2.svg');
     }
   }
+  [natural = 'earth_bank'][zoom >= 13] {
+    line-pattern-file: url('symbols/earth_bank.svg');
+    [zoom >= 15] {
+      line-pattern-file: url('symbols/earth_bank2.svg');
+    }
+  }
   [man_made = 'embankment'][zoom >= 15]::man_made {
     line-pattern-file: url('symbols/embankment.svg');
   }
@@ -1001,11 +1007,15 @@
 
 #text-line {
   [feature = 'natural_cliff'][zoom >= 15],
+  [feature = 'natural_earth_bank'][zoom >= 15],
   [feature = 'man_made_embankment'][zoom >= 15] {
     text-name: "[name]";
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
     text-fill: #999;
+    [feature = 'natural_earth_bank'][zoom >= 15] {
+      text-fill: #bb8e81;
+    }
     text-size: 10;
     text-face-name: @book-fonts;
     text-placement: line;

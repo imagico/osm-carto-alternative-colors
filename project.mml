@@ -563,7 +563,7 @@ Layer:
         (SELECT
             way, "natural", man_made
           FROM planet_osm_line
-          WHERE "natural" = 'cliff' OR man_made = 'embankment'
+          WHERE "natural" IN ('cliff', 'earth_bank') OR man_made = 'embankment'
         ) AS cliffs
     properties:
       minzoom: 13
@@ -2733,7 +2733,7 @@ Layer:
           FROM planet_osm_line
           WHERE (man_made IN ('pier', 'breakwater', 'groyne', 'embankment')
               OR waterway IN ('dam', 'weir', 'lock_gate')
-              OR "natural" IN ('cliff'))
+              OR "natural" IN ('cliff', 'earth_bank'))
             AND name IS NOT NULL
         ) AS text_line
     properties:
