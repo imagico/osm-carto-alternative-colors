@@ -414,7 +414,7 @@ Layer:
             (waterway IN ('dock', 'riverbank')
               OR landuse IN ('reservoir', 'basin')
               OR "natural" IN ('water', 'glacier'))
-            AND landuse NOT IN ('salt_pond')
+            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
             AND building IS NULL
             AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
           ORDER BY COALESCE(layer,0), way_area DESC
