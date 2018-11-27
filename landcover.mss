@@ -935,6 +935,15 @@
       line-pattern-file: url('symbols/earth_bank2.svg');
     }
   }
+  [natural = 'ridge'][zoom >= 13] {
+    line-pattern-file: url('symbols/ridge.svg');
+  }
+  [natural = 'arete'][zoom >= 13] {
+    line-pattern-file: url('symbols/arete.svg');
+    [zoom >= 15] {
+      line-pattern-file: url('symbols/arete2.svg');
+    }
+  }
   [man_made = 'embankment'][zoom >= 15]::man_made {
     line-pattern-file: url('symbols/embankment.svg');
   }
