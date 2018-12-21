@@ -29,6 +29,13 @@ at mid zoom levels.
 * different rendering of springs and addition of rendering of other water related point features.
 * different color for transportation and accomodation related point symbols.
 * different patterns for woodland and differentiated rendering of leaf_cycle.
+* rendering of implicit embankments and cuttings (embankment=yes/cutting=yes) in highways, railways and waterways
+* rendering of archipelagos based on convex hull
+* rendering of various farmland and orchard types with special patterns
+* rendering of natural=earth_bank
+* rendering of landuse=salt_pond
+* rendering of natura=ridge and natural=arete with a linear structure pattern
+* golf course rendering derived from the French style
 
 # Cartographic principles
 
