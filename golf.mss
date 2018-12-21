@@ -6,6 +6,9 @@ derived from https://github.com/cquest/osmfr-cartocss/blob/master/sports.mss
 
 #landcover[zoom >= 14] {
   [feature = 'golf_rough'] {
+    polygon-fill: mix(@grass, @scrub, 70%);
+    [way_pixels >= 4]  { polygon-gamma: 0.75; }
+    [way_pixels >= 64] { polygon-gamma: 0.3;  }
     polygon-pattern-file: url('symbols/patterns/golf_rough.png');
     polygon-pattern-alignment: global;
     [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
