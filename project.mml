@@ -2542,16 +2542,18 @@ Layer:
                 'no' AS is_building
              FROM
                (SELECT
-                  -- this detects multipolygons extending over the 180 degree meridian to split them
-                  CASE WHEN (ST_XMax(way)-ST_XMin(way)) < 20037508 THEN
-                    ST_ConvexHull(way)
-                  ELSE
-                    -- splits the polygon into the two hemisphere parts
-                    (ST_Dump(ST_Collect(
-                      ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((-20037508 -20037508, -20037508 20037508, 0 20037508, 0 -20037508, -20037508 -20037508))'), 900913))),
-                      ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((0 -20037508, 0 20037508, 20037508 20037508, 20037508 -20037508, 0 -20037508))'), 900913)))
-                    ))).geom
-                  END AS way,
+                  (ST_Dump(
+                    -- this detects multipolygons extending over the 180 degree meridian to split them
+                    CASE WHEN (ST_XMax(way)-ST_XMin(way)) < 20037508 THEN
+                      ST_ConvexHull(way)
+                    ELSE
+                      -- splits the polygon into the two hemisphere parts
+                      ST_Collect(
+                        ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((-20037508 -20037508, -20037508 20037508, 0 20037508, 0 -20037508, -20037508 -20037508))'), 900913))),
+                        ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((0 -20037508, 0 20037508, 20037508 20037508, 20037508 -20037508, 0 -20037508))'), 900913)))
+                      )
+                    END
+                  )).geom AS way,
                   way AS oway,
                   name
                 FROM planet_osm_polygon
