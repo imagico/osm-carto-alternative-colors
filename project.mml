@@ -592,35 +592,39 @@ Layer:
               (SELECT
                   COALESCE(
                     ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
-                      (0.5*carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway), z(!scale_denominator!)) + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real))),
+                      (0.5*carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), z(!scale_denominator!)) + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real))),
                       ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 900913)
                   )
                 FROM planet_osm_line o
-                WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
-                  carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway), z(!scale_denominator!)) > 0.0 AND
+                WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
+                  carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), z(!scale_denominator!)) > 0.0 AND
                   ST_DWithin(l.line, o.way, 1) AND
                   o.way && ST_Expand(!bbox!, (0.5*carto_embankment_line_width('motorway', z(!scale_denominator!)) + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real)) AND
-                  (NOT(o.tags @> 'embankment=>yes') OR l.cutting = 'yes') AND (NOT(o.tags @> 'cutting=>yes') OR l.cutting = 'no')
+                  (
+                    (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
+                    (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
+                    (l.type = 'dyke' AND (o.man_made IS NULL OR o.man_made NOT IN ('dyke')))
+                  )
               )
             ) AS way,
-            cutting
+            type
           FROM
             -- this queries the lines with embankment/cutting and buffers + aggregates them separately for embankment and cutting
             (SELECT
                 ST_Union(ST_Buffer(way, (0.5*width_px + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real))) AS way,
                 ST_Collect(way) AS line,
-                cutting
+                type
               FROM
                 (SELECT
                     way,
-                    carto_embankment_line_width(COALESCE(highway, railway, waterway), z(!scale_denominator!)) AS width_px,
-                    (CASE WHEN (tags @> 'cutting=>yes') THEN 'yes' ELSE 'no' END) AS cutting
+                    carto_embankment_line_width(COALESCE(highway, railway, waterway, man_made), z(!scale_denominator!)) AS width_px,
+                    (CASE WHEN (tags @> 'cutting=>yes') THEN 'cutting' WHEN (man_made = 'dyke') THEN 'dyke' ELSE 'embankment' END) AS type
                   FROM planet_osm_line
-                  WHERE (highway IS NOT NULL OR railway IS NOT NULL OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
-                    AND ((tags @> 'embankment=>yes') OR (tags @> 'cutting=>yes')) AND way && !bbox!
+                  WHERE (highway IS NOT NULL OR railway IS NOT NULL OR (man_made = 'dyke') OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
+                    AND ((man_made = 'dyke') OR (tags @> 'embankment=>yes') OR (tags @> 'cutting=>yes')) AND way && !bbox!
                 ) AS embankments
               WHERE width_px > 0.0
-              GROUP BY cutting
+              GROUP BY type
             ) AS l
         ) AS highway_embankments
     properties:

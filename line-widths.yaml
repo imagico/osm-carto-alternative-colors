@@ -52,6 +52,7 @@ sql:
     - rail
     - light_rail
     - tram
+    - dyke
 
 tags:
   river: IN ('river', 'canal')
@@ -252,6 +253,8 @@ classes:
     13: 1
     15: 1.5
     17: 2
+  dyke:
+    15: 1.5
 
 
 

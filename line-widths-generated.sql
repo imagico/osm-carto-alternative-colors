@@ -356,6 +356,15 @@ select
         when $2 = 19 then 2.0
         else 0.0
       end)
+    when $1 = 'dyke' then
+      (case
+        when $2 = 15 then 1.5
+        when $2 = 16 then 1.5
+        when $2 = 17 then 1.5
+        when $2 = 18 then 1.5
+        when $2 = 19 then 1.5
+        else 0.0
+      end)
     else 0.0
   end;
 $func$;
