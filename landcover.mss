@@ -949,16 +949,6 @@
   }
 }
 
-#area-barriers {
-  [zoom >= 16] {
-    line-color: #444;
-    line-width: 0.4;
-    [feature = 'barrier_hedge'] {
-      polygon-fill: #aed1a0;
-    }
-  }
-}
-
 .barriers {
   [zoom >= 16] {
     line-width: 0.4;

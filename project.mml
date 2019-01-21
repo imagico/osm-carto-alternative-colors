@@ -1108,23 +1108,6 @@ Layer:
         ) AS line_barriers
     properties:
       minzoom: 14
-  - id: area-barriers
-    class: barriers
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, barrier AS feature
-          FROM (SELECT way,
-            ('barrier_' || barrier) AS barrier
-            FROM planet_osm_polygon
-            WHERE barrier IS NOT NULL
-          ) AS features
-        ) AS area_barriers
-    properties:
-      minzoom: 16
   - id: ferry-routes
     geometry: linestring
     <<: *extents
