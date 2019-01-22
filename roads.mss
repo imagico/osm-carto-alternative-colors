@@ -6,9 +6,6 @@
 @pedestrian-fill: @living-street-fill;
 @raceway-fill: pink;
 @road-fill: #ddd;
-@footway-fill-noaccess: #bbbbbb;
-@steps-fill-noaccess: #bbbbbb;
-@cycleway-fill-noaccess: #9999ff;
 @bridleway-fill: green;
 @bridleway-fill-noaccess: #aaddaa;
 @track-fill: #996600;
@@ -22,9 +19,12 @@
 
 @footway-fill-lowzoom: #ff5069;
 @footway-fill: #fc592f;
+@footway-fill-noaccess: lighten(desaturate(@footway-fill, 56%), 12%);
 @steps-fill: lighten(@footway-fill, 10%);
+@steps-fill-noaccess: lighten(desaturate(@steps-fill, 56%), 12%);
 @cycleway-fill-lowzoom: #ff5069;
 @cycleway-fill: #cd63ef;
+@cycleway-fill-noaccess: lighten(desaturate(@cycleway-fill, 56%), 12%);
 
 @default-casing: white;
 @residential-casing: #bbbbbb;
@@ -1290,11 +1290,12 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           line-color: @secondary-fill;
         }
         [construction = 'tertiary'],
-        [construction = 'tertiary_link'],
+        [construction = 'tertiary_link'] {
+          line-color: @tertiary-fill;
+        }
         [construction = 'residential'],
         [construction = 'unclassified'],
         [construction = 'living_street'] {
-          line-color: @residential-construction;
           [zoom < 13] {
             line-width: 0;
             b/line-width: 0;
@@ -1306,7 +1307,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           }
         }
         [construction = 'service'] {
-          line-color: @service-construction;
           [zoom < 14] {
             line-width: 0;
             b/line-width: 0;
@@ -1340,6 +1340,21 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           b/line-width: 1.2;
           b/line-color: @construction;
           b/line-dasharray: 2,6;
+        }
+        [construction = 'steps'] {
+          [zoom < 14] {
+            line-width: 0;
+            b/line-width: 0;
+          }
+          line-color: white;
+          line-width: @steps-width-z13 + 2 * @paths-background-width;
+          [zoom >= 15] { line-width: @steps-width-z15 + 2 * @paths-background-width; }
+          line-opacity: 0.4;
+          b/line-width: 1.2;
+          b/line-width: @steps-width-z13;
+          [zoom >= 15] { b/line-width:  @steps-width-z15; }
+          b/line-color: @construction;
+          b/line-dasharray: 2,3;
         }
       }
     }
@@ -1797,13 +1812,13 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           }
         }
         line/line-color: @footway-fill-lowzoom;
-        [access = 'no'] { line/line-color: @footway-fill-noaccess; }
         line/line-join: round;
         line/line-cap: round;
         line/line-width: @footway-width-z13;
         [zoom >= 14] { line/line-width: @footway-width-z14; }
         [zoom >= 15] {
           line/line-color: @footway-fill;
+          [access = 'no'] { line/line-color: @footway-fill-noaccess; }
           line/line-dasharray: 7,2;
           line/line-color: @footway-fill;
           line/line-width: @footway-width-z15;
@@ -1886,13 +1901,13 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           }
         }
         line/line-color: @cycleway-fill-lowzoom;
-        [access = 'no'] { line/line-color: @cycleway-fill-noaccess; }
         line/line-join: round;
         line/line-cap: round;
         line/line-width: @cycleway-width-z13;
         [zoom >= 14] { line/line-width: @cycleway-width-z14; }
         [zoom >= 15] {
           line/line-color: @cycleway-fill;
+          [access = 'no'] { line/line-color: @cycleway-fill-noaccess; }
           line/line-dasharray: 7,2;
           line/line-width: @cycleway-width-z15;
           [zoom >= 16] {
@@ -2913,10 +2928,12 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'highway_tertiary'],
     [feature = 'highway_unclassified'],
     [feature = 'highway_residential'],
-    [feature = 'highway_living_street'] {
+    [feature = 'highway_living_street'],
+    [feature = 'highway_pedestrian'] {
       [zoom >= 15] {
         access/line-color: @access-marking;
-        [feature = 'highway_living_street'] {
+        [feature = 'highway_living_street'],
+        [feature = 'highway_pedestrian'] {
           access/line-color: @access-marking-living-street;
         }
         access/line-join: round;
@@ -2964,10 +2981,12 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'highway_tertiary'],
     [feature = 'highway_unclassified'],
     [feature = 'highway_residential'],
-    [feature = 'highway_living_street'] {
+    [feature = 'highway_living_street'],
+    [feature = 'highway_pedestrian'] {
       [zoom >= 15] {
         access/line-color: @access-marking;
-        [feature = 'highway_living_street'] {
+        [feature = 'highway_living_street'],
+        [feature = 'highway_pedestrian'] {
           access/line-color: @access-marking-living-street;
         }
         access/line-join: round;
