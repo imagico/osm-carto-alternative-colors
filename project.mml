@@ -570,7 +570,7 @@ Layer:
               way,
               (SELECT ST_Union(ST_Buffer(way, 6*sqrt(!pixel_width!::real*!pixel_height!::real)))
                  FROM planet_osm_point p
-                 WHERE "natural" IN ('peak', 'volcano', 'saddle')
+                 WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
                    AND ST_DWithin(l.way, p.way, 6*sqrt(!pixel_width!::real*!pixel_height!::real))
               )
             ), "natural", man_made
@@ -1495,7 +1495,12 @@ Layer:
             tracktype,
             int_surface,
             'no' AS int_tunnel,
-            CASE WHEN ford = 'yes' OR ford = 'stepping_stones' THEN 'ford' WHEN ford = 'ford_node' THEN 'ford_node' ELSE 'yes' END AS int_bridge,
+            CASE
+              WHEN pass = 'yes' OR pass = 'stepping_stones' THEN 'ford'
+              WHEN pass = 'ford_node' THEN 'ford_node'
+              WHEN pass = 'mountain_pass' THEN 'mountain_pass'
+              ELSE 'yes'
+            END AS int_bridge,
             access,
             construction,
             service,
@@ -1509,7 +1514,7 @@ Layer:
                 foot,
                 bicycle,
                 tracktype,
-                tags->'ford' AS ford,
+                tags->'ford' AS pass,
                 CASE WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                   WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -1549,7 +1554,7 @@ Layer:
                 foot,
                 bicycle,
                 tracktype,
-                NULL AS ford,
+                NULL AS pass,
                 'null',
                 CASE
                   WHEN access IN ('destination') THEN 'destination'::text
@@ -1566,13 +1571,13 @@ Layer:
                 AND (railway IS NOT NULL OR aeroway IS NOT NULL) -- end of rail/aero select
             UNION ALL
             SELECT 
-                ST_LineSubstring(way, GREATEST(0, position-length*2.5), LEAST(1, position+length*2.5)) AS way,
+                ST_LineSubstring(way, GREATEST(0, position-length*0.5*pass_length), LEAST(1, position+length*0.5*pass_length)) AS way,
                 feature,
                 horse,
                 foot,
                 bicycle,
                 tracktype,
-                ford,
+                pass,
                 int_surface,
                 access,
                 construction,
@@ -1590,7 +1595,8 @@ Layer:
                       l.foot AS foot,
                       l.bicycle AS bicycle,
                       l.tracktype AS tracktype,
-                      'ford_node' AS ford,
+                      CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN 'mountain_pass' ELSE 'ford_node' END AS pass,
+                      CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN GREATEST(7, carto_embankment_line_width(l.highway, z(!scale_denominator!))) ELSE 5 END AS pass_length,
                       CASE WHEN l.surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                             'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                         WHEN l.surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -1614,8 +1620,9 @@ Layer:
                       l.z_order AS z_order
                     FROM planet_osm_point p
                       JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1) -- Assumes Mercator
-                    WHERE p.tags @> 'ford=>yes' OR p.tags @> 'ford=>stepping_stones'
-                      AND l.highway IS NOT NULL -- end of fort point pseudo-line select
+                    WHERE ((p.tags @> 'ford=>yes' OR p.tags @> 'ford=>stepping_stones') AND l.highway IS NOT NULL) OR
+                          (p.tags @> 'mountain_pass=>yes' AND l.highway IS NOT NULL)
+                    -- end of ford point pseudo-line select
                   ) AS fords
             ) AS features
           ORDER BY
@@ -1623,7 +1630,7 @@ Layer:
             z_order,
             CASE WHEN access IN ('no', 'private') THEN 0 WHEN access IN ('destination') THEN 1 ELSE 2 END,
             CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 2 END,
-            CASE WHEN ford = 'yes' OR ford = 'stepping_stones' THEN 3 WHEN ford = 'ford_node' THEN 2 ELSE 1 END
+            CASE WHEN pass = 'yes' OR pass = 'stepping_stones' THEN 3 WHEN pass = 'ford_node' OR pass = 'mountain_pass' THEN 2 ELSE 1 END
         ) AS bridges
     properties:
       group-by: layernotnull
@@ -2218,7 +2225,8 @@ Layer:
                            'dog_park', 'fitness_centre', 'fitness_station', 'firepit', 'sauna', 'beach_resort')
             OR barrier IN ('toll_booth')
             OR man_made IN ('mast', 'tower', 'water_tower', 'lighthouse', 'windmill', 'cross', 'obelisk', 'water_well', 'water_tap')
-            OR "natural" IN ('peak', 'volcano', 'saddle', 'spring', 'hot_spring', 'geyser', 'cave_entrance')
+            OR "natural" IN ('peak', 'volcano', 'spring', 'hot_spring', 'geyser', 'cave_entrance')
+            OR ("natural" = 'saddle' AND NOT(tags @> 'mountain_pass=>yes'))
             OR historic IN ('memorial', 'monument', 'archaeological_site', 'wayside_cross', 'fort', 'wayside_shrine', 'castle', 'manor', 'city_gate')
             OR tags->'memorial' IN ('plaque')
             OR military IN ('bunker')
@@ -2761,7 +2769,7 @@ Layer:
                 CASE WHEN elevation IS NOT NULL THEN CONCAT(REPLACE(ROUND(elevation)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') ELSE NULL END
             ) AS name,
             CASE
-              WHEN "natural" IN ('peak', 'volcano', 'saddle') THEN elevation
+              WHEN "natural" IN ('peak', 'volcano', 'saddle') OR (mountain_pass = 'yes') THEN elevation
               ELSE NULL
             END AS score,
             operator,
@@ -2813,6 +2821,7 @@ Layer:
                                                       'greenhouse_horticulture', 'retail', 'industrial', 'railway', 'commercial', 'brownfield', 'landfill',
                                                       'construction', 'military', 'plant_nursery') THEN landuse ELSE NULL END,
                   'man_made_' || CASE WHEN man_made IN ('lighthouse', 'windmill', 'mast', 'tower', 'water_tower', 'obelisk', 'works') THEN man_made ELSE NULL END,
+                  CASE WHEN (tags @> 'mountain_pass=>yes') THEN 'mountain_pass' ELSE NULL END, -- before saddle since this has precedence in case of double tagging
                   'natural_' || CASE WHEN "natural" IN ('wood', 'peak', 'volcano', 'saddle', 'cave_entrance', 'water', 'mud', 'wetland', 'marsh', 'bay',
                                                         'scree', 'shingle', 'bare_rock', 'sand', 'heath', 'grassland', 'scrub', 'beach', 'glacier', 'tree')
                                                         THEN "natural" ELSE NULL END,
@@ -2832,7 +2841,7 @@ Layer:
                 access,
                 name,
                 CASE
-                  WHEN "natural" IN ('peak', 'volcano', 'saddle')
+                  WHEN "natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes')
                     OR tourism = 'alpine_hut' OR (tourism = 'information' AND tags->'information' = 'guidepost')
                     OR amenity = 'shelter' THEN
                     CASE
@@ -2849,6 +2858,7 @@ Layer:
                 tags->'recycling_type' as recycling_type,
                 tags->'castle_type' as castle_type,
                 tags->'information' as information,
+                tags->'mountain_pass' as mountain_pass,
                 ref,
                 NULL AS way_area,
                 CASE WHEN building = 'no' OR building IS NULL THEN 'no' ELSE 'yes' END AS is_building
@@ -2867,6 +2877,7 @@ Layer:
                                  'retail', 'industrial', 'railway', 'commercial', 'brownfield', 'landfill', 'construction', 'military', 'plant_nursery')
                   OR man_made IN ('lighthouse', 'windmill', 'mast', 'tower', 'water_tower', 'cross', 'obelisk', 'water_well', 'water_tap', 'works')
                   OR "natural" IS NOT NULL
+                  OR tags @> 'mountain_pass=>yes'
                   OR place IN ('island', 'islet')
                   OR barrier IN ('toll_booth')
                   OR military IN ('danger_area', 'bunker')

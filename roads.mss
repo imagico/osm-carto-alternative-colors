@@ -52,6 +52,7 @@
 @bridge-casing: black;
 /* same color as for swimming pool outline */
 @ford-casing: saturate(darken(@water-color, 40%), 30%);
+@mountain-pass-casing: saturate(darken(@landform-color, 10%), 15%);
 
 @motorway-tunnel-fill: lighten(@motorway-fill, 10%);
 @trunk-tunnel-fill: lighten(@trunk-fill, 10%);
@@ -205,6 +206,9 @@
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
             }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
+            }
           }
         }
       }
@@ -237,6 +241,9 @@
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
             }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
+            }
           }
         }
       }
@@ -268,6 +275,9 @@
             [int_bridge = 'ford'],
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
             }
           }
         }
@@ -303,6 +313,9 @@
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
             }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
+            }
           }
         }
       }
@@ -333,6 +346,9 @@
             [int_bridge = 'ford'],
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
             }
           }
         }
@@ -365,6 +381,9 @@
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
             }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
+            }
           }
         }
       }
@@ -391,6 +410,9 @@
           [int_bridge = 'ford'],
           [int_bridge = 'ford_node'] {
             line-color: @ford-casing;
+          }
+          [int_bridge = 'mountain_pass'] {
+            line-color: @mountain-pass-casing;
           }
         }
       }
@@ -427,6 +449,9 @@
           [int_bridge = 'ford_node'] {
             line-color: @ford-casing;
           }
+          [int_bridge = 'mountain_pass'] {
+            line-color: @mountain-pass-casing;
+          }
         }
       }
     }
@@ -455,6 +480,9 @@
             [int_bridge = 'ford'],
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
             }
           }
         }
@@ -486,6 +514,9 @@
             [int_bridge = 'ford_node'] {
               line-color: @ford-casing;
             }
+            [int_bridge = 'mountain_pass'] {
+              line-color: @mountain-pass-casing;
+            }
           }
         }
       }
@@ -500,12 +531,17 @@
           line-color: @bridge-casing;
           line-join: round;
           [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
             line-opacity: 0;
             [int_bridge = 'ford'],
             [zoom >= 15] {
               a/line-color: @ford-casing;
               b/line-color: @ford-casing;
+              [int_bridge = 'mountain_pass'] {
+                a/line-color: @mountain-pass-casing;
+                b/line-color: @mountain-pass-casing;
+              }
               a/line-width: @paths-ford-casing-width-z14;
               b/line-width: @paths-ford-casing-width-z14;
               a/line-offset: 0.5*@steps-width-z13 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
@@ -543,12 +579,17 @@
           line-color: @bridge-casing;
           line-join: round;
           [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
             line-opacity: 0;
             [int_bridge = 'ford'],
             [zoom >= 15] {
               a/line-color: @ford-casing;
               b/line-color: @ford-casing;
+              [int_bridge = 'mountain_pass'] {
+                a/line-color: @mountain-pass-casing;
+                b/line-color: @mountain-pass-casing;
+              }
               a/line-width: @paths-ford-casing-width-z14;
               b/line-width: @paths-ford-casing-width-z14;
               a/line-offset: 0.5*@bridleway-width-z13 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
@@ -589,12 +630,17 @@
           line-color: @bridge-casing;
           line-join: round;
           [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
             line-opacity: 0;
             [int_bridge = 'ford'],
             [zoom >= 15] {
               a/line-color: @ford-casing;
               b/line-color: @ford-casing;
+              [int_bridge = 'mountain_pass'] {
+                a/line-color: @mountain-pass-casing;
+                b/line-color: @mountain-pass-casing;
+              }
               a/line-width: @paths-ford-casing-width-z14;
               b/line-width: @paths-ford-casing-width-z14;
               a/line-offset: 0.5*@footway-width-z13 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
@@ -650,12 +696,17 @@
           line-color: @bridge-casing;
           line-join: round;
           [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
             line-opacity: 0;
             [int_bridge = 'ford'],
             [zoom >= 15] {
               a/line-color: @ford-casing;
               b/line-color: @ford-casing;
+              [int_bridge = 'mountain_pass'] {
+                a/line-color: @mountain-pass-casing;
+                b/line-color: @mountain-pass-casing;
+              }
               a/line-width: @paths-ford-casing-width-z14;
               b/line-width: @paths-ford-casing-width-z14;
               a/line-offset: 0.5*@cycleway-width-z13 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
@@ -711,12 +762,17 @@
             line-width: @track-grade2-width-z13 + 2 * (@paths-background-width + @paths-bridge-casing-width);
           }
           [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
             line-opacity: 0;
             line-width: 0;
             [int_bridge = 'ford'][zoom >= 14] {
               a/line-color: @ford-casing;
               b/line-color: @ford-casing;
+              [int_bridge = 'mountain_pass'] {
+                a/line-color: @mountain-pass-casing;
+                b/line-color: @mountain-pass-casing;
+              }
               a/line-width: @paths-ford-casing-width-z14;
               b/line-width: @paths-ford-casing-width-z14;
               a/line-offset: 0.5*@track-width-z15 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
@@ -745,11 +801,16 @@
             line-width: @track-grade2-width-z15 + 2 * (@track-background-width + @paths-bridge-casing-width);
           }
           [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
             line-opacity: 0;
             line-width: 0;
             a/line-color: @ford-casing;
             b/line-color: @ford-casing;
+            [int_bridge = 'mountain_pass'] {
+              a/line-color: @mountain-pass-casing;
+              b/line-color: @mountain-pass-casing;
+            }
             a/line-width: @paths-ford-casing-width;
             b/line-width: @paths-ford-casing-width;
             a/line-offset: 0.5*@track-width-z15 + @track-background-width + 0.5*@paths-ford-casing-width;
@@ -892,7 +953,7 @@
     [feature = 'highway_bridleway'],
     [feature = 'highway_path'][horse = 'designated'] {
       .bridges-casing {
-        [int_bridge != 'ford'][int_bridge != 'ford_node'] {
+        [int_bridge != 'ford'][int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
           [zoom >= 14][access != 'no'],
           [zoom >= 15] {
             line-width: @bridleway-width-z13 + 2 * @paths-background-width;
@@ -917,7 +978,7 @@
     [feature = 'highway_footway'],
     [feature = 'highway_path'][bicycle != 'designated'][horse != 'designated'] {
       .bridges-casing {
-        [int_bridge != 'ford'][int_bridge != 'ford_node'] {
+        [int_bridge != 'ford'][int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
           [zoom >= 14][access != 'no'],
           [zoom >= 15] {
             line-width: @footway-width-z13 + 2 * @paths-background-width;
@@ -948,7 +1009,7 @@
     [feature = 'highway_cycleway'],
     [feature = 'highway_path'][bicycle = 'designated'] {
       .bridges-casing {
-        [int_bridge != 'ford'][int_bridge != 'ford_node'] {
+        [int_bridge != 'ford'][int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
           [zoom >= 14][access != 'no'],
           [zoom >= 15] {
             line-width: @cycleway-width-z13 + 2 * @paths-background-width;
@@ -978,7 +1039,7 @@
 
     [feature = 'highway_steps'] {
       .bridges-casing {
-        [int_bridge != 'ford'][int_bridge != 'ford_node'] {
+        [int_bridge != 'ford'][int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
           [zoom >= 14][access != 'no'],
           [zoom >= 15] {
             line-width: @steps-width-z13 + 2 * @paths-background-width;
@@ -1003,7 +1064,7 @@
     [feature = 'highway_track'] {
       /* We don't set opacity here, so it's 1.0. Aside from that, it's basically a copy of roads-fill::background in the track part of ::fill */
       .bridges-casing {
-        [int_bridge != 'ford'][int_bridge != 'ford_node'] {
+        [int_bridge != 'ford'][int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
           [zoom >= 13][access != 'no'] {
             line-color: @track-casing;
             line-join: round;
@@ -1328,17 +1389,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
             [zoom >= 18] { line-width: @motorway-link-width-z18 - 2 * @bridge-casing-width-z18; }
             [zoom >= 19] { line-width: @motorway-link-width-z19 - 2 * @bridge-casing-width-z19; }
           }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.35*@motorway-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 17] { c/line-width: 0.35*@motorway-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@motorway-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@motorway-width-z19; }
-            }
-          }
         }
         line-cap: round;
         line-join: round;
@@ -1374,17 +1424,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 17] { line-width: @trunk-width-z17 - 2 * @major-bridge-casing-width-z17; }
           [zoom >= 18] { line-width: @trunk-width-z18 - 2 * @major-bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @trunk-width-z19 - 2 * @major-bridge-casing-width-z19; }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.35*@trunk-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 17] { c/line-width: 0.35*@trunk-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@trunk-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@trunk-width-z19; }
-            }
-          }
         }
         line-cap: round;
         line-join: round;
@@ -1417,17 +1456,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 17] { line-width: @primary-width-z17 - 2 * @major-bridge-casing-width-z17; }
           [zoom >= 18] { line-width: @primary-width-z18 - 2 * @major-bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @primary-width-z19 - 2 * @major-bridge-casing-width-z19; }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.35*@primary-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 17] { c/line-width: 0.35*@primary-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@primary-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@primary-width-z19; }
-            }
-          }
         }
         line-cap: round;
         line-join: round;
@@ -1469,18 +1497,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
             [zoom >= 17] { line-width: @secondary-width-z17 - 2 * @major-bridge-casing-width-z17; }
             [zoom >= 18] { line-width: @secondary-width-z18 - 2 * @major-bridge-casing-width-z18; }
             [zoom >= 19] { line-width: @secondary-width-z19 - 2 * @major-bridge-casing-width-z19; }
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              [zoom >= 15] { 
-                c/line-width: 0.35*@secondary-width-z15;
-                c/line-color: @river-color;
-                c/line-join: round;
-                [zoom >= 16] { c/line-width: 0.35*@secondary-width-z16; }
-                [zoom >= 17] { c/line-width: 0.35*@secondary-width-z17; }
-                [zoom >= 18] { c/line-width: 0.35*@secondary-width-z18; }
-                [zoom >= 19] { c/line-width: 0.35*@secondary-width-z19; }
-              }
-            }
           }
         }
       }
@@ -1516,18 +1532,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 17] { line-width: @tertiary-width-z17 - 2 * @bridge-casing-width-z17; }
           [zoom >= 18] { line-width: @tertiary-width-z18 - 2 * @bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @tertiary-width-z19 - 2 * @bridge-casing-width-z19; }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.35*@tertiary-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 16] { c/line-width: 0.35*@tertiary-width-z16; }
-              [zoom >= 17] { c/line-width: 0.35*@tertiary-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@tertiary-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@tertiary-width-z19; }
-            }
-          }
         }
         line-cap: round;
         line-join: round;
@@ -1566,18 +1570,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 17] { line-width: @residential-width-z17 - 2 * @bridge-casing-width-z17; }
           [zoom >= 18] { line-width: @residential-width-z18 - 2 * @bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @residential-width-z19 - 2 * @bridge-casing-width-z19; }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.25*@residential-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 16] { c/line-width: 0.25*@residential-width-z16; }
-              [zoom >= 17] { c/line-width: 0.35*@residential-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@residential-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@residential-width-z19; }
-            }
-          }
         }
         line-cap: round;
         line-join: round;
@@ -1607,18 +1599,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 17] { line-width: @living-street-width-z17 - 2 * @bridge-casing-width-z17; }
           [zoom >= 18] { line-width: @living-street-width-z18 - 2 * @bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @living-street-width-z19 - 2 * @bridge-casing-width-z19; }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.25*@living-street-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 16] { c/line-width: 0.25*@living-street-width-z16; }
-              [zoom >= 17] { c/line-width: 0.35*@living-street-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@living-street-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@living-street-width-z19; }
-            }
-          }
         }
         line-join: round;
         line-cap: round;
@@ -1648,16 +1628,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 18] { line-width: @road-width-z18 - 2 * @bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @road-width-z19 - 2 * @bridge-casing-width-z19; }
           line-color: @road-fill;
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 17] { 
-              c/line-width: 0.25*@road-width-z17;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 18] { c/line-width: 0.35*@road-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@road-width-z19; }
-            }
-          }
         }
         .tunnels-fill {
           line-color: @road-fill;
@@ -1698,16 +1668,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
             [zoom >= 17] { line-width: @service-width-z17 - 2 * @bridge-casing-width-z17; }
             [zoom >= 18] { line-width: @service-width-z18 - 2 * @bridge-casing-width-z18; }
             [zoom >= 19] { line-width: @service-width-z19 - 2 * @bridge-casing-width-z19; }
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              [zoom >= 17] { 
-                c/line-width: 0.25*@service-width-z17;
-                c/line-color: @river-color;
-                c/line-join: round;
-                [zoom >= 18] { c/line-width: 0.35*@service-width-z18; }
-                [zoom >= 19] { c/line-width: 0.35*@service-width-z19; }
-              }
-            }
           }
           [service = 'INT-minor'] {
             line-width: @minor-service-width-z16 - 2 * @bridge-casing-width-z16;
@@ -1737,18 +1697,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 17] { line-width: @pedestrian-width-z17 - 2 * @bridge-casing-width-z17; }
           [zoom >= 18] { line-width: @pedestrian-width-z18 - 2 * @bridge-casing-width-z18; }
           [zoom >= 19] { line-width: @pedestrian-width-z19 - 2 * @bridge-casing-width-z19; }
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            [zoom >= 15] { 
-              c/line-width: 0.25*@pedestrian-width-z15;
-              c/line-color: @river-color;
-              c/line-join: round;
-              [zoom >= 16] { c/line-width: 0.25*@pedestrian-width-z16; }
-              [zoom >= 17] { c/line-width: 0.35*@pedestrian-width-z17; }
-              [zoom >= 18] { c/line-width: 0.35*@pedestrian-width-z18; }
-              [zoom >= 19] { c/line-width: 0.35*@pedestrian-width-z19; }
-            }
-          }
         }
         line-join: round;
         line-cap: round;
@@ -1783,7 +1731,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
-    [int_bridge != 'ford_node'] {
+    [int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
     [feature = 'highway_steps'] {
       [zoom >= 13][access != 'no'],
       [zoom >= 15] {
@@ -2317,6 +2265,193 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         [zoom >= 14] { line-width: 4; }
         [zoom >= 15] { line-width: 6; }
         [zoom >= 16] { line-width: 8; }
+      }
+    }
+  }
+  ::center {
+    [feature = 'highway_motorway'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.35*@motorway-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 17] { c/line-width: 0.35*@motorway-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@motorway-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@motorway-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_trunk'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.35*@trunk-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 17] { c/line-width: 0.35*@trunk-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@trunk-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@trunk-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_primary'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.35*@primary-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 17] { c/line-width: 0.35*@primary-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@primary-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@primary-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_secondary'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.35*@secondary-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 16] { c/line-width: 0.35*@secondary-width-z16; }
+            [zoom >= 17] { c/line-width: 0.35*@secondary-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@secondary-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@secondary-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_tertiary'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.35*@tertiary-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 16] { c/line-width: 0.35*@tertiary-width-z16; }
+            [zoom >= 17] { c/line-width: 0.35*@tertiary-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@tertiary-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@tertiary-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_residential'],
+    [feature = 'highway_unclassified'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.25*@residential-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 16] { c/line-width: 0.25*@residential-width-z16; }
+            [zoom >= 17] { c/line-width: 0.35*@residential-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@residential-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@residential-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_living_street'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.25*@living-street-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 16] { c/line-width: 0.25*@living-street-width-z16; }
+            [zoom >= 17] { c/line-width: 0.35*@living-street-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@living-street-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@living-street-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_road'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 17] {
+            c/line-width: 0.25*@road-width-z17;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 18] { c/line-width: 0.35*@road-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@road-width-z19; }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_service'] {
+      .bridges-fill {
+        [service = 'INT-normal'] {
+          [int_bridge = 'ford'],
+          [int_bridge = 'ford_node'],
+          [int_bridge = 'mountain_pass'] {
+            [zoom >= 17] {
+              c/line-width: 0.25*@service-width-z17;
+              c/line-color: @river-color;
+              [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+              c/line-join: round;
+              [zoom >= 18] { c/line-width: 0.35*@service-width-z18; }
+              [zoom >= 19] { c/line-width: 0.35*@service-width-z19; }
+            }
+          }
+        }
+      }
+    }
+
+    [feature = 'highway_pedestrian'] {
+      .bridges-fill {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 15] {
+            c/line-width: 0.25*@pedestrian-width-z15;
+            c/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { c/line-color: @landform-color; }
+            c/line-join: round;
+            [zoom >= 16] { c/line-width: 0.25*@pedestrian-width-z16; }
+            [zoom >= 17] { c/line-width: 0.35*@pedestrian-width-z17; }
+            [zoom >= 18] { c/line-width: 0.35*@pedestrian-width-z18; }
+            [zoom >= 19] { c/line-width: 0.35*@pedestrian-width-z19; }
+          }
+        }
       }
     }
   }
