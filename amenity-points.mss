@@ -1145,15 +1145,17 @@
   }
 
   [feature = 'natural_peak'][zoom >= 11] {
-    marker-file: url('symbols/peak.svg');
+    marker-file: url('symbols/peak_small.svg');
+    [zoom >= 12] { marker-file: url('symbols/peak.svg'); }
     marker-fill: @landform-color;
     marker-placement: interior;
     marker-clip: false;
   }
 
-  [feature = 'natural_volcano'][zoom >= 11] {
-    marker-file: url('symbols/peak.svg');
-    marker-fill: #d40000;
+  [feature = 'natural_volcano'][zoom >= 13] {
+    marker-file: url('symbols/volcano_small.svg');
+    [zoom >= 14] { marker-file: url('symbols/volcano.svg'); }
+    marker-fill: @landform-color;
     marker-placement: interior;
     marker-clip: false;
   }
@@ -1628,7 +1630,7 @@
   }
 
   [feature = 'natural_peak'][zoom >= 13],
-  [feature = 'natural_volcano'][zoom >= 13],
+  [feature = 'natural_volcano'][zoom >= 15],
   [feature = 'natural_saddle'][zoom >= 15],
   [feature = 'mountain_pass'][zoom >= 15] {
     text-name: "[name]";
@@ -1636,8 +1638,9 @@
     text-wrap-width: @standard-wrap-width;
     text-line-spacing: @standard-line-spacing-size;
     text-fill: darken(@landform-color, 30%);
-    [feature = 'natural_volcano'] { text-fill: #d40000; }
     text-dy: 7;
+    [feature = 'mountain_pass'] { text-dy: 10; }
+    [feature = 'natural_volcano'] { text-dy: 11; }
     text-face-name: @standard-font;
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
