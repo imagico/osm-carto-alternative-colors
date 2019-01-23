@@ -563,7 +563,8 @@ Layer:
         (SELECT
             way, "natural", man_made
           FROM planet_osm_line
-          WHERE "natural" IN ('cliff', 'earth_bank') OR man_made = 'embankment'
+          WHERE ("natural" IN ('cliff', 'earth_bank') OR man_made = 'embankment')
+            AND way && !bbox!
          UNION ALL
          SELECT
             ST_Difference(
@@ -573,9 +574,10 @@ Layer:
                  WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
                    AND ST_DWithin(l.way, p.way, 6*sqrt(!pixel_width!::real*!pixel_height!::real))
               )
-            ), "natural", man_made
+            ) AS way, "natural", man_made
           FROM planet_osm_line l
           WHERE "natural" IN ('ridge', 'arete')
+            AND l.way && !bbox!
         ) AS cliffs
     properties:
       minzoom: 13
@@ -656,7 +658,7 @@ Layer:
             'line' AS wtype,
             name
           FROM planet_osm_line b
-          WHERE waterway IN ('dam', 'weir', 'lock_gate')
+          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
           AND NOT EXISTS
             (SELECT 1 FROM planet_osm_line l WHERE ST_Intersects(b.way, l.way)
               AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
@@ -717,7 +719,7 @@ Layer:
                     (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                   FROM planet_osm_line b
                   JOIN planet_osm_line l ON ST_Intersects(b.way, l.way)
-                  WHERE b.waterway IN ('dam', 'weir', 'lock_gate')
+                  WHERE b.waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
                     AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
                   GROUP BY ST_Intersection(b.way, l.way), l.way
                 ) AS barriers
@@ -806,7 +808,7 @@ Layer:
                              ])))).geom AS geom
                          FROM planet_osm_polygon poly
                          WHERE (waterway IN ('dock', 'riverbank') OR landuse IN ('reservoir', 'basin') OR "natural" IN ('water'))
-                           AND ST_Intersects(poly.way, point)
+                           AND ST_Intersects(poly.way, point) AND (poly.way && !bbox!)
                        ) AS line_segments
                      WHERE ST_DWithin(geom, point, 1) ORDER BY ST_Length(geom) DESC LIMIT 1
                    )
@@ -847,7 +849,7 @@ Layer:
                      (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                    FROM planet_osm_point p
                    JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
-                   WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
+                   WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall') AND (p.way && !bbox!)
                      AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
                    ORDER BY p.osm_id, contructed_width DESC,
                      ST_LineLocatePoint(l.way, p.way) ASC -- this gives downstream waterways priority
@@ -887,7 +889,7 @@ Layer:
               carto_waterway_line_width(l.waterway, z(!scale_denominator!)) + 1.5 AS width
             FROM planet_osm_point p
             JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
-            WHERE p.natural IN ('spring', 'hot_spring')
+            WHERE p.natural IN ('spring', 'hot_spring') AND (p.way && !bbox!)
               AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
             ) AS features
         ) AS springs
@@ -1540,7 +1542,8 @@ Layer:
               WHERE
                 (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
                   OR tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones')
-                AND highway IS NOT NULL -- end of road select
+                AND highway IS NOT NULL
+                AND way && !bbox! -- end of road select
             UNION ALL
             SELECT
                 way,
@@ -1568,9 +1571,10 @@ Layer:
                 z_order
               FROM planet_osm_line
               WHERE bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')
-                AND (railway IS NOT NULL OR aeroway IS NOT NULL) -- end of rail/aero select
+                AND (railway IS NOT NULL OR aeroway IS NOT NULL)
+                AND way && !bbox! -- end of rail/aero select
             UNION ALL
-            SELECT 
+            SELECT
                 ST_LineSubstring(way, GREATEST(0, position-length*0.5*pass_length), LEAST(1, position+length*0.5*pass_length)) AS way,
                 feature,
                 horse,
@@ -1620,9 +1624,9 @@ Layer:
                       l.z_order AS z_order
                     FROM planet_osm_point p
                       JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1) -- Assumes Mercator
-                    WHERE ((p.tags @> 'ford=>yes' OR p.tags @> 'ford=>stepping_stones') AND l.highway IS NOT NULL) OR
-                          (p.tags @> 'mountain_pass=>yes' AND l.highway IS NOT NULL)
-                    -- end of ford point pseudo-line select
+                    WHERE (p.tags @> 'ford=>yes' OR p.tags @> 'ford=>stepping_stones' OR p.tags @> 'mountain_pass=>yes')
+                      AND l.highway IS NOT NULL
+                      AND p.way && !bbox! -- end of ford point pseudo-line select
                   ) AS fords
             ) AS features
           ORDER BY
