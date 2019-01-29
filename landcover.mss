@@ -63,13 +63,12 @@
 // --- Other ----
 
 @danger_area: pink;
-@place_of_worship: #cdccc9;
-@place_of_worship_outline: #111;
 @playground: #b7f8e6;       // Lch(93,24,175)
 @power: darken(@industrial, 5%);
 @power-line: darken(@industrial-line, 5%);
 @societal_amenities: #fdebd8;   // Lch(94,12,76)
 @stadium: @societal_amenities; // also fitness_centre and sports_centre
+@place_of_worship: @societal_amenities;
 @tourism: #734a08;
 @military: #f55;
 
@@ -224,7 +223,7 @@
     polygon-fill: @place_of_worship;
     polygon-clip: false;
     [zoom >= 15] {
-      line-color: @place_of_worship_outline;
+      line-color: darken(@place_of_worship, 35%);
       line-width: 0.3;
       line-clip: false;
     }
