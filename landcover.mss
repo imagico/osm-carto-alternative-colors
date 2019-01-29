@@ -69,7 +69,7 @@
 @societal_amenities: #fdebd8;   // Lch(94,12,76)
 @stadium: @societal_amenities; // also fitness_centre and sports_centre
 @place_of_worship: @societal_amenities;
-@tourism: #734a08;
+@tourism: #660033;
 @military: #f55;
 
 // --- low zoom colors ---
@@ -983,28 +983,35 @@
 }
 
 #tourism-boundary {
-  [tourism = 'zoo'][zoom >= 10][way_pixels >= 20],
-  [tourism = 'theme_park'][zoom >= 10][way_pixels >= 20] {
-    a/line-width: 1;
-    a/line-offset: -0.5;
-    a/line-color: @tourism;
-    a/line-opacity: 0.5;
-    a/line-join: round;
-    a/line-cap: round;
-    [zoom >= 17],
-    [way_pixels >= 60] {
-      b/line-width: 4;
-      b/line-offset: -2;
-      b/line-color: @tourism;
-      b/line-opacity: 0.3;
-      b/line-join: round;
-      b/line-cap: round;    
-    }
+  [tourism = 'zoo'],
+  [tourism = 'theme_park'] {
+    [zoom >= 10][way_pixels >= 600],
+    [zoom >= 11][way_pixels >= 400],
+    [zoom >= 12][way_pixels >= 250],
+    [zoom >= 13][way_pixels >= 160],
+    [zoom >= 14][way_pixels >= 90],
     [zoom >= 17] {
-      a/line-width: 2;
-      a/line-offset: -1;
-      b/line-width: 6;
-      b/line-offset: -3;
+      a/line-width: 1;
+      a/line-offset: -0.5;
+      a/line-color: @tourism;
+      a/line-opacity: 0.35;
+      a/line-join: round;
+      a/line-cap: round;
+      [zoom >= 17],
+      [way_pixels >= 90] {
+        b/line-width: 4;
+        b/line-offset: -2;
+        b/line-color: @tourism;
+        b/line-opacity: 0.2;
+        b/line-join: round;
+        b/line-cap: round;    
+      }
+      [zoom >= 17] {
+        a/line-width: 2;
+        a/line-offset: -1;
+        b/line-width: 6;
+        b/line-offset: -3;
+      }
     }
   }
 }
