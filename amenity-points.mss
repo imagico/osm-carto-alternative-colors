@@ -1813,7 +1813,7 @@
       text-halo-fill: @standard-halo-fill;
       text-placement: interior;
       [access != ''][access != 'permissive'][access != 'yes'] {
-        text-fill: darken(@park, 50%);
+        text-fill: desaturate(lighten(@leisure-icon, 15%), 25%);
       }
     }
   }
