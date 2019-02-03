@@ -2027,10 +2027,10 @@
       [feature = 'landuse_industrial'],
       [feature = 'landuse_railway'],
       [feature = 'man_made_works'] {
-        text-fill: darken(@industrial, 60%);
+        text-fill: darken(@industrial, 50%);
       }
       [feature = 'landuse_commercial'] {
-        text-fill: darken(@commercial, 60%);
+        text-fill: darken(@commercial, 50%);
       }
       [feature = 'landuse_brownfield'],
       [feature = 'landuse_landfill'],
@@ -2054,7 +2054,7 @@
       [feature = 'amenity_school'],
       [feature = 'amenity_college'],
       [feature = 'amenity_university'] {
-        text-fill: darken(@societal_amenities, 70%);
+        text-fill: darken(@societal_amenities, 60%);
       }
       [feature = 'natural_heath'] {
         text-fill: darken(@heath, 40%);
@@ -2068,7 +2068,7 @@
       }
       [feature = 'leisure_sports_centre'],
       [feature = 'leisure_stadium'] {
-        text-fill: darken(@stadium, 70%);
+        text-fill: darken(@stadium, 60%);
       }
       [feature = 'leisure_dog_park'],
       [feature = 'leisure_fitness_centre'],

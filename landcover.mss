@@ -21,7 +21,7 @@
 
 @bare_ground: #eee5dc;
 @sand: #f5e9c6;
-@beach: #fff1ba;
+@beach: #fceeb6;          // Lch(94,29,97)
 @mud: rgba(203,177,154,0.3); // produces #e6dcd1 over @land
 
 // --- industrial ---
@@ -35,16 +35,14 @@
 
 @residential: #e0dfdf;      // Lch(89,0,0)
 @residential-line: #b9b9b9; // Lch(75,0,0)
-@retail: #ffd6d1;           // Lch(89,16,30)
-@retail-line: #d99c95;      // Lch(70,25,30)
-@commercial: #f2dad9;       // Lch(89,8.5,25)
-@commercial-line: #d1b2b0;  // Lch(75,12,25)
+@retail: #fcd8cd;           // Lch(89,15,42)
+@retail-line: #deae9f;      // Lch(75,21,42)
+@commercial: #f3dada;       // Lch(89,9,21)
+@commercial-line: #d1b1b1;  // Lch(75,12,21)
 @industrial: #ebdbe8;       // Lch(89,9,330) (Also used for railway)
 @industrial-line: #c6b3c3;  // Lch(75,11,330) (Also used for railway-line)
 @farmyard: #f5dcba;         // Lch(89,20,80)
 @farmyard-line: #d1b48c;    // Lch(75,25,80)
-
-@garages: #dfddce;
 
 // --- Transport ----
 
@@ -54,8 +52,10 @@
 @station-line: @transportation-line;
 @aerodrome: @transportation;
 @aerodrome-line: @transportation-line;
+@garages: @transportation;
+@garages-line: @transportation-line;
 @apron: #e9d1ff;
-@parking: #f7efb7;
+@parking: #faecdd;  // Lch(94,9,76)
 @railway: @industrial;
 @railway-line: @industrial-line;
 @rest_area: #efc8c8; // also services
@@ -66,7 +66,7 @@
 @playground: #b7f8e6;       // Lch(93,24,175)
 @power: darken(@industrial, 5%);
 @power-line: darken(@industrial-line, 5%);
-@societal_amenities: #fdebd8;   // Lch(94,12,76)
+@societal_amenities: #e2e7dc;   // Lch(91,6,127)
 @stadium: @societal_amenities; // also fitness_centre and sports_centre
 @place_of_worship: @societal_amenities;
 @tourism: #660033;
@@ -260,6 +260,13 @@
   [feature = 'landuse_garages'][zoom >= 10] {
     polygon-fill: @built-up-lowzoom;
     [zoom >= 13] { polygon-fill: @garages; }
+    [zoom >= 16] {
+      line-width: .5;
+      line-color: @garages-line;
+      [name != ''] {
+        line-width: 0.7;
+      }
+    }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
@@ -648,7 +655,7 @@
       [zoom >= 13] {
         polygon-fill: @societal_amenities;
         line-width: 0.3;
-        line-color: darken(@societal_amenities, 35%);
+        line-color: darken(@societal_amenities, 25%);
       }
       [way_pixels >= 4]  { polygon-gamma: 0.75; }
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
@@ -662,7 +669,7 @@
     [zoom >= 12] { polygon-fill: @parking; }
     [zoom >= 15] {
       line-width: 0.3;
-      line-color: saturate(darken(@parking, 40%), 20%);
+      line-color: desaturate(darken(@parking, 40%), 20%);
     }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }

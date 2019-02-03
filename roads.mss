@@ -17,6 +17,8 @@
 @access-marking: #eaeaea;
 @access-marking-living-street: #cccccc;
 
+@platform-fill: #bbbbbb;
+
 @footway-fill-lowzoom: #ff5069;
 @footway-fill: #fc592f;
 @footway-fill-noaccess: lighten(desaturate(@footway-fill, 56%), 12%);
@@ -1741,7 +1743,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line-color: grey;
         line-cap: round;
         b/line-width: 4;
-        b/line-color: #bbbbbb;
+        b/line-color: @platform-fill;
         b/line-cap: round;
         b/line-join: round;
       }
@@ -2248,7 +2250,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line-color: grey;
         line-cap: round;
         b/line-width: 4;
-        b/line-color: #bbbbbb;
+        b/line-color: @platform-fill;
         b/line-cap: round;
         b/line-join: round;
       }
@@ -2813,7 +2815,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
   [feature = 'highway_platform'],
   [feature = 'railway_platform'] {
     [zoom >= 16] {
-      polygon-fill: #bbbbbb;
+      polygon-fill: @platform-fill;
       polygon-gamma: 0.65;
     }
   }

@@ -1,6 +1,8 @@
-@building-fill: #d9d0c9; //Lch(84, 5, 70)
+@building-fill: #d9d0c9; // Lch(84,5,70)
 @building-line: darken(@building-fill, 15%);
 @building-low-zoom: darken(@building-fill, 4%);
+
+@bridge: #cdc5be; // Lch(80,5,70)
 
 #buildings {
   [zoom >= 13] {
@@ -27,6 +29,6 @@
 
 #bridge {
   [zoom >= 12] {
-    polygon-fill: #B8B8B8;
+    polygon-fill: @bridge;
   }
 }
