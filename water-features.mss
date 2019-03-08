@@ -9,12 +9,12 @@
 @water-hot: #ff4020;  // when changed here should be changed in SVGs too
 @whitewater-line: lighten(@water-color, 5%);
 
-#water-barriers-line, #water-barriers-poly {
+#water-barriers-line {
 
   ::wwline {
     [waterway = 'waterfall'],
     [waterway = 'weir'] {
-      #water-barriers-line[zoom >= 14] {
+      [zoom >= 14] {
         line-width: 1.5;
         line-offset: 1.5;
         line-color: @whitewater-line;
@@ -23,21 +23,15 @@
     }
   }
 
-  [waterway = 'dam'] {
-    #water-barriers-poly[zoom >= 12] {
+  [waterway = 'dam'][zoom >= 12] {
       polygon-fill: @dam-lz;
       [zoom >= 13] {
-        line-width: 2;
-        line-color: @dam-line;
-        line-join: round;
-        line-cap: round;
         polygon-fill: @dam;
       }
-    }
-    #water-barriers-line[zoom >= 12] {
       [wtype = 'river'],
       [wtype = 'canal'],
       [wtype = 'line'],
+      [wtype = 'polygon'],
       [zoom >= 13] {
         line-width: 1;
         [wtype = 'river'][zoom >= 13],
@@ -52,14 +46,13 @@
         line-join: round;
         line-cap: round;
       }
-    }
   }
 
   [waterway = 'weir'][zoom >= 12] {
-    #water-barriers-line {
       [wtype = 'river'],
       [wtype = 'canal'],
       [wtype = 'line'],
+      [wtype = 'polygon'],
       [zoom >= 14] {
         line-width: 1;
         [wtype = 'river'][zoom >= 13],
@@ -78,14 +71,13 @@
         }
         line-color: @weir-line;
       }
-    }
   }
 
   [waterway = 'lock_gate'][zoom >= 12] {
-    #water-barriers-line {
       [wtype = 'river'],
       [wtype = 'canal'],
       [wtype = 'line'],
+      [wtype = 'polygon'],
       [zoom >= 13] {
         line-width: 1;
         [wtype = 'river'][zoom >= 13],
@@ -97,7 +89,6 @@
         }
         line-color: @lock-gate-line;
       }
-    }
   }
 
   [waterway = 'waterfall'] {
