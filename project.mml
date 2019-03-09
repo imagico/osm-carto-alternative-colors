@@ -837,7 +837,7 @@ Layer:
                     (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                   FROM planet_osm_polygon b
                   JOIN planet_osm_line l ON ST_Intersects(ST_Boundary(b.way), l.way)
-                  WHERE b.waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
+                  WHERE b.waterway IN ('dam') AND (b.way && !bbox!)
                     AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
                   GROUP BY ST_Intersection(ST_Boundary(b.way), l.way), l.way
                 ) AS barriers
