@@ -70,7 +70,7 @@ Layer:
               ('landuse_' || (CASE WHEN landuse IN ('forest', 'military') THEN landuse ELSE NULL END)) AS landuse,
               ('natural_' || (CASE WHEN "natural" IN ('wood', 'sand', 'scree', 'shingle', 'bare_rock') THEN "natural" ELSE NULL END)) AS "natural",
               ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
-              way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+              way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
             FROM planet_osm_polygon
             WHERE (landuse IN ('forest', 'military')
               OR "natural" IN ('wood', 'wetland', 'mud', 'sand', 'scree', 'shingle', 'bare_rock'))
@@ -93,7 +93,7 @@ Layer:
             name,
             religion,
             crop,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             feature
           FROM (SELECT
               way, name, religion, crop, way_area, layer, prio,
@@ -408,7 +408,7 @@ Layer:
             tags->'glacier:type' as glacier_type,
             landuse,
             name,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE
             (waterway IN ('dock', 'riverbank')
@@ -537,7 +537,7 @@ Layer:
             END AS int_wetland,
             tags->'leaf_type' AS leaf_type,
             tags->'leaf_cycle' AS leaf_cycle,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef', 'scrub') OR landuse = 'forest')
             AND building IS NULL
@@ -569,10 +569,10 @@ Layer:
          SELECT
             ST_Difference(
               way,
-              (SELECT ST_Union(ST_Buffer(way, 6*sqrt(!pixel_width!::real*!pixel_height!::real)))
+              (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
                  FROM planet_osm_point p
                  WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
-                   AND ST_DWithin(l.way, p.way, 6*sqrt(!pixel_width!::real*!pixel_height!::real))
+                   AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
               )
             ) AS way, "natural", man_made
           FROM planet_osm_line l
@@ -594,14 +594,14 @@ Layer:
               (SELECT
                   COALESCE(
                     ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
-                      (0.5*carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), z(!scale_denominator!)) + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real))),
+                      (0.5*carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), z(!scale_denominator!)) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))),
                       ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 900913)
                   )
                 FROM planet_osm_line o
                 WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
                   carto_embankment_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), z(!scale_denominator!)) > 0.0 AND
                   ST_DWithin(l.line, o.way, 1) AND
-                  o.way && ST_Expand(!bbox!, (0.5*carto_embankment_line_width('motorway', z(!scale_denominator!)) + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real)) AND
+                  o.way && ST_Expand(!bbox!, (0.5*carto_embankment_line_width('motorway', z(!scale_denominator!)) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
                   (
                     (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
                     (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
@@ -613,7 +613,7 @@ Layer:
           FROM
             -- this queries the lines with embankment/cutting and buffers + aggregates them separately for embankment and cutting
             (SELECT
-                ST_Union(ST_Buffer(way, (0.5*width_px + 2.5)*sqrt(!pixel_width!::real*!pixel_height!::real))) AS way,
+                ST_Union(ST_Buffer(way, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))) AS way,
                 ST_Collect(way) AS line,
                 type
               FROM
@@ -714,7 +714,7 @@ Layer:
                         WHEN 17 THEN 4
                         ELSE 4.5
                       END)
-                    END)*sqrt(!pixel_width!::real*!pixel_height!::real) AS contructed_width,
+                    END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                     SUM(ST_Length(b.way)) AS mapped_width,
                     (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                   FROM planet_osm_line b
@@ -832,7 +832,7 @@ Layer:
                         WHEN 17 THEN 4
                         ELSE 4.5
                       END)
-                    END)*sqrt(!pixel_width!::real*!pixel_height!::real) AS contructed_width,
+                    END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                     MAX(ST_Length(ST_BoundingDiagonal(b.way))) AS polygon_width,
                     (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                   FROM planet_osm_polygon b
@@ -998,7 +998,7 @@ Layer:
                          WHEN 17 THEN 4
                          ELSE 4.5
                        END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
-                     END)*sqrt(!pixel_width!::real*!pixel_height!::real) AS contructed_width,
+                     END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                      (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                    FROM planet_osm_point p
                    JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
@@ -1019,7 +1019,7 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-          ST_Difference(ST_Buffer(point, (0.5*width + 1.0*(CASE WHEN width > 4.2 THEN 1.5 ELSE 1 END))*sqrt(!pixel_width!::real*!pixel_height!::real)), ST_Buffer(line, 0.5*width*sqrt(!pixel_width!::real*!pixel_height!::real))) AS way
+          ST_Difference(ST_Buffer(point, (0.5*width + 1.0*(CASE WHEN width > 4.2 THEN 1.5 ELSE 1 END))*NULLIF(!scale_denominator!*0.001*0.28,0)), ST_Buffer(line, 0.5*width*NULLIF(!scale_denominator!*0.001*0.28,0))) AS way
           FROM ( -- subselect to avoid duplicating the line width
             SELECT
               p.way AS point,
@@ -1067,7 +1067,7 @@ Layer:
       table: |-
         (SELECT
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             man_made,
             name
           FROM planet_osm_polygon
@@ -1196,7 +1196,7 @@ Layer:
         (SELECT
             way,
             landuse,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE landuse = 'military'
             AND building IS NULL
@@ -1708,7 +1708,7 @@ Layer:
                   (SELECT
                       l.way AS way, -- this is the highway intersecting the ford node
                       ST_LineLocatePoint(l.way, p.way) AS position, -- this is the position along the way
-                      sqrt(!pixel_width!::real*!pixel_height!::real)/ST_Length(l.way) AS length, -- this is the pixel size as a fraction of the way length
+                      NULLIF(!scale_denominator!*0.001*0.28,0)/ST_Length(l.way) AS length, -- this is the pixel size as a fraction of the way length
                       ('highway_' || l.highway) AS feature,
                       l.horse AS horse,
                       l.foot AS foot,
@@ -1904,7 +1904,7 @@ Layer:
       table: |-
         (SELECT
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             name,
             tourism
           FROM planet_osm_polygon
@@ -1940,7 +1940,7 @@ Layer:
       table: |-
         (SELECT
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             name
           FROM planet_osm_polygon
           WHERE boundary = 'administrative'
@@ -1982,7 +1982,7 @@ Layer:
       table: |-
         (SELECT
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             name,
             ref
           FROM planet_osm_polygon
@@ -2184,7 +2184,7 @@ Layer:
                                'copyshop', 'sports', 'deli', 'tobacco', 'art', 'tea', 'coffee', 'tyres', 'pastry', 'chocolate',
                                'music', 'medical_supply', 'dairy', 'video_games') THEN shop
                                ELSE 'other' END AS shop,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           -- The upcoming where clause is needed for performance only, as the CASE statements would end up doing the equivalent filtering
           WHERE aeroway IN ('helipad', 'aerodrome')
@@ -2442,7 +2442,7 @@ Layer:
       table: |-
         (SELECT
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             man_made,
             name
           FROM planet_osm_polygon
@@ -2513,7 +2513,7 @@ Layer:
       table: |-
         (SELECT
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             highway,
             name
           FROM planet_osm_polygon
@@ -2611,7 +2611,7 @@ Layer:
           FROM
             (SELECT
                 way,
-                way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
                 COALESCE(
                   'landuse_' || CASE WHEN landuse IN ('forest', 'military') THEN landuse ELSE NULL END,
                   'natural_' || CASE WHEN "natural" IN ('wood', 'glacier', 'sand', 'scree', 'shingle', 'bare_rock') THEN "natural" ELSE NULL END,
@@ -2628,7 +2628,7 @@ Layer:
              UNION ALL
              SELECT
                 ST_ClosestPoint(oway,ST_PointOnSurface(way)),
-                ST_Area(ST_Envelope(oway))/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+                ST_Area(ST_Envelope(oway))/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
                 'place_archipelago' AS feature,
                 name,
                 'no' AS is_building
@@ -2687,7 +2687,7 @@ Layer:
           FROM
             (SELECT
                 way,
-                way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
                 COALESCE(
                   'aeroway_' || CASE WHEN aeroway IN ('gate', 'apron', 'helipad', 'aerodrome') THEN aeroway ELSE NULL END,
                   'tourism_' || CASE WHEN tourism IN ('artwork', 'alpine_hut', 'hotel', 'motel', 'hostel', 'chalet', 'wilderness_hut', 'guest_house', 'apartment', 'camp_site', 'caravan_site',
@@ -2781,7 +2781,7 @@ Layer:
              UNION ALL
              SELECT
                 ST_ClosestPoint(oway,ST_PointOnSurface(way)),
-                ST_Area(ST_Envelope(oway))/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels,
+                ST_Area(ST_Envelope(oway))/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
                 'place_archipelago' AS feature,
                 NULL AS access,
                 name,
@@ -3003,7 +3003,7 @@ Layer:
         (SELECT
             name,
             way,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE building IS NOT NULL
             AND building NOT IN ('no')
@@ -3036,7 +3036,7 @@ Layer:
             "addr:housenumber" AS addr_housenumber,
             "addr:housename" AS addr_housename,
             tags->'addr:unit' AS addr_unit,
-            way_area/NULLIF(!pixel_width!::real*!pixel_height!::real,0) AS way_pixels
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE (("addr:housenumber" IS NOT NULL) OR ("addr:housename" IS NOT NULL) OR ((tags->'addr:unit') IS NOT NULL))
             AND building IS NOT NULL
