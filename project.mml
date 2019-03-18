@@ -2639,3 +2639,12 @@ Layer:
           ) AS amenity_low_priority_poly
     properties:
       minzoom: 14
+  - id: eu-banner
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      file: eu-copyright.shp
+      type: shape
+    properties:
+      minzoom: 2
+      maxzoom: 6

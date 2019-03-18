@@ -52,3 +52,31 @@
     }
   }
 }
+
+#eu-banner {
+  text-fill: #ff6080;
+  text-face-name: @bold-fonts;
+  text-name: "[name]";
+  text-size: 10;
+  text-wrap-width: 40;
+  [zoom >= 3] {
+    text-size: 15;
+    text-wrap-width: 60;
+  }
+  [zoom >= 4] {
+    text-size: 30;
+    text-wrap-width: 120
+  }
+  [zoom >= 5] {
+    text-size: 60;
+    text-wrap-width: 240
+  }
+  [zoom >= 6] {
+    text-size: 100;
+    text-wrap-width: 400
+  }
+  text-halo-radius: @standard-halo-radius;
+  text-halo-fill: #202020;
+  text-placement: interior;
+  text-allow-overlap: true;
+}
