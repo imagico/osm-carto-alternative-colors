@@ -22,7 +22,7 @@ def load_settings():
 def svg_convert(fin, fout, transparent, inkscape, dpi):
 
     sys.stdout.flush()
-    
+
     if inkscape:
         if transparent:
             if dpi > 0:
@@ -51,15 +51,15 @@ def svg_convert(fin, fout, transparent, inkscape, dpi):
                 params = ["convert", "-density", dpi, fin, fout]
             else:
                 params = ["convert", fin, fout]
-                
+
         if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
             sys.exit("\n\n   'convert' error: SVG conversion failed.\n")
 
         if not(os.path.exists(fout)):
             sys.exit("\n\n   'convert' error: SVG conversion failed.\n")
-                
+
     sys.stdout.flush()
-        
+
 
 def generate_pattern(pattern, colors, inkscape, dpi):
 
@@ -70,7 +70,7 @@ def generate_pattern(pattern, colors, inkscape, dpi):
         pattern_components.pop()
         pattern_base = "_".join(pattern_components)
         source_name = os.path.join("symbols/patterns/sources", pattern_base + ".svg")
-        
+
     if os.path.exists(source_name):
         png_bw_name = os.path.join("symbols/patterns/processed", pattern + "_bw.png")
         svg_bw_name = os.path.join("symbols/patterns/processed", pattern + "_bw.svg")
@@ -89,7 +89,7 @@ def generate_pattern(pattern, colors, inkscape, dpi):
 
             im = Image.open(png_name)
             (width, height) = im.size
-            
+
             sys.stdout.flush()
 
             if subprocess.call(
@@ -102,7 +102,7 @@ def generate_pattern(pattern, colors, inkscape, dpi):
 
             if not(os.path.exists(preview_name)):
                 sys.exit("\n\n   'convert' error: preview generation failed.\n")
-                
+
         else:
             print pattern+" (colorized)..."
 
@@ -192,11 +192,11 @@ def main():
                     sub_count += cnt
 
                 fout.write(line_out)
-                    
+
             fin.close()
             fout.close()
             print "  "+("%d" % sub_count)+" patterns"
-            
+
     elif args.png:
         print "Converting mss code to use PNGs..."
         for mss in mss_files:
@@ -212,7 +212,7 @@ def main():
                     sub_count += cnt
 
                 fout.write(line_out)
-                    
+
             fin.close()
             fout.close()
             print "  "+("%d" % sub_count)+" patterns"

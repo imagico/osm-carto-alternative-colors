@@ -789,9 +789,17 @@
     [natural = 'mud'],
     [int_wetland = 'tidalflat'] {
       [zoom >= 9] {
-        polygon-fill: @mud;
-        [way_pixels >= 4]  { polygon-gamma: 0.75; }
-        [way_pixels >= 64] { polygon-gamma: 0.3;  }
+        [surface = 'sand'][zoom >= 13] {
+          polygon-pattern-file: url('symbols/patterns/beach.png');
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        }
+        [surface != 'sand'],
+        [zoom < 13] {
+          polygon-fill: @mud;
+          [way_pixels >= 4]  { polygon-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-gamma: 0.3;  }
+        }
       }
     }
   }
@@ -803,7 +811,36 @@
   [natural = 'reef'][zoom >= 10] {
     polygon-pattern-file: url('symbols/patterns/reef.png');
     polygon-pattern-alignment: global;
+    [zoom >= 13] {
+      [reef = 'sand'] {
+        polygon-pattern-file: url('symbols/patterns/reef_sand.png');
+      }
+      [reef = 'rock'] {
+        polygon-pattern-file: url('symbols/patterns/reef_rock.png');
+      }
+      [reef = 'coral'] {
+        polygon-pattern-file: url('symbols/patterns/reef_coral.png');
+      }
+    }
   }
+
+/*
+  [natural = 'bare_rock'][zoom >= 13] {
+    polygon-pattern-file: url('symbols/patterns/rock_overlay.png');
+    [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+    [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+  }
+
+  [natural = 'scree'],
+  [natural = 'shingle'] {
+    [zoom >= 13] {
+      polygon-pattern-file: url('symbols/patterns/scree_overlay.png');
+      [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+      [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+    }
+  }
+*/
+
   [zoom >= 14] {
     [int_wetland = 'marsh'],
     [int_wetland = 'saltmarsh'],
@@ -865,7 +902,7 @@
         polygon-pattern-alignment: global;
       }
     }
-    [natural = 'scrub'] {
+    [natural = 'scrub']::scrub {
       polygon-pattern-file: url('symbols/patterns/scrub_unknown_unknown.png');
       [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_evergreen.png'); }
       [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_deciduous.png'); }

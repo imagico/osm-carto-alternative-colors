@@ -537,9 +537,10 @@ Layer:
             END AS int_wetland,
             tags->'leaf_type' AS leaf_type,
             tags->'leaf_cycle' AS leaf_cycle,
+            tags->'reef' AS reef,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
-          WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef', 'scrub') OR landuse = 'forest')
+          WHERE ("natural" IN ('marsh', 'mud', 'wetland', 'wood', 'beach', 'shoal', 'reef', 'scrub', 'scree', 'shingle', 'bare_rock') OR landuse = 'forest')
             AND building IS NULL
             AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
           ORDER BY COALESCE(layer,0), way_area DESC

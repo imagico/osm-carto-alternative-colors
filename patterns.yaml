@@ -90,6 +90,9 @@ patterns:
   - scrub_unknown_mixed
   - scrub_unknown_unknown
   - reef
+  - reef_coral
+  - reef_rock
+  - reef_sand
   - rock_overlay
   - scree_overlay
   - river_intermittent
@@ -124,8 +127,8 @@ patterns:
 
 colors:
   allotments: ["#c9e1bf", "#f2efe9"]
-  beach_coarse: ["#fff1ba", "#969696"]
-  beach: ["#fff1ba", "#685d45", 0.61]
+  beach_coarse: ["#fceeb6", "#969696"]
+  beach: ["#fceeb6", "#685d45", 0.61]
   brownfield: ["#c5bea6", "#b5ae96"]
   construction: ["#c5bea6", "#b4ae96"]
   landfill: ["#c5bea6", "#aba388"]
@@ -174,8 +177,11 @@ colors:
   scrub_unknown_mixed: ["#c4daa5", "#99c671"]
   scrub_unknown_unknown: ["#c4daa5", "#a0c1a0"]
   reef: ["#a2d1e0", "#549ccd"]
-  rock_overlay: ["#eee5dc", "#cfcdca"]
-  scree_overlay: ["#eee5dc", "#cbc9c6"]
+  reef_rock: ["#a2d1e0", "#549ccd", 0.3]
+  reef_sand: ["#a2d1e0", "#549ccd"]
+  reef_coral: ["#a2d1e0", "#549ccd", 0.65]
+  rock_overlay: ["#eee5dc", "#8a99a5", 0.3]
+  scree_overlay: ["#eee5dc", "#7e8d99", 0.3]
   river_intermittent: ["#f2efe9", "native"]
   water_intermittent: ["#f2efe9", "native"]
   water_intermittent_salt: ["#f2efe9", "native"]
