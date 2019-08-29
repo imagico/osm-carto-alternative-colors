@@ -13,6 +13,14 @@
 
 .ocean {
   polygon-fill: @ocean-color;
+  [zoom >= 9] {
+    comp-op: dst-out;
+  }
+}
+
+.ocean-backdrop {
+  polygon-fill: @ocean-color;
+  comp-op: dst-over;
 }
 
 .lakes {

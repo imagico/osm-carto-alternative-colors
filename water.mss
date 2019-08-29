@@ -23,40 +23,78 @@
 @stream-width-z17:             3.5;
 @stream-width-z18:             4;
 
+#glaciers {
+  [zoom >= 6] {
+    line-width: 0.75;
+    line-color: @glacier-line;
+    polygon-fill: @glacier;
+    [glacier_type = 'shelf'],
+    [glacier_type = 'ice_tongue'] {
+      polygon-fill: @glacier-shelf;
+    }
+    [zoom >= 8] {
+      line-width: 1.0;
+    }
+    [zoom >= 10] {
+      line-dasharray: 4,2;
+      line-width: 1.5;
+    }
+  }
+}
+
 #water-areas {
-  [natural = 'glacier']::natural {
-    [zoom >= 6] {
-      line-width: 0.75;
-      line-color: @glacier-line;
-      polygon-fill: @glacier;
-      [glacier_type = 'shelf'],
-      [glacier_type = 'ice_tongue'] {
-        polygon-fill: @glacier-shelf;
-      }
-      [zoom >= 8] {
-        line-width: 1.0;
-      }
-      [zoom >= 10] {
-        line-dasharray: 4,2;
-        line-width: 1.5;
-      }
-    }
-  }
-
-  [waterway = 'dock'] {
-    [zoom >= 9]::waterway {
-      polygon-fill: @water-color;
-      [way_pixels >= 4] {
-        polygon-gamma: 0.75;
-      }
-      [way_pixels >= 64] {
-        polygon-gamma: 0.6;
-      }
-    }
-  }
-
-  [landuse = 'basin'][zoom >= 7]::landuse {
+  [waterway = 'dock'],
+  [landuse = 'basin'],
+  [natural = 'water'],
+  [landuse = 'reservoir'],
+  [waterway = 'riverbank'] {
     polygon-fill: @water-color;
+    [zoom >= 9] {
+      polygon-comp-op: dst-out;
+    }
+    [water != 'river'][water != 'canal'][waterway != 'riverbank'] {
+      [intermittent = 'yes'],
+      [seasonal = 'yes'] {
+        [salt = 'yes'] { polygon-fill: @ocean-color; }
+        [zoom >= 8] {
+          polygon-fill: transparent;
+          polygon-pattern-file: url('symbols/patterns/water_intermittent.png');
+          [salt = 'yes'] {
+            polygon-pattern-file: url('symbols/patterns/water_intermittent_salt.png');
+          }
+          polygon-pattern-alignment: global;
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
+        }
+        polygon-comp-op: src-over;
+      }
+      [intermittent != 'yes'][seasonal != 'yes'][salt = 'yes'] {
+        polygon-fill: @ocean-color;
+        [zoom >= 10] {
+          polygon-pattern-file: url('symbols/patterns/water_salt.png');
+          polygon-pattern-alignment: global;
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
+        }
+        polygon-comp-op: src-over;
+      }
+    }
+    [natural = 'water'][water = 'river'],
+    [natural = 'water'][water = 'canal'],
+    [waterway = 'riverbank'] {
+      polygon-fill: @river-color;
+      [intermittent = 'yes'],
+      [seasonal = 'yes'] {
+        [zoom >= 15] {
+          polygon-fill: @bare_ground;
+          polygon-pattern-file: url('symbols/patterns/river_intermittent.png');
+          polygon-pattern-alignment: global;
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
+          polygon-comp-op: src-over;
+        }
+      }
+    }
     [way_pixels >= 4] {
       polygon-gamma: 0.75;
     }
@@ -64,61 +102,16 @@
       polygon-gamma: 0.6;
     }
   }
+}
 
-  [natural = 'water']::natural,
-  [landuse = 'reservoir']::landuse,
-  [waterway = 'riverbank']::waterway {
-    [zoom >= 6] {
-      polygon-fill: @water-color;
+#river-areas-backdrop {
+  polygon-fill: @river-color;
+  comp-op: dst-over;
+}
 
-      [water != 'river'][water != 'canal'][waterway != 'riverbank'] {
-        [intermittent = 'yes'],
-        [seasonal = 'yes'] {
-          [salt = 'yes'] { polygon-fill: @ocean-color; }
-          [zoom >= 8] {
-            polygon-fill: transparent;
-            polygon-pattern-file: url('symbols/patterns/water_intermittent.png');
-            [salt = 'yes'] {
-              polygon-pattern-file: url('symbols/patterns/water_intermittent_salt.png');
-            }
-            polygon-pattern-alignment: global;
-            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-            [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
-          }
-        }
-        [intermittent != 'yes'][seasonal != 'yes'][salt = 'yes'] {
-          polygon-fill: @ocean-color;
-          [zoom >= 10] {
-            polygon-pattern-file: url('symbols/patterns/water_salt.png');
-            polygon-pattern-alignment: global;
-            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-            [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
-          }
-        }
-      }
-      [natural = 'water'][water = 'river'],
-      [natural = 'water'][water = 'canal'],
-      [waterway = 'riverbank'] {
-        polygon-fill: @river-color;
-        [intermittent = 'yes'],
-        [seasonal = 'yes'] {
-          [zoom >= 15] {
-            polygon-fill: @bare_ground;
-            polygon-pattern-file: url('symbols/patterns/river_intermittent.png');
-            polygon-pattern-alignment: global;
-            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-            [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
-          }
-        }
-      }
-      [way_pixels >= 4] {
-        polygon-gamma: 0.75;
-      }
-      [way_pixels >= 64] {
-        polygon-gamma: 0.6;
-      }
-    }
-  }
+#water-areas-backdrop {
+  polygon-fill: @water-color;
+  comp-op: dst-over;
 }
 
 #water-lines-casing {
