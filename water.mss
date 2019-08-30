@@ -23,8 +23,8 @@
 @stream-width-z17:             3.5;
 @stream-width-z18:             4;
 
-#glaciers {
-  [zoom >= 6] {
+#water-areas {
+  [natural = 'glacier'] {
     line-width: 0.75;
     line-color: @glacier-line;
     polygon-fill: @glacier;
@@ -40,18 +40,13 @@
       line-width: 1.5;
     }
   }
-}
-
-#water-areas {
   [waterway = 'dock'],
   [landuse = 'basin'],
   [natural = 'water'],
   [landuse = 'reservoir'],
   [waterway = 'riverbank'] {
     polygon-fill: @water-color;
-    [zoom >= 9] {
-      polygon-comp-op: dst-out;
-    }
+    polygon-comp-op: dst-out;
     [water != 'river'][water != 'canal'][waterway != 'riverbank'] {
       [intermittent = 'yes'],
       [seasonal = 'yes'] {
@@ -111,6 +106,7 @@
 
 #water-areas-backdrop {
   polygon-fill: @water-color;
+  /*polygon-fill: @ocean-color;*/
   comp-op: dst-over;
 }
 
@@ -171,6 +167,7 @@
     [zoom >= 10] { line-width: @river-width-z10; }
     [zoom >= 11] { line-width: @river-width-z11; }
   }
+  line-comp-op: src-atop;
 }
 
 .water-lines {
@@ -184,6 +181,7 @@
       background/line-width: @river-width-z12;
       background/line-cap: round;
       background/line-join: round;
+      background/line-comp-op: src-atop;
     }
 
     [bridge = 'yes'] {
@@ -206,6 +204,7 @@
         bkg_intermittent/line-color: @land-color;
         bkg_intermittent/line-join: round;
         bkg_intermittent/line-width: @river-width-z14 - 1;
+        bkg_intermittent/line-comp-op: src-atop;
         [zoom >= 15] { bkg_intermittent/line-width: @river-width-z15 - 1; }
         [zoom >= 16] { bkg_intermittent/line-width: @river-width-z16 - 1; }
         [zoom >= 17] { bkg_intermittent/line-width: @river-width-z17 - 1; }
@@ -217,6 +216,7 @@
     water/line-width: @river-width-z12;
     water/line-cap: round;
     water/line-join: round;
+    water/line-comp-op: src-atop;
 
     [zoom >= 13] { water/line-width: @river-width-z13; }
     [zoom >= 14] { water/line-width: @river-width-z14; }
@@ -231,6 +231,7 @@
       artificial/line-width: @river-width-z12 * 0.5;
       artificial/line-cap: round;
       artificial/line-join: round;
+      artificial/line-comp-op: src-atop;
       [zoom >= 13] { artificial/line-width: @river-width-z13 * 0.5; }
       [zoom >= 14] { artificial/line-width: @river-width-z14 * 0.5; water/line-color: darken(@river-color, 3%); }
       [zoom >= 15] { 
@@ -410,12 +411,12 @@
       [zoom < 14] {
         centerline/line-color: @bare_ground;
         centerline/line-width: 0.65;
+        centerline/line-comp-op: src-atop;
         [zoom >= 13] { centerline/line-width: 0.9; }
       }
     }
   }
   }
-
 }
 
 #water-lines-text {

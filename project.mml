@@ -68,12 +68,12 @@ Layer:
           FROM (SELECT
               way, COALESCE(name, '') AS name, religion,
               ('landuse_' || (CASE WHEN landuse IN ('forest', 'military') THEN landuse ELSE NULL END)) AS landuse,
-              ('natural_' || (CASE WHEN "natural" IN ('wood', 'sand', 'scree', 'shingle', 'bare_rock') THEN "natural" ELSE NULL END)) AS "natural",
+              ('natural_' || (CASE WHEN "natural" IN ('wood', 'sand', 'scree', 'shingle', 'bare_rock', 'beach') THEN "natural" ELSE NULL END)) AS "natural",
               ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
               way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
             FROM planet_osm_polygon
             WHERE (landuse IN ('forest', 'military')
-              OR "natural" IN ('wood', 'wetland', 'mud', 'sand', 'scree', 'shingle', 'bare_rock'))
+              OR "natural" IN ('wood', 'wetland', 'mud', 'sand', 'scree', 'shingle', 'bare_rock', 'beach'))
               AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
               AND building IS NULL
             ORDER BY COALESCE(layer,0), way_area DESC
@@ -199,47 +199,6 @@ Layer:
           FROM planet_osm_line
           WHERE waterway IN ('stream', 'drain', 'ditch')
         ) AS water_lines_casing
-    properties:
-      minzoom: 12
-  - id: water-lines-low-zoom
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way,
-            waterway,
-            tags->'intermittent' as intermittent,
-            tags->'seasonal' as seasonal
-          FROM planet_osm_line
-          WHERE waterway = 'river'
-        ) AS water_lines_low_zoom
-    properties:
-      minzoom: 8
-      maxzoom: 11
-  - id: water-lines
-    class: water-lines
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way,
-            waterway,
-            name,
-            tags->'intermittent' as intermittent,
-            tags->'seasonal' as seasonal,
-            CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
-            'no' AS bridge
-          FROM planet_osm_line
-          WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
-            AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
-            ORDER BY
-              COALESCE(layer,0),
-              CASE WHEN waterway IN ('derelict_canal') THEN 0 WHEN waterway IN ('drain', 'ditch') THEN 1 WHEN waterway IN ('canal') THEN 2 ELSE 3 END
-        ) AS water_lines
     properties:
       minzoom: 12
   - id: rivers-z0
@@ -393,24 +352,6 @@ Layer:
       minzoom: 6
       maxzoom: 6
     advanced: {}
-  - id: glaciers
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way,
-            tags->'glacier:type' as glacier_type,
-            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
-          FROM planet_osm_polygon
-          WHERE "natural" IN ('glacier')
-            AND building IS NULL
-            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
-          ORDER BY COALESCE(layer,0), way_area DESC
-        ) AS glaciers
-    properties:
-      minzoom: 7
   - id: water-areas
     geometry: polygon
     <<: *extents
@@ -425,6 +366,7 @@ Layer:
             tags->'intermittent' as intermittent,
             tags->'seasonal' as seasonal,
             tags->'salt' as salt,
+            tags->'glacier:type' as glacier_type,
             landuse,
             name,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
@@ -432,7 +374,7 @@ Layer:
           WHERE
             (waterway IN ('dock', 'riverbank')
               OR landuse IN ('reservoir', 'basin')
-              OR "natural" IN ('water'))
+              OR "natural" IN ('water', 'glacier'))
             AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
             AND building IS NULL
             AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
@@ -542,7 +484,8 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, surface,
+            way,
+            surface,
             "natural",
             CASE WHEN "natural" IN ('mud') 
                 THEN "natural" 
@@ -554,16 +497,56 @@ Layer:
                     END 
                 END
             END AS int_wetland,
-            tags->'reef' AS reef,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
-          WHERE "natural" IN ('mud', 'wetland', 'beach', 'shoal', 'reef', 'scree', 'shingle', 'bare_rock')
+          WHERE "natural" IN ('mud', 'wetland', 'beach', 'shoal', 'scree', 'shingle', 'bare_rock')
             AND building IS NULL
             AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS landcover_water
     properties:
-      minzoom: 9
+      minzoom: 7
+  - id: water-lines-low-zoom
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            waterway,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal
+          FROM planet_osm_line
+          WHERE waterway = 'river'
+        ) AS water_lines_low_zoom
+    properties:
+      minzoom: 8
+      maxzoom: 11
+  - id: water-lines
+    class: water-lines
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            waterway,
+            name,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
+            'no' AS bridge
+          FROM planet_osm_line
+          WHERE waterway IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi')
+            AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
+            ORDER BY
+              COALESCE(layer,0),
+              CASE WHEN waterway IN ('derelict_canal') THEN 0 WHEN waterway IN ('drain', 'ditch') THEN 1 WHEN waterway IN ('canal') THEN 2 ELSE 3 END
+        ) AS water_lines
+    properties:
+      minzoom: 12
   - id: ocean-lz-backdrop
     class: "ocean-backdrop"
     geometry: polygon
@@ -572,7 +555,7 @@ Layer:
       file: data/simplified-water-polygons-complete-3857/simplified_water_polygons.shp
       type: shape
     properties:
-      minzoom: 9
+      minzoom: 7
       maxzoom: 9
   - id: ocean-backdrop
     class: "ocean-backdrop"
@@ -601,7 +584,7 @@ Layer:
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS river_areas_backdrop
     properties:
-      minzoom: 9
+      minzoom: 7
   - id: water-areas-backdrop
     geometry: polygon
     <<: *extents
@@ -612,7 +595,7 @@ Layer:
             ST_MakeEnvelope(-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244, 900913) AS way
         ) AS water_areas_backdrop
     properties:
-      minzoom: 9
+      minzoom: 7
   - id: landcover-area-symbols
     geometry: polygon
     <<: *extents
@@ -620,7 +603,8 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, surface, 
+            way,
+            CASE WHEN ("natural" in ('reef')) THEN tags->'reef' ELSE surface END AS surface,
             COALESCE(CASE WHEN landuse = 'forest' THEN 'wood' ELSE NULL END, "natural") AS "natural",
             CASE WHEN "natural" IN ('mud') 
                 THEN "natural" 
@@ -629,20 +613,20 @@ Layer:
                   ELSE CASE WHEN ("natural" = 'wetland')
                     THEN tags->'wetland'
                     ELSE NULL
-                    END 
+                    END
                 END
             END AS int_wetland,
             tags->'leaf_type' AS leaf_type,
             tags->'leaf_cycle' AS leaf_cycle,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
-          WHERE ("natural" IN ('mud', 'wetland', 'wood', 'scrub') OR landuse = 'forest')
+          WHERE ("natural" IN ('mud', 'wetland', 'wood', 'scrub', 'reef') OR landuse = 'forest')
             AND building IS NULL
             AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS landcover_area_symbols
     properties:
-      minzoom: 9
+      minzoom: 7
   - id: icesheet-outlines
     geometry: linestring
     <<: *extents

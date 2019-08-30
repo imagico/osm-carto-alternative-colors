@@ -13,9 +13,11 @@
 
 .ocean {
   polygon-fill: @ocean-color;
-  [zoom >= 9] {
-    comp-op: dst-out;
-  }
+}
+
+#ocean-lz,
+#ocean {
+  comp-op: dst-out;
 }
 
 .ocean-backdrop {
