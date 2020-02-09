@@ -91,7 +91,7 @@ Layer:
       table: |-
         (SELECT
             way, name, religion, way_pixels, is_building,
-            COALESCE(aeroway, amenity, wetland, power, landuse, leisure, man_made, "natural", shop, tourism, highway, railway) AS feature
+            COALESCE(aeroway, amenity, wetland, power, landuse, leisure, man_made, "natural", shop, tourism, highway, railway, barrier) AS feature
           FROM (SELECT
               way, COALESCE(name, '') AS name,
               ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
@@ -115,6 +115,7 @@ Layer:
               ('tourism_' || (CASE WHEN tourism IN ('camp_site', 'caravan_site', 'picnic_site') THEN tourism ELSE NULL END)) AS tourism,
               ('highway_' || (CASE WHEN highway IN ('services', 'rest_area') THEN highway ELSE NULL END)) AS highway,
               ('railway_' || (CASE WHEN railway = 'station' THEN railway ELSE NULL END)) AS railway,
+              ('barrier_' || (CASE WHEN barrier IN ('hedge') THEN barrier ELSE NULL END)) AS barrier,
               CASE WHEN religion IN ('christian', 'jewish', 'muslim') THEN religion ELSE 'INT-generic'::text END AS religion,
               way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
               CASE WHEN building = 'no' OR building IS NULL THEN 'no' ELSE 'yes' END AS is_building,
@@ -132,7 +133,8 @@ Layer:
               OR shop IN ('mall')
               OR tourism IN ('camp_site', 'caravan_site', 'picnic_site')
               OR highway IN ('services', 'rest_area')
-              OR railway = 'station')
+              OR railway = 'station'
+              OR barrier IN ('hedge'))
               AND way_area > 1*!pixel_width!::real*!pixel_height!::real
           ) AS landcover
           ORDER BY way_area DESC, feature
@@ -588,6 +590,7 @@ Layer:
                     waterway
                   FROM planet_osm_polygon
                   WHERE way && !bbox!
+                    AND barrier NOT IN ('hedge')
                 UNION ALL
                 SELECT
                     way,
@@ -599,8 +602,8 @@ Layer:
                 ) _
               WHERE barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                   'handrail', 'hedge', 'retaining_wall', 'wall')
-              OR historic = 'citywalls'
-              AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'stream', 'drain', 'ditch'))
+                OR historic = 'citywalls'
+                AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'stream', 'drain', 'ditch'))
           ) AS features
         ) AS line_barriers
     properties:

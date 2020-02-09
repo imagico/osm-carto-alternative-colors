@@ -355,6 +355,12 @@
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
   }
 
+  [feature = 'barrier_hedge'][zoom >= 16] {
+    polygon-fill: #aed1a0;
+    [way_pixels >= 4]  { polygon-gamma: 0.75; }
+    [way_pixels >= 64] { polygon-gamma: 0.3;  }
+  }
+
   [feature = 'landuse_retail'],
   [feature = 'shop_mall'],
   [feature = 'amenity_marketplace'] {
