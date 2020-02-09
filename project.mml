@@ -580,23 +580,7 @@ Layer:
               ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                     'handrail', 'hedge', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
               ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic
-              FROM
-                (SELECT
-                    way,
-                    historic,
-                    barrier,
-                    waterway
-                  FROM planet_osm_polygon
-                  WHERE way && !bbox!
-                UNION ALL
-                SELECT
-                    way,
-                    historic,
-                    barrier,
-                    waterway
-                  FROM planet_osm_line
-                  WHERE way && !bbox!
-                ) _
+              FROM planet_osm_line
               WHERE barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                   'handrail', 'hedge', 'retaining_wall', 'wall')
               OR historic = 'citywalls'
