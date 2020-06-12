@@ -292,13 +292,6 @@
     }
   }
 
-  [feature = 'amenity_embassy'][zoom >= 17] {
-    marker-file: url('symbols/embassy.svg');
-    marker-fill: @public-service;
-    marker-placement: interior;
-    marker-clip: false;
-  }
-
   [feature = 'amenity_library'][zoom >= 16] {
     marker-file: url('symbols/library.svg');
     marker-fill: @culture;
@@ -1033,6 +1026,20 @@
     marker-fill: @office;
   }
 
+  [feature = 'diplomatic_embassy'][zoom >= 17] {
+    marker-file: url('symbols/embassy.svg');
+    marker-fill: @office;
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
+  [feature = 'diplomatic_consulate'][zoom >= 17] {
+    marker-file: url('symbols/consulate.svg');
+    marker-fill: @office;
+    marker-placement: interior;
+    marker-clip: false;
+  }
+
   [feature = 'leisure_water_park'][zoom >= 17] {
     marker-file: url('symbols/water_park.svg');
     marker-placement: interior;
@@ -1565,7 +1572,6 @@
   [feature = 'amenity_fire_station'][zoom >= 17],
   [feature = 'amenity_post_office'][zoom >= 17],
   [feature = 'amenity_prison'][zoom >= 17],
-  [feature = 'amenity_embassy'][zoom >= 17],
   [feature = 'amenity_bank'][zoom >= 17] {
     text-name: "[name]";
     text-size: @standard-font-size;
@@ -1576,7 +1582,6 @@
     [feature = 'amenity_courthouse'] { text-dy: 13; }
     [feature = 'amenity_townhall'] { text-dy: 13; }
     [feature = 'amenity_prison'] { text-dy: 12; }
-    [feature = 'amenity_embassy'] { text-dy: 10; }
     [feature = 'amenity_bank'] { text-dy: 9; }
     text-face-name: @standard-font;
     text-halo-radius: @standard-halo-radius;
@@ -2509,6 +2514,22 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-dy: 8;
+      text-fill: @office;
+      text-face-name: @standard-font;
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: rgba(255, 255, 255, 0.6);
+      text-placement: interior;
+    }
+  }
+
+  [feature = 'diplomatic_embassy'],
+  [feature = 'diplomatic_consulate'] {
+    [zoom >= 17] {
+      text-name: "[name]";
+      text-size: @standard-font-size;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-dy: 10;
       text-fill: @office;
       text-face-name: @standard-font;
       text-halo-radius: @standard-halo-radius;
