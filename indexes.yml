@@ -6,6 +6,8 @@ point:
   # The point table is small, but so are the partial indexes
   place:
     where: place IS NOT NULL AND name IS NOT NULL
+  water_barrier:
+    where: waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
 line:
   name:
     where: name IS NOT NULL
@@ -13,6 +15,8 @@ line:
     where: route = 'ferry'
   river:
     where: waterway = 'river'
+  water_barrier:
+    where: waterway IN ('dam', 'weir', 'lock_gate')
 polygon:
   # The polygon table is by far the largest, and generally the slowest
   name:
@@ -29,6 +33,8 @@ polygon:
           OR "natural" IN ('water', 'glacier')
   way_area_z6:
     where: way_area > 59750
+  water_barrier:
+    where: waterway IN ('dam', 'weir', 'lock_gate')
 roads:
   # The roads table only has a subset of data, so it's just got some low-zoom
   # indexes and some fairly selective ones for high zoom
