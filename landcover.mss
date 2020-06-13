@@ -797,13 +797,103 @@
 
   [feature = 'leisure_pitch'][zoom >= 10] {
     polygon-fill: @built-up-lowzoom;
-    [zoom >= 13] { polygon-fill: @pitch; }
+    [zoom >= 13] {
+      polygon-fill: @pitch;
+      polygon-comp-op: dst-out;
+    }
     [zoom >= 15] {
       line-width: 0.5;
       line-color: saturate(darken(@pitch, 30%), 20%);
     }
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
+  }
+}
+
+#landcover-backdrop {
+  [zoom >= 13] {
+    [feature = 'leisure_pitch'] {
+      polygon-fill: @pitch;
+      [way_pixels >= 4]  { polygon-gamma: 0.75; }
+      [way_pixels >= 64] { polygon-gamma: 0.3;  }
+      [zoom >= 15][way_pixels >= 480] {
+        [sport = 'soccer'] {
+          marker-file: url('symbols/soccer.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'handball'] {
+          marker-file: url('symbols/handball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'baseball'] {
+          marker-file: url('symbols/baseball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'basketball'] {
+          marker-file: url('symbols/basketball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'american_football'] {
+          marker-file: url('symbols/american_football.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'tennis'] {
+          marker-file: url('symbols/tennis.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'skateboard'] {
+          marker-file: url('symbols/skateboard.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'boules'],
+        [sport = 'bowls'] {
+          marker-file: url('symbols/boules.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [sport = 'volleyball'],
+        [sport = 'beachvolleyball'] {
+          marker-file: url('symbols/volleyball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 20%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+      }
+    }
+    comp-op: dst-over;
   }
 }
 
