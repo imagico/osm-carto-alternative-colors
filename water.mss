@@ -322,6 +322,7 @@
       }
       water/line-color: @river-color;
       water/line-width: @stream-width-z12;
+      water/line-comp-op: src-atop;
       [zoom >= 13] { water/line-width: @stream-width-z13; }
       [zoom >= 14] { water/line-width: @stream-width-z14; }
       [zoom >= 15] { water/line-width: @stream-width-z15; }
