@@ -555,6 +555,7 @@ Layer:
         (SELECT
             way,
             waterway,
+            "natural",
             name,
             tags->'intermittent' as intermittent,
             tags->'seasonal' as seasonal,
@@ -595,7 +596,13 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way
+            way,
+            "natural",
+            waterway,
+            water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE
             (waterway IN ('riverbank')
@@ -605,6 +612,37 @@ Layer:
             AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS river_areas_backdrop
+    properties:
+      minzoom: 7
+  - id: saltwater-areas-backdrop
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            "natural",
+            waterway,
+            water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            tags->'salt' as salt,
+            landuse,
+            name,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE
+            (waterway IN ('dock')
+              OR landuse IN ('reservoir', 'basin')
+              OR "natural" IN ('water'))
+            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
+            -- water = ocean is for testing only
+            AND ((tags @> 'salt=>yes') OR water = 'ocean')
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS saltwater_areas
     properties:
       minzoom: 7
   - id: water-areas-backdrop

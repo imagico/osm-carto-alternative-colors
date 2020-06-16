@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 
 # Generates png pattern images from svgs and switch mss code between svg and png.
 
@@ -17,7 +17,7 @@ from shutil import copyfile
 
 def load_settings():
     """Read the settings from YAML."""
-    return yaml.load(open('patterns.yaml', 'r'))
+    return yaml.load(open('patterns.yaml', 'r'), Loader=yaml.FullLoader)
 
 def svg_convert(fin, fout, transparent, inkscape, dpi):
 
@@ -81,7 +81,7 @@ def generate_pattern(pattern, colors, inkscape, dpi):
 
         if colors[pattern][1] == "native":
 
-            print pattern+" (native)..."
+            print (pattern+" (native)...")
 
             copyfile(source_name, svg_name)
 
@@ -104,7 +104,7 @@ def generate_pattern(pattern, colors, inkscape, dpi):
                 sys.exit("\n\n   'convert' error: preview generation failed.\n")
 
         else:
-            print pattern+" (colorized)..."
+            print (pattern+" (colorized)...")
 
             fin = open(source_name, "rt")
             fout = open(svg_bw_name, "wt")
@@ -173,14 +173,14 @@ def main():
     mss_files = settings['mss']
 
     if args.gen:
-        print "Generating pattern images..."
+        print ("Generating pattern images...")
         for pattern in patterns:
             generate_pattern(pattern, colors, args.inkscape, args.dpi)
 
     if args.svg:
-        print "Converting mss code to use SVGs..."
+        print ("Converting mss code to use SVGs...")
         for mss in mss_files:
-            print "  "+mss+"..."
+            print ("  "+mss+"...")
             copyfile(mss, mss+".bak")
             fin = open(mss+".bak", "rt")
             fout = open(mss, "wt")
@@ -195,12 +195,12 @@ def main():
 
             fin.close()
             fout.close()
-            print "  "+("%d" % sub_count)+" patterns"
+            print ("  "+("%d" % sub_count)+" patterns")
 
     elif args.png:
-        print "Converting mss code to use PNGs..."
+        print ("Converting mss code to use PNGs...")
         for mss in mss_files:
-            print "  "+mss+"..."
+            print ("  "+mss+"...")
             copyfile(mss, mss+".bak")
             fin = open(mss+".bak", "rt")
             fout = open(mss, "wt")
@@ -215,7 +215,7 @@ def main():
 
             fin.close()
             fout.close()
-            print "  "+("%d" % sub_count)+" patterns"
+            print ("  "+("%d" % sub_count)+" patterns")
 
 
 

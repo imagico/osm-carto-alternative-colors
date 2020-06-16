@@ -100,6 +100,7 @@ patterns:
   - water_intermittent_salt
   - water_salt
   - salt_pond
+  - salt_dots
   - wetland
   - swamp_broadleaved_deciduous
   - swamp_broadleaved_evergreen
@@ -187,6 +188,7 @@ colors:
   water_intermittent_salt: ["#f2efe9", "native"]
   water_salt: ["#a2d1e0", "native"]
   salt_pond: ["#a2d1e0", "#ffffff"]
+  salt_dots: ["#d1efb4", "#ffffff", 0.85]
   wetland: ["#f2efe9", "#4aa5fa", 0.8]
   swamp_broadleaved_deciduous: ["#add19e", "native"]
   swamp_broadleaved_evergreen: ["#add19e", "native"]
