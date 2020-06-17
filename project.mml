@@ -80,6 +80,7 @@ Layer:
           ) AS features
         ) AS landcover_low_zoom
     properties:
+      cache-features: true
       minzoom: 7
       maxzoom: 9
   - id: landcover
@@ -94,10 +95,11 @@ Layer:
             religion,
             crop,
             surface,
+            sport,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             feature
           FROM (SELECT
-              way, name, religion, crop, surface, way_area, layer, prio,
+              way, name, religion, crop, surface, sport, way_area, layer, prio,
               COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, military, "natural", tourism, highway, railway) AS feature
             FROM (SELECT
                 way, COALESCE(name, '') AS name,
@@ -123,6 +125,7 @@ Layer:
                 CASE WHEN religion IN ('christian', 'jewish', 'muslim') THEN religion ELSE 'INT-generic'::text END AS religion,
                 CASE WHEN (tags->'crop') IN ('rice', 'tea', 'hop') THEN tags->'crop' ELSE tags->'trees' END AS crop,
                 surface,
+                (tags->'sport') AS sport,
                 way_area, layer, 0 AS prio
               FROM planet_osm_polygon
               WHERE (landuse IS NOT NULL
@@ -142,7 +145,7 @@ Layer:
             UNION ALL -- this is only needed because closed ways with a golf* tag are by default not treated as polygons
             SELECT
                 way, COALESCE(name, '') AS name,
-                'INT-generic'::text AS religion, '' AS crop, '' AS surface, 0 AS way_area, layer,
+                'INT-generic'::text AS religion, '' AS crop, '' AS surface, '' AS sport, 0 AS way_area, layer,
                 (CASE WHEN (tags->'golf') = 'rough' THEN -1 WHEN (tags->'golf') = 'fairway' THEN 10 WHEN (tags->'golf') = 'green' THEN 20 WHEN (tags->'golf') = 'bunker' THEN 30 ELSE 40 END) AS prio,
                 ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS feature
               FROM planet_osm_line
@@ -151,29 +154,8 @@ Layer:
           ORDER BY COALESCE(layer,0), prio, way_area DESC
         ) AS features
     properties:
+      cache-features: true
       minzoom: 10
-  - id: landcover-backdrop
-    geometry: polygon
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way, way_pixels, sport,
-            leisure AS feature
-          FROM (SELECT
-              way, (tags->'sport') AS sport,
-              ('leisure_' || (CASE WHEN leisure IN ('pitch') THEN leisure ELSE NULL END)) AS leisure,
-              way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
-            FROM planet_osm_polygon
-            WHERE leisure IN ('pitch')
-              AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
-              AND building IS NULL
-            ORDER BY COALESCE(layer,0), way_area DESC
-          ) AS features
-        ) AS landcover_backdrop
-    properties:
-      minzoom: 13
   - id: builtup
     geometry: polygon
     extent: *world
@@ -686,6 +668,7 @@ Layer:
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS landcover_area_symbols
     properties:
+      cache-features: true
       minzoom: 7
   - id: icesheet-outlines
     geometry: linestring
