@@ -36,6 +36,7 @@ at mid zoom levels.
 * rendering of landuse=salt_pond
 * rendering of natura=ridge and natural=arete with a linear structure pattern
 * golf course rendering derived from the French style
+* rendering sport type on pitches using single symbol patterns
 
 # Cartographic principles
 
