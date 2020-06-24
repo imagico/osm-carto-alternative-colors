@@ -24,9 +24,11 @@
   }
 
   [waterway = 'dam'][zoom >= 12] {
-      polygon-fill: @dam-lz;
-      [zoom >= 13] {
-        polygon-fill: @dam;
+      [wtype = 'polygon'] {
+        polygon-fill: @dam-lz;
+        [zoom >= 13] {
+          polygon-fill: @dam;
+        }
       }
       [wtype = 'river'],
       [wtype = 'canal'],

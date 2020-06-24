@@ -922,7 +922,7 @@ Layer:
                     MIN(b.osm_id) AS osm_id,
                     ST_Collect(b.way) AS barrier,
                     (SELECT
-                        ST_Collect(w.way)
+                        ST_Union(w.way)
                       FROM planet_osm_polygon w
                       WHERE
                         (w.waterway IN ('dock', 'riverbank')
@@ -972,7 +972,7 @@ Layer:
             SELECT
                 barrier AS way,
                 waterway,
-                wtype,
+                'polygon' AS wtype,
                 name
               FROM barriers_grouped
               WHERE polygon_width >= 2.5*contructed_width
