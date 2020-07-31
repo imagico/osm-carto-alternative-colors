@@ -136,7 +136,7 @@
           polygon-pattern-file: url('symbols/patterns/quarry.png');
           polygon-pattern-alignment: global;
           line-width: 0.5;
-          line-color: darken(@quarry, 30%);
+          line-color: darken(@quarry, 10%);
         }
       }
       [way_pixels >= 4]  { polygon-gamma: 0.75; }
@@ -554,7 +554,7 @@
           polygon-pattern-file: url('symbols/patterns/landfill.png');
           polygon-pattern-alignment: global;
           line-width: 0.5;
-          line-color: darken(@landfill, 30%);
+          line-color: darken(@landfill, 10%);
         }
       }
     }
