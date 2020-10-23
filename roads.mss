@@ -433,10 +433,10 @@
           [zoom >= 19] { line-width: @service-width-z19; }
         }
         [service = 'INT-minor'] {
-          line-width: @minor-service-width-z16;
-          [zoom >= 17] { line-width: @minor-service-width-z17; }
-          [zoom >= 18] { line-width: @minor-service-width-z18; }
-          [zoom >= 19] { line-width: @minor-service-width-z19; }
+          line-width: @service-minor-width-z16;
+          [zoom >= 17] { line-width: @service-minor-width-z17; }
+          [zoom >= 18] { line-width: @service-minor-width-z18; }
+          [zoom >= 19] { line-width: @service-minor-width-z19; }
         }
         .roads-casing {
           line-join: round;
@@ -1669,10 +1669,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [zoom >= 19] { line-width: @service-width-z19 - 2 * @casing-width-z19; }
         }
         [service = 'INT-minor'] {
-          line-width: @minor-service-width-z16 - 2 * @casing-width-z16;
-          [zoom >= 17] { line-width: @minor-service-width-z17 - 2 * @casing-width-z17; }
-          [zoom >= 18] { line-width: @minor-service-width-z18 - 2 * @casing-width-z18; }
-          [zoom >= 19] { line-width: @minor-service-width-z19 - 2 * @casing-width-z19; }
+          line-width: @service-minor-width-z16 - 2 * @casing-width-z16;
+          [zoom >= 17] { line-width: @service-minor-width-z17 - 2 * @casing-width-z17; }
+          [zoom >= 18] { line-width: @service-minor-width-z18 - 2 * @casing-width-z18; }
+          [zoom >= 19] { line-width: @service-minor-width-z19 - 2 * @casing-width-z19; }
         }
         line-join: round;
         line-cap: round;
@@ -1688,10 +1688,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
             [zoom >= 19] { line-width: @service-width-z19 - 2 * @bridge-casing-width-z19; }
           }
           [service = 'INT-minor'] {
-            line-width: @minor-service-width-z16 - 2 * @bridge-casing-width-z16;
-            [zoom >= 17] { line-width: @minor-service-width-z17 - 2 * @bridge-casing-width-z17; }
-            [zoom >= 18] { line-width: @minor-service-width-z18 - 2 * @bridge-casing-width-z18; }
-            [zoom >= 19] { line-width: @minor-service-width-z19 - 2 * @bridge-casing-width-z19; }
+            line-width: @service-minor-width-z16 - 2 * @bridge-casing-width-z16;
+            [zoom >= 17] { line-width: @service-minor-width-z17 - 2 * @bridge-casing-width-z17; }
+            [zoom >= 18] { line-width: @service-minor-width-z18 - 2 * @bridge-casing-width-z18; }
+            [zoom >= 19] { line-width: @service-minor-width-z19 - 2 * @bridge-casing-width-z19; }
           }
         }
       }
@@ -2575,11 +2575,11 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
   [int_tc_type = 'service'][int_tc_service = 'INT-minor'][zoom >= 18] {
     marker-fill: @service-casing;
-    marker-width: @minor-service-width-z18 * 1.6 + 2 * @casing-width-z18;
-    marker-height: @minor-service-width-z18 * 1.6 + 2 * @casing-width-z18;
+    marker-width: @service-minor-width-z18 * 1.6 + 2 * @casing-width-z18;
+    marker-height: @service-width-z18 * 1.6 + 2 * @casing-width-z18;
     [zoom >= 19] {
-      marker-width: @minor-service-width-z19 * 1.6 + 2 * @casing-width-z19;
-      marker-height: @minor-service-width-z19 * 1.6 + 2 * @casing-width-z19;
+      marker-width: @service-minor-width-z19 * 1.6 + 2 * @casing-width-z19;
+      marker-height: @service-minor-width-z19 * 1.6 + 2 * @casing-width-z19;
     }
     marker-allow-overlap: true;
     marker-ignore-placement: true;
@@ -2689,11 +2689,11 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
   [int_tc_type = 'service'][int_tc_service = 'INT-minor'][zoom >= 18] {
     marker-fill: @service-fill;
-    marker-width: @minor-service-width-z18 * 1.6;
-    marker-height: @minor-service-width-z18 * 1.6;
+    marker-width: @service-minor-width-z18 * 1.6;
+    marker-height: @service-minor-width-z18 * 1.6;
     [zoom >= 19] {
-      marker-width: @minor-service-width-z19 * 1.6;
-      marker-height: @minor-service-width-z19 * 1.6;
+      marker-width: @service-minor-width-z19 * 1.6;
+      marker-height: @service-minor-width-z19 * 1.6;
     }
     marker-allow-overlap: true;
     marker-ignore-placement: true;

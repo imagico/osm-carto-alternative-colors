@@ -1191,12 +1191,8 @@
   }
 }
 
-.barriers {
+#line-barriers {
   [zoom >= 16] {
-    line-width: 0.4;
-    line-color: #444;
-  }
-  [feature = 'barrier_embankment'][zoom >= 14] {
     line-width: 0.4;
     line-color: #444;
   }
@@ -1215,6 +1211,27 @@
       line-width: 3;
       barrier/line-width: 0.4;
       barrier/line-color: #444;
+    }
+  }
+}
+
+#line-barrier-entrances {
+  [feature = 'historic_citywalls'][zoom >= 15],
+  [feature = 'barrier_city_wall'][zoom >= 15],
+  [zoom >= 16] {
+    marker-fill: black;
+    marker-allow-overlap: true;
+    marker-line-width: 0;
+    marker-width: 0.8;
+    marker-height: 0.8;
+    marker-ignore-placement: true;
+    [zoom >= 16] {
+      marker-width: 1.25;
+      marker-height: 1.25;
+    }
+    [zoom >= 18] {
+      marker-width: 1.5;
+      marker-height: 1.5;
     }
   }
 }

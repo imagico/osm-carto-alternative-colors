@@ -14,6 +14,9 @@ CREATE INDEX planet_osm_line_river
 CREATE INDEX planet_osm_line_water_barrier
   ON planet_osm_line USING GIST (way)
   WHERE waterway IN ('dam', 'weir', 'lock_gate');
+CREATE INDEX planet_osm_point_barrier_entrance
+  ON planet_osm_point USING GIST (way)
+  WHERE barrier IN ('entrance');
 CREATE INDEX planet_osm_point_place
   ON planet_osm_point USING GIST (way)
   WHERE place IS NOT NULL AND name IS NOT NULL;

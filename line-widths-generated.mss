@@ -111,6 +111,10 @@
 @service-width-z17: 7;
 @service-width-z18: 8.5;
 @service-width-z19: 11;
+@service-minor-width-z16: 2;
+@service-minor-width-z17: 3.5;
+@service-minor-width-z18: 4.75;
+@service-minor-width-z19: 5.5;
 @living-street-width-z13: 2;
 @living-street-width-z14: 3;
 @living-street-width-z15: 5;

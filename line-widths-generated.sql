@@ -46,8 +46,8 @@ select
   end;
 $func$;
 
-/* embankment */
-create or replace function carto_embankment_line_width (text, numeric)
+/* highway */
+create or replace function carto_highway_line_width (text, numeric)
   returns numeric
   language sql
   immutable
@@ -213,6 +213,14 @@ select
         when $2 = 19 then 11.0
         else 0.0
       end)
+    when $1 = 'service-minor' then
+      (case
+        when $2 = 16 then 2.0
+        when $2 = 17 then 3.5
+        when $2 = 18 then 4.75
+        when $2 = 19 then 5.5
+        else 0.0
+      end)
     when $1 = 'living_street' then
       (case
         when $2 = 13 then 2.0
@@ -363,6 +371,101 @@ select
         when $2 = 17 then 1.5
         when $2 = 18 then 1.5
         when $2 = 19 then 1.5
+        else 0.0
+      end)
+    else 0.0
+  end;
+$func$;
+
+/* barrier */
+create or replace function carto_barrier_line_width (text, numeric)
+  returns numeric
+  language sql
+  immutable
+  returns null on null input
+as $func$
+select
+  case
+    when $1 = 'chain' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
+        else 0.0
+      end)
+    when $1 = 'city_wall' then
+      (case
+        when $2 = 15 then 1.5
+        when $2 = 16 then 1.5
+        when $2 = 17 then 3.0
+        when $2 = 18 then 3.0
+        when $2 = 19 then 3.0
+        else 0.0
+      end)
+    when $1 = 'citywalls' then
+      (case
+        when $2 = 15 then 1.5
+        when $2 = 16 then 1.5
+        when $2 = 17 then 3.0
+        when $2 = 18 then 3.0
+        when $2 = 19 then 3.0
+        else 0.0
+      end)
+    when $1 = 'ditch' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
+        else 0.0
+      end)
+    when $1 = 'fence' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
+        else 0.0
+      end)
+    when $1 = 'guard_rail' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
+        else 0.0
+      end)
+    when $1 = 'handrail' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
+        else 0.0
+      end)
+    when $1 = 'hedge' then
+      (case
+        when $2 = 16 then 3.0
+        when $2 = 17 then 3.0
+        when $2 = 18 then 3.0
+        when $2 = 19 then 3.0
+        else 0.0
+      end)
+    when $1 = 'retaining_wall' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
+        else 0.0
+      end)
+    when $1 = 'wall' then
+      (case
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 0.4
+        when $2 = 19 then 0.4
         else 0.0
       end)
     else 0.0

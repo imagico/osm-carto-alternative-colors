@@ -14,6 +14,7 @@ mss:
     - residential
     - unclassified
     - service
+    - service-minor
     - living-street
     - pedestrian
     - steps
@@ -28,7 +29,7 @@ sql:
   waterway:
     - river
     - stream
-  embankment:
+  highway:
     - river
     - stream
     - motorway
@@ -40,6 +41,7 @@ sql:
     - residential
     - unclassified
     - service
+    - service-minor
     - living-street
     - pedestrian
     - steps
@@ -53,6 +55,17 @@ sql:
     - light_rail
     - tram
     - dyke
+  barrier:
+    - chain
+    - city_wall
+    - citywalls
+    - ditch
+    - fence
+    - guard_rail
+    - handrail
+    - hedge
+    - retaining_wall
+    - wall
 
 tags:
   river: IN ('river', 'canal')
@@ -180,6 +193,12 @@ classes:
     17: 7
     18: 8.5
     19: 11
+  # this is not an actual tag value, needs separate SQL code
+  service-minor:
+    16: 2
+    17: 3.5
+    18: 4.75
+    19: 5.5
   # living_street and pedestrian are identical
   living-street:
     13: 2
@@ -255,9 +274,28 @@ classes:
     17: 2
   dyke:
     15: 1.5
-
-
-
+  chain:
+    16: 0.4
+  city_wall:
+    15: 1.5
+    17: 3
+  citywalls:
+    15: 1.5
+    17: 3
+  ditch:
+    16: 0.4
+  fence:
+    16: 0.4
+  guard_rail:
+    16: 0.4
+  handrail:
+    16: 0.4
+  hedge:
+    16: 3
+  retaining_wall:
+    16: 0.4
+  wall:
+    16: 0.4
 
 
 

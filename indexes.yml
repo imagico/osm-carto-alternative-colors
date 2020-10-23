@@ -8,6 +8,8 @@ point:
     where: place IS NOT NULL AND name IS NOT NULL
   water_barrier:
     where: waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
+  barrier_entrance:
+    where: barrier IN ('entrance')
 line:
   name:
     where: name IS NOT NULL
