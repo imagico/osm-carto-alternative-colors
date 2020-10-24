@@ -1415,7 +1415,7 @@ Layer:
           ) AS features
         ) AS line_barriers
     properties:
-      minzoom: 14
+      minzoom: 15
   - id: ferry-routes
     geometry: linestring
     <<: *extents
@@ -2356,7 +2356,7 @@ Layer:
                        CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
                        z(!scale_denominator!)
                      ))*NULLIF(!scale_denominator!*0.001*0.28,0))))
-                AND (l.barrier IN ('chain', 'city_wall', 'embankment', 'ditch', 'fence', 'guard_rail',
+                AND (l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                     'handrail', 'hedge', 'retaining_wall', 'wall')
                   OR l.historic = 'citywalls')
                 AND (l.waterway IS NULL OR l.waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi'))
@@ -2373,7 +2373,7 @@ Layer:
           ) AS lbe
         ) AS line_barrier_entrances
     properties:
-      minzoom: 14
+      minzoom: 16
   - id: amenity-points-poly
     class: points
     geometry: polygon

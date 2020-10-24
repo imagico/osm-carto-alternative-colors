@@ -10,6 +10,7 @@
 @park: #c8facc;           // Lch(94,30,145) also recreation_ground
 @farmland: #eef0d5;       // Lch(94,14,112)
 @farmland-line: #c7c9ae;  // Lch(80,14,112)
+@hedge: @forest;
 
 @campsite: #def6c0;       // also caravan_site, picnic_site
 @golf_course: @campsite;
@@ -1197,42 +1198,61 @@
     line-color: #444;
   }
   [feature = 'barrier_hedge'][zoom >= 16] {
-    line-width: 3;
-    line-color: #aed1a0;
+    line-width: 1.5;
+    line-color: @hedge;
+    [zoom >= 17] {
+      line-width: 2;
+    }
+    [zoom >= 18] {
+      line-width: 3;
+    }
+    [zoom >= 19] {
+      line-width: 4;
+    }
+    [zoom >= 20] {
+      line-width: 5;
+    }
   }
   [feature = 'historic_citywalls'],
   [feature = 'barrier_city_wall'] {
     [zoom >= 15] {
-      line-width: 1.5;
+      line-width: 1;
       line-color: lighten(#444, 30%);
     }
-
+    [zoom >= 16] {
+      line-width: 1.5;
+    }
     [zoom >= 17] {
-      line-width: 3;
+      line-width: 2;
       barrier/line-width: 0.4;
       barrier/line-color: #444;
+    }
+    [zoom >= 18] {
+      line-width: 3;
+    }
+    [zoom >= 19] {
+      line-width: 4;
+    }
+    [zoom >= 20] {
+      line-width: 5;
     }
   }
 }
 
 #line-barrier-entrances {
-  [feature = 'historic_citywalls'][zoom >= 15],
-  [feature = 'barrier_city_wall'][zoom >= 15],
-  [zoom >= 16] {
-    marker-fill: black;
-    marker-allow-overlap: true;
-    marker-line-width: 0;
-    marker-width: 0.8;
-    marker-height: 0.8;
-    marker-ignore-placement: true;
-    [zoom >= 16] {
-      marker-width: 1.25;
-      marker-height: 1.25;
-    }
-    [zoom >= 18] {
-      marker-width: 1.5;
-      marker-height: 1.5;
-    }
+  marker-fill: black;
+  marker-allow-overlap: true;
+  marker-line-width: 0;
+  marker-width: 1.0;
+  marker-height: 1.0;
+  marker-ignore-placement: true;
+  [zoom >= 17] {
+    marker-width: 1.25;
+    marker-height: 1.25;
+  }
+  [zoom >= 18] {
+    marker-width: 1.5;
+    marker-height: 1.5;
   }
 }
 

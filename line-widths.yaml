@@ -277,8 +277,12 @@ classes:
   chain:
     16: 0.4
   city_wall:
-    15: 1.5
-    17: 3
+    15: 1
+    16: 1.5
+    17: 2
+    18: 3
+    19: 4
+    20: 5
   citywalls:
     15: 1.5
     17: 3
@@ -291,7 +295,11 @@ classes:
   handrail:
     16: 0.4
   hedge:
-    16: 3
+    16: 1.5
+    17: 2
+    18: 3
+    19: 4
+    20: 5
   retaining_wall:
     16: 0.4
   wall:

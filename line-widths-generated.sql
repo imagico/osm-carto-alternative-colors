@@ -396,11 +396,11 @@ select
       end)
     when $1 = 'city_wall' then
       (case
-        when $2 = 15 then 1.5
+        when $2 = 15 then 1.0
         when $2 = 16 then 1.5
-        when $2 = 17 then 3.0
+        when $2 = 17 then 2.0
         when $2 = 18 then 3.0
-        when $2 = 19 then 3.0
+        when $2 = 19 then 4.0
         else 0.0
       end)
     when $1 = 'citywalls' then
@@ -446,10 +446,10 @@ select
       end)
     when $1 = 'hedge' then
       (case
-        when $2 = 16 then 3.0
-        when $2 = 17 then 3.0
+        when $2 = 16 then 1.5
+        when $2 = 17 then 2.0
         when $2 = 18 then 3.0
-        when $2 = 19 then 3.0
+        when $2 = 19 then 4.0
         else 0.0
       end)
     when $1 = 'retaining_wall' then
