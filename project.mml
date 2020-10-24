@@ -1255,6 +1255,10 @@ Layer:
             construction,
             service,
             link,
+            carto_highway_line_width(
+              CASE WHEN service = 'INT-minor' AND feature = 'highway_service' THEN 'service-minor'
+              ELSE substr(feature, 9, length(feature)-8)
+              END, z(!scale_denominator!)) AS width,
             layernotnull
           FROM ( -- subselect that contains both roads and rail/aero
             SELECT
@@ -1440,7 +1444,12 @@ Layer:
             CASE WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway')
               THEN 'INT-minor'::text
               ELSE 'INT-normal'::text
-            END AS int_tc_service
+            END AS int_tc_service,
+            carto_highway_line_width(
+              CASE WHEN l.highway = 'service' AND l.service IN ('parking_aisle', 'drive-through', 'driveway') 
+                THEN 'service-minor'
+                ELSE l.highway
+              END, z(!scale_denominator!)) AS width
           FROM planet_osm_point p
             JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1) -- Assumes Mercator
             JOIN (VALUES
@@ -1495,6 +1504,10 @@ Layer:
             construction,
             service,
             link,
+            carto_highway_line_width(
+              CASE WHEN service = 'INT-minor' AND feature = 'highway_service' THEN 'service-minor'
+              ELSE substr(feature, 9, length(feature)-8)
+              END, z(!scale_denominator!)) AS width,
             layernotnull
           FROM ( -- subselect that contains both roads and rail/aero
             SELECT
@@ -1617,6 +1630,10 @@ Layer:
             construction,
             service,
             link,
+            carto_highway_line_width(
+              CASE WHEN service = 'INT-minor' AND feature = 'highway_service' THEN 'service-minor'
+              ELSE substr(feature, 9, length(feature)-8)
+              END, z(!scale_denominator!)) AS width,
             layernotnull
           FROM ( -- begin "features" subselect that contains both roads and rail/aero
             SELECT
@@ -1701,7 +1718,12 @@ Layer:
             DISTINCT on (p.way)
             p.way AS way, l.highway AS int_tc_type,
             CASE WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text
-              ELSE 'INT-normal'::text END AS int_tc_service
+              ELSE 'INT-normal'::text END AS int_tc_service,
+            carto_highway_line_width(
+              CASE WHEN l.highway = 'service' AND l.service IN ('parking_aisle', 'drive-through', 'driveway') 
+                THEN 'service-minor'
+                ELSE l.highway
+              END, z(!scale_denominator!)) AS width
           FROM planet_osm_point p
             JOIN planet_osm_line l
               ON ST_DWithin(p.way, l.way, 0.1)
@@ -1754,7 +1776,8 @@ Layer:
               WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
                                   'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'
               ELSE NULL
-            END AS int_surface
+            END AS int_surface,
+            carto_highway_line_width(COALESCE(highway, railway), z(!scale_denominator!)) AS width
           FROM planet_osm_roads
           WHERE highway IS NOT NULL
             OR (railway IS NOT NULL AND railway != 'preserved'
@@ -1813,6 +1836,10 @@ Layer:
             construction,
             service,
             link,
+            carto_highway_line_width(
+              CASE WHEN service = 'INT-minor' AND feature = 'highway_service' THEN 'service-minor'
+              ELSE substr(feature, 9, length(feature)-8)
+              END, z(!scale_denominator!)) AS width,
             layernotnull
           FROM ( -- subselect that contains roads, rail/aero and node based fords
             SELECT
