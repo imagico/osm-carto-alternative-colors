@@ -718,22 +718,15 @@ Layer:
               (SELECT
                   COALESCE(
                     ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
-                      (0.5*carto_highway_line_width(COALESCE(
-                        CASE WHEN o.highway = 'service' AND o.service IN ('parking_aisle', 'drive-through', 'driveway') 
-                          THEN 'service-minor'
-                          ELSE o.highway
-                        END,
-                        o.railway, o.waterway, o.man_made), z(!scale_denominator!)) + 2.5
+                      (0.5* GREATEST(
+                              carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), o.service, z(!scale_denominator!)),
+                              carto_highway_line_width_mapped(o.highway, o.tags->'width', o.tags->'lanes', o.way, !scale_denominator!)) + 2.5
                       )*NULLIF(!scale_denominator!*0.001*0.28,0))),
                       ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 900913)
                   )
                 FROM planet_osm_line o
                 WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
-                  carto_highway_line_width(COALESCE(
-                    CASE WHEN o.highway = 'service' AND o.service IN ('parking_aisle', 'drive-through', 'driveway') 
-                      THEN 'service-minor'
-                      ELSE o.highway
-                    END, o.railway, o.waterway, o.man_made), z(!scale_denominator!)) > 0.0 AND
+                  carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), o.service, z(!scale_denominator!)) > 0.0 AND
                   ST_DWithin(l.line, o.way, 1) AND
                   o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
                   (
@@ -753,11 +746,9 @@ Layer:
               FROM
                 (SELECT
                     way,
-                    carto_highway_line_width(COALESCE(
-                      CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                        THEN 'service-minor'
-                        ELSE highway
-                      END, railway, waterway, man_made), z(!scale_denominator!)) AS width_px,
+                    GREATEST(
+                      carto_highway_line_width(COALESCE(highway, railway, waterway, man_made), service, z(!scale_denominator!)),
+                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!)) AS width_px,
                     (CASE WHEN (tags @> 'cutting=>yes') THEN 'cutting' WHEN (man_made = 'dyke') THEN 'dyke' ELSE 'embankment' END) AS type
                   FROM planet_osm_line
                   WHERE (highway IS NOT NULL OR railway IS NOT NULL OR (man_made = 'dyke') OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
@@ -1255,7 +1246,8 @@ Layer:
             construction,
             service,
             link,
-            width,
+            width_nominal,
+            CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- subselect that contains both roads and rail/aero
             SELECT
@@ -1284,16 +1276,8 @@ Layer:
                   WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
                   ELSE 'no'
                 END AS link,
-                GREATEST(
-                  carto_highway_line_width(
-                    CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                      THEN 'service-minor'
-                      ELSE highway
-                    END, z(!scale_denominator!)),
-                  (CASE
-                    WHEN tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'width')::NUMERIC
-                    ELSE 0.0
-                  END) / (scale_factor(way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width,
+                carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1321,7 +1305,8 @@ Layer:
                 construction,
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
-                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width,
+                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
+                0.0 AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1385,21 +1370,15 @@ Layer:
                 e.way,
                 (COALESCE(
                   (SELECT
-                     carto_highway_line_width(
-                       CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                         THEN 'service-minor'
-                         ELSE highway
-                       END, z(!scale_denominator!))
+                     GREATEST(
+                      carto_highway_line_width(highway, service, z(!scale_denominator!)),
+                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!))
                      FROM planet_osm_line h
                      WHERE ST_Intersects(h.way, e.way) AND highway IN 
                       ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
                        'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
                        'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track')
-                      ORDER BY carto_highway_line_width(
-                        CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                          THEN 'service-minor'
-                          ELSE highway
-                        END, z(!scale_denominator!)) DESC LIMIT 1
+                      ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
                   ),
                   carto_highway_line_width('footway', z(!scale_denominator!))
                 ) + 2.5 + carto_barrier_line_width(
@@ -1454,15 +1433,8 @@ Layer:
               ELSE 'INT-normal'::text
             END AS int_tc_service,
             GREATEST(
-              carto_highway_line_width(
-                CASE WHEN l.highway = 'service' AND l.service IN ('parking_aisle', 'drive-through', 'driveway') 
-                  THEN 'service-minor'
-                  ELSE l.highway
-                END, z(!scale_denominator!)),
-              (CASE
-                WHEN l.tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (l.tags->'width')::NUMERIC
-                ELSE 0.0
-              END) / (scale_factor(p.way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width
+              carto_highway_line_width(l.highway, l.service, z(!scale_denominator!)),
+              carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', p.way, !scale_denominator!)) AS width
           FROM planet_osm_point p
             JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1) -- Assumes Mercator
             JOIN (VALUES
@@ -1517,7 +1489,8 @@ Layer:
             construction,
             service,
             link,
-            width,
+            width_nominal,
+            CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- subselect that contains both roads and rail/aero
             SELECT
@@ -1546,16 +1519,8 @@ Layer:
                   WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
                   ELSE 'no'
                 END AS link,
-                GREATEST(
-                  carto_highway_line_width(
-                    CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                      THEN 'service-minor'
-                      ELSE highway
-                    END, z(!scale_denominator!)),
-                  (CASE
-                    WHEN tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'width')::NUMERIC
-                    ELSE 0.0
-                  END) / (scale_factor(way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width,
+                carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1586,7 +1551,8 @@ Layer:
                 construction,
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
-                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width,
+                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
+                0.0 AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1651,7 +1617,8 @@ Layer:
             construction,
             service,
             link,
-            width,
+            width_nominal,
+            CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- begin "features" subselect that contains both roads and rail/aero
             SELECT
@@ -1680,16 +1647,8 @@ Layer:
                   WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
                   ELSE 'no'
                 END AS link,
-                GREATEST(
-                  carto_highway_line_width(
-                    CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                      THEN 'service-minor'
-                      ELSE highway
-                    END, z(!scale_denominator!)),
-                  (CASE
-                    WHEN tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'width')::NUMERIC
-                    ELSE 0.0
-                  END) / (scale_factor(way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width,
+                carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1720,7 +1679,8 @@ Layer:
                 construction,
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
-                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width,
+                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
+                0.0 AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1749,15 +1709,8 @@ Layer:
             CASE WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text
               ELSE 'INT-normal'::text END AS int_tc_service,
             GREATEST(
-              carto_highway_line_width(
-                CASE WHEN l.highway = 'service' AND l.service IN ('parking_aisle', 'drive-through', 'driveway') 
-                  THEN 'service-minor'
-                  ELSE l.highway
-                END, z(!scale_denominator!)),
-              (CASE
-                WHEN l.tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (l.tags->'width')::NUMERIC
-                ELSE 0.0
-              END) / (scale_factor(p.way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width
+              carto_highway_line_width(l.highway, l.service, z(!scale_denominator!)),
+              carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', p.way, !scale_denominator!)) AS width
           FROM planet_osm_point p
             JOIN planet_osm_line l
               ON ST_DWithin(p.way, l.way, 0.1)
@@ -1811,7 +1764,8 @@ Layer:
                                   'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'
               ELSE NULL
             END AS int_surface,
-            carto_highway_line_width(COALESCE(highway, railway), z(!scale_denominator!)) AS width
+            carto_highway_line_width(COALESCE(highway, railway), z(!scale_denominator!)) AS width_nominal,
+            0.0 AS width
           FROM planet_osm_roads
           WHERE highway IS NOT NULL
             OR (railway IS NOT NULL AND railway != 'preserved'
@@ -1870,7 +1824,8 @@ Layer:
             construction,
             service,
             link,
-            width,
+            width_nominal,
+            CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- subselect that contains roads, rail/aero and node based fords
             SELECT
@@ -1900,16 +1855,8 @@ Layer:
                   WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
                   ELSE 'no'
                 END AS link,
-                GREATEST(
-                  carto_highway_line_width(
-                    CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                      THEN 'service-minor'
-                      ELSE highway
-                    END, z(!scale_denominator!)),
-                  (CASE
-                    WHEN tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'width')::NUMERIC
-                    ELSE 0.0
-                  END) / (scale_factor(way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width,
+                carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1941,7 +1888,8 @@ Layer:
                 construction,
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
-                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width,
+                carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
+                0.0 AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1962,7 +1910,8 @@ Layer:
                 construction,
                 service,
                 link,
-                width,
+                width_nominal,
+                width_tagged,
                 layernotnull,
                 z_order
                 FROM
@@ -1977,10 +1926,7 @@ Layer:
                       l.tracktype AS tracktype,
                       CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN 'mountain_pass' ELSE 'ford_node' END AS pass,
                       CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN GREATEST(7, carto_highway_line_width(
-                        CASE WHEN l.highway = 'service' AND l.service IN ('parking_aisle', 'drive-through', 'driveway') 
-                          THEN 'service-minor'
-                          ELSE l.highway
-                        END, z(!scale_denominator!))) ELSE 5 END AS pass_length,
+                        l.highway, l.service, z(!scale_denominator!))) ELSE 5 END AS pass_length,
                       CASE WHEN l.surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                             'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                         WHEN l.surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -2000,16 +1946,8 @@ Layer:
                         WHEN substr(l.highway, length(l.highway)-4, 5) = '_link' THEN 'yes'
                         ELSE 'no'
                       END AS link,
-                      GREATEST(
-                        carto_highway_line_width(
-                          CASE WHEN l.highway = 'service' AND l.service IN ('parking_aisle', 'drive-through', 'driveway') 
-                            THEN 'service-minor'
-                            ELSE l.highway
-                          END, z(!scale_denominator!)),
-                        (CASE
-                          WHEN l.tags->'width' ~ '^-?\d{1,4}(\.\d+)?$' THEN (l.tags->'width')::NUMERIC
-                          ELSE 0.0
-                        END) / (scale_factor(p.way) * NULLIF(!scale_denominator!*0.001*0.28,0))) AS width,
+                      carto_highway_line_width(l.highway, l.service, z(!scale_denominator!)) AS width_nominal,
+                      carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', l.way, !scale_denominator!) AS width_tagged,
                       COALESCE(l.layer,0) AS layernotnull,
                       l.z_order AS z_order
                     FROM planet_osm_point p
@@ -2402,21 +2340,15 @@ Layer:
                   e.way,
                   (COALESCE(
                     (SELECT
-                       carto_highway_line_width(
-                         CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                           THEN 'service-minor'
-                           ELSE highway
-                         END, z(!scale_denominator!))
+                       GREATEST(
+                         carto_highway_line_width(highway, service, z(!scale_denominator!)),
+                         carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!))
                        FROM planet_osm_line h 
                        WHERE ST_Intersects(h.way, e.way) AND highway IN 
                         ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
                          'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
                          'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track')
-                        ORDER BY carto_highway_line_width(
-                          CASE WHEN highway = 'service' AND service IN ('parking_aisle', 'drive-through', 'driveway') 
-                            THEN 'service-minor'
-                            ELSE highway
-                          END, z(!scale_denominator!)) DESC LIMIT 1
+                        ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
                     ),
                     carto_highway_line_width('footway', z(!scale_denominator!))
                   ) + 2.5 + carto_barrier_line_width(

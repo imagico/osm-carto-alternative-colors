@@ -6,5 +6,74 @@ create or replace function scale_factor (geometry)
   immutable
   returns null on null input
 as $func$
-select ST_DistanceSphere(ST_Transform(ST_Translate(geom, 0, 1), 4326), ST_Transform(geom, 4326))::numeric from (select ST_Centroid(ST_Envelope($1)) as geom) as p
+select ST_DistanceSphere(ST_Transform(ST_Translate(geom, 0, 1), 4326), ST_Transform(geom, 4326))::numeric from (select ST_Centroid($1) as geom) as p
+$func$;
+
+/* split service class into service/service-minor */
+/* parameters: highway tag, service tag, zoom level */
+create or replace function carto_highway_line_width (text, text, numeric)
+  returns numeric
+  language sql
+  immutable
+as $func$
+select carto_highway_line_width(
+  CASE WHEN $1 = 'service' AND $2 IN ('parking_aisle', 'drive-through', 'driveway') 
+    THEN 'service-minor'
+    ELSE $1
+  END, $3)
+$func$;
+
+/* tagged width or width estimated from lanes */
+/* parameters: highway tag, width tag, lanes tag, way, scale_denominator */
+create or replace function carto_highway_line_width_mapped (text, text, text, geometry, numeric)
+  returns numeric
+  language sql
+  immutable
+as $func$
+select (CASE
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN $2::NUMERIC / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+  WHEN $3 IN ('1', '2', '3', '4', '5', '6') THEN
+  case
+    when $1 = 'motorway' then
+      ($3::NUMERIC * 3.75 + 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'motorway_link' then
+      ($3::NUMERIC * 3.5 + 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 IN ('trunk', 'trunk_link') then
+      ($3::NUMERIC * 3.5 + 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 IN ('primary', 'primary_link') then
+      ($3::NUMERIC * 3.0 + 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 IN ('secondary', 'secondary_link') then
+      ($3::NUMERIC * 2.75 + 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 IN ('tertiary', 'tertiary_link') then
+      ($3::NUMERIC * 2.5 + 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'residential' then
+      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'unclassified' then
+      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'service' then
+      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'service-minor' then
+      ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'living_street' then
+      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'pedestrian' then
+      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'steps' then
+      ($3::NUMERIC * 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'road' then
+      ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'bridleway' then
+      ($3::NUMERIC * 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'footway' then
+      ($3::NUMERIC * 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'cycleway' then
+      ($3::NUMERIC * 0.75) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'path' then
+      ($3::NUMERIC * 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    when $1 = 'track' then
+      ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+    else 0.0
+  end
+  ELSE 0.0
+END)
 $func$;
