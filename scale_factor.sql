@@ -31,7 +31,7 @@ create or replace function carto_highway_line_width_mapped (text, text, text, ge
   immutable
 as $func$
 select (CASE
-  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN $2::NUMERIC / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 150) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
   WHEN $3 IN ('1', '2', '3', '4', '5', '6') THEN
   case
     when $1 = 'motorway' then
@@ -74,6 +74,25 @@ select (CASE
       ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
     else 0.0
   end
+  ELSE 0.0
+END)
+$func$;
+
+/* tagged width or width estimated from length */
+/* parameters: aeroway tag, width tag, way, scale_denominator */
+create or replace function carto_aeroway_line_width_mapped (text, text, geometry, numeric)
+  returns numeric
+  language sql
+  immutable
+as $func$
+select (CASE
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 150) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $1 = 'runway' THEN
+    /* estimate runway width from length */
+    LEAST(GREATEST(ST_Length(ST_Transform($3,4326)::geography)::NUMERIC/50,12.0),75.0) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $1 = 'taxiway' THEN
+    /* this is the minimum assumed ground unit taxiway width */
+    6.0 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
   ELSE 0.0
 END)
 $func$;

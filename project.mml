@@ -720,7 +720,17 @@ Layer:
                     ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
                       (0.5* GREATEST(
                               carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), o.service, z(!scale_denominator!)),
-                              carto_highway_line_width_mapped(o.highway, o.tags->'width', o.tags->'lanes', o.way, !scale_denominator!)) + 2.5
+                              carto_highway_line_width_mapped(o.highway, o.tags->'width', o.tags->'lanes', o.way, !scale_denominator!)) +
+                                (CASE WHEN
+                                  (o.tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
+                                  (o.tags->'sidewalk:left') IN ('yes') OR
+                                  (o.tags->'sidewalk:right') IN ('yes') OR
+                                  (o.tags->'cycleway') IN ('track') OR
+                                  (o.tags->'cycleway:left')  IN ('track') OR
+                                  (o.tags->'cycleway:right') IN ('track') OR
+                                  (o.tags->'handrail') IN ('yes') OR
+                                  (o.tags->'handrail:left') IN ('yes') OR
+                                  (o.tags->'handrail:right') IN ('yes') THEN 7.5 ELSE 0.0 END) + 5.0
                       )*NULLIF(!scale_denominator!*0.001*0.28,0))),
                       ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 900913)
                   )
@@ -728,7 +738,7 @@ Layer:
                 WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
                   carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made), o.service, z(!scale_denominator!)) > 0.0 AND
                   ST_DWithin(l.line, o.way, 1) AND
-                  o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
+                  o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
                   (
                     (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
                     (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
@@ -748,11 +758,22 @@ Layer:
                     way,
                     GREATEST(
                       carto_highway_line_width(COALESCE(highway, railway, waterway, man_made), service, z(!scale_denominator!)),
-                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!)) AS width_px,
+                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', way, !scale_denominator!)) + 
+                    (CASE WHEN
+                      (tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
+                      (tags->'sidewalk:left') IN ('yes') OR
+                      (tags->'sidewalk:right') IN ('yes') OR
+                      (tags->'cycleway') IN ('track') OR
+                      (tags->'cycleway:left')  IN ('track') OR
+                      (tags->'cycleway:right') IN ('track') OR
+                      (tags->'handrail') IN ('yes') OR
+                      (tags->'handrail:left') IN ('yes') OR
+                      (tags->'handrail:right') IN ('yes') THEN 7.5 ELSE 0.0 END) AS width_px,
                     (CASE WHEN (tags @> 'cutting=>yes') THEN 'cutting' WHEN (man_made = 'dyke') THEN 'dyke' ELSE 'embankment' END) AS type
                   FROM planet_osm_line
                   WHERE (highway IS NOT NULL OR railway IS NOT NULL OR (man_made = 'dyke') OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
-                    AND ((man_made = 'dyke') OR (tags @> 'embankment=>yes') OR (tags @> 'cutting=>yes')) AND way && !bbox!
+                    AND ((man_made = 'dyke') OR (tags @> 'embankment=>yes') OR (tags @> 'cutting=>yes'))
+                    AND way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0))
                 ) AS embankments
               WHERE width_px > 0.0
               GROUP BY type
@@ -1247,6 +1268,7 @@ Layer:
             service,
             link,
             width_nominal,
+            GREATEST(width_nominal, width_tagged) AS width_max,
             CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- subselect that contains both roads and rail/aero
@@ -1306,7 +1328,7 @@ Layer:
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
                 carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
-                0.0 AS width_tagged,
+                carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1490,6 +1512,7 @@ Layer:
             service,
             link,
             width_nominal,
+            GREATEST(width_nominal, width_tagged) AS width_max,
             CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- subselect that contains both roads and rail/aero
@@ -1552,7 +1575,7 @@ Layer:
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
                 carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
-                0.0 AS width_tagged,
+                carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1611,6 +1634,11 @@ Layer:
             bicycle,
             tracktype,
             int_surface,
+            int_side_right,
+            int_side_left,
+            int_lane_right,
+            int_lane_left,
+            int_lanes,
             'no' AS int_tunnel,
             'no' AS int_bridge,
             access,
@@ -1618,6 +1646,7 @@ Layer:
             service,
             link,
             width_nominal,
+            GREATEST(width_nominal, width_tagged) AS width_max,
             CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- begin "features" subselect that contains both roads and rail/aero
@@ -1634,6 +1663,51 @@ Layer:
                                       'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'
                   ELSE NULL
                 END AS int_surface,
+                CASE
+                  WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN 
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                  ELSE
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'cycle'::text
+                    ELSE
+                      CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
+                      ELSE
+                        NULL
+                      END
+                    END
+                END AS int_side_right,
+                CASE
+                  WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN 
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                  ELSE
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'cycle'::text
+                    ELSE
+                      CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
+                      ELSE
+                        NULL
+                      END
+                    END
+                END AS int_side_left,
+                CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:right') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_right,
+                CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:left') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_left,
+                CASE
+                  WHEN highway IN ('steps') THEN
+                    CASE
+                      WHEN (tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
+                      WHEN (tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
+                      WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
+                      WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
+                    ELSE ''::text END
+                  WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
+                  ELSE
+                    CASE
+                      WHEN highway IN ('motorway', 'trunk') THEN '2'::text
+                      WHEN (oneway IS NULL OR NOT (oneway IN ('no', 'reversible'))) THEN '1'::text
+                      WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
+                      ELSE '1'::text
+                    END
+                END ||
+                CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END
+                AS int_lanes,
                 CASE WHEN access IN ('destination') THEN 'destination'::text
                   WHEN access IN ('no', 'private') THEN 'no'::text
                   ELSE NULL
@@ -1671,6 +1745,11 @@ Layer:
                 bicycle,
                 tracktype,
                 'null' AS surface, -- Should be a SQL NULL?
+                'null' AS int_side_right,
+                'null' AS int_side_left,
+                'null' AS int_lane_right,
+                'null' AS int_lane_left,
+                'null' AS int_lanes,
                 CASE
                   WHEN access IN ('destination') THEN 'destination'::text
                   WHEN access IN ('no', 'private') THEN 'no'::text
@@ -1680,7 +1759,7 @@ Layer:
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
                 carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
-                0.0 AS width_tagged,
+                carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1813,6 +1892,11 @@ Layer:
             bicycle,
             tracktype,
             int_surface,
+            int_side_right,
+            int_side_left,
+            int_lane_right,
+            int_lane_left,
+            int_lanes,
             'no' AS int_tunnel,
             CASE
               WHEN pass = 'yes' OR pass = 'stepping_stones' THEN 'ford'
@@ -1825,6 +1909,7 @@ Layer:
             service,
             link,
             width_nominal,
+            GREATEST(width_nominal, width_tagged) AS width_max,
             CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
             layernotnull
           FROM ( -- subselect that contains roads, rail/aero and node based fords
@@ -1842,6 +1927,51 @@ Layer:
                                       'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'
                   ELSE NULL
                 END AS int_surface,
+                CASE
+                  WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN 
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                  ELSE
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'cycle'::text
+                    ELSE
+                      CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
+                      ELSE
+                        NULL
+                      END
+                    END
+                END AS int_side_right,
+                CASE
+                  WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN 
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                  ELSE
+                    CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'cycle'::text
+                    ELSE
+                      CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
+                      ELSE
+                        NULL
+                      END
+                    END
+                END AS int_side_left,
+                CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:right') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_right,
+                CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:left') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_left,
+                CASE
+                  WHEN highway IN ('steps') THEN
+                    CASE
+                      WHEN (tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
+                      WHEN (tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
+                      WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
+                      WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
+                    ELSE ''::text END
+                  WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
+                  ELSE
+                    CASE
+                      WHEN highway IN ('motorway', 'trunk') THEN '2'::text
+                      WHEN (oneway IS NULL OR NOT (oneway IN ('no', 'reversible'))) THEN '1'::text
+                      WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
+                      ELSE '1'::text
+                    END
+                END ||
+                CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END
+                AS int_lanes,
                 CASE WHEN access IN ('destination') THEN 'destination'::text
                   WHEN access IN ('no', 'private') THEN 'no'::text
                   ELSE NULL
@@ -1879,7 +2009,12 @@ Layer:
                 bicycle,
                 tracktype,
                 NULL AS pass,
-                'null',
+                'null' AS int_surface,
+                'null' AS int_side_right,
+                'null' AS int_side_left,
+                'null' AS int_lane_right,
+                'null' AS int_lane_left,
+                'null' AS int_lanes,
                 CASE
                   WHEN access IN ('destination') THEN 'destination'::text
                   WHEN access IN ('no', 'private') THEN 'no'::text
@@ -1889,7 +2024,7 @@ Layer:
                 CASE WHEN service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text ELSE 'INT-normal'::text END AS service,
                 'no' AS link,
                 carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
-                0.0 AS width_tagged,
+                carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !scale_denominator!) AS width_tagged,
                 COALESCE(layer,0) AS layernotnull,
                 z_order
               FROM planet_osm_line
@@ -1906,6 +2041,11 @@ Layer:
                 tracktype,
                 pass,
                 int_surface,
+                int_side_right,
+                int_side_left,
+                int_lane_right,
+                int_lane_left,
+                int_lanes,
                 access,
                 construction,
                 service,
@@ -1933,6 +2073,51 @@ Layer:
                                             'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'
                         ELSE NULL
                       END AS int_surface,
+                      CASE
+                        WHEN (l.tags->'sidewalk') IN ('yes', 'both', 'right') OR (l.tags->'sidewalk:right') IN ('yes') THEN 
+                          CASE WHEN (l.tags->'cycleway') IN ('track') OR (l.tags->'cycleway:right') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                        ELSE
+                          CASE WHEN (l.tags->'cycleway') IN ('track') OR (l.tags->'cycleway:right') IN ('track') THEN 'cycle'::text
+                          ELSE
+                            CASE WHEN (l.tags->'handrail') IN ('yes') OR (l.tags->'handrail:right') IN ('yes') THEN 'handrail'::text
+                            ELSE
+                              NULL
+                            END
+                          END
+                      END AS int_side_right,
+                      CASE
+                        WHEN (l.tags->'sidewalk') IN ('yes', 'both', 'left') OR (l.tags->'sidewalk:left') IN ('yes') THEN 
+                          CASE WHEN (l.tags->'cycleway') IN ('track') OR (l.tags->'cycleway:left') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                        ELSE
+                          CASE WHEN (l.tags->'cycleway') IN ('track') OR (l.tags->'cycleway:left') IN ('track') THEN 'cycle'::text
+                          ELSE
+                            CASE WHEN (l.tags->'handrail') IN ('yes') OR (l.tags->'handrail:left') IN ('yes') THEN 'handrail'::text
+                            ELSE
+                              NULL
+                            END
+                          END
+                      END AS int_side_left,
+                      CASE WHEN (l.tags->'cycleway') IN ('lane') OR (l.tags->'cycleway:right') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_right,
+                      CASE WHEN (l.tags->'cycleway') IN ('lane') OR (l.tags->'cycleway:left') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_left,
+                      CASE
+                        WHEN l.highway IN ('steps') THEN
+                          CASE
+                            WHEN (l.tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
+                            WHEN (l.tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
+                            WHEN (l.tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
+                            WHEN (l.tags @> 'handrail:center=>yes') THEN 'handrail'::text
+                          ELSE ''::text END
+                        WHEN (l.tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (l.tags->'lanes')::text
+                        ELSE
+                          CASE
+                            WHEN l.highway IN ('motorway', 'trunk') THEN '2'::text
+                            WHEN (l.oneway IS NULL OR NOT (l.oneway IN ('no', 'reversible'))) THEN '1'::text
+                            WHEN l.highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
+                            ELSE '1'::text
+                          END
+                      END ||
+                      CASE WHEN (l.tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END
+                      AS int_lanes,
                       CASE WHEN l.access IN ('destination') THEN 'destination'::text
                         WHEN l.access IN ('no', 'private') THEN 'no'::text
                         ELSE NULL
