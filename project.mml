@@ -1259,7 +1259,6 @@ Layer:
             horse,
             foot,
             bicycle,
-            tracktype,
             int_surface,
             'yes' AS int_tunnel,
             'no' AS int_bridge,
@@ -1278,7 +1277,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 CASE WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                   WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -1317,7 +1315,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 'null',
                 CASE
                   WHEN access IN ('destination') THEN 'destination'::text
@@ -1505,7 +1502,6 @@ Layer:
             horse,
             foot,
             bicycle,
-            tracktype,
             int_surface,
             access,
             construction,
@@ -1522,7 +1518,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 CASE WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                   WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -1564,7 +1559,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 'null',
                 CASE
                   WHEN access IN ('destination') THEN 'destination'::text
@@ -1632,7 +1626,6 @@ Layer:
             horse,
             foot,
             bicycle,
-            tracktype,
             int_surface,
             int_side_right,
             int_side_left,
@@ -1656,7 +1649,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 CASE WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
                   WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
@@ -1743,7 +1735,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 'null' AS surface, -- Should be a SQL NULL?
                 'null' AS int_side_right,
                 'null' AS int_side_left,
@@ -1890,7 +1881,6 @@ Layer:
             horse,
             foot,
             bicycle,
-            tracktype,
             int_surface,
             int_side_right,
             int_side_left,
@@ -1919,7 +1909,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 tags->'ford' AS pass,
                 CASE WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'
@@ -2007,7 +1996,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 NULL AS pass,
                 'null' AS int_surface,
                 'null' AS int_side_right,
@@ -2038,7 +2026,6 @@ Layer:
                 horse,
                 foot,
                 bicycle,
-                tracktype,
                 pass,
                 int_surface,
                 int_side_right,
@@ -2063,7 +2050,6 @@ Layer:
                       l.horse AS horse,
                       l.foot AS foot,
                       l.bicycle AS bicycle,
-                      l.tracktype AS tracktype,
                       CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN 'mountain_pass' ELSE 'ford_node' END AS pass,
                       CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN GREATEST(7, carto_highway_line_width(
                         l.highway, l.service, z(!scale_denominator!))) ELSE 5 END AS pass_length,

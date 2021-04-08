@@ -74,13 +74,6 @@
 @minor-service-width-z18:         4.75;
 @minor-service-width-z19:         5.5;
 
-@track-grade1-width-z13:          0.25;
-@track-grade2-width-z13:          0.25;
-
-@track-grade1-width-z15:          0.75;
-@track-grade2-width-z15:          0.75;
-
-
 @major-casing-width-z11:          0.3;
 
 @casing-width-z12:                0.1;
@@ -825,12 +818,6 @@
           line-color: @bridge-casing;
           line-join: round;
           line-width: @track-width-z13 + 2 * (@paths-background-width + @paths-bridge-casing-width);
-          [tracktype = 'grade1'] {
-            line-width: @track-grade1-width-z13 + 2 * (@paths-background-width + @paths-bridge-casing-width);
-          }
-          [tracktype = 'grade2'] {
-            line-width: @track-grade2-width-z13 + 2 * (@paths-background-width + @paths-bridge-casing-width);
-          }
           [int_bridge = 'ford'],
           [int_bridge = 'ford_node'],
           [int_bridge = 'mountain_pass'] {
@@ -847,14 +834,6 @@
               b/line-width: @paths-ford-casing-width-z14;
               a/line-offset: 0.5*@track-width-z15 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
               b/line-offset: -0.5*@track-width-z15 - @paths-background-width - 0.5*@paths-ford-casing-width-z14;
-              [tracktype = 'grade1'] {
-                a/line-offset: 0.5*@track-grade1-width-z15 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
-                b/line-offset: -0.5*@track-grade1-width-z15 - @paths-background-width - 0.5*@paths-ford-casing-width-z14;
-              }
-              [tracktype = 'grade2'] {
-                a/line-offset: 0.5*@track-grade2-width-z15 + @paths-background-width + 0.5*@paths-ford-casing-width-z14;
-                b/line-offset: -0.5*@track-grade2-width-z15 - @paths-background-width - 0.5*@paths-ford-casing-width-z14;
-              }
               a/line-join: round;
               b/line-join: round;
             }
@@ -864,12 +843,6 @@
           line-color: @bridge-casing;
           line-join: round;
           line-width: @track-width-z15 + 2 * (@track-background-width + @paths-bridge-casing-width);
-          [tracktype = 'grade1'] {
-            line-width: @track-grade1-width-z15 + 2 * (@track-background-width + @paths-bridge-casing-width);
-          }
-          [tracktype = 'grade2'] {
-            line-width: @track-grade2-width-z15 + 2 * (@track-background-width + @paths-bridge-casing-width);
-          }
           [int_bridge = 'ford'],
           [int_bridge = 'ford_node'],
           [int_bridge = 'mountain_pass'] {
@@ -885,14 +858,6 @@
             b/line-width: @paths-ford-casing-width;
             a/line-offset: 0.5*@track-width-z15 + @track-background-width + 0.5*@paths-ford-casing-width;
             b/line-offset: -0.5*@track-width-z15 - @track-background-width - 0.5*@paths-ford-casing-width;
-            [tracktype = 'grade1'] {
-              a/line-offset: 0.5*@track-grade1-width-z15 + @track-background-width + 0.5*@paths-ford-casing-width;
-              b/line-offset: -0.5*@track-grade1-width-z15 - @track-background-width - 0.5*@paths-ford-casing-width;
-            }
-            [tracktype = 'grade2'] {
-              a/line-offset: 0.5*@track-grade2-width-z15 + @track-background-width + 0.5*@paths-ford-casing-width;
-              b/line-offset: -0.5*@track-grade2-width-z15 - @track-background-width - 0.5*@paths-ford-casing-width;
-            }
             a/line-join: round;
             b/line-join: round;
           }
@@ -904,20 +869,8 @@
           line-color: @tunnel-casing;
           line-dasharray: 4,2;
           line-width: @track-width-z13 + 2 * (@track-background-width + @paths-tunnel-casing-width);
-          [tracktype = 'grade1'] {
-            line-width: @track-grade1-width-z13 + 2 * (@track-background-width + @paths-tunnel-casing-width);
-          }
-          [tracktype = 'grade2'] {
-            line-width: @track-grade2-width-z13 + 2 * (@track-background-width + @paths-tunnel-casing-width);
-          }
           [zoom >= 15]{
             line-width: @track-width-z15 + 2 * (@track-background-width + @paths-tunnel-casing-width);
-            [tracktype = 'grade1'] {
-              line-width: @track-grade1-width-z15 + 2 * (@track-background-width + @paths-tunnel-casing-width);
-            }
-            [tracktype = 'grade2'] {
-              line-width: @track-grade2-width-z15 + 2 * (@track-background-width + @paths-tunnel-casing-width);
-            }
           }
         }
       }
@@ -1125,23 +1078,11 @@
             line-color: @track-casing;
             line-join: round;
             line-width: @track-width-z13 + 2 * @paths-background-width;
-            [tracktype = 'grade1'] {
-              line-width: @track-grade1-width-z13 + 2 * @paths-background-width;
-            }
-            [tracktype = 'grade2'] {
-              line-width: @track-grade2-width-z13 + 2 * @paths-background-width;
-            }
           }
           [zoom >= 15] {
             line-color: @track-casing;
             line-join: round;
             line-width: @track-width-z15 + 2 * @track-background-width;
-            [tracktype = 'grade1'] {
-              line-width: @track-grade1-width-z15 + 2 * @track-background-width;
-            }
-            [tracktype = 'grade2'] {
-              line-width: @track-grade2-width-z15 + 2 * @track-background-width;
-            }
           }
         }
       }
@@ -1152,22 +1093,8 @@
           line-join: round;
           line-cap: round;
           line-width: @track-width-z13 + 2 * @paths-background-width;
-          /* With the heavier dasharrays on grade1 and grade2 it helps to make the casing a bit larger */
-          [tracktype = 'grade1'] {
-            line-width: @track-grade1-width-z13 + 2 * @paths-background-width;
-          }
-          [tracktype = 'grade2'] {
-            line-width: @track-grade2-width-z13 + 2 * @paths-background-width;
-          }
-
           [zoom >= 15] {
             line-width: @track-width-z15 + 2 * @track-background-width;
-            [tracktype = 'grade1'] {
-              line-width: @track-grade1-width-z15 + 2 * @track-background-width;
-            }
-            [tracktype = 'grade2'] {
-              line-width: @track-grade2-width-z15 + 2 * @track-background-width;
-            }
           }
         }
       }
@@ -2199,14 +2126,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           background/line-color: @track-casing;
           background/line-join: round;
           background/line-cap: round;
-          background/line-width: @track-width-z15 + 2 * @paths-background-width;
-          /* With the heavier dasharrays on grade1 and grade2 it helps to make the casing a bit larger */
-          [tracktype = 'grade1'] {
-            background/line-width: @track-grade1-width-z15 + 2 * @paths-background-width;
-          }
-          [tracktype = 'grade2'] {
-            background/line-width: @track-grade2-width-z15 + 2 * @paths-background-width;
-          }
+          background/line-width: [width_nominal] + 2 * @paths-background-width;
         }
 
         /* Set the properties of the brown inside */
@@ -2218,36 +2138,21 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line/line-opacity: 0.8;
         line/line-clip:false;
 
-        line/line-width: @track-width-z13;
+        line/line-width: [width_nominal];
 
         [zoom >= 14] {
-          line/line-width: @track-width-z14*0.85;
-          line/line-dasharray: 5,4,2,4;
-        }
-
-        [zoom >= 15] {
-          line/line-width: @track-width-z15;
-        }
-
-        [tracktype = 'grade1'] {
-          [zoom >= 14] { line/line-dasharray: 100,0; line/line-width: @track-width-z14; }
-          [zoom >= 15] { line/line-dasharray: 100,0; line/line-width: @track-width-z15; }
-        }
-        [tracktype = 'grade2'] {
-          [zoom >= 14] { line/line-dasharray: 100,0; line/line-width: @track-width-z14*0.85; }
-          [zoom >= 15] { line/line-dasharray: 11,4; line/line-width: @track-width-z15; }
-        }
-        [tracktype = 'grade3'] {
-          [zoom >= 14] { line/line-dasharray: 100,0; line/line-width: @track-width-z14*0.7; }
-          [zoom >= 15] { line/line-dasharray: 7,5; line/line-width: @track-width-z15; }
-        }
-        [tracktype = 'grade4'] {
-          [zoom >= 14] { line/line-dasharray: 100,0; line/line-width: @track-width-z14*0.55; }
-          [zoom >= 15] { line/line-dasharray: 4,6; line/line-width: @track-width-z15; }
-        }
-        [tracktype = 'grade5'] {
-          [zoom >= 14] { line/line-dasharray: 100,0; line/line-width: @track-width-z14*0.45; }
-          [zoom >= 15] { line/line-dasharray: 2,8; line/line-width: @track-width-z15; }
+          line/line-dasharray: 100,0;
+          [zoom >= 15] { line/line-dasharray: 12,2.5; }
+          [zoom >= 17] { line/line-dasharray: 12.5,3; }
+          [zoom >= 18] { line/line-dasharray: 13,3.5; }
+          [int_surface = 'unpaved'] {
+            [zoom >= 15] { line/line-dasharray: 3.2,3; }
+            [zoom >= 17] { line/line-dasharray: 3.8,3.2; }
+            [zoom >= 18] { line/line-dasharray: 4.2,3.5; }
+          }
+          [int_surface = null] {
+            line/line-dasharray: 6.5,3,2,3;
+          }
         }
       }
     }
