@@ -55,6 +55,8 @@ sql:
     - light_rail
     - tram
     - dyke
+    - runway
+    - taxiway
   barrier:
     - chain
     - city_wall
@@ -272,6 +274,20 @@ classes:
     13: 1
     15: 1.5
     17: 2
+  runway:
+    11: 2
+    12: 4
+    13: 6
+    14: 12
+    15: 18
+    16: 24
+  taxiway:
+    11: 1
+    12: 1.5
+    13: 2
+    14: 4
+    15: 6
+    16: 8
   dyke:
     15: 1.5
   chain:

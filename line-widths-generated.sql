@@ -373,6 +373,32 @@ select
         when $2 = 19 then 1.5
         else 0.0
       end)
+    when $1 = 'runway' then
+      (case
+        when $2 = 11 then 2.0
+        when $2 = 12 then 4.0
+        when $2 = 13 then 6.0
+        when $2 = 14 then 12.0
+        when $2 = 15 then 18.0
+        when $2 = 16 then 24.0
+        when $2 = 17 then 24.0
+        when $2 = 18 then 24.0
+        when $2 = 19 then 24.0
+        else 0.0
+      end)
+    when $1 = 'taxiway' then
+      (case
+        when $2 = 11 then 1.0
+        when $2 = 12 then 1.5
+        when $2 = 13 then 2.0
+        when $2 = 14 then 4.0
+        when $2 = 15 then 6.0
+        when $2 = 16 then 8.0
+        when $2 = 17 then 8.0
+        when $2 = 18 then 8.0
+        when $2 = 19 then 8.0
+        else 0.0
+      end)
     else 0.0
   end;
 $func$;
