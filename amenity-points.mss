@@ -1981,10 +1981,7 @@
       }
       [feature = 'leisure_recreation_ground'],
       [feature = 'leisure_park'] {
-        text-fill: darken(@park, 70%);
-      }
-      [feature = 'landuse_quarry'] {
-        text-fill: darken(@quarry, 60%);
+        text-fill: darken(@park, 60%);
       }
       [feature = 'landuse_vineyard'],
       [feature = 'landuse_orchard'],
@@ -2031,6 +2028,7 @@
       [feature = 'landuse_commercial'] {
         text-fill: darken(@commercial, 50%);
       }
+      [feature = 'landuse_quarry'],
       [feature = 'landuse_brownfield'],
       [feature = 'landuse_landfill'],
       [feature = 'landuse_construction'] {
@@ -2056,10 +2054,10 @@
         text-fill: darken(@societal_amenities, 60%);
       }
       [feature = 'natural_heath'] {
-        text-fill: darken(@heath, 40%);
+        text-fill: darken(@heath, 50%);
       }
       [feature = 'natural_scrub'] {
-        text-fill: darken(@scrub, 60%);
+        text-fill: darken(@scrub, 50%);
       }
       [feature = 'natural_beach'],
       [feature = 'natural_shoal'] {
@@ -2069,11 +2067,12 @@
       [feature = 'leisure_stadium'] {
         text-fill: darken(@stadium, 60%);
       }
-      [feature = 'leisure_dog_park'],
       [feature = 'leisure_fitness_centre'],
-      [feature = 'leisure_fitness_station'],
+      [feature = 'leisure_fitness_station'] {
+        text-fill: darken(@stadium, 60%);
+      }
       [feature = 'leisure_dog_park'] {
-        text-fill: @leisure-icon;
+        text-fill: darken(@park, 60%);
         text-halo-radius: @standard-halo-radius * 1.5; /* Extra halo needed to stand out from paw pattern. */
         text-halo-fill: @standard-halo-fill;
       }
@@ -2614,9 +2613,12 @@
       text-halo-fill: @standard-halo-fill;
       text-placement: interior;
       [feature = 'natural_scree'],
-      [feature = 'natural_shingle'],
+      [feature = 'natural_shingle'] {
+        text-fill: darken(@bare_ground, 50%);
+      }
       [feature = 'natural_bare_rock'] {
         text-fill: darken(@bare_ground, 50%);
+        text-halo-radius: @standard-halo-radius * 1.5; /* extra halo needed to overpower the pattern */
       }
       [feature = 'natural_sand'] {
         text-fill: darken(@sand, 50%);
