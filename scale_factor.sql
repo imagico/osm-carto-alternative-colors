@@ -96,3 +96,26 @@ select (CASE
   ELSE 0.0
 END)
 $func$;
+
+/* These are simple dummy functions for the mapped width calculation that speed up the style */
+/* Uncomment these and (re)run the sql file to enable */
+/*
+create or replace function carto_highway_line_width_mapped (text, text, text, geometry, numeric)
+  returns numeric
+  language sql
+  immutable
+as $func$
+select 0.0
+$func$;
+*/
+/* tagged width or width estimated from length */
+/* parameters: aeroway tag, width tag, way, bbox, scale_denominator */
+/*
+create or replace function carto_aeroway_line_width_mapped (text, text, geometry, geometry, numeric)
+  returns numeric
+  language sql
+  immutable
+as $func$
+select 0.0
+$func$;
+*/

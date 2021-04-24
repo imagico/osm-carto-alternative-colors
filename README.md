@@ -50,6 +50,41 @@ fit into the design concept here.
 # Installation
 
 See [INSTALL.md](INSTALL.md) for the generic OSM-Carto installation instructions.  In addition you need to 
-install the `z()` function in PostGIS which is supplied in `z.sql` as well as the functions in 
-`line-widths-generated.sql`.
+install the a number of functions in PostGIS supplied in:
 
+* `z.sql`
+* `line-widths-generated.sql`
+* `scale_factor.sql`
+
+## Simplified version for faster rendering
+
+Some of the features of this style are fairly slow in rendering due to complex SQL code.  There is builtin 
+support for a more simple version of the style that disables the slowest parts, in particular parts of the 
+water barriers and the variable width road rendering.
+
+To enable this simplified version you need to:
+
+* uncomment and install the commented functions at the end of `scale_factor.sql`
+* disable the `water-barriers-line` layer and enable the `water-barriers-line-simple` layer, for example
+by using (with kosmtik) the following in `localconfig.json`:
+
+```
+    {
+        "where": "Layer",
+        "if": {
+            "id": "water-barriers-line"
+        },
+        "then": {
+            "properties.minzoom": 22
+        }
+    },
+    {
+        "where": "Layer",
+        "if": {
+            "id": "water-barriers-line-simple"
+        },
+        "then": {
+            "properties.minzoom": 11
+        }
+    }
+```
