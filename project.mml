@@ -870,27 +870,10 @@ Layer:
                      p.waterway AS waterway,
                      l.waterway AS wtype,
                      p.name AS name,
-                     (CASE WHEN l.waterway IN ('river', 'canal') THEN
-                       (CASE z(!scale_denominator!)
-                         WHEN 11 THEN 1.8
-                         WHEN 12 THEN 2.2
-                         WHEN 13 THEN 3
-                         WHEN 14 THEN 4.5
-                         WHEN 15 THEN 6
-                         WHEN 16 THEN 8
-                         WHEN 17 THEN 10
-                         ELSE 12
-                       END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
-                     ELSE
-                       (CASE z(!scale_denominator!)
-                         WHEN 13 THEN 2.2
-                         WHEN 14 THEN 2.5
-                         WHEN 15 THEN 3
-                         WHEN 16 THEN 3.5
-                         WHEN 17 THEN 4
-                         ELSE 4.5
-                       END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
-                     END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                     (carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                       (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END) +
+                       (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                         NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                      (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                    FROM planet_osm_point p
                    JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
@@ -955,27 +938,9 @@ Layer:
                     MIN(b.waterway) AS waterway,
                     MIN(l.waterway) AS wtype,
                     MIN(b.name) AS name,
-                    MAX(CASE WHEN l.waterway IN ('river', 'canal') THEN
-                      (CASE z(!scale_denominator!)
-                        WHEN 11 THEN 1.8
-                        WHEN 12 THEN 2.2
-                        WHEN 13 THEN 3
-                        WHEN 14 THEN 4.5
-                        WHEN 15 THEN 6
-                        WHEN 16 THEN 8
-                        WHEN 17 THEN 10
-                        ELSE 12
-                      END)
-                    ELSE
-                      (CASE z(!scale_denominator!)
-                        WHEN 13 THEN 2.2
-                        WHEN 14 THEN 2.5
-                        WHEN 15 THEN 3
-                        WHEN 16 THEN 3.5
-                        WHEN 17 THEN 4
-                        ELSE 4.5
-                      END)
-                    END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                    MAX(carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                      (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                        NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                     SUM(ST_Length(b.way)) AS mapped_width,
                     (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                   FROM planet_osm_line b
@@ -1073,27 +1038,9 @@ Layer:
                     MIN(b.waterway) AS waterway,
                     MIN(l.waterway) AS wtype,
                     MIN(b.name) AS name,
-                    MAX(CASE WHEN l.waterway IN ('river', 'canal') THEN
-                      (CASE z(!scale_denominator!)
-                        WHEN 11 THEN 1.8
-                        WHEN 12 THEN 2.2
-                        WHEN 13 THEN 3
-                        WHEN 14 THEN 4.5
-                        WHEN 15 THEN 6
-                        WHEN 16 THEN 8
-                        WHEN 17 THEN 10
-                        ELSE 12
-                      END)
-                    ELSE
-                      (CASE z(!scale_denominator!)
-                        WHEN 13 THEN 2.2
-                        WHEN 14 THEN 2.5
-                        WHEN 15 THEN 3
-                        WHEN 16 THEN 3.5
-                        WHEN 17 THEN 4
-                        ELSE 4.5
-                      END)
-                    END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                    MAX(carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                      (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                        NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                     MAX(ST_Length(ST_BoundingDiagonal(b.way))) AS polygon_width,
                     (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                   FROM planet_osm_polygon b
@@ -1239,27 +1186,10 @@ Layer:
                      p.waterway AS waterway,
                      l.waterway AS wtype,
                      p.name AS name,
-                     (CASE WHEN l.waterway IN ('river', 'canal') THEN
-                       (CASE z(!scale_denominator!)
-                         WHEN 11 THEN 1.8
-                         WHEN 12 THEN 2.2
-                         WHEN 13 THEN 3
-                         WHEN 14 THEN 4.5
-                         WHEN 15 THEN 6
-                         WHEN 16 THEN 8
-                         WHEN 17 THEN 10
-                         ELSE 12
-                       END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
-                     ELSE
-                       (CASE z(!scale_denominator!)
-                         WHEN 13 THEN 2.2
-                         WHEN 14 THEN 2.5
-                         WHEN 15 THEN 3
-                         WHEN 16 THEN 3.5
-                         WHEN 17 THEN 4
-                         ELSE 4.5
-                       END) + (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END)
-                     END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                     (carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                       (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END) +
+                       (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                         NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
                      (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
                    FROM planet_osm_point p
                    JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 1)
