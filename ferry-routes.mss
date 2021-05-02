@@ -1,7 +1,7 @@
 @ferry-route: #66f;
 @ferry-route-text: @ferry-route;
 
-#ferry-routes {
+#roads[zoom >= 10][road_layer = 'ferry_routes'] {
   [zoom >= 7] {
     /* background prevents problems with overlapping ferry-routes, see #457 */
     background/line-color: @river-color;

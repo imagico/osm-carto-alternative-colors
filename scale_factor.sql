@@ -23,6 +23,19 @@ select carto_highway_line_width(
   END, $3)
 $func$;
 
+/* wrapper for casing width - bridge or not */
+create or replace function carto_casing_line_width (text, text, numeric)
+  returns numeric
+  language sql
+  immutable
+  returns null on null input
+as $func$
+select 
+  CASE WHEN $2 = 'no' THEN carto_casing_line_width ($1, $3)
+    ELSE carto_bridge_casing_line_width ($1, $3)
+  END
+$func$;
+
 /* tagged width or width estimated from lanes */
 /* parameters: highway tag, width tag, lanes tag, way, scale_denominator */
 create or replace function carto_highway_line_width_mapped (text, text, text, geometry, numeric)

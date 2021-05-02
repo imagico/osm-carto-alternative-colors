@@ -39,7 +39,10 @@ def generate_sql(group, cl_list, classes, tags):
         zoom_prev = -1;
         for zoom in range(20):
             if zoom in classes[name]:
-                line = "        when $2 = {z} then {wdth}"
+                if zoom == 19:
+                    line = "        when $2 >= {z} then {wdth}"
+                else:
+                    line = "        when $2 = {z} then {wdth}"
                 print (line.format(z = zoom, wdth = float(classes[name][zoom])))
                 width_prev = classes[name][zoom]
                 zoom_prev = zoom

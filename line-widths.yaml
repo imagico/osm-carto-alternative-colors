@@ -57,6 +57,13 @@ sql:
     - dyke
     - runway
     - taxiway
+  casing:
+    - casing-major
+    - casing-secondary
+    - casing
+  bridge_casing:
+    - bridge-casing-major
+    - bridge-casing
   barrier:
     - chain
     - city_wall
@@ -78,6 +85,11 @@ tags:
   secondary: IN ('secondary', 'secondary_link')
   tertiary: IN ('tertiary', 'tertiary_link')
   living-street: = 'living_street'
+  casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link')
+  casing-secondary: IN ('secondary', 'secondary_link')
+  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps')
+  bridge-casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link')
+  bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps')
 
 classes:
   river:
@@ -320,12 +332,51 @@ classes:
     16: 0.4
   wall:
     16: 0.4
-
-
-
-
-
-
+  casing-major:
+    12: 0.5
+    13: 0.5
+    14: 0.6
+    15: 0.7
+    16: 0.7
+    17: 1
+    18: 1
+    19: 1
+  casing-secondary:
+    12: 0.3
+    13: 0.35
+    14: 0.35
+    15: 0.7
+    16: 0.7
+    17: 1
+    18: 1
+    19: 1
+  casing:
+    12: 0.1
+    13: 0.5
+    14: 0.55
+    15: 0.6
+    16: 0.6
+    17: 0.8
+    18: 0.8
+    19: 0.8
+  bridge-casing-major:
+    12: 0.5
+    13: 0.5
+    14: 0.6
+    15: 0.75
+    16: 0.75
+    17: 1
+    18: 1
+    19: 1
+  bridge-casing:
+    12: 0.1
+    13: 0.5
+    14: 0.5
+    15: 0.75
+    16: 0.75
+    17: 0.8
+    18: 0.8
+    19: 0.8
 
 
 

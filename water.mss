@@ -198,11 +198,10 @@
   line-comp-op: src-atop;
 }
 
-.water-lines {
-  ::base {
-  [waterway = 'canal'][zoom >= 12],
-  [waterway = 'river'][zoom >= 12],
-  [waterway = 'wadi'][zoom >= 13] {
+#water-lines,
+#roads[road_layer = 'waterway_bridges'] {
+  [feature = 'waterway_canal'][zoom >= 12],
+  [feature = 'waterway_river'][zoom >= 12] {
     // the additional line of land color is used to provide a background for dashed casings
     [int_tunnel = 'yes'] {
       background/line-color: @land-color;
@@ -212,7 +211,7 @@
       background/line-comp-op: src-atop;
     }
 
-    [bridge = 'yes'] {
+    [int_bridge = 'yes'] {
       [zoom >= 14] {
         bridgecasing/line-color: black;
         bridgecasing/line-join: round;
@@ -226,8 +225,7 @@
 
     // this is an additional background line for rivers/canals to show the dashing also on dark backgrounds
     [intermittent = 'yes'],
-    [seasonal = 'yes'],
-    [waterway = 'wadi'] {
+    [seasonal = 'yes'] {
       [zoom >= 14] {
         bkg_intermittent/line-color: @land-color;
         bkg_intermittent/line-join: round;
@@ -253,7 +251,7 @@
     [zoom >= 17] { water/line-width: @river-width-z17; }
     [zoom >= 18] { water/line-width: @river-width-z18; }
 
-    [waterway = 'canal'] {
+    [feature = 'waterway_canal'] {
       water/line-color: darken(@river-color, 6%);
       artificial/line-color: @water-color;
       artificial/line-width: @river-width-z12 * 0.5;
@@ -295,14 +293,13 @@
     }
 
     [intermittent = 'yes'],
-    [seasonal = 'yes'],
-    [waterway = 'wadi'] {
+    [seasonal = 'yes'] {
       [zoom >= 14] {
         water/line-cap: butt;
         water/line-join: round;
         water/line-clip: false;
         water/line-dasharray: 8,1;
-        [waterway = 'canal'] {
+        [feature = 'waterway_canal'] {
           artificial/line-cap: butt;
           artificial/line-join: round;
           artificial/line-clip: false;
@@ -314,9 +311,9 @@
     }
   }
 
-  [waterway = 'stream'],
-  [waterway = 'ditch'],
-  [waterway = 'drain'] {
+  [feature = 'waterway_stream'],
+  [feature = 'waterway_ditch'],
+  [feature = 'waterway_drain'] {
     [zoom >= 12][intermittent != 'yes'][seasonal != 'yes'],
     [zoom >= 13] {
       // the additional line of land color is used to provide a background for dashed casings
@@ -330,7 +327,7 @@
         [zoom >= 17] { background/line-width: @stream-width-z17; }
         [zoom >= 18] { background/line-width: @stream-width-z18; }
       }
-      [bridge = 'yes'] {
+      [int_bridge = 'yes'] {
         [zoom >= 14] {
           bridgecasing/line-color: black;
           bridgecasing/line-join: round;
@@ -358,8 +355,8 @@
       [zoom >= 17] { water/line-width: @stream-width-z17; }
       [zoom >= 18] { water/line-width: @stream-width-z18; }
 
-      [waterway = 'ditch'],
-      [waterway = 'drain'] {
+      [feature = 'waterway_ditch'],
+      [feature = 'waterway_drain'] {
         [zoom >= 15][intermittent != 'yes'][seasonal != 'yes'] {
           water/line-color: darken(@river-color, 6%);
           artificial/line-color: lighten(@river-color, 6%);
@@ -410,33 +407,12 @@
     }
   }
 
-  [waterway = 'derelict_canal'][zoom >= 12] {
-    line-width: 1.5;
-    line-color: #b5e4d0;
-    line-dasharray: 4,4;
-    line-opacity: 0.5;
-    line-join: round;
-    line-cap: round;
-    [zoom >= 13] {
-      line-width: 2.5;
-      line-dasharray: 4,6;
-    }
-    [zoom >= 14] {
-      line-width: 4.5;
-      line-dasharray: 4,8;
-    }
-  }
-  }
-
   // this is the intermittent centerline for rivers at mid zoom
   // to be drawn above all blue water lines
-  ::top {
-  [waterway = 'canal'][zoom >= 12],
-  [waterway = 'river'][zoom >= 12],
-  [waterway = 'wadi'][zoom >= 13] {
+  [feature = 'waterway_canal'][zoom >= 12],
+  [feature = 'waterway_river'][zoom >= 12] {
     [intermittent = 'yes'],
-    [seasonal = 'yes'],
-    [waterway = 'wadi'] {
+    [seasonal = 'yes'] {
       [zoom < 14] {
         centerline/line-color: @bare_ground;
         centerline/line-width: 0.65;
@@ -444,7 +420,6 @@
         [zoom >= 13] { centerline/line-width: 0.9; }
       }
     }
-  }
   }
 }
 

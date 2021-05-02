@@ -1153,10 +1153,12 @@
   }
 }
 
-#landuse-overlay {
-  [landuse = 'military'][zoom >= 7][way_pixels > 900],
-  [landuse = 'military'][zoom >= 8][way_pixels > 100],
-  [landuse = 'military'][zoom >= 10][way_pixels > 75] {
+#landuse-overlay-lz,
+#roads[zoom >= 10][road_layer = 'landuse-overlay'] {
+  // width is way_pixels here
+  [feature = 'landuse_military'][zoom >= 7][width > 900],
+  [feature = 'landuse_military'][zoom >= 8][width > 100],
+  [feature = 'landuse_military'][zoom >= 10][width > 75] {
     polygon-pattern-file: url('symbols/military_red_hatch.png');
     polygon-pattern-alignment: global;
     line-color: @military;
@@ -1192,7 +1194,7 @@
   }
 }
 
-#line-barriers {
+#roads[zoom >= 10][road_layer = 'line_barriers'] {
   [zoom >= 16] {
     line-width: 0.4;
     line-color: #444;
