@@ -1,9 +1,9 @@
-/* This is generated code, do not change this file manually.         */
-/*                                                                   */
-/* To change these definitions, alter line-widths.yaml and run:      */
-/*                                                                   */
-/*   ./scripts/generate_line_widths.py > line-widths-generated.mss   */
-/*                                                                   */
+/* This is generated code, do not change this file manually.               */
+/*                                                                         */
+/* To change these definitions, alter line-widths.yaml and run:            */
+/*                                                                         */
+/*   ./scripts/generate_line_widths.py > style/line-widths-generated.mss   */
+/*                                                                         */
 
 /* waterway */
 @river-width-z8: 0.7;

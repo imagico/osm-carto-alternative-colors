@@ -86,23 +86,23 @@ def main():
     if args.sql:
         groups = settings['sql']
         # Print a warning about the nature of these definitions.
-        print ("/* This is generated code, do not change this file manually.            */")
-        print ("/*                                                                      */")
-        print ("/* To change these definitions, alter line-widths.yaml and run:         */")
-        print ("/*                                                                      */")
-        print ("/*   ./scripts/generate_line_widths.py -s > line-widths-generated.sql   */")
-        print ("/*                                                                      */")
+        print ("/* This is generated code, do not change this file manually.                */")
+        print ("/*                                                                          */")
+        print ("/* To change these definitions, alter line-widths.yaml and run:             */")
+        print ("/*                                                                          */")
+        print ("/*   ./scripts/generate_line_widths.py -s > sql/line-widths-generated.sql   */")
+        print ("/*                                                                          */")
         for group, cl_list in groups.items():
             generate_sql(group, cl_list, classes, tags)
     else:
         groups = settings['mss']
         # Print a warning about the nature of these definitions.
-        print ("/* This is generated code, do not change this file manually.         */")
-        print ("/*                                                                   */")
-        print ("/* To change these definitions, alter line-widths.yaml and run:      */")
-        print ("/*                                                                   */")
-        print ("/*   ./scripts/generate_line_widths.py > line-widths-generated.mss   */")
-        print ("/*                                                                   */")
+        print ("/* This is generated code, do not change this file manually.               */")
+        print ("/*                                                                         */")
+        print ("/* To change these definitions, alter line-widths.yaml and run:            */")
+        print ("/*                                                                         */")
+        print ("/*   ./scripts/generate_line_widths.py > style/line-widths-generated.mss   */")
+        print ("/*                                                                         */")
         for group, cl_list in groups.items():
             generate_mss(group, cl_list, classes)
 

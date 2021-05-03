@@ -1,9 +1,9 @@
-/* This is generated code, do not change this file manually.            */
-/*                                                                      */
-/* To change these definitions, alter line-widths.yaml and run:         */
-/*                                                                      */
-/*   ./scripts/generate_line_widths.py -s > line-widths-generated.sql   */
-/*                                                                      */
+/* This is generated code, do not change this file manually.                */
+/*                                                                          */
+/* To change these definitions, alter line-widths.yaml and run:             */
+/*                                                                          */
+/*   ./scripts/generate_line_widths.py -s > sql/line-widths-generated.sql   */
+/*                                                                          */
 
 /* waterway */
 create or replace function carto_waterway_line_width (text, numeric)

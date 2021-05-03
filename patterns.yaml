@@ -32,9 +32,9 @@
 # These are the mss files containing patterns that can be switched between PNG and SVG
 
 mss:
-  - golf.mss
-  - landcover.mss
-  - water.mss
+  - style/golf.mss
+  - style/landcover.mss
+  - style/water.mss
 
 # This is the list of pattern names that are to be automatically processed
 
