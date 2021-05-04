@@ -3466,10 +3466,7 @@ Layer:
               JOIN planet_osm_line l ON ST_Intersects(l.way, e.way)
               WHERE e.barrier IN ('entrance')
                 AND (e.way && ST_Expand(!bbox!, (0.5*(carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 +
-                     carto_barrier_line_width(
-                       CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
-                       z(!scale_denominator!)
-                     ))*NULLIF(!scale_denominator!*0.001*0.28,0))))
+                     carto_barrier_line_width('citywalls', z(!scale_denominator!)))*NULLIF(!scale_denominator!*0.001*0.28,0))))
                 AND (l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                     'handrail', 'hedge', 'retaining_wall', 'wall')
                   OR l.historic = 'citywalls')
