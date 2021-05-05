@@ -1704,21 +1704,25 @@ Layer:
                                 osm_id,
                                 z_order
                               FROM highways_raw h1
-                              WHERE EXISTS
-                                (SELECT 1
-                                  FROM highways_raw h2
-                                  WHERE ST_DWithin(ST_StartPoint(h1.way), h2.way, 0.1)
-                                    AND (h1.width_tagged > h2.width_tagged)
-                                    AND (h1.width_tagged > h2.width_nominal)
-                                )
-                                AND NOT EXISTS
-                                (SELECT 1
-                                  FROM highways_raw h2
-                                  WHERE (ST_DWithin(ST_StartPoint(h1.way), ST_StartPoint(h2.way), 0.1) OR
-                                         ST_DWithin(ST_StartPoint(h1.way), ST_EndPoint(h2.way), 0.1))
-                                    AND (h1.highway = h2.highway)
-                                    AND (h1.osm_id != h2.osm_id)
-                                )
+                              WHERE
+                                -- either one way connecting not at the ends or two ways connecting at the ends
+                                -- and no way connecting at end with the same highway class
+                               (SELECT
+                                   SUM(
+                                     CASE
+                                       WHEN (ST_DWithin(ST_StartPoint(h1.way), ST_StartPoint(h2.way), 0.1) OR
+                                             ST_DWithin(ST_StartPoint(h1.way), ST_EndPoint(h2.way), 0.1)) THEN
+                                         CASE
+                                           WHEN (h1.highway = h2.highway) AND (h1.osm_id != h2.osm_id) THEN 3
+                                           WHEN (h1.width_tagged > h2.width_tagged)
+                                            AND (h1.width_tagged > h2.width_nominal) THEN 1
+                                           ELSE 0
+                                         END
+                                       WHEN (h1.width_tagged > h2.width_tagged)
+                                        AND (h1.width_tagged > h2.width_nominal) THEN 2
+                                       ELSE 0
+                                     END)
+                                 FROM highways_raw h2 WHERE ST_DWithin(ST_StartPoint(h1.way), h2.way, 0.1)) = 2
                               UNION ALL
                               SELECT
                                 ST_EndPoint(way) AS center,
@@ -1747,24 +1751,27 @@ Layer:
                                 osm_id,
                                 z_order
                               FROM highways_raw h1
-                              WHERE EXISTS 
-                                (SELECT 1
-                                  FROM highways_raw h2
-                                  WHERE ST_DWithin(ST_EndPoint(h1.way), h2.way, 0.1)
-                                    AND (h1.width_tagged > h2.width_tagged)
-                                    AND (h1.width_tagged > h2.width_nominal)
-                                )
-                                AND NOT EXISTS
-                                (SELECT 1
-                                  FROM highways_raw h2
-                                  WHERE (ST_DWithin(ST_EndPoint(h1.way), ST_StartPoint(h2.way), 0.1) OR
-                                         ST_DWithin(ST_EndPoint(h1.way), ST_EndPoint(h2.way), 0.1))
-                                    AND (h1.highway = h2.highway)
-                                    AND (h1.osm_id != h2.osm_id)
-                                )
+                              WHERE
+                                -- either one way connecting not at the ends or two ways connecting at the ends
+                                -- and no way connecting at end with the same highway class
+                               (SELECT
+                                   SUM(
+                                     CASE
+                                       WHEN (ST_DWithin(ST_EndPoint(h1.way), ST_StartPoint(h2.way), 0.1) OR
+                                             ST_DWithin(ST_EndPoint(h1.way), ST_EndPoint(h2.way), 0.1)) THEN
+                                         CASE
+                                           WHEN (h1.highway = h2.highway) AND (h1.osm_id != h2.osm_id) THEN 3
+                                           WHEN (h1.width_tagged > h2.width_tagged)
+                                            AND (h1.width_tagged > h2.width_nominal) THEN 1
+                                           ELSE 0
+                                         END
+                                       WHEN (h1.width_tagged > h2.width_tagged)
+                                        AND (h1.width_tagged > h2.width_nominal) THEN 2
+                                       ELSE 0
+                                     END)
+                                 FROM highways_raw h2 WHERE ST_DWithin(ST_EndPoint(h1.way), h2.way, 0.1)) = 2
                             ) AS junctions_raw
                           WHERE (width_tagged > width_nominal)
-                            -- AND highway NOT IN ('steps')
                             -- we simply assume that the previous conditions and the need to render junctions
                             -- are not met at z<14 - that simplifies mss code (because it is the same as for hw areas)
                             AND z(!scale_denominator!) >= 14

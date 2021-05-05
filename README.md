@@ -52,9 +52,10 @@ fit into the design concept here.
 See [INSTALL.md](INSTALL.md) for the generic OSM-Carto installation instructions.  In addition you need to 
 install the a number of functions in PostGIS supplied in:
 
-* `z.sql`
-* `line-widths-generated.sql`
-* `scale_factor.sql`
+* `sql/z.sql`
+* `sql/line-widths-generated.sql`
+* `sql/scale_factor.sql`
+* `sql/roads.sql`
 
 ## Simplified version for faster rendering
 
@@ -64,7 +65,7 @@ water barriers and the variable width road rendering.
 
 To enable this simplified version you need to:
 
-* uncomment and install the commented functions at the end of `scale_factor.sql`
+* run `sql/ac-lite.sql` on your database (which overrides some of the functions in roads.sql)
 * disable the `water-barriers-line` layer and enable the `water-barriers-line-simple` layer, for example
 by using (with kosmtik) the following in `localconfig.json`:
 
@@ -72,19 +73,19 @@ by using (with kosmtik) the following in `localconfig.json`:
     {
         "where": "Layer",
         "if": {
-            "id": "water-barriers-line"
+            "id": "water-barriers-line-simple"
         },
         "then": {
-            "properties.minzoom": 22
+            "properties.minzoom": 11
         }
     },
     {
         "where": "Layer",
         "if": {
-            "id": "water-barriers-line-simple"
+            "id": "water-barriers-line"
         },
         "then": {
-            "properties.minzoom": 11
+            "Datasource.table": " (SELECT way, waterway, 'line' AS wtype, name FROM planet_osm_line WHERE FALSE) AS water_barriers_line"
         }
     }
 ```
