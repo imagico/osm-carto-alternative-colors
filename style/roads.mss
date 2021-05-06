@@ -117,235 +117,69 @@
 @shield-font: @book-fonts;
 @shield-clip: false;
 
+/* Roads MSS code is primarily structured by road_layer now (the sublayyer in the roads SQL) */
+
+/* Data on z<10 comes from osm_planet_roads, data on z>=10 comes from
+osm_planet_line. This is for performance reasons: osm_planet_roads contains less
+data, and is thus faster. Chosen is for zoom level 10 as cut-off, because
+tertiary is rendered from z10 and is not included in osm_planet_roads. */
+
+/* Practically this is z<12 only, higher zoom levels have separate casing rules below */
+
+#roads-low-zoom[zoom < 10],
+#roads[zoom >= 10] {
+
+  [road_layer = 'casing'] {
+    [feature = 'highway_motorway'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
+    [feature = 'highway_trunk'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
+    [feature = 'highway_primary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
+    [feature = 'highway_secondary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 10][zoom < 12] {
+      [feature = 'highway_motorway'] {
+        line-width: [width_nominal] + 2 * @vlowzoom-halo-width;
+        [zoom >= 8] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
+      }
+      [feature = 'highway_trunk'] {
+        line-width: [width_nominal] + 2 * @vlowzoom-halo-width;
+        [zoom >= 8] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
+      }
+      [feature = 'highway_primary'] {
+        [zoom >= 8] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
+      }
+      [feature = 'highway_secondary'] {
+        [zoom >= 10] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
+      }
+      line-color: @lowzoom-halo-color;
+      line-opacity: .4;
+    }
+    [feature = 'highway_secondary'][link != 'yes'][zoom >= 9][zoom < 10],
+    [feature = 'highway_tertiary'][link != 'yes'][zoom >= 10][zoom < 12],
+    [feature = 'highway_residential'][zoom = 12],
+    [feature = 'highway_unclassified'][zoom = 12] {
+      [feature = 'highway_secondary'] {
+        line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant;
+      }
+      [feature = 'highway_tertiary'] {
+        [zoom >= 10] { line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant; }
+      }
+      [feature = 'highway_residential'][zoom = 12] {
+        line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant;
+      }
+      [feature = 'highway_unclassified'][zoom = 12] {
+        line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant;
+      }
+      line-color: @lowzoom-halo-unimportant-color;
+      line-opacity: 1;
+      line-comp-op: darken;
+    }
+  } // == end casing ==
+
+}
+
 #roads {
 
-  [road_layer = 'casing'][int_tunnel = 'no'] {
-    // we draw in increased width based on tagging without round line caps 
-    // to avoid artefacts where minor roads have a higher width than major roads
-    [width > 0.0] {
-      [zoom >= 12] {
-        [feature = 'highway_motorway'] {
-          tagged/line-color: @motorway-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_trunk'] {
-          tagged/line-color: @trunk-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_primary'] {
-          tagged/line-color: @primary-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_secondary'] {
-          tagged/line-color: @secondary-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_tertiary'] {
-          tagged/line-color: @tertiary-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_residential'],
-        [feature = 'highway_unclassified'] {
-          tagged/line-color: @residential-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            line-join: round;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_road'] {
-          tagged/line-color: @road-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
+  [road_layer = 'casing'][zoom >= 12] {
 
-        [feature = 'highway_service'] {
-          tagged/line-color: @service-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-
-        [feature = 'highway_pedestrian'] {
-          tagged/line-color: @pedestrian-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-
-        [feature = 'highway_living_street'] {
-          tagged/line-color: @living-street-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-      }
-
-      // casing for paths with mapped width at high zoom levels
-      [zoom >= 18][width >= 4.0] {
-        [feature = 'highway_bridleway'],
-        [feature = 'highway_footway'],
-        [feature = 'highway_cycleway'],
-        [feature = 'highway_path'] {
-          tagged/line-color: @pedestrian-casing;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-        [feature = 'highway_track'] {
-          tagged/line-color: @track-fill;
-          tagged/line-width: [width];
-          tagged/line-join: round;
-          tagged/line-cap: round;
-          [int_bridge != 'no'] {
-            tagged/line-color: @bridge-casing;
-            tagged/line-cap: butt;
-            [int_bridge = 'ford'],
-            [int_bridge = 'ford_node'] {
-              tagged/line-color: @ford-casing;
-            }
-            [int_bridge = 'mountain_pass'] {
-              tagged/line-color: @mountain-pass-casing;
-            }
-          }
-        }
-      }
-    } // end width > 0
-  } // end casing, no tunnel
-
-  // normal high zoom road casings
-  [road_layer = 'casing'] {
+    // normal high zoom road casings (including bridge casings for railways and aeroways)
     [feature = 'highway_motorway'] {
       [zoom >= 12] {
         line-color: @motorway-low-zoom-casing;
@@ -859,6 +693,7 @@
       }
     }
 
+    // bridge casings railways
     [feature = 'railway_tram'],
     [feature = 'railway_tram-service'][zoom >= 15] {
       [int_bridge != 'no'] {
@@ -930,8 +765,9 @@
       }
     }
 
+    // bridge casings aeroways
     [feature = 'aeroway_runway'] {
-      [int_bridge = 'yes'] {
+      [int_bridge != 'no'] {
         [zoom >= 14] {
           line-width: [width_max] + 2 * [casing_width];
           line-color: @bridge-casing;
@@ -941,7 +777,7 @@
     }
 
     [feature = 'aeroway_taxiway'] {
-      [int_bridge = 'yes'] {
+      [int_bridge != 'no'] {
         [zoom >= 14] {
           line-width: [width_max] + 2 * [casing_width];
           line-color: @bridge-casing;
@@ -949,7 +785,258 @@
         }
       }
     }
-  } // end casing
+
+    // ground unit tagged width casings
+    [int_tunnel = 'no'] {
+      [width > 0.0] {
+        [feature = 'highway_motorway'] {
+          tagged/line-color: @motorway-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+        [feature = 'highway_trunk'] {
+          tagged/line-color: @trunk-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+        [feature = 'highway_primary'] {
+          tagged/line-color: @primary-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+        [feature = 'highway_secondary'] {
+          tagged/line-color: @secondary-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+        [feature = 'highway_tertiary'] {
+          tagged/line-color: @tertiary-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+        [feature = 'highway_residential'],
+        [feature = 'highway_unclassified'] {
+          tagged/line-color: @residential-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            line-join: round;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+        [feature = 'highway_road'] {
+          tagged/line-color: @road-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+
+        [feature = 'highway_service'] {
+          tagged/line-color: @service-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+
+        [feature = 'highway_pedestrian'] {
+          tagged/line-color: @pedestrian-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+
+        [feature = 'highway_living_street'] {
+          tagged/line-color: @living-street-casing;
+          tagged/line-width: [width];
+          tagged/line-join: round;
+          tagged/line-cap: round;
+          [int_bridge != 'no'] {
+            tagged/line-color: @bridge-casing;
+            tagged/line-cap: butt;
+            [int_bridge = 'ford'],
+            [int_bridge = 'ford_node'] {
+              tagged/line-color: @ford-casing;
+            }
+            [int_bridge = 'mountain_pass'] {
+              tagged/line-color: @mountain-pass-casing;
+            }
+          }
+        }
+
+        // casing for paths with mapped width at high zoom levels
+        [zoom >= 18][width >= 4.0] {
+          [feature = 'highway_bridleway'],
+          [feature = 'highway_footway'],
+          [feature = 'highway_cycleway'],
+          [feature = 'highway_path'] {
+            tagged/line-color: @pedestrian-casing;
+            tagged/line-width: [width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+            [int_bridge != 'no'] {
+              tagged/line-color: @bridge-casing;
+              tagged/line-cap: butt;
+              [int_bridge = 'ford'],
+              [int_bridge = 'ford_node'] {
+                tagged/line-color: @ford-casing;
+              }
+              [int_bridge = 'mountain_pass'] {
+                tagged/line-color: @mountain-pass-casing;
+              }
+            }
+          }
+          [feature = 'highway_track'] {
+            tagged/line-color: @track-fill;
+            tagged/line-width: [width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+            [int_bridge != 'no'] {
+              tagged/line-color: @bridge-casing;
+              tagged/line-cap: butt;
+              [int_bridge = 'ford'],
+              [int_bridge = 'ford_node'] {
+                tagged/line-color: @ford-casing;
+              }
+              [int_bridge = 'mountain_pass'] {
+                tagged/line-color: @mountain-pass-casing;
+              }
+            }
+          }
+        }
+      } // end width > 0
+    } // end no tunnel
+
+    // sidewalks casings
+    [zoom >= 18] {
+      [feature = 'highway_sidewalk_foot'],
+      [feature = 'highway_sidewalk_cycle'],
+      [feature = 'highway_sidewalk_both'] {
+        line-color: @footway-casing;
+        //line-cap: round;
+        line-join: round;
+        line-opacity: 0.65;
+        line-width: @sidewalks-width + 2 * @paths-background-width;
+        [feature = 'highway_sidewalk_cycle'] { line-color: @cycleway-casing; }
+        [int_bridge != 'no'] {
+          bridge/line-color: @bridge-casing;
+          [int_bridge = 'ford'],
+          [int_bridge = 'ford_node'] {
+            bridge/line-color: @ford-casing;
+          }
+          [int_bridge = 'mountain_pass'] {
+            bridge/line-color: @mountain-pass-casing;
+          }
+          bridge/line-join: round;
+          bridge/line-offset: -2.5 * [casing_width];
+          bridge/line-width: [casing_width];
+        }
+      }
+    }
+
+  } // == end casing ==
+
 
   [road_layer = 'background'] {
 
@@ -1134,6 +1221,7 @@
 
     // paths with mapped width at high zoom levels
     // their fill is rendered as background so the center line is above it
+    // excludes unpaved - which are a separate sublayer below
     [int_tunnel = 'no'][int_surface != 'unpaved'] {
       [zoom >= 18][width >= 4.0] {
         [feature = 'highway_bridleway'],
@@ -1153,7 +1241,7 @@
         }
       }
     }
-  } // end background
+  } // == end background ==
 
   [road_layer = 'background_unpaved'] {
     // paths with mapped width at high zoom levels
@@ -1173,109 +1261,15 @@
         }
       }
     }
-  } // end background_unpaved
+  } // == end background_unpaved ==
 
-  // sidewalks
-  [zoom >= 18] {
-    [feature = 'highway_sidewalk_foot'],
-    [feature = 'highway_sidewalk_cycle'],
-    [feature = 'highway_sidewalk_both'] {
-      [road_layer = 'casing'] {
-        line-color: @footway-casing;
-        //line-cap: round;
-        line-join: round;
-        line-opacity: 0.65;
-        line-width: @sidewalks-width + 2 * @paths-background-width;
-        [feature = 'highway_sidewalk_cycle'] { line-color: @cycleway-casing; }
-        [int_bridge != 'no'] {
-          bridge/line-color: @bridge-casing;
-          [int_bridge = 'ford'],
-          [int_bridge = 'ford_node'] {
-            bridge/line-color: @ford-casing;
-          }
-          [int_bridge = 'mountain_pass'] {
-            bridge/line-color: @mountain-pass-casing;
-          }
-          bridge/line-join: round;
-          bridge/line-offset: -2.5 * [casing_width];
-          bridge/line-width: [casing_width];
-        }
-      }
-
-      [road_layer = 'fill'] {
-        line-color: @footway-fill;
-        [feature = 'highway_sidewalk_cycle'] { line-color: @cycleway-fill; }
-        line-width: @sidewalks-width;
-      }
-    }
-    [road_layer = 'fill'] {
-      [int_bridge = 'no'][int_tunnel = 'no'] {
-        [feature = 'highway_sidewalk_handrail'][service = 'steps'] {
-          side/line-color: #444;
-          side/line-join: round;
-          side/line-offset: [casing_width];
-          side/line-width: 0.4;
-          side/line-opacity: 0.75;
-        }
-      }
-    }
-  }
 }
-
-
-/* Data on z<10 comes from osm_planet_roads, data on z>=10 comes from
-osm_planet_line. This is for performance reasons: osm_planet_roads contains less
-data, and is thus faster. Chosen is for zoom level 10 as cut-off, because
-tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
 #roads-low-zoom[zoom < 10],
 #roads[zoom >= 10] {
 
-  [road_layer = 'casing'] {
-    [feature = 'highway_motorway'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
-    [feature = 'highway_trunk'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
-    [feature = 'highway_primary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
-    [feature = 'highway_secondary'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 10][zoom < 12] {
-      [feature = 'highway_motorway'] {
-        line-width: [width_nominal] + 2 * @vlowzoom-halo-width;
-        [zoom >= 8] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
-      }
-      [feature = 'highway_trunk'] {
-        line-width: [width_nominal] + 2 * @vlowzoom-halo-width;
-        [zoom >= 8] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
-      }
-      [feature = 'highway_primary'] {
-        [zoom >= 8] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
-      }
-      [feature = 'highway_secondary'] {
-        [zoom >= 10] { line-width: [width_nominal] + 2 * @lowzoom-halo-width; }
-      }
-      line-color: @lowzoom-halo-color;
-      line-opacity: .4;
-    }
-    [feature = 'highway_secondary'][link != 'yes'][zoom >= 9][zoom < 10],
-    [feature = 'highway_tertiary'][link != 'yes'][zoom >= 10][zoom < 12],
-    [feature = 'highway_residential'][zoom = 12],
-    [feature = 'highway_unclassified'][zoom = 12] {
-      [feature = 'highway_secondary'] {
-        line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant;
-      }
-      [feature = 'highway_tertiary'] {
-        [zoom >= 10] { line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant; }
-      }
-      [feature = 'highway_residential'][zoom = 12] {
-        line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant;
-      }
-      [feature = 'highway_unclassified'][zoom = 12] {
-        line-width: [width_nominal] + 2 * @lowzoom-halo-width-unimportant;
-      }
-      line-color: @lowzoom-halo-unimportant-color;
-      line-opacity: 1;
-      line-comp-op: darken;
-    }
-  } // == end casing ==
-
   [road_layer = 'fill'] {
+
     /*
      * The construction rules for small roads are strange, since if construction is null its assumed that
      * it's a more major road. The line-width = 0 could be removed by playing with the query to set a construction
@@ -1379,6 +1373,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
+    // paths halo and fill
     [int_bridge != 'ford_node'][int_bridge != 'mountain_pass'] {
       [feature = 'highway_steps'] {
         [zoom >= 13][access != 'no'],
@@ -1566,6 +1561,287 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
     } // end no ford_node or mountain_pass
+
+
+    // sidewalks fill
+    [zoom >= 18] {
+      [feature = 'highway_sidewalk_foot'],
+      [feature = 'highway_sidewalk_cycle'],
+      [feature = 'highway_sidewalk_both'] {
+        line-color: @footway-fill;
+        [feature = 'highway_sidewalk_cycle'] { line-color: @cycleway-fill; }
+        line-width: @sidewalks-width;
+      }
+      [int_bridge = 'no'][int_tunnel = 'no'] {
+        [feature = 'highway_sidewalk_handrail'][service = 'steps'] {
+          side/line-color: #444;
+          side/line-join: round;
+          side/line-offset: [casing_width];
+          side/line-width: 0.4;
+          side/line-opacity: 0.75;
+        }
+      }
+    }
+
+    // nominal width highway fills
+    [width_nominal > 0.0] {
+      [feature = 'highway_motorway'] {
+        [zoom >= 5][zoom < 12] {
+          line-color: @motorway-low-zoom;
+          line-width: [width_nominal];
+        }
+        [zoom >= 12] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @motorway-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @motorway-tunnel-fill;
+            }
+            line-cap: round;
+            line-join: round;
+          }
+        }
+      }
+
+      [feature = 'highway_trunk'] {
+        [zoom >= 5][zoom < 12] {
+          line-color: @trunk-low-zoom;
+          line-width: [width_nominal];
+        }
+        [zoom >= 12] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @trunk-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @trunk-tunnel-fill;
+            }
+            line-cap: round;
+            line-join: round;
+          }
+        }
+      }
+
+      [feature = 'highway_primary'] {
+        [zoom >= 8][zoom < 12] {
+          line-color: @primary-low-zoom;
+          line-width: [width_nominal];
+        }
+        [zoom >= 12] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @primary-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @primary-tunnel-fill;
+            }
+            line-cap: round;
+            line-join: round;
+          }
+        }
+      }
+
+      [feature = 'highway_secondary'] {
+        [zoom >= 9][zoom < 12] {
+          line-color: @unimportant-road;
+          line-width: [width_nominal];
+        }
+        [zoom >= 10][zoom < 12] {
+          line-color: @secondary-low-zoom;
+        }
+        [zoom >= 12] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @secondary-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @secondary-tunnel-fill;
+            }
+            line-cap: round;
+            line-join: round;
+          }
+        }
+      }
+
+      [feature = 'highway_tertiary'] {
+        [zoom >= 10][zoom < 12] {
+          line-color: @unimportant-road;
+          line-width: [width_nominal];
+        }
+        [zoom >= 12] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @tertiary-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @tertiary-tunnel-fill;
+            }
+            line-cap: round;
+            line-join: round;
+          }
+        }
+      }
+
+      [feature = 'highway_residential'],
+      [feature = 'highway_unclassified'] {
+        [zoom = 12] {
+          line-color: @unimportant-road;
+          line-width: [width_nominal];
+        }
+        [zoom >= 13] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @residential-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @residential-tunnel-fill;
+            }
+            line-cap: round;
+            line-join: round;
+          }
+        }
+      }
+
+      [feature = 'highway_living_street'] {
+        [zoom >= 13] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @living-street-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @living-street-tunnel-fill;
+            }
+            line-join: round;
+            line-cap: round;
+          }
+        }
+      }
+
+      [feature = 'highway_road'] {
+        [zoom >= 10][zoom < 14] {
+          line-color: @unimportant-road;
+          line-join: round;
+          line-cap: round;
+          line-width: 1;
+        }
+        [zoom >= 14] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-width: [width_nominal] - 2 * [casing_width];
+            line-color: @road-fill;
+          }
+        }
+      }
+
+      [feature = 'highway_service'] {
+        [zoom = 13][service = 'INT-normal'] {
+          line-width: [width_nominal];
+          line-color: @unimportant-road;
+        }
+        [zoom >= 14][service = 'INT-normal'],
+        [zoom >= 16][service = 'INT-minor'] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @service-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @service-tunnel-fill;
+            }
+            line-join: round;
+            line-cap: round;
+          }
+        }
+      }
+
+      [feature = 'highway_pedestrian'] {
+        [zoom >= 13] {
+          [int_surface != 'unpaved'],
+          [int_tunnel != 'no'] {
+            line-color: @pedestrian-fill;
+            line-width: [width_nominal] - 2 * [casing_width];
+            [int_tunnel != 'no'] {
+              line-color: @pedestrian-tunnel-fill;
+            }
+            line-join: round;
+            line-cap: round;
+          }
+        }
+      }
+    } // width_nominal > 0.0
+
+    // we draw in increased width based on tagging without round line caps 
+    // to avoid artefacts where minor roads have a higher width than major roads
+    [int_tunnel = 'no'][int_surface != 'unpaved'] {
+      [width > 0.0] {
+        [zoom >= 12] {
+          [feature = 'highway_motorway'] {
+            tagged/line-color: @motorway-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_trunk'] {
+            tagged/line-color: @trunk-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_primary'] {
+            tagged/line-color: @primary-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_secondary'] {
+            tagged/line-color: @secondary-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_tertiary'] {
+            tagged/line-color: @tertiary-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_residential'][zoom >= 13],
+          [feature = 'highway_unclassified'][zoom >= 13] {
+            tagged/line-color: @residential-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_living_street'][zoom >= 13] {
+            tagged/line-color: @living-street-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_pedestrian'][zoom >= 13] {
+            tagged/line-color: @pedestrian-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+          [feature = 'highway_road'][zoom >= 14] {
+            tagged/line-color: @road-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+
+          [feature = 'highway_service'][zoom >= 14][service = 'INT-normal'],
+          [feature = 'highway_service'][zoom >= 16][service = 'INT-minor'] {
+            tagged/line-color: @service-fill;
+            tagged/line-width: [width] - 2 * [casing_width];
+            tagged/line-join: round;
+            tagged/line-cap: round;
+          }
+        }
+      } // width > 0.0
+    } // tunnel = no, int_surface != unpaved
+
 
     [feature = 'railway_rail'][zoom >= 7],
     [feature = 'railway_INT-spur-siding-yard'][zoom >= 13] {
@@ -1849,266 +2125,520 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
   } // == end fill ==
 
-  [road_layer = 'fill'] {
-    // we draw in increased width based on tagging without round line caps 
-    // to avoid artefacts where minor roads have a higher width than major roads
-    [int_tunnel = 'no'][int_surface != 'unpaved'] {
-      [width > 0.0] {
-        [zoom >= 12] {
-          [feature = 'highway_motorway'] {
-            tagged/line-color: @motorway-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_trunk'] {
-            tagged/line-color: @trunk-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_primary'] {
-            tagged/line-color: @primary-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_secondary'] {
-            tagged/line-color: @secondary-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_tertiary'] {
-            tagged/line-color: @tertiary-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_residential'][zoom >= 13],
-          [feature = 'highway_unclassified'][zoom >= 13] {
-            tagged/line-color: @residential-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_living_street'][zoom >= 13] {
-            tagged/line-color: @living-street-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_pedestrian'][zoom >= 13] {
-            tagged/line-color: @pedestrian-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-          [feature = 'highway_road'][zoom >= 14] {
-            tagged/line-color: @road-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
+}
 
-          [feature = 'highway_service'][zoom >= 14][service = 'INT-normal'],
-          [feature = 'highway_service'][zoom >= 16][service = 'INT-minor'] {
-            tagged/line-color: @service-fill;
-            tagged/line-width: [width] - 2 * [casing_width];
-            tagged/line-join: round;
-            tagged/line-cap: round;
-          }
-        }
-      } // width > 0.0
-    } // tunnel = no, int_surface != unpaved
+#roads {
 
-    // nominal width highway fills
-    [width_nominal > 0.0] {
-      [feature = 'highway_motorway'] {
-        [zoom >= 5][zoom < 12] {
-          line-color: @motorway-low-zoom;
-          line-width: [width_nominal];
-        }
-        [zoom >= 12] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @motorway-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @motorway-tunnel-fill;
-            }
-            line-cap: round;
-            line-join: round;
-          }
-        }
+  [road_layer = 'tc_casing'][zoom >= 15] {
+    line-width: [width] + 2 * [casing_width];
+    [int_bridge = 'yes'] {
+      line-color: @bridge-casing;
+    }
+
+    [feature = 'highway_trunk'] {
+      [int_bridge != 'yes'] { line-color: @trunk-casing; }
+    }
+    [feature = 'highway_primary'] {
+       [int_bridge != 'yes'] { line-color: @primary-casing; }
+    }
+    [feature = 'highway_secondary'] {
+       [int_bridge != 'yes'] { line-color: @secondary-casing; }
+    }
+    [feature = 'highway_tertiary'] {
+      [int_bridge != 'yes'] { line-color: @tertiary-casing; }
+    }
+    [feature = 'highway_residential'],
+    [feature = 'highway_unclassified'] {
+      [int_bridge != 'yes'] { line-color: @residential-casing; }
+    }
+    [feature = 'highway_living_street'] {
+      [int_bridge != 'yes'] { line-color: @living-street-casing; }
+    }
+    [feature = 'highway_service'][service = 'INT-normal'] {
+      [zoom < 16] {
+        line-width: 0.0;
       }
-
-      [feature = 'highway_trunk'] {
-        [zoom >= 5][zoom < 12] {
-          line-color: @trunk-low-zoom;
-          line-width: [width_nominal];
-        }
-        [zoom >= 12] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @trunk-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @trunk-tunnel-fill;
-            }
-            line-cap: round;
-            line-join: round;
-          }
-        }
+      [zoom >= 16] { [int_bridge != 'yes'] { line-color: @service-casing; } }
+    }
+    [feature = 'highway_service'][service = 'INT-minor'] {
+      [zoom < 18] {
+        line-width: 0.0;
       }
+      [zoom >= 18] { [int_bridge != 'yes'] { line-color: @service-casing; } }
+    }
+    [feature = 'highway_track'][zoom >= 15] {
+      [int_bridge != 'yes'] { line-color: @track-fill; }
+    }
+    line-cap: round;
+    line-join: round;
+  } // == end tc_casing ==
 
-      [feature = 'highway_primary'] {
-        [zoom >= 8][zoom < 12] {
-          line-color: @primary-low-zoom;
-          line-width: [width_nominal];
-        }
-        [zoom >= 12] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @primary-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @primary-tunnel-fill;
-            }
-            line-cap: round;
-            line-join: round;
-          }
-        }
+  [road_layer = 'tc_fill'][zoom >= 15] {
+    line-width: [width];
+
+    [feature = 'highway_trunk'] {
+      line-color: @trunk-fill;
+    }
+    [feature = 'highway_primary'] {
+      line-color: @primary-fill;
+    }
+    [feature = 'highway_secondary'] {
+      line-color: @secondary-fill;
+    }
+    [feature = 'highway_tertiary'] {
+      line-color: @tertiary-fill;
+    }
+    [feature = 'highway_residential'],
+    [feature = 'highway_unclassified'] {
+      line-color: @residential-fill;
+    }
+    [feature = 'highway_living_street'] {
+      line-color: @living-street-fill;
+    }
+    [feature = 'highway_service'][service = 'INT-normal'] {
+      [zoom < 16] {
+        line-width: 0.0;
       }
-
-      [feature = 'highway_secondary'] {
-        [zoom >= 9][zoom < 12] {
-          line-color: @unimportant-road;
-          line-width: [width_nominal];
-        }
-        [zoom >= 10][zoom < 12] {
-          line-color: @secondary-low-zoom;
-        }
-        [zoom >= 12] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @secondary-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @secondary-tunnel-fill;
-            }
-            line-cap: round;
-            line-join: round;
-          }
-        }
+      [zoom >= 16] { line-color: @service-fill; }
+    }
+    [feature = 'highway_service'][service = 'INT-minor'] {
+      [zoom < 18] {
+        line-width: 0.0;
       }
+      [zoom >= 18] { line-color: @service-fill; }
+    }
+    [feature = 'highway_track'][zoom >= 15] {
+      line-color: @track-area-fill;
+    }
+    line-cap: round;
+    line-join: round;
 
-      [feature = 'highway_tertiary'] {
-        [zoom >= 10][zoom < 12] {
-          line-color: @unimportant-road;
-          line-width: [width_nominal];
-        }
-        [zoom >= 12] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @tertiary-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @tertiary-tunnel-fill;
-            }
-            line-cap: round;
-            line-join: round;
-          }
-        }
-      }
+    [tc_type = 'turning_loop'] {
+      center/line-width: [width] * 0.35 + 2 * [casing_width];
 
+      [feature = 'highway_trunk'] { center/line-color: @trunk-casing; }
+      [feature = 'highway_primary'] { center/line-color: @primary-casing; }
+      [feature = 'highway_secondary'] { center/line-color: @secondary-casing; }
+      [feature = 'highway_tertiary'] { center/line-color: @tertiary-casing; }
       [feature = 'highway_residential'],
-      [feature = 'highway_unclassified'] {
-        [zoom = 12] {
-          line-color: @unimportant-road;
-          line-width: [width_nominal];
+      [feature = 'highway_unclassified'] { center/line-color: @residential-casing; }
+      [feature = 'highway_living_street'] { center/line-color: @living-street-casing; }
+      [feature = 'highway_service'] { center/line-color: @service-casing; }
+      [feature = 'highway_track'] { center/line-color: @track-fill; }
+      [int_bridge = 'yes'] {
+        center/line-color: @bridge-casing;
+      }
+
+      hole/line-width: [width] * 0.35;
+      hole/line-color: @land-color;
+
+      [feature = 'highway_service'][service = 'INT-normal'] {
+        [zoom < 16] {
+          center/line-width: 0.0;
+          hole/line-width: 0.0;
         }
-        [zoom >= 13] {
-          [int_surface != 'unpaved'],
+      }
+      [feature = 'highway_service'][service = 'INT-minor'] {
+        [zoom < 18] {
+          center/line-width: 0.0;
+          hole/line-width: 0.0;
+        }
+      }
+      center/line-cap: round;
+      center/line-join: round;
+      hole/line-cap: round;
+      hole/line-join: round;
+    }
+
+    [tc_type = 'mini_roundabout'] {
+      center/line-width: @mini-roundabout-width;
+
+      [feature = 'highway_trunk'] { center/line-color: @trunk-casing; }
+      [feature = 'highway_primary'] { center/line-color: @primary-casing; }
+      [feature = 'highway_secondary'] { center/line-color: @secondary-casing; }
+      [feature = 'highway_tertiary'] { center/line-color: @tertiary-casing; }
+      [feature = 'highway_residential'],
+      [feature = 'highway_unclassified'] { center/line-color: @residential-casing; }
+      [feature = 'highway_living_street'] { center/line-color: @living-street-casing; }
+      [feature = 'highway_service'] { center/line-color: @service-casing; }
+      [feature = 'highway_track'] { center/line-color: @track-fill; }
+
+      [feature = 'highway_service'][service = 'INT-normal'] {
+        [zoom < 16] {
+          center/line-width: 0.0;
+        }
+      }
+      [feature = 'highway_service'][service = 'INT-minor'] {
+        [zoom < 18] {
+          center/line-width: 0.0;
+        }
+      }
+      center/line-cap: round;
+      center/line-join: round;
+    }
+  } // == end tc_fill ==
+
+  [road_layer = 'junction_casing'],
+  [road_layer = 'area_casing'] {
+    [zoom >= 14] {
+
+      // road types with no mapped area rendering: only junction polygons
+      [road_layer = 'junction_casing'] {
+        [feature = 'highway_motorway'] {
+          line-color: @motorway-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
           [int_tunnel != 'no'] {
-            line-color: @residential-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @residential-tunnel-fill;
-            }
-            line-cap: round;
-            line-join: round;
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
+        }
+        [feature = 'highway_trunk'] {
+          line-color: @trunk-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
+        }
+        [feature = 'highway_primary'] {
+          line-color: @primary-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
+        }
+        [feature = 'highway_secondary'] {
+          line-color: @secondary-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
+        }
+        [feature = 'highway_tertiary'] {
+          line-color: @tertiary-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
+        }
+        [feature = 'highway_road'] {
+          line-color: @road-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
           }
         }
       }
 
       [feature = 'highway_living_street'] {
-        [zoom >= 13] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @living-street-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @living-street-tunnel-fill;
-            }
-            line-join: round;
-            line-cap: round;
-          }
+        line-color: @living-street-casing;
+        line-width: 2 * [casing_width];
+        [int_bridge = 'yes'] {
+          line-color: @bridge-casing;
+        }
+        [int_tunnel != 'no'] {
+          line-dasharray: 4,2;
+          line-cap: butt;
         }
       }
 
-      [feature = 'highway_road'] {
-        [zoom >= 10][zoom < 14] {
-          line-color: @unimportant-road;
-          line-join: round;
-          line-cap: round;
-          line-width: 1;
+      [feature = 'highway_residential'],
+      [feature = 'highway_unclassified'] {
+        line-color: @residential-casing;
+        line-width: 2 * [casing_width];
+        [int_bridge = 'yes'] {
+          line-color: @bridge-casing;
         }
-        [zoom >= 14] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-width: [width_nominal] - 2 * [casing_width];
-            line-color: @road-fill;
-          }
+        [int_tunnel != 'no'] {
+          line-dasharray: 4,2;
+          line-cap: butt;
         }
       }
 
       [feature = 'highway_service'] {
-        [zoom = 13][service = 'INT-normal'] {
-          line-width: [width_nominal];
-          line-color: @unimportant-road;
+        // junctions for minor service roads only at z16+
+        [service = 'INT-normal'],
+        [zoom >= 16][service = 'INT-minor'],
+        [road_layer = 'area_casing'] {
+          line-color: @service-casing;
+          line-width: 2 * [casing_width];
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
         }
+      }
+
+      [feature = 'highway_pedestrian'],
+      [feature = 'highway_bridleway'][road_layer = 'junction_casing'][zoom >= 18],
+      [feature = 'highway_footway'][road_layer = 'junction_casing'][zoom >= 18],
+      [feature = 'highway_cycleway'][road_layer = 'junction_casing'][zoom >= 18],
+      [feature = 'highway_path'][road_layer = 'junction_casing'][zoom >= 18],
+      [feature = 'highway_footway'][road_layer = 'area_casing'],
+      [feature = 'highway_cycleway'][road_layer = 'area_casing'],
+      [feature = 'highway_path'][road_layer = 'area_casing'] {
+        line-color: @pedestrian-casing;
+        line-width: 2 * [casing_width];
+        [int_bridge = 'yes'] {
+          line-color: @bridge-casing;
+        }
+        [int_tunnel != 'no'] {
+          line-dasharray: 4,2;
+          line-cap: butt;
+        }
+      }
+
+      // this is junctions only
+      [feature = 'highway_steps'][width > 0.0] {
+        polygon-fill: mix(@steps-fill, @steps-casing, 75%);
+      }
+
+      [feature = 'highway_track'][road_layer = 'junction_casing'][zoom >= 18],
+      [feature = 'highway_track'][road_layer = 'area_casing'] {
+        line-color: @track-fill;
+        line-width: 2 * [casing_width];
+        [road_layer = 'area_casing'] {
+          line-width: 1;
+          line-dasharray: 5,4,2,4;
+        }
+        line-cap: round;
+        line-join: round;
+      }
+
+      [feature = 'highway_platform'],
+      [feature = 'railway_platform'] {
+        [zoom >= 16] {
+          line-color: grey;
+          line-width: 2;
+          line-cap: round;
+          line-join: round;
+          [int_tunnel != 'no'] {
+            line-dasharray: 4,2;
+            line-cap: butt;
+          }
+        }
+      }
+    }
+  } // == end area/junctions casing ==
+
+  [road_layer = 'junction_fill'],
+  [road_layer = 'area_fill'] {
+    [zoom >= 14] {
+
+      // road types with no mapped area rendering: only junction polygons
+      [road_layer = 'junction_fill'] {
+        [feature = 'highway_motorway'] {
+          polygon-fill: @motorway-fill;
+          [int_tunnel != 'no'] {
+            polygon-fill: @motorway-tunnel-fill;
+          }
+        }
+        [feature = 'highway_trunk'] {
+          polygon-fill: @trunk-fill;
+          [int_tunnel != 'no'] {
+            polygon-fill: @trunk-tunnel-fill;
+          }
+        }
+        [feature = 'highway_primary'] {
+          polygon-fill: @primary-fill;
+          [int_tunnel != 'no'] {
+            polygon-fill: @primary-tunnel-fill;
+          }
+        }
+        [feature = 'highway_secondary'] {
+          polygon-fill: @secondary-fill;
+          [int_tunnel != 'no'] {
+            polygon-fill: @secondary-tunnel-fill;
+          }
+        }
+        [feature = 'highway_tertiary'] {
+          polygon-fill: @tertiary-fill;
+          [int_tunnel != 'no'] {
+            polygon-fill: @tertiary-tunnel-fill;
+          }
+        }
+        [feature = 'highway_road'] {
+          polygon-fill: @road-fill;
+        }
+      }
+
+      [feature = 'highway_residential'],
+      [feature = 'highway_unclassified'] {
+        polygon-fill: @residential-fill;
+        [int_tunnel != 'no'] {
+          polygon-fill: @residential-tunnel-fill;
+        }
+      }
+
+      [feature = 'highway_service'] {
+        // junctions for minor service roads only at z16+
+        [service = 'INT-normal'],
+        [zoom >= 16][service = 'INT-minor'],
+        [road_layer = 'area_fill'] {
+          polygon-fill: @service-fill;
+          [int_tunnel != 'no'] {
+            polygon-fill: @service-tunnel-fill;
+          }
+        }
+      }
+
+      [feature = 'highway_pedestrian'],
+      [feature = 'highway_bridleway'][road_layer = 'junction_fill'][zoom >= 18],
+      [feature = 'highway_footway'][road_layer = 'junction_fill'][zoom >= 18],
+      [feature = 'highway_cycleway'][road_layer = 'junction_fill'][zoom >= 18],
+      [feature = 'highway_path'][road_layer = 'junction_fill'][zoom >= 18],
+      [feature = 'highway_footway'][road_layer = 'area_fill'],
+      [feature = 'highway_cycleway'][road_layer = 'area_fill'],
+      [feature = 'highway_path'][road_layer = 'area_fill'] {
+        polygon-fill: @pedestrian-fill;
+        [int_tunnel != 'no'] {
+          polygon-fill: @pedestrian-tunnel-fill;
+        }
+      }
+
+      [feature = 'highway_track'][road_layer = 'junction_fill'][zoom >= 18],
+      [feature = 'highway_track'][road_layer = 'area_fill'] {
+        polygon-fill: @track-area-fill;
+      }
+
+      [feature = 'highway_platform'],
+      [feature = 'railway_platform'] {
+        [zoom >= 16] {
+          polygon-fill: @platform-fill;
+          polygon-gamma: 0.65;
+        }
+      }
+    }
+
+    [feature = 'aeroway_runway'][zoom >= 11] {
+      polygon-fill: @runway-fill;
+    }
+
+    [feature = 'aeroway_taxiway'][zoom >= 13] {
+      polygon-fill: @taxiway-fill;
+    }
+
+    [feature = 'aeroway_helipad'][zoom >= 16] {
+      polygon-fill: @helipad-fill;
+    }
+  } // == end area_fill ==
+
+  [road_layer = 'fill_unpaved'] {
+    // nominal width highway fills for unpaved roads
+    // these are converted to polygons in SQL
+    [width_nominal > 0.0] {
+      [feature = 'highway_motorway'] {
+        [zoom >= 12] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_motorway-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_trunk'] {
+        [zoom >= 12] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_trunk-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_primary'] {
+        [zoom >= 12] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_primary-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_secondary'] {
+        [zoom >= 12] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_secondary-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_tertiary'] {
+        [zoom >= 12] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_tertiary-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_residential'],
+      [feature = 'highway_unclassified'] {
+        [zoom >= 13] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_residential-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_living_street'] {
+        [zoom >= 13] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_pedestrian-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_road'] {
+        [zoom >= 14] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_road-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'highway_service'] {
         [zoom >= 14][service = 'INT-normal'],
         [zoom >= 16][service = 'INT-minor'] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @service-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @service-tunnel-fill;
-            }
-            line-join: round;
-            line-cap: round;
-          }
+          polygon-pattern-file: url('symbols/unpaved/unpaved_service-fill.svg');
+          polygon-pattern-alignment: global;
         }
       }
 
       [feature = 'highway_pedestrian'] {
         [zoom >= 13] {
-          [int_surface != 'unpaved'],
-          [int_tunnel != 'no'] {
-            line-color: @pedestrian-fill;
-            line-width: [width_nominal] - 2 * [casing_width];
-            [int_tunnel != 'no'] {
-              line-color: @pedestrian-tunnel-fill;
-            }
-            line-join: round;
-            line-cap: round;
-          }
+          polygon-pattern-file: url('symbols/unpaved/unpaved_pedestrian-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'aeroway_runway'] {
+        [zoom >= 12] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_aeroway-fill.svg');
+          polygon-pattern-alignment: global;
+        }
+      }
+
+      [feature = 'aeroway_taxiway'] {
+        [zoom >= 14] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_aeroway-fill.svg');
+          polygon-pattern-alignment: global;
         }
       }
     } // width_nominal > 0.0
-  } // == end fill ==
+  } // == end fill_unpaved ==
 
   [road_layer = 'centerline'] {
 
@@ -2479,524 +3009,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
   } // == end centerline ==
 
-  [road_layer = 'tc_casing'][zoom >= 15] {
-    line-width: [width] + 2 * [casing_width];
-    [int_bridge = 'yes'] {
-      line-color: @bridge-casing;
-    }
-
-    [feature = 'highway_trunk'] {
-      [int_bridge != 'yes'] { line-color: @trunk-casing; }
-    }
-    [feature = 'highway_primary'] {
-       [int_bridge != 'yes'] { line-color: @primary-casing; }
-    }
-    [feature = 'highway_secondary'] {
-       [int_bridge != 'yes'] { line-color: @secondary-casing; }
-    }
-    [feature = 'highway_tertiary'] {
-      [int_bridge != 'yes'] { line-color: @tertiary-casing; }
-    }
-    [feature = 'highway_residential'],
-    [feature = 'highway_unclassified'] {
-      [int_bridge != 'yes'] { line-color: @residential-casing; }
-    }
-    [feature = 'highway_living_street'] {
-      [int_bridge != 'yes'] { line-color: @living-street-casing; }
-    }
-    [feature = 'highway_service'][service = 'INT-normal'] {
-      [zoom < 16] {
-        line-width: 0.0;
-      }
-      [zoom >= 16] { [int_bridge != 'yes'] { line-color: @service-casing; } }
-    }
-    [feature = 'highway_service'][service = 'INT-minor'] {
-      [zoom < 18] {
-        line-width: 0.0;
-      }
-      [zoom >= 18] { [int_bridge != 'yes'] { line-color: @service-casing; } }
-    }
-    [feature = 'highway_track'][zoom >= 15] {
-      [int_bridge != 'yes'] { line-color: @track-fill; }
-    }
-    line-cap: round;
-    line-join: round;
-  } // == end tc_casing ==
-
-  [road_layer = 'tc_fill'][zoom >= 15] {
-    line-width: [width];
-
-    [feature = 'highway_trunk'] {
-      line-color: @trunk-fill;
-    }
-    [feature = 'highway_primary'] {
-      line-color: @primary-fill;
-    }
-    [feature = 'highway_secondary'] {
-      line-color: @secondary-fill;
-    }
-    [feature = 'highway_tertiary'] {
-      line-color: @tertiary-fill;
-    }
-    [feature = 'highway_residential'],
-    [feature = 'highway_unclassified'] {
-      line-color: @residential-fill;
-    }
-    [feature = 'highway_living_street'] {
-      line-color: @living-street-fill;
-    }
-    [feature = 'highway_service'][service = 'INT-normal'] {
-      [zoom < 16] {
-        line-width: 0.0;
-      }
-      [zoom >= 16] { line-color: @service-fill; }
-    }
-    [feature = 'highway_service'][service = 'INT-minor'] {
-      [zoom < 18] {
-        line-width: 0.0;
-      }
-      [zoom >= 18] { line-color: @service-fill; }
-    }
-    [feature = 'highway_track'][zoom >= 15] {
-      line-color: @track-area-fill;
-    }
-    line-cap: round;
-    line-join: round;
-
-    [tc_type = 'turning_loop'] {
-      center/line-width: [width] * 0.35 + 2 * [casing_width];
-
-      [feature = 'highway_trunk'] { center/line-color: @trunk-casing; }
-      [feature = 'highway_primary'] { center/line-color: @primary-casing; }
-      [feature = 'highway_secondary'] { center/line-color: @secondary-casing; }
-      [feature = 'highway_tertiary'] { center/line-color: @tertiary-casing; }
-      [feature = 'highway_residential'],
-      [feature = 'highway_unclassified'] { center/line-color: @residential-casing; }
-      [feature = 'highway_living_street'] { center/line-color: @living-street-casing; }
-      [feature = 'highway_service'] { center/line-color: @service-casing; }
-      [feature = 'highway_track'] { center/line-color: @track-fill; }
-      [int_bridge = 'yes'] {
-        center/line-color: @bridge-casing;
-      }
-
-      hole/line-width: [width] * 0.35;
-      hole/line-color: @land-color;
-
-      [feature = 'highway_service'][service = 'INT-normal'] {
-        [zoom < 16] {
-          center/line-width: 0.0;
-          hole/line-width: 0.0;
-        }
-      }
-      [feature = 'highway_service'][service = 'INT-minor'] {
-        [zoom < 18] {
-          center/line-width: 0.0;
-          hole/line-width: 0.0;
-        }
-      }
-      center/line-cap: round;
-      center/line-join: round;
-      hole/line-cap: round;
-      hole/line-join: round;
-    }
-
-    [tc_type = 'mini_roundabout'] {
-      center/line-width: @mini-roundabout-width;
-
-      [feature = 'highway_trunk'] { center/line-color: @trunk-casing; }
-      [feature = 'highway_primary'] { center/line-color: @primary-casing; }
-      [feature = 'highway_secondary'] { center/line-color: @secondary-casing; }
-      [feature = 'highway_tertiary'] { center/line-color: @tertiary-casing; }
-      [feature = 'highway_residential'],
-      [feature = 'highway_unclassified'] { center/line-color: @residential-casing; }
-      [feature = 'highway_living_street'] { center/line-color: @living-street-casing; }
-      [feature = 'highway_service'] { center/line-color: @service-casing; }
-      [feature = 'highway_track'] { center/line-color: @track-fill; }
-
-      [feature = 'highway_service'][service = 'INT-normal'] {
-        [zoom < 16] {
-          center/line-width: 0.0;
-        }
-      }
-      [feature = 'highway_service'][service = 'INT-minor'] {
-        [zoom < 18] {
-          center/line-width: 0.0;
-        }
-      }
-      center/line-cap: round;
-      center/line-join: round;
-    }
-  } // == end tc_fill ==
-
-  [road_layer = 'junction_casing'],
-  [road_layer = 'area_casing'] {
-    [zoom >= 14] {
-
-      // road types with no mapped area rendering: only junction polygons
-      [road_layer = 'junction_casing'] {
-        [feature = 'highway_motorway'] {
-          line-color: @motorway-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-        [feature = 'highway_trunk'] {
-          line-color: @trunk-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-        [feature = 'highway_primary'] {
-          line-color: @primary-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-        [feature = 'highway_secondary'] {
-          line-color: @secondary-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-        [feature = 'highway_tertiary'] {
-          line-color: @tertiary-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-        [feature = 'highway_road'] {
-          line-color: @road-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-      }
-
-      [feature = 'highway_living_street'] {
-        line-color: @living-street-casing;
-        line-width: 2 * [casing_width];
-        [int_bridge = 'yes'] {
-          line-color: @bridge-casing;
-        }
-        [int_tunnel != 'no'] {
-          line-dasharray: 4,2;
-          line-cap: butt;
-        }
-      }
-
-      [feature = 'highway_residential'],
-      [feature = 'highway_unclassified'] {
-        line-color: @residential-casing;
-        line-width: 2 * [casing_width];
-        [int_bridge = 'yes'] {
-          line-color: @bridge-casing;
-        }
-        [int_tunnel != 'no'] {
-          line-dasharray: 4,2;
-          line-cap: butt;
-        }
-      }
-
-      [feature = 'highway_service'] {
-        // junctions for minor service roads only at z16+
-        [service = 'INT-normal'],
-        [zoom >= 16][service = 'INT-minor'],
-        [road_layer = 'area_casing'] {
-          line-color: @service-casing;
-          line-width: 2 * [casing_width];
-          [int_bridge = 'yes'] {
-            line-color: @bridge-casing;
-          }
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-      }
-
-      [feature = 'highway_pedestrian'],
-      [feature = 'highway_bridleway'][road_layer = 'junction_casing'][zoom >= 18],
-      [feature = 'highway_footway'][road_layer = 'junction_casing'][zoom >= 18],
-      [feature = 'highway_cycleway'][road_layer = 'junction_casing'][zoom >= 18],
-      [feature = 'highway_path'][road_layer = 'junction_casing'][zoom >= 18],
-      [feature = 'highway_footway'][road_layer = 'area_casing'],
-      [feature = 'highway_cycleway'][road_layer = 'area_casing'],
-      [feature = 'highway_path'][road_layer = 'area_casing'] {
-        line-color: @pedestrian-casing;
-        line-width: 2 * [casing_width];
-        [int_bridge = 'yes'] {
-          line-color: @bridge-casing;
-        }
-        [int_tunnel != 'no'] {
-          line-dasharray: 4,2;
-          line-cap: butt;
-        }
-      }
-
-      // this is junctions only
-      [feature = 'highway_steps'][width > 0.0] {
-        polygon-fill: mix(@steps-fill, @steps-casing, 75%);
-      }
-
-      [feature = 'highway_track'][road_layer = 'junction_casing'][zoom >= 18],
-      [feature = 'highway_track'][road_layer = 'area_casing'] {
-        line-color: @track-fill;
-        line-width: 2 * [casing_width];
-        [road_layer = 'area_casing'] {
-          line-width: 1;
-          line-dasharray: 5,4,2,4;
-        }
-        line-cap: round;
-        line-join: round;
-      }
-
-      [feature = 'highway_platform'],
-      [feature = 'railway_platform'] {
-        [zoom >= 16] {
-          line-color: grey;
-          line-width: 2;
-          line-cap: round;
-          line-join: round;
-          [int_tunnel != 'no'] {
-            line-dasharray: 4,2;
-            line-cap: butt;
-          }
-        }
-      }
-    }
-  } // == end area/junctions casing ==
-
-  [road_layer = 'junction_fill'],
-  [road_layer = 'area_fill'] {
-    [zoom >= 14] {
-
-      // road types with no mapped area rendering: only junction polygons
-      [road_layer = 'junction_fill'] {
-        [feature = 'highway_motorway'] {
-          polygon-fill: @motorway-fill;
-          [int_tunnel != 'no'] {
-            polygon-fill: @motorway-tunnel-fill;
-          }
-        }
-        [feature = 'highway_trunk'] {
-          polygon-fill: @trunk-fill;
-          [int_tunnel != 'no'] {
-            polygon-fill: @trunk-tunnel-fill;
-          }
-        }
-        [feature = 'highway_primary'] {
-          polygon-fill: @primary-fill;
-          [int_tunnel != 'no'] {
-            polygon-fill: @primary-tunnel-fill;
-          }
-        }
-        [feature = 'highway_secondary'] {
-          polygon-fill: @secondary-fill;
-          [int_tunnel != 'no'] {
-            polygon-fill: @secondary-tunnel-fill;
-          }
-        }
-        [feature = 'highway_tertiary'] {
-          polygon-fill: @tertiary-fill;
-          [int_tunnel != 'no'] {
-            polygon-fill: @tertiary-tunnel-fill;
-          }
-        }
-        [feature = 'highway_road'] {
-          polygon-fill: @road-fill;
-        }
-      }
-
-      [feature = 'highway_living_street'] {
-        polygon-fill: @living-street-fill;
-        [int_tunnel != 'no'] {
-          polygon-fill: @living-street-tunnel-fill;
-        }
-      }
-
-      [feature = 'highway_residential'],
-      [feature = 'highway_unclassified'] {
-        polygon-fill: @residential-fill;
-        [int_tunnel != 'no'] {
-          polygon-fill: @residential-tunnel-fill;
-        }
-      }
-
-      [feature = 'highway_service'] {
-        // junctions for minor service roads only at z16+
-        [service = 'INT-normal'],
-        [zoom >= 16][service = 'INT-minor'],
-        [road_layer = 'area_fill'] {
-          polygon-fill: @service-fill;
-          [int_tunnel != 'no'] {
-            polygon-fill: @service-tunnel-fill;
-          }
-        }
-      }
-
-
-      [feature = 'highway_pedestrian'],
-      [feature = 'highway_bridleway'][road_layer = 'junction_fill'][zoom >= 18],
-      [feature = 'highway_footway'][road_layer = 'junction_fill'][zoom >= 18],
-      [feature = 'highway_cycleway'][road_layer = 'junction_fill'][zoom >= 18],
-      [feature = 'highway_path'][road_layer = 'junction_fill'][zoom >= 18],
-      [feature = 'highway_footway'][road_layer = 'area_fill'],
-      [feature = 'highway_cycleway'][road_layer = 'area_fill'],
-      [feature = 'highway_path'][road_layer = 'area_fill'] {
-        polygon-fill: @pedestrian-fill;
-        [int_tunnel != 'no'] {
-          polygon-fill: @pedestrian-tunnel-fill;
-        }
-      }
-
-      [feature = 'highway_track'][road_layer = 'junction_fill'][zoom >= 18],
-      [feature = 'highway_track'][road_layer = 'area_fill'] {
-        polygon-fill: @track-area-fill;
-      }
-
-      [feature = 'highway_platform'],
-      [feature = 'railway_platform'] {
-        [zoom >= 16] {
-          polygon-fill: @platform-fill;
-          polygon-gamma: 0.65;
-        }
-      }
-    }
-
-    [feature = 'aeroway_runway'][zoom >= 11] {
-      polygon-fill: @runway-fill;
-    }
-
-    [feature = 'aeroway_taxiway'][zoom >= 13] {
-      polygon-fill: @taxiway-fill;
-    }
-
-    [feature = 'aeroway_helipad'][zoom >= 16] {
-      polygon-fill: @helipad-fill;
-    }
-  } // == end area_fill ==
-
-  [road_layer = 'fill_unpaved'] {
-    // nominal width highway fills for unpaved roads
-    // these are converted to polygons in SQL
-    [width_nominal > 0.0] {
-      [feature = 'highway_motorway'] {
-        [zoom >= 12] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_motorway-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_trunk'] {
-        [zoom >= 12] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_trunk-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_primary'] {
-        [zoom >= 12] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_primary-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_secondary'] {
-        [zoom >= 12] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_secondary-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_tertiary'] {
-        [zoom >= 12] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_tertiary-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_residential'],
-      [feature = 'highway_unclassified'] {
-        [zoom >= 13] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_residential-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_living_street'] {
-        [zoom >= 13] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_pedestrian-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_road'] {
-        [zoom >= 14] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_road-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_service'] {
-        [zoom >= 14][service = 'INT-normal'],
-        [zoom >= 16][service = 'INT-minor'] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_service-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'highway_pedestrian'] {
-        [zoom >= 13] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_pedestrian-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'aeroway_runway'] {
-        [zoom >= 12] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_aeroway-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-
-      [feature = 'aeroway_taxiway'] {
-        [zoom >= 14] {
-          polygon-pattern-file: url('symbols/unpaved/unpaved_aeroway-fill.svg');
-          polygon-pattern-alignment: global;
-        }
-      }
-    } // width_nominal > 0.0
-  } // == end fill_unpaved ==
 }
 
 #junctions {
