@@ -2599,6 +2599,43 @@ Layer:
               FROM roads_all
               WHERE int_junction = 'no'
             UNION ALL
+            SELECT -- background_unpaved
+                ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                'background_unpaved' AS road_layer,
+                feature,
+                horse,
+                foot,
+                bicycle,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lane_right,
+                int_lane_left,
+                int_lanes,
+                access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_surface = 'unpaved'
+                AND width >= 0.0
+                AND
+                  -- this is all the roads with a fill that is patterened for unpaved roads - only at high zoom and rendered as background
+                  feature IN ('highway_bridleway', 'highway_footway', 'highway_cycleway', 'highway_path', 'highway_track')
+                AND z(!scale_denominator!) >= 18
+            UNION ALL
             SELECT -- fill
                 way,
                 'fill' AS road_layer,
@@ -2628,6 +2665,50 @@ Layer:
                 z_order
               FROM roads_all
               WHERE int_junction = 'no'
+            UNION ALL
+            SELECT -- fill_unpaved
+                CASE
+                  WHEN feature IN ('aeroway_runway', 'aeroway_taxiway') THEN
+                    ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
+                  ELSE
+                    ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                END AS way,
+                'fill_unpaved' AS road_layer,
+                feature,
+                horse,
+                foot,
+                bicycle,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lane_right,
+                int_lane_left,
+                int_lanes,
+                access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_surface = 'unpaved'
+                AND
+                  -- this is all the roads with a fill that is patterened for unpaved roads
+                  feature IN (
+                    'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
+                    'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street',
+                    'aeroway_runway', 'aeroway_taxiway')
+                AND z(!scale_denominator!) >= 12
             UNION ALL
             SELECT -- junction_casing
                 way,
@@ -2719,8 +2800,7 @@ Layer:
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
-                AND width_max > 7.5
-                AND z(!scale_denominator!) >= 18
+                AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- area_casing
                 way,
@@ -3045,9 +3125,11 @@ Layer:
               WHEN road_layer = 'junction_casing' THEN 6
               WHEN road_layer = 'casing' THEN 7
               WHEN road_layer = 'background' THEN 8
+              WHEN road_layer = 'background_unpaved' THEN 8
               WHEN road_layer = 'area_fill' THEN 9
               WHEN road_layer = 'junction_fill' THEN 10
               WHEN road_layer = 'fill' THEN 11
+              WHEN road_layer = 'fill_unpaved' THEN 11
               WHEN road_layer = 'centerline' THEN 12
               WHEN road_layer = 'tc_fill' THEN 13
             END,
@@ -3055,9 +3137,7 @@ Layer:
             z_order,
             CASE WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0 ELSE 1 END,
             CASE WHEN access IN ('no', 'private') THEN 0 WHEN access IN ('destination') THEN 1 ELSE 2 END,
-            CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 2 END,
-            CASE WHEN int_tunnel NOT IN ('no') THEN -1 ELSE 0 END +
-            CASE WHEN int_bridge NOT IN ('no') THEN 1 ELSE 0 END,
+            CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 1 END,
             osm_id
         ) AS roads_sql
     properties:
