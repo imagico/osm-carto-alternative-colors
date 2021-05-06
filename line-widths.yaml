@@ -24,6 +24,8 @@ mss:
     - cycleway
     - path
     - track
+    - raceway
+    - platform
 
 sql:
   waterway:
@@ -57,6 +59,8 @@ sql:
     - dyke
     - runway
     - taxiway
+    - raceway
+    - platform
   casing:
     - casing-major
     - casing-secondary
@@ -89,7 +93,7 @@ tags:
   casing-secondary: IN ('secondary', 'secondary_link')
   casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps')
   bridge-casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link')
-  bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps')
+  bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
 
 classes:
   river:
@@ -272,6 +276,17 @@ classes:
     13: 0.45
     14: 0.85
     15: 1.5
+  raceway:
+    12: 1.2
+    13: 2
+    14: 3
+    15: 4.5
+    16: 6
+    17: 7.5
+    18: 9.5
+    19: 12
+  platform:
+    16: 4
   rail:
     7: 0.5
     8: 0.8

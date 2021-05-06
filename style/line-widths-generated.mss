@@ -163,3 +163,12 @@
 @track-width-z13: 0.45;
 @track-width-z14: 0.85;
 @track-width-z15: 1.5;
+@raceway-width-z12: 1.2;
+@raceway-width-z13: 2;
+@raceway-width-z14: 3;
+@raceway-width-z15: 4.5;
+@raceway-width-z16: 6;
+@raceway-width-z17: 7.5;
+@raceway-width-z18: 9.5;
+@raceway-width-z19: 12;
+@platform-width-z16: 4;

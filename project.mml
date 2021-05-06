@@ -2288,7 +2288,12 @@ Layer:
                     END AS service,
                     'no' AS link,
                     carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
-                    carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !bbox!, !scale_denominator!) AS width_tagged,
+                    CASE
+                      WHEN aeroway IS NOT NULL THEN
+                        carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !bbox!, !scale_denominator!)
+                      ELSE
+                        carto_highway_line_width_mapped(railway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!)
+                    END AS width_tagged,
                     carto_casing_line_width(
                        COALESCE(railway, aeroway),
                        CASE
@@ -2670,6 +2675,8 @@ Layer:
                 CASE
                   WHEN feature IN ('aeroway_runway', 'aeroway_taxiway') THEN
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
+                  WHEN feature IN ('highway_platform', 'railway_platform') THEN
+                    ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
                   ELSE
                     ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
                 END AS way,
@@ -2706,8 +2713,8 @@ Layer:
                   -- this is all the roads with a fill that is patterened for unpaved roads
                   feature IN (
                     'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
-                    'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street',
-                    'aeroway_runway', 'aeroway_taxiway')
+                    'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street', 'highway_raceway',
+                    'highway_platform', 'railway_platform', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 12
             UNION ALL
             SELECT -- junction_casing
@@ -3977,10 +3984,10 @@ Layer:
         (SELECT
             way,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
-            highway,
+            COALESCE(highway, railway) AS highway,
             name
           FROM planet_osm_polygon
-          WHERE highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'cycleway', 'living_street', 'track', 'path', 'platform')
+          WHERE highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'track', 'path', 'platform')
             OR railway IN ('platform')
             AND name IS NOT NULL
           ORDER BY way_area DESC
