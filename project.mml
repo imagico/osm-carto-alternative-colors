@@ -2675,7 +2675,7 @@ Layer:
                 CASE
                   WHEN feature IN ('aeroway_runway', 'aeroway_taxiway') THEN
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
-                  WHEN feature IN ('highway_platform', 'railway_platform') THEN
+                  WHEN feature IN ('highway_raceway', 'highway_platform', 'railway_platform') THEN
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
                   ELSE
                     ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))

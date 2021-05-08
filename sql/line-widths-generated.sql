@@ -456,7 +456,7 @@ select
         when $2 >= 19 then 1.0
         else 0.0
       end)
-    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps') then
+    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
       (case
         when $2 = 12 then 0.1
         when $2 = 13 then 0.5

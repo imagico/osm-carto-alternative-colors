@@ -91,7 +91,7 @@ tags:
   living-street: = 'living_street'
   casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link')
   casing-secondary: IN ('secondary', 'secondary_link')
-  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps')
+  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
   bridge-casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link')
   bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
 

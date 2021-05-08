@@ -60,6 +60,8 @@
 @ford-casing: saturate(darken(@water-color, 40%), 30%);
 @mountain-pass-casing: saturate(darken(@landform-color, 10%), 15%);
 
+@raceway-casing: darken(@raceway-fill, 15%);
+
 @motorway-tunnel-fill: lighten(@motorway-fill, 10%);
 @trunk-tunnel-fill: lighten(@trunk-fill, 10%);
 @primary-tunnel-fill: lighten(@primary-fill, 10%);
@@ -69,6 +71,7 @@
 @service-tunnel-fill: darken(@service-fill, 5%);
 @pedestrian-tunnel-fill: lighten(@pedestrian-fill, 2%);
 @living-street-tunnel-fill: lighten(@living-street-fill, 2%);
+@raceway-tunnel-fill: lighten(@raceway-fill, 5%);
 
 @sidewalks-width:                 0.8;
 @paths-background-width:          1;
@@ -696,7 +699,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     // bridge casings railways
     [feature = 'railway_tram'],
     [feature = 'railway_tram-service'][zoom >= 15] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 13] {
           line-width: 4;
           [zoom >= 15] {
@@ -709,7 +712,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
 
     [feature = 'railway_subway'] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 14] {
           line-width: 5.5;
           line-color: @bridge-casing;
@@ -721,7 +724,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'railway_light_rail'],
     [feature = 'railway_funicular'],
     [feature = 'railway_narrow_gauge'] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 14] {
           line-width: 5.5;
           line-color: @bridge-casing;
@@ -733,7 +736,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'railway_rail'],
     [feature = 'railway_preserved'],
     [feature = 'railway_monorail'][zoom >= 14] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 13] {
           line-width: 6.5;
           line-color: @bridge-casing;
@@ -743,7 +746,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
 
     [feature = 'railway_INT-spur-siding-yard'] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 13] {
           line-width: 5.7;
           line-color: @bridge-casing;
@@ -756,7 +759,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'railway_construction'],
     [feature = 'railway_miniature'][zoom >= 15],
     [feature = 'railway_INT-preserved-ssy'][zoom >= 14] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 13] {
           line-width: 6;
           line-color: @bridge-casing;
@@ -767,7 +770,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
     // bridge casings aeroways
     [feature = 'aeroway_runway'] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'][int_tunnel = 'no'] {
         [zoom >= 14] {
           line-width: [width_max] + 2 * [casing_width];
           line-color: @bridge-casing;
@@ -777,7 +780,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
 
     [feature = 'aeroway_taxiway'] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'][int_tunnel = 'no'] {
         [zoom >= 14] {
           line-width: [width_max] + 2 * [casing_width];
           line-color: @bridge-casing;
@@ -787,10 +790,18 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
 
     [feature = 'highway_raceway'] {
-      [int_bridge != 'no'] {
+      [int_bridge = 'yes'] {
         [zoom >= 14] {
           line-width: [width_max] + 2 * [casing_width];
           line-color: @bridge-casing;
+          line-join: round;
+        }
+      }
+      [int_tunnel != 'no'] {
+        [zoom >= 14] {
+          line-color: @raceway-casing;
+          line-width: [width_max] + 2 * [casing_width];
+          line-dasharray: 4,2;
           line-join: round;
         }
       }
@@ -1877,30 +1888,32 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
       [zoom >= 13] {
-        dark/line-join: round;
-        light/line-color: white;
-        light/line-join: round;
-        [feature = 'railway_rail'] {
-          dark/line-color: #707070;
-          dark/line-width: 3;
-          light/line-width: 1;
-          light/line-dasharray: 8,8;
-          [zoom >= 15] {
-            light/line-dasharray: 0,8,8,1;
-          }
-          [zoom >= 18] {
-            dark/line-width: 4;
-            light/line-width: 2;
-          }
-        }
-        [feature = 'railway_INT-spur-siding-yard'] {
-          dark/line-width: 2;
-          dark/line-color: #aaa;
-          light/line-width: 0.8;
-          light/line-dasharray: 0,8,8,1;
-          [zoom >= 18] {
+        [int_tunnel = 'no'] {
+          dark/line-join: round;
+          light/line-color: white;
+          light/line-join: round;
+          [feature = 'railway_rail'] {
+            dark/line-color: #707070;
             dark/line-width: 3;
             light/line-width: 1;
+            light/line-dasharray: 8,8;
+            [zoom >= 15] {
+              light/line-dasharray: 0,8,8,1;
+            }
+            [zoom >= 18] {
+              dark/line-width: 4;
+              light/line-width: 2;
+            }
+          }
+          [feature = 'railway_INT-spur-siding-yard'] {
+            dark/line-width: 2;
+            dark/line-color: #aaa;
+            light/line-width: 0.8;
+            light/line-dasharray: 0,8,8,1;
+            [zoom >= 18] {
+              dark/line-width: 3;
+              light/line-width: 1;
+            }
           }
         }
         [int_tunnel != 'no'] {
@@ -2083,22 +2096,57 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
-    [feature = 'aeroway_runway'] {
-      [zoom >= 11] {
-        [zoom < 12],
-        [int_surface != 'unpaved'] {
-          line-color: @runway-fill;
-          line-width: [width_max];
+
+    [int_tunnel = 'no'] {
+      [feature = 'aeroway_runway'] {
+        [zoom >= 11] {
+          [zoom < 12],
+          [int_surface != 'unpaved'] {
+            line-color: @runway-fill;
+            line-width: [width_max];
+          }
         }
       }
-    }
 
-    [feature = 'aeroway_taxiway'] {
-      [zoom >= 11] {
-        [zoom < 14],
-        [int_surface != 'unpaved'] {
-          line-color: @taxiway-fill;
-          line-width: [width_max];
+      [feature = 'aeroway_taxiway'] {
+        [zoom >= 11] {
+          [zoom < 14],
+          [int_surface != 'unpaved'] {
+            line-color: @taxiway-fill;
+            line-width: [width_max];
+          }
+        }
+      }
+
+      [feature = 'aeroway_construction'] {
+        [zoom >= 12] {
+          line-width: 2;
+          line-color: @runway-fill;
+          b/line-color: white;
+          b/line-width: 2;
+          b/line-dasharray: 4,2;
+          [construction = 'taxiway'] {
+            line-width: 1.5;
+            b/line-width: 1.5;
+          }
+          [zoom >= 14] {
+            line-width: 4;
+            b/line-width: 3.5;
+            b/line-dasharray: 5,3;
+            [construction = 'taxiway'] {
+             line-width: 2.5;
+              b/line-width: 2;
+            }
+          }
+          [zoom >= 16] {
+            line-width: 10;
+            b/line-width: 9;
+            b/line-dasharray: 7,6;
+            [construction = 'taxiway'] {
+             line-width: 6;
+              b/line-width: 5.5;
+            }
+          }
         }
       }
     }
@@ -2106,11 +2154,15 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'highway_raceway'] {
       [zoom >= 12] {
         [zoom < 14],
-        [int_surface != 'unpaved'] {
+        [int_surface != 'unpaved'],
+        [int_tunnel != 'no'] {
           line-color: @raceway-fill;
           line-width: [width_max];
-          line-join: round;
+          [int_tunnel != 'no'] {
+            line-color: @raceway-tunnel-fill;
+          }
           line-cap: round;
+          line-join: round;
         }
       }
     }
