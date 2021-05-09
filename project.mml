@@ -2445,14 +2445,14 @@ Layer:
                           CASE
                             WHEN l.highway = 'track' THEN
                               CASE z(!scale_denominator!)
-                                WHEN 15 THEN 5
-                                WHEN 16 THEN 6
-                                WHEN 17 THEN 7
-                                ELSE 8
+                                WHEN 15 THEN 5.75
+                                WHEN 16 THEN 6.75
+                                WHEN 17 THEN 7.75
+                                ELSE 8.75
                               END
-                            ELSE carto_highway_line_width(l.highway, l.service, z(!scale_denominator!))*1.6
+                            ELSE carto_highway_line_width(l.highway, l.service, z(!scale_denominator!))*1.7
                           END,
-                          carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', !bbox!, !scale_denominator!)*1.3
+                          carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', !bbox!, !scale_denominator!)*1.375
                         ),
                         CASE WHEN p.tags->'diameter' ~ '^-?\d{1,4}(\.\d+)?$' THEN (p.tags->'diameter')::NUMERIC / NULLIF(scale_factor(p.way)*!scale_denominator!*0.001*0.28,0) ELSE 0.0 END
                       ) AS width,
