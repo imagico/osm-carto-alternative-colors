@@ -1,14 +1,14 @@
 # OSM-Carto alternative colors map style
 
-![screenshot](https://raw.github.com/imagico/osm-carto-alternative-colors/master/preview.png)
+![screenshot](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview.png)
 
 This is a fork of the [OpenStreetMap Carto map style](https://github.com/gravitystorm/openstreetmap-carto/)
 implementing a different color scheme, various improvements regarding path, road and water feature rendering
 and overall a different approach to cartographic design.
 
-![screenshot2](https://raw.github.com/imagico/osm-carto-alternative-colors/master/preview2.png)
-![screenshot3](https://raw.github.com/imagico/osm-carto-alternative-colors/master/preview3.png)
-![screenshot4](https://raw.github.com/imagico/osm-carto-alternative-colors/master/preview4.png)
+![screenshot2](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview2.png)
+![screenshot3](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview3.png)
+![screenshot4](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview4.png)
 
 # Features
 
@@ -37,6 +37,19 @@ at mid zoom levels.
 * rendering of natura=ridge and natural=arete with a linear structure pattern
 * golf course rendering derived from the French style
 * rendering sport type on pitches using single symbol patterns
+* rendering of entrances in barriers mapped with nodes
+* complete re-design of the road rendering framework with:
+  - ground unit width rendering of roads
+  - lane depiction on roads
+  - rendering of implicitly mapped sidewalks on roads
+  - differentiated rendering of turning circles, turning loops, mini roundabouts and passing places
+  - rendering of details on steps
+  - differentiation of unpaved roads
+
+# Samples
+
+There is a collection of sample rendering available for a more extensive impression of the looks of this style
+on https://imagico.de/map/ac_samples_en.php
 
 # Cartographic principles
 
@@ -56,6 +69,9 @@ install the a number of functions in PostGIS supplied in:
 * `sql/line-widths-generated.sql`
 * `sql/scale_factor.sql`
 * `sql/roads.sql`
+
+Be aware that this style does not work well together with Postgresql JIT optimization.  It is highly 
+advisable to turn that feature off in your Postgresql configuration
 
 ## Simplified version for faster rendering
 
