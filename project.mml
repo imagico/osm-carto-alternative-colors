@@ -2926,9 +2926,42 @@ Layer:
                 z_order
               FROM tc_all
             UNION ALL
-            SELECT -- waterway_bridges
+            SELECT -- waterway_bridges_casing
                 way,
-                'waterway_bridges' AS road_layer,
+                'waterway_bridges_casing' AS road_layer,
+                ('waterway_' || waterway) AS feature,
+                'null' AS horse,
+                'null' AS foot,
+                'null' AS bicycle,
+                tags->'intermittent' AS intermittent,
+                tags->'seasonal' AS seasonal,
+                'null' AS int_surface,
+                CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
+                'yes' AS int_bridge,
+                'null' AS int_lane_right,
+                'null' AS int_lane_left,
+                'null' AS int_lanes,
+                'null' AS access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_nominal,
+                0 AS width_max,
+                0 AS width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM planet_osm_line
+              WHERE waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi')
+                AND bridge IN ('yes', 'aqueduct')
+                AND way && !bbox!
+                AND z(!scale_denominator!) >= 12
+            UNION ALL
+            SELECT -- waterway_bridges_fill
+                way,
+                'waterway_bridges_fill' AS road_layer,
                 ('waterway_' || waterway) AS feature,
                 'null' AS horse,
                 'null' AS foot,
@@ -3123,22 +3156,23 @@ Layer:
             END,
             CASE
               -- this is bridges only so it comes after all the non-bridge layers and before the road bridge layers
-              WHEN road_layer = 'waterway_bridges' THEN 0 
-              WHEN road_layer = 'landuse_overlay' THEN 1
-              WHEN road_layer = 'line_barriers' THEN 2
-              WHEN road_layer = 'ferry_routes' THEN 3
-              WHEN road_layer = 'tc_casing' THEN 4
-              WHEN road_layer = 'area_casing' THEN 5
-              WHEN road_layer = 'junction_casing' THEN 6
-              WHEN road_layer = 'casing' THEN 7
-              WHEN road_layer = 'background' THEN 8
-              WHEN road_layer = 'background_unpaved' THEN 8
-              WHEN road_layer = 'area_fill' THEN 9
-              WHEN road_layer = 'junction_fill' THEN 10
-              WHEN road_layer = 'fill' THEN 11
-              WHEN road_layer = 'fill_unpaved' THEN 11
-              WHEN road_layer = 'centerline' THEN 12
-              WHEN road_layer = 'tc_fill' THEN 13
+              WHEN road_layer = 'waterway_bridges_casing' THEN 0
+              WHEN road_layer = 'waterway_bridges_fill' THEN 1
+              WHEN road_layer = 'landuse_overlay' THEN 2
+              WHEN road_layer = 'line_barriers' THEN 3
+              WHEN road_layer = 'ferry_routes' THEN 4
+              WHEN road_layer = 'tc_casing' THEN 5
+              WHEN road_layer = 'area_casing' THEN 6
+              WHEN road_layer = 'junction_casing' THEN 7
+              WHEN road_layer = 'casing' THEN 8
+              WHEN road_layer = 'background' THEN 9
+              WHEN road_layer = 'background_unpaved' THEN 9
+              WHEN road_layer = 'area_fill' THEN 10
+              WHEN road_layer = 'junction_fill' THEN 11
+              WHEN road_layer = 'fill' THEN 12
+              WHEN road_layer = 'fill_unpaved' THEN 12
+              WHEN road_layer = 'centerline' THEN 13
+              WHEN road_layer = 'tc_fill' THEN 14
             END,
             layernotnull,
             z_order,

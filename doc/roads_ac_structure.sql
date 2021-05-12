@@ -371,22 +371,23 @@
             END,
             CASE
               -- this is bridges only so it comes after all the non-bridge layers and before the road bridge layers
-              WHEN road_layer = 'waterway_bridges' THEN 0 
-              WHEN road_layer = 'landuse_overlay' THEN 1
-              WHEN road_layer = 'line_barriers' THEN 2
-              WHEN road_layer = 'ferry_routes' THEN 3
-              WHEN road_layer = 'tc_casing' THEN 4
-              WHEN road_layer = 'area_casing' THEN 5
-              WHEN road_layer = 'junction_casing' THEN 6
-              WHEN road_layer = 'casing' THEN 7
-              WHEN road_layer = 'background' THEN 8
-              WHEN road_layer = 'background_unpaved' THEN 8
-              WHEN road_layer = 'area_fill' THEN 9
-              WHEN road_layer = 'junction_fill' THEN 10
-              WHEN road_layer = 'fill' THEN 11
-              WHEN road_layer = 'fill_unpaved' THEN 11
-              WHEN road_layer = 'centerline' THEN 12
-              WHEN road_layer = 'tc_fill' THEN 13
+              WHEN road_layer = 'waterway_bridges_casing' THEN 0
+              WHEN road_layer = 'waterway_bridges_fill' THEN 1
+              WHEN road_layer = 'landuse_overlay' THEN 2
+              WHEN road_layer = 'line_barriers' THEN 3
+              WHEN road_layer = 'ferry_routes' THEN 4
+              WHEN road_layer = 'tc_casing' THEN 5
+              WHEN road_layer = 'area_casing' THEN 6
+              WHEN road_layer = 'junction_casing' THEN 7
+              WHEN road_layer = 'casing' THEN 8
+              WHEN road_layer = 'background' THEN 9
+              WHEN road_layer = 'background_unpaved' THEN 9
+              WHEN road_layer = 'area_fill' THEN 10
+              WHEN road_layer = 'junction_fill' THEN 11
+              WHEN road_layer = 'fill' THEN 12
+              WHEN road_layer = 'fill_unpaved' THEN 12
+              WHEN road_layer = 'centerline' THEN 13
+              WHEN road_layer = 'tc_fill' THEN 14
             END,
             layernotnull,
             z_order,

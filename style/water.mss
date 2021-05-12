@@ -198,8 +198,22 @@
   line-comp-op: src-atop;
 }
 
+#roads[road_layer = 'waterway_bridges_casing'] {
+  [int_bridge = 'yes'] {
+    [zoom >= 14] {
+      bridgecasing/line-color: black;
+      bridgecasing/line-join: round;
+      bridgecasing/line-width: @river-width-z14 + 1;
+      [zoom >= 15] { bridgecasing/line-width: @river-width-z15 + 1; }
+      [zoom >= 16] { bridgecasing/line-width: @river-width-z16 + 1; }
+      [zoom >= 17] { bridgecasing/line-width: @river-width-z17 + 1; }
+      [zoom >= 18] { bridgecasing/line-width: @river-width-z18 + 1; }
+    }
+  }
+}
+
 #water-lines,
-#roads[road_layer = 'waterway_bridges'] {
+#roads[road_layer = 'waterway_bridges_fill'] {
   [feature = 'waterway_canal'][zoom >= 12],
   [feature = 'waterway_river'][zoom >= 12] {
     // the additional line of land color is used to provide a background for dashed casings
@@ -209,18 +223,6 @@
       background/line-cap: round;
       background/line-join: round;
       background/line-comp-op: src-atop;
-    }
-
-    [int_bridge = 'yes'] {
-      [zoom >= 14] {
-        bridgecasing/line-color: black;
-        bridgecasing/line-join: round;
-        bridgecasing/line-width: @river-width-z14 + 1;
-        [zoom >= 15] { bridgecasing/line-width: @river-width-z15 + 1; }
-        [zoom >= 16] { bridgecasing/line-width: @river-width-z16 + 1; }
-        [zoom >= 17] { bridgecasing/line-width: @river-width-z17 + 1; }
-        [zoom >= 18] { bridgecasing/line-width: @river-width-z18 + 1; }
-      }
     }
 
     // this is an additional background line for rivers/canals to show the dashing also on dark backgrounds
