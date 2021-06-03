@@ -1,0 +1,117 @@
+{
+    "data_format": 1,
+    "data_url": "https://raw.githubusercontent.com/imagico/osm-carto-alternative-colors/master/taginfo.json",
+    "data_updated": "20210603T210731Z",
+    "project": {
+        "name": "Alternative colors map style",
+        "description": "OSM-Carto fork with additional features and different development paradigm",
+        "project_url": "https://github.com/imagico/osm-carto-alternative-colors",
+        "doc_url": "https://github.com/imagico/osm-carto-alternative-colors/blob/master/README.md",
+        "icon_url": "https://raw.githubusercontent.com/imagico/osm-carto-alternative-colors/master/doc/icon.png",
+        "contact_name": "Christoph Hormann",
+        "contact_email": "chris_hormann@gmx.de"
+    },
+    "tags": [
+        { "key": "access" }
+        { "key": "addr:housename" }
+        { "key": "addr:housenumber" }
+        { "key": "addr:interpolation" }
+        { "key": "addr:unit" }
+        { "key": "admin_level" }
+        { "key": "advertising" }
+        { "key": "aerialway" }
+        { "key": "aeroway" }
+        { "key": "amenity" }
+        { "key": "area" }
+        { "key": "barrier" }
+        { "key": "bicycle" }
+        { "key": "boundary" }
+        { "key": "bridge" }
+        { "key": "building" }
+        { "key": "capital" }
+        { "key": "castle_type" }
+        { "key": "construction" }
+        { "key": "covered" }
+        { "key": "crop" }
+        { "key": "cutting" }
+        { "key": "cycleway" }
+        { "key": "cycleway:left" }
+        { "key": "cycleway:right" }
+        { "key": "denomination" }
+        { "key": "diameter" }
+        { "key": "diplomatic" }
+        { "key": "drinking_water" }
+        { "key": "ele" }
+        { "key": "embankment" }
+        { "key": "emergency" }
+        { "key": "foot" }
+        { "key": "ford" }
+        { "key": "generator:source" }
+        { "key": "glacier:type" }
+        { "key": "golf" }
+        { "key": "handrail" }
+        { "key": "handrail:center" }
+        { "key": "handrail:left" }
+        { "key": "handrail:right" }
+        { "key": "height" }
+        { "key": "highway" }
+        { "key": "historic" }
+        { "key": "horse" }
+        { "key": "iata" }
+        { "key": "icao" }
+        { "key": "information" }
+        { "key": "intermittent" }
+        { "key": "junction" }
+        { "key": "landuse" }
+        { "key": "lane_markings" }
+        { "key": "lanes" }
+        { "key": "layer" }
+        { "key": "leaf_cycle" }
+        { "key": "leaf_type" }
+        { "key": "leisure" }
+        { "key": "lock" }
+        { "key": "man_made" }
+        { "key": "maritime" }
+        { "key": "memorial" }
+        { "key": "military" }
+        { "key": "mountain_pass" }
+        { "key": "name" }
+        { "key": "natural" }
+        { "key": "office" }
+        { "key": "oneway" }
+        { "key": "operator" }
+        { "key": "place" }
+        { "key": "population" }
+        { "key": "power" }
+        { "key": "power_source" }
+        { "key": "railway" }
+        { "key": "ramp:bicycle" }
+        { "key": "ramp:stroller" }
+        { "key": "ramp:wheelchair" }
+        { "key": "recycling_type" }
+        { "key": "reef" }
+        { "key": "ref" }
+        { "key": "religion" }
+        { "key": "route" }
+        { "key": "salt" }
+        { "key": "seasonal" }
+        { "key": "service" }
+        { "key": "shop" }
+        { "key": "sidewalk" }
+        { "key": "sidewalk:left" }
+        { "key": "sidewalk:right" }
+        { "key": "sport" }
+        { "key": "surface" }
+        { "key": "tourism" }
+        { "key": "tower:construction" }
+        { "key": "tower:type" }
+        { "key": "tracktype" }
+        { "key": "trees" }
+        { "key": "tunnel" }
+        { "key": "type" }
+        { "key": "water" }
+        { "key": "waterway" }
+        { "key": "wetland" }
+        { "key": "width" }
+    ]
+}
