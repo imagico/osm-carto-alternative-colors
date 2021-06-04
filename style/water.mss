@@ -187,6 +187,7 @@
       [zoom >= 10] { line-width: @river-width-z10 - 0.6; }
       [zoom >= 11] { line-width: @river-width-z11 - 0.8; }
     }
+    line-comp-op: src-atop;
   }
   [waterway = 'river'][zoom >= 8][zoom < 12][intermittent != 'yes'][seasonal != 'yes'] {
     line-color: @river-color;
@@ -194,20 +195,45 @@
     [zoom >= 9] { line-width: @river-width-z9; }
     [zoom >= 10] { line-width: @river-width-z10; }
     [zoom >= 11] { line-width: @river-width-z11; }
+    line-comp-op: src-atop;
   }
-  line-comp-op: src-atop;
 }
 
 #roads[road_layer = 'waterway_bridges_casing'] {
-  [int_bridge = 'yes'] {
-    [zoom >= 14] {
-      bridgecasing/line-color: black;
-      bridgecasing/line-join: round;
-      bridgecasing/line-width: @river-width-z14 + 1;
-      [zoom >= 15] { bridgecasing/line-width: @river-width-z15 + 1; }
-      [zoom >= 16] { bridgecasing/line-width: @river-width-z16 + 1; }
-      [zoom >= 17] { bridgecasing/line-width: @river-width-z17 + 1; }
-      [zoom >= 18] { bridgecasing/line-width: @river-width-z18 + 1; }
+  [feature = 'waterway_canal'],
+  [feature = 'waterway_river'] {
+    [int_bridge = 'yes'] {
+      [zoom >= 14] {
+        bridgecasing/line-color: black;
+        bridgecasing/line-join: round;
+        bridgecasing/line-width: @river-width-z14 + 1;
+        [zoom >= 15] { bridgecasing/line-width: @river-width-z15 + 1; }
+        [zoom >= 16] { bridgecasing/line-width: @river-width-z16 + 1; }
+        [zoom >= 17] { bridgecasing/line-width: @river-width-z17 + 1; }
+        [zoom >= 18] { bridgecasing/line-width: @river-width-z18 + 1; }
+      }
+    }
+  }
+  [feature = 'waterway_stream'],
+  [feature = 'waterway_ditch'],
+  [feature = 'waterway_drain'] {
+    [int_bridge = 'yes'] {
+      [zoom >= 14] {
+        bridgecasing/line-color: black;
+        bridgecasing/line-join: round;
+        bridgecasing/line-width: @stream-width-z14 + 2;
+        [zoom >= 15] { bridgecasing/line-width: @stream-width-z15 + 2; }
+        [zoom >= 16] { bridgecasing/line-width: @stream-width-z16 + 2; }
+        [zoom >= 17] { bridgecasing/line-width: @stream-width-z17 + 2; }
+        [zoom >= 18] { bridgecasing/line-width: @stream-width-z18 + 2; }
+        bridgeglow/line-color: white;
+        bridgeglow/line-join: round;
+        bridgeglow/line-width: @stream-width-z14 + 1;
+        [zoom >= 15] { bridgeglow/line-width: @stream-width-z15 + 1; }
+        [zoom >= 16] { bridgeglow/line-width: @stream-width-z16 + 1; }
+        [zoom >= 17] { bridgeglow/line-width: @stream-width-z17 + 1; }
+        [zoom >= 18] { bridgeglow/line-width: @stream-width-z18 + 1; }
+      }
     }
   }
 }
@@ -328,24 +354,6 @@
         [zoom >= 16] { background/line-width: @stream-width-z16; }
         [zoom >= 17] { background/line-width: @stream-width-z17; }
         [zoom >= 18] { background/line-width: @stream-width-z18; }
-      }
-      [int_bridge = 'yes'] {
-        [zoom >= 14] {
-          bridgecasing/line-color: black;
-          bridgecasing/line-join: round;
-          bridgecasing/line-width: @stream-width-z14 + 2;
-          [zoom >= 15] { bridgecasing/line-width: @stream-width-z15 + 2; }
-          [zoom >= 16] { bridgecasing/line-width: @stream-width-z16 + 2; }
-          [zoom >= 17] { bridgecasing/line-width: @stream-width-z17 + 2; }
-          [zoom >= 18] { bridgecasing/line-width: @stream-width-z18 + 2; }
-          bridgeglow/line-color: white;
-          bridgeglow/line-join: round;
-          bridgeglow/line-width: @stream-width-z14 + 1;
-          [zoom >= 15] { bridgeglow/line-width: @stream-width-z15 + 1; }
-          [zoom >= 16] { bridgeglow/line-width: @stream-width-z16 + 1; }
-          [zoom >= 17] { bridgeglow/line-width: @stream-width-z17 + 1; }
-          [zoom >= 18] { bridgeglow/line-width: @stream-width-z18 + 1; }
-        }
       }
       water/line-color: @river-color;
       water/line-width: @stream-width-z12;
