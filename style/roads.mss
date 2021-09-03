@@ -18,7 +18,11 @@
 @taxiway-fill: @aeroway-fill;
 @helipad-fill: @aeroway-fill;
 @access-marking: #eaeaea;
-@access-marking-living-street: #cccccc;
+@access-marking-secondary: #f0f0f0;
+@access-marking-tertiary: #e4e4e4;
+@access-marking-unpaved: #e0e0e0;
+@access-marking-road: #f0f0f0;
+@access-marking-living-street: #d4d4d4;
 
 @platform-fill: #bbbbbb;
 
@@ -2818,83 +2822,18 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
   [road_layer = 'centerline'] {
 
-    // ford/mountain_pass centerlines
-    [feature = 'highway_motorway'],
-    [feature = 'highway_trunk'],
-    [feature = 'highway_primary'],
-    [feature = 'highway_secondary'],
-    [feature = 'highway_tertiary'] {
-      [int_bridge = 'ford'],
-      [int_bridge = 'ford_node'],
-      [int_bridge = 'mountain_pass'] {
-        [zoom >= 15] {
-          line-width: 0.35*[width_nominal];
-          line-color: @river-color;
-          [int_bridge = 'mountain_pass'] { line-color: @landform-color; }
-          line-join: round;
-        }
-      }
-    }
-
-    [feature = 'highway_residential'],
-    [feature = 'highway_unclassified'],
-    [feature = 'highway_living_street'],
-    [feature = 'highway_pedestrian'] {
-      [int_bridge = 'ford'],
-      [int_bridge = 'ford_node'],
-      [int_bridge = 'mountain_pass'] {
-        [zoom >= 15] {
-          line-width: 0.25*[width_nominal];
-          line-color: @river-color;
-          [int_bridge = 'mountain_pass'] { line-color: @landform-color; }
-          line-join: round;
-          [zoom >= 17] { line-width: 0.35*[width_nominal]; }
-        }
-      }
-    }
-
-    [feature = 'highway_road'] {
-      [int_bridge = 'ford'],
-      [int_bridge = 'ford_node'],
-      [int_bridge = 'mountain_pass'] {
-        [zoom >= 17] {
-          line-width: 0.25*[width_nominal];
-          line-color: @river-color;
-          [int_bridge = 'mountain_pass'] { line-color: @landform-color; }
-          line-join: round;
-          [zoom >= 18] { line-width: 0.35*[width_nominal]; }
-        }
-      }
-    }
-
-    [feature = 'highway_service'] {
-      [service = 'INT-normal'] {
-        [int_bridge = 'ford'],
-        [int_bridge = 'ford_node'],
-        [int_bridge = 'mountain_pass'] {
-          [zoom >= 17] {
-            line-width: 0.25*[width_nominal];
-            line-color: @river-color;
-            [int_bridge = 'mountain_pass'] { line-color: @landform-color; }
-            line-join: round;
-            [zoom >= 18] { line-width: 0.35*[width_nominal]; }
-          }
-        }
-      }
-    }
-
     // aeroway centerlines
     [feature = 'aeroway_runway'] {
       [zoom >= 15] {
-        line-color: @runway-centerline;
-        line-width: 0.4;
+        aeroway/line-color: @runway-centerline;
+        aeroway/line-width: 0.4;
       }
     }
     [feature = 'aeroway_taxiway'] {
       [zoom >= 15] {
-        line-color: @taxiway-centerline;
-        line-width: 0.4;
-        line-dasharray: 6,3;
+        aeroway/line-color: @taxiway-centerline;
+        aeroway/line-width: 0.4;
+        aeroway/line-dasharray: 6,3;
       }
     }
 
@@ -3091,6 +3030,16 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       [feature = 'highway_pedestrian'] {
         [zoom >= 15] {
           access/line-color: @access-marking;
+          [feature = 'highway_unclassified'][int_surface = 'unpaved'],
+          [feature = 'highway_residential'][int_surface = 'unpaved'] {
+            access/line-color: @access-marking-unpaved;
+          }
+          [feature = 'highway_secondary'] {
+            access/line-color: @access-marking-secondary;
+          }
+          [feature = 'highway_tertiary'] {
+            access/line-color: @access-marking-tertiary;
+          }
           [feature = 'highway_living_street'],
           [feature = 'highway_pedestrian'] {
             access/line-color: @access-marking-living-street;
@@ -3109,6 +3058,12 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       [feature = 'highway_service'][service = 'INT-normal'] {
         [zoom >= 15] {
           access/line-color: @access-marking;
+          [int_surface = 'unpaved'] {
+            access/line-color: @access-marking-unpaved;
+          }
+          [feature = 'highway_road'] {
+            access/line-color: @access-marking-road;
+          }
           access/line-join: round;
           access/line-cap: round;
           access/line-width: 2;
@@ -3122,6 +3077,9 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       [feature = 'highway_service'][service = 'INT-minor'] {
         [zoom >= 16] {
           access/line-color: @access-marking;
+          [int_surface = 'unpaved'] {
+            access/line-color: @access-marking-unpaved;
+          }
           access/line-join: round;
           access/line-cap: round;
           access/line-width: 1;
@@ -3144,6 +3102,16 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       [feature = 'highway_pedestrian'] {
         [zoom >= 15] {
           access/line-color: @access-marking;
+          [feature = 'highway_unclassified'][int_surface = 'unpaved'],
+          [feature = 'highway_residential'][int_surface = 'unpaved'] {
+            access/line-color: @access-marking-unpaved;
+          }
+          [feature = 'highway_secondary'] {
+            access/line-color: @access-marking-secondary;
+          }
+          [feature = 'highway_tertiary'] {
+            access/line-color: @access-marking-tertiary;
+          }
           [feature = 'highway_living_street'],
           [feature = 'highway_pedestrian'] {
             access/line-color: @access-marking-living-street;
@@ -3162,6 +3130,12 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       [feature = 'highway_service'][service = 'INT-normal'] {
         [zoom >= 15] {
           access/line-color: @access-marking;
+          [int_surface = 'unpaved'] {
+            access/line-color: @access-marking-unpaved;
+          }
+          [feature = 'highway_road'] {
+            access/line-color: @access-marking-road;
+          }
           access/line-join: round;
           access/line-cap: round;
           access/line-width: 2;
@@ -3174,6 +3148,9 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
       [feature = 'highway_service'][service = 'INT-minor'][zoom >= 16] {
         access/line-color: @access-marking;
+        [int_surface = 'unpaved'] {
+          access/line-color: @access-marking-unpaved;
+        }
         access/line-join: round;
         access/line-cap: round;
         access/line-width: 1;
@@ -3183,6 +3160,72 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
     }
+
+    // ford/mountain_pass centerlines
+    [feature = 'highway_motorway'],
+    [feature = 'highway_trunk'],
+    [feature = 'highway_primary'],
+    [feature = 'highway_secondary'],
+    [feature = 'highway_tertiary'] {
+      [int_bridge = 'ford'],
+      [int_bridge = 'ford_node'],
+      [int_bridge = 'mountain_pass'] {
+        [zoom >= 15] {
+          fordcl/line-width: 0.35*[width_nominal];
+          fordcl/line-color: @river-color;
+          [int_bridge = 'mountain_pass'] { fordcl/line-color: @landform-color; }
+          fordcl/line-join: round;
+        }
+      }
+    }
+
+    [feature = 'highway_residential'],
+    [feature = 'highway_unclassified'],
+    [feature = 'highway_living_street'],
+    [feature = 'highway_pedestrian'] {
+      [int_bridge = 'ford'],
+      [int_bridge = 'ford_node'],
+      [int_bridge = 'mountain_pass'] {
+        [zoom >= 15] {
+          fordcl/line-width: 0.25*[width_nominal];
+          fordcl/line-color: @river-color;
+          [int_bridge = 'mountain_pass'] { fordcl/line-color: @landform-color; }
+          fordcl/line-join: round;
+          [zoom >= 17] { fordcl/line-width: 0.35*[width_nominal]; }
+        }
+      }
+    }
+
+    [feature = 'highway_road'] {
+      [int_bridge = 'ford'],
+      [int_bridge = 'ford_node'],
+      [int_bridge = 'mountain_pass'] {
+        [zoom >= 17] {
+          fordcl/line-width: 0.25*[width_nominal];
+          fordcl/line-color: @river-color;
+          [int_bridge = 'mountain_pass'] { fordcl/line-color: @landform-color; }
+          fordcl/line-join: round;
+          [zoom >= 18] { fordcl/line-width: 0.35*[width_nominal]; }
+        }
+      }
+    }
+
+    [feature = 'highway_service'] {
+      [service = 'INT-normal'] {
+        [int_bridge = 'ford'],
+        [int_bridge = 'ford_node'],
+        [int_bridge = 'mountain_pass'] {
+          [zoom >= 17] {
+            fordcl/line-width: 0.25*[width_nominal];
+            fordcl/line-color: @river-color;
+            [int_bridge = 'mountain_pass'] { fordcl/line-color: @landform-color; }
+            fordcl/line-join: round;
+            [zoom >= 18] { fordcl/line-width: 0.35*[width_nominal]; }
+          }
+        }
+      }
+    }
+
   } // == end centerline ==
 
 }

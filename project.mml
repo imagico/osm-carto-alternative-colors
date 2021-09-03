@@ -3179,6 +3179,7 @@ Layer:
             CASE WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0 ELSE 1 END,
             CASE WHEN access IN ('no', 'private') THEN 0 WHEN access IN ('destination') THEN 1 ELSE 2 END,
             CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 1 END,
+            CASE WHEN int_bridge IN ('mountain_pass', 'ford_node') THEN 1 ELSE 0 END,
             osm_id
         ) AS roads_sql
     properties:
