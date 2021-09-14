@@ -1406,9 +1406,7 @@ Layer:
             way,
             road_layer,
             feature,
-            horse,
-            foot,
-            bicycle,
+            path_type,
             intermittent,
             seasonal,
             int_surface,
@@ -1417,7 +1415,7 @@ Layer:
             int_lane_right,
             int_lane_left,
             int_lanes,
-            access,
+            int_access,
             construction,
             service,
             link,
@@ -1431,9 +1429,7 @@ Layer:
             (SELECT
                 way,
                 (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 int_surface,
                 int_tunnel,
                 int_bridge,
@@ -1441,7 +1437,7 @@ Layer:
                 int_lane_left,
                 int_lanes,
                 int_junction,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -1460,9 +1456,7 @@ Layer:
                     way,
                     ('highway_' || highway) AS feature, -- only motorway to tertiary links are accepted later on
                     highway,
-                    horse,
-                    foot,
-                    bicycle,
+                    carto_path_type(foot, bicycle, horse) AS path_type,
                     CASE
                       WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                        'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
@@ -1508,7 +1502,7 @@ Layer:
                         ELSE
                           CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
                           ELSE
-                            'null'::text
+                            NULL
                           END
                         END
                     END AS int_side_right,
@@ -1520,15 +1514,11 @@ Layer:
                         ELSE
                           CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
                           ELSE
-                            'null'::text
+                            NULL
                           END
                         END
                     END AS int_side_left,
-                    'no' AS int_junction,
-                    CASE WHEN access IN ('destination') THEN 'destination'::text
-                      WHEN access IN ('no', 'private') THEN 'no'::text
-                      ELSE NULL
-                    END AS access,
+                    carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
                     construction,
                     CASE
                       WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
@@ -1558,9 +1548,7 @@ Layer:
                       ELSE ST_Intersection(junction_cut, bounds_ext)
                     END AS way,
                     feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
@@ -1569,7 +1557,7 @@ Layer:
                     int_lanes,
                     int_side_right,
                     int_side_left,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -1604,9 +1592,7 @@ Layer:
                         -- into its components
                         (ST_Dump(junction_poly)).geom AS junction_cut,
                         feature,
-                        horse,
-                        foot,
-                        bicycle,
+                        path_type,
                         int_surface,
                         int_tunnel,
                         int_bridge,
@@ -1615,7 +1601,7 @@ Layer:
                         int_lanes,
                         int_side_right,
                         int_side_left,
-                        access,
+                        int_access,
                         construction,
                         service,
                         link,
@@ -1654,9 +1640,7 @@ Layer:
                               )
                             ) AS junction_poly,
                             ('highway_' || highway) AS feature,
-                            horse,
-                            foot,
-                            bicycle,
+                            path_type,
                             int_surface,
                             int_tunnel,
                             int_bridge,
@@ -1665,7 +1649,7 @@ Layer:
                             int_lanes,
                             int_side_right,
                             int_side_left,
-                            access,
+                            int_access,
                             construction,
                             service,
                             link,
@@ -1681,9 +1665,7 @@ Layer:
                                 ST_StartPoint(way) AS center,
                                 way,
                                 highway,
-                                horse,
-                                foot,
-                                bicycle,
+                                path_type,
                                 int_surface,
                                 int_tunnel,
                                 int_bridge,
@@ -1692,7 +1674,7 @@ Layer:
                                 int_lanes,
                                 int_side_right,
                                 int_side_left,
-                                access,
+                                int_access,
                                 construction,
                                 service,
                                 link,
@@ -1728,9 +1710,7 @@ Layer:
                                 ST_EndPoint(way) AS center,
                                 way,
                                 highway,
-                                horse,
-                                foot,
-                                bicycle,
+                                path_type,
                                 int_surface,
                                 int_tunnel,
                                 int_bridge,
@@ -1739,7 +1719,7 @@ Layer:
                                 int_lanes,
                                 int_side_right,
                                 int_side_left,
-                                access,
+                                int_access,
                                 construction,
                                 service,
                                 link,
@@ -1793,9 +1773,7 @@ Layer:
                     j.clip AS clip,
                     h.feature AS feature,
                     h.highway AS highway,
-                    h.horse AS horse,
-                    h.foot AS foot,
-                    h.bicycle AS bicycle,
+                    h.path_type AS path_type,
                     h.int_surface AS int_surface,
                     h.int_tunnel AS int_tunnel,
                     h.int_bridge AS int_bridge,
@@ -1804,7 +1782,7 @@ Layer:
                     h.int_lanes AS int_lanes,
                     h.int_side_right AS int_side_right,
                     h.int_side_left AS int_side_left,
-                    h.access AS access,
+                    h.int_access AS int_access,
                     h.construction AS construction,
                     h.service AS service,
                     h.link AS link,
@@ -1853,13 +1831,11 @@ Layer:
                     way,
                     way_orig,
                     feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -1885,15 +1861,13 @@ Layer:
                         way,
                         way_orig,
                         ('highway_sidewalk_' || COALESCE(int_side_right,int_side_left)) AS feature,
-                        horse,
-                        foot,
-                        bicycle,
+                        path_type,
                         int_surface,
                         int_tunnel,
                         int_bridge,
                         int_side_right,
                         int_side_left,
-                        access,
+                        int_access,
                         construction,
                         service,
                         link,
@@ -1912,15 +1886,13 @@ Layer:
                               way_orig,
                               clip,
                               feature,
-                              horse,
-                              foot,
-                              bicycle,
+                              path_type,
                               int_surface,
                               int_tunnel,
                               int_bridge,
                               int_side_right,
                               int_side_left,
-                              access,
+                              int_access,
                               construction,
                               highway AS service, -- we use this to store the original highway value to be able to use that in MSS code
                               link,
@@ -1942,15 +1914,13 @@ Layer:
                             way_orig,
                             clip,
                             feature,
-                            horse,
-                            foot,
-                            bicycle,
+                            path_type,
                             int_surface,
                             int_tunnel,
                             int_bridge,
                             int_side_right,
                             int_side_left,
-                            access,
+                            int_access,
                             construction,
                             service,
                             link,
@@ -1971,15 +1941,13 @@ Layer:
                             way_orig,
                             clip,
                             feature,
-                            horse,
-                            foot,
-                            bicycle,
+                            path_type,
                             int_surface,
                             int_tunnel,
                             int_bridge,
                             int_side_right,
                             NULL AS int_side_left,
-                            access,
+                            int_access,
                             construction,
                             service,
                             link,
@@ -1999,15 +1967,13 @@ Layer:
                             way_orig,
                             clip,
                             feature,
-                            horse,
-                            foot,
-                            bicycle,
+                            path_type,
                             int_surface,
                             int_tunnel,
                             int_bridge,
                             NULL AS int_side_right,
                             int_side_left,
-                            access,
+                            int_access,
                             construction,
                             service,
                             link,
@@ -2028,15 +1994,13 @@ Layer:
                             way_orig,
                             clip,
                             feature,
-                            horse,
-                            foot,
-                            bicycle,
+                            path_type,
                             int_surface,
                             int_tunnel,
                             int_bridge,
                             NULL AS int_side_right,
                             NULL AS int_side_left,
-                            access,
+                            int_access,
                             construction,
                             service,
                             link,
@@ -2093,17 +2057,15 @@ Layer:
                       )
                     ) AS way,
                     feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
                     'null' AS int_lane_right,
                     'null' AS int_lane_left,
-                    'null' AS int_lanes,
+                    NULL AS int_lanes,
                     'no' AS int_junction,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -2121,9 +2083,7 @@ Layer:
                 SELECT -- begin of main road select
                     way,
                     feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
@@ -2131,7 +2091,7 @@ Layer:
                     int_lane_left,
                     int_lanes,
                     'no' AS int_junction,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -2147,9 +2107,7 @@ Layer:
                 SELECT -- begin of junction polygons select
                     way,
                     feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
@@ -2157,7 +2115,7 @@ Layer:
                     int_lane_left,
                     int_lanes,
                     'yes' AS int_junction,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -2173,17 +2131,15 @@ Layer:
                 SELECT -- begin of ford/mountain_pass point pseudo-line select
                     ST_LineSubstring(way, GREATEST(0, position-length*0.5*pass_length), LEAST(1, position+length*0.5*pass_length)) AS way,
                     feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
                     'null' AS int_lane_right,
                     'null' AS int_lane_left,
-                    'null' AS int_lanes,
+                    NULL AS int_lanes,
                     'no' AS int_junction,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -2202,9 +2158,7 @@ Layer:
                             l.highway, l.service, z(!scale_denominator!))) ELSE 5 END AS pass_length,
                           ('highway_' || l.highway) AS feature,
                           l.highway AS highway,
-                          l.horse AS horse,
-                          l.foot AS foot,
-                          l.bicycle AS bicycle,
+                          carto_path_type(l.foot, l.bicycle, l.horse) AS path_type,
                           CASE
                             WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                              'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
@@ -2218,10 +2172,7 @@ Layer:
                             ELSE 'no'::text
                           END AS int_tunnel,
                           CASE WHEN (p.tags @> 'mountain_pass=>yes') THEN 'mountain_pass' ELSE 'ford_node' END AS int_bridge,
-                          CASE WHEN l.access IN ('destination') THEN 'destination'::text
-                            WHEN l.access IN ('no', 'private') THEN 'no'::text
-                            ELSE NULL
-                          END AS access,
+                          carto_road_access(l.highway, l.access, l.tags->'vehicle', l.tags->'motor_vehicle', l.tags->'motorcar', l.bicycle, l.horse, l.foot, l.tags->'bus', l.tags->'psv') AS int_access,
                           l.construction AS construction,
                           CASE
                             WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway') THEN 'INT-minor'::text
@@ -2252,9 +2203,7 @@ Layer:
                                            WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'tram-service' ELSE railway END)),
                       ('aeroway_' || aeroway)
                     ) AS feature,
-                    horse,
-                    foot,
-                    bicycle,
+                    'null' AS path_type,
                     CASE
                       WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                        'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
@@ -2274,13 +2223,9 @@ Layer:
                     END AS int_bridge,
                     'null' AS int_lane_right,
                     'null' AS int_lane_left,
-                    'null' AS int_lanes,
+                    NULL AS int_lanes,
                     'no' AS int_junction,
-                    CASE
-                      WHEN access IN ('destination') THEN 'destination'::text
-                      WHEN access IN ('no', 'private') THEN 'no'::text
-                      ELSE NULL
-                    END AS access,
+                    NULL AS int_access,
                     construction,
                     CASE
                       WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
@@ -2319,9 +2264,7 @@ Layer:
                   ('railway_' || (CASE WHEN railway IN ('platform') THEN railway ELSE NULL END)),
                   ('aeroway_' || (CASE WHEN aeroway IN ('runway', 'taxiway', 'helipad') THEN aeroway ELSE NULL END))
                 ) AS feature,
-                horse,
-                foot,
-                bicycle,
+                carto_path_type(foot, bicycle, horse) AS path_type,
                 CASE
                   WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                    'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
@@ -2341,11 +2284,8 @@ Layer:
                 END AS int_bridge,
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
-                'null' AS int_lanes,
-                CASE WHEN access IN ('destination') THEN 'destination'::text
-                  WHEN access IN ('no', 'private') THEN 'no'::text
-                  ELSE NULL
-                END AS access,
+                NULL AS int_lanes,
+                carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
                 construction,
                 CASE
                   WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
@@ -2377,16 +2317,14 @@ Layer:
             (SELECT
                 way,
                 (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 int_surface,
                 int_tunnel,
                 int_bridge,
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2404,9 +2342,7 @@ Layer:
                       l.way AS lway,
                       ('highway_' || l.highway) AS feature,
                       l.highway AS highway,
-                      l.horse AS horse,
-                      l.foot AS foot,
-                      l.bicycle AS bicycle,
+                      carto_path_type(l.foot, l.bicycle, l.horse) AS path_type,
                       CASE
                         WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
                                          'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
@@ -2426,11 +2362,8 @@ Layer:
                       END AS int_bridge,
                       'null' AS int_lane_right,
                       'null' AS int_lane_left,
-                      'null' AS int_lanes,
-                      CASE WHEN l.access IN ('destination') THEN 'destination'::text
-                        WHEN l.access IN ('no', 'private') THEN 'no'::text
-                        ELSE NULL
-                      END AS access,
+                      NULL AS int_lanes,
+                      carto_road_access(l.highway, l.access, l.tags->'vehicle', l.tags->'motor_vehicle', l.tags->'motorcar', l.bicycle, l.horse, l.foot, l.tags->'bus', l.tags->'psv') AS int_access,
                       l.construction AS construction,
                       CASE WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway')
                         THEN 'INT-minor'::text
@@ -2464,7 +2397,7 @@ Layer:
                     WHERE p.highway IN ('turning_circle', 'turning_loop', 'mini_roundabout', 'passing_place')
                       AND l.highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link',
                                         'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
-                                        'living_street', 'track')
+                                        'living_street', 'track', 'busway', 'bus_guideway')
                       AND p.way && !bbox!
                       AND z(!scale_denominator!) >= 15
                   )
@@ -2472,16 +2405,14 @@ Layer:
                     ST_MakeLine(way, ST_Translate(way, 0, 0.01)) AS way,
                     feature,
                     highway,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
                     int_lane_right,
                     int_lane_left,
                     int_lanes,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -2497,16 +2428,14 @@ Layer:
                     ST_LineSubstring(way, GREATEST(0, position-length*0.25*width), LEAST(1, position+length*0.25*width)) AS way,
                     feature,
                     highway,
-                    horse,
-                    foot,
-                    bicycle,
+                    path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
                     int_lane_right,
                     int_lane_left,
                     int_lanes,
-                    access,
+                    int_access,
                     construction,
                     service,
                     link,
@@ -2522,16 +2451,14 @@ Layer:
                         NULLIF(!scale_denominator!*0.001*0.28,0)/ST_Length(lway) AS length, -- this is the pixel size as a fraction of the way length
                         feature,
                         highway,
-                        horse,
-                        foot,
-                        bicycle,
+                        path_type,
                         int_surface,
                         int_tunnel,
                         int_bridge,
                         int_lane_right,
                         int_lane_left,
                         int_lanes,
-                        access,
+                        int_access,
                         construction,
                         service,
                         link,
@@ -2548,9 +2475,7 @@ Layer:
                 way,
                 'casing' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2559,7 +2484,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2578,9 +2503,7 @@ Layer:
                 way,
                 'background' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2589,7 +2512,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2608,9 +2531,7 @@ Layer:
                 ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
                 'background_unpaved' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2619,7 +2540,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2645,9 +2566,7 @@ Layer:
                 way,
                 'fill' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2656,7 +2575,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2682,9 +2601,7 @@ Layer:
                 END AS way,
                 'fill_unpaved' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2693,7 +2610,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2714,6 +2631,7 @@ Layer:
                   feature IN (
                     'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
                     'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street', 'highway_raceway',
+                    'highway_busway', 'highway_bus_guideway',
                     'highway_platform', 'railway_platform', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 12
             UNION ALL
@@ -2721,9 +2639,7 @@ Layer:
                 way,
                 'junction_casing' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2732,7 +2648,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2751,9 +2667,7 @@ Layer:
                 way,
                 'junction_fill' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2762,7 +2676,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2781,9 +2695,7 @@ Layer:
                 way,
                 'centerline' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2792,7 +2704,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2807,15 +2719,14 @@ Layer:
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
+                AND feature IN ('highway_living_street', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
-            SELECT -- area_casing
+            SELECT -- lanes
                 way,
-                'area_casing' AS road_layer,
+                'lanes' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2824,7 +2735,100 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_lanes IS NOT NULL
+                AND z(!scale_denominator!) >= 18
+            UNION ALL
+            SELECT -- access
+                way,
+                'access' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lane_right,
+                int_lane_left,
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_access IS NOT NULL
+                AND z(!scale_denominator!) >= 15
+            UNION ALL
+            SELECT -- centerline_top
+                way,
+                'centerline_top' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lane_right,
+                int_lane_left,
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_bridge IN ('ford', 'ford_node',  'mountain_pass')
+                AND z(!scale_denominator!) >= 15
+            UNION ALL
+            SELECT -- area_casing
+                way,
+                'area_casing' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lane_right,
+                int_lane_left,
+                int_lanes,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2843,9 +2847,7 @@ Layer:
                 way,
                 'area_fill' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2854,7 +2856,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2872,9 +2874,7 @@ Layer:
                 way,
                 'tc_casing' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2883,7 +2883,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2901,9 +2901,7 @@ Layer:
                 way,
                 'tc_fill' AS road_layer,
                 feature,
-                horse,
-                foot,
-                bicycle,
+                path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
                 int_surface,
@@ -2912,7 +2910,7 @@ Layer:
                 int_lane_right,
                 int_lane_left,
                 int_lanes,
-                access,
+                int_access,
                 construction,
                 service,
                 link,
@@ -2930,9 +2928,7 @@ Layer:
                 way,
                 'waterway_bridges_casing' AS road_layer,
                 ('waterway_' || waterway) AS feature,
-                'null' AS horse,
-                'null' AS foot,
-                'null' AS bicycle,
+                'null' AS path_type,
                 tags->'intermittent' AS intermittent,
                 tags->'seasonal' AS seasonal,
                 'null' AS int_surface,
@@ -2941,7 +2937,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS access,
+                'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -2963,9 +2959,7 @@ Layer:
                 way,
                 'waterway_bridges_fill' AS road_layer,
                 ('waterway_' || waterway) AS feature,
-                'null' AS horse,
-                'null' AS foot,
-                'null' AS bicycle,
+                'null' AS path_type,
                 tags->'intermittent' AS intermittent,
                 tags->'seasonal' AS seasonal,
                 'null' AS int_surface,
@@ -2974,7 +2968,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS access,
+                'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -2996,9 +2990,7 @@ Layer:
                 way,
                 'line_barriers' AS road_layer,
                 COALESCE(historic, barrier) AS feature,
-                'null' AS horse,
-                'null' AS foot,
-                'null' AS bicycle,
+                'null' AS path_type,
                 'null' AS intermittent,
                 'null' AS seasonal,
                 'null' AS int_surface,
@@ -3007,7 +2999,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS access,
+                'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -3053,7 +3045,8 @@ Layer:
                              WHERE ST_Intersects(h.way, e.way) AND highway IN 
                               ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
                                'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
-                               'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track')
+                               'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                               'busway', 'bus_guideway')
                               ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
                           ),
                           carto_highway_line_width('footway', z(!scale_denominator!))
@@ -3090,9 +3083,7 @@ Layer:
                 way,
                 'ferry_routes' AS road_layer,
                 'ferry' AS feature,
-                'null' AS horse,
-                'null' AS foot,
-                'null' AS bicycle,
+                'null' AS path_type,
                 'null' AS intermittent,
                 'null' AS seasonal,
                 'null' AS int_surface,
@@ -3101,7 +3092,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS access,
+                'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -3120,9 +3111,7 @@ Layer:
                 way,
                 'landuse_overlay' AS road_layer,
                 ('landuse_' || landuse) AS feature,
-                'null' AS horse,
-                'null' AS foot,
-                'null' AS bicycle,
+                'null' AS path_type,
                 'null' AS intermittent,
                 'null' AS seasonal,
                 'null' AS int_surface,
@@ -3131,7 +3120,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS access,
+                'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -3154,8 +3143,38 @@ Layer:
               WHEN int_tunnel NOT IN ('no') THEN layernotnull - 100
               ELSE 0
             END,
+            -- this defines the orering of layers as far as it has priority over the
+            -- layer and z_oder of normal non-bridge and non-tunnel features, that is:
+            --  * the non-roads layers
+            --  * the casing-background-fill progression
+            -- ordering beyond that is defined later because
+            -- it is subordinate to the layer and z_oder
             CASE
               -- this is bridges only so it comes after all the non-bridge layers and before the road bridge layers
+              WHEN road_layer = 'waterway_bridges_casing' THEN 0
+              WHEN road_layer = 'waterway_bridges_fill' THEN 1
+              WHEN road_layer = 'landuse_overlay' THEN 2
+              WHEN road_layer = 'line_barriers' THEN 3
+              WHEN road_layer = 'ferry_routes' THEN 4
+              WHEN road_layer = 'tc_casing' THEN 5
+              WHEN road_layer = 'area_casing' THEN 5
+              WHEN road_layer = 'junction_casing' THEN 5
+              WHEN road_layer = 'casing' THEN 5
+              WHEN road_layer = 'background' THEN 6
+              WHEN road_layer = 'background_unpaved' THEN 6
+              WHEN road_layer = 'area_fill' THEN 7
+              WHEN road_layer = 'junction_fill' THEN 7
+              WHEN road_layer = 'fill' THEN 7
+              WHEN road_layer = 'fill_unpaved' THEN 7
+              WHEN road_layer = 'centerline' THEN 7
+              WHEN road_layer = 'lanes' THEN 7
+              WHEN road_layer = 'access' THEN 7
+              WHEN road_layer = 'tc_fill' THEN 7
+              WHEN road_layer = 'centerline_top' THEN 8
+            END,
+            layernotnull,
+            z_order,
+            CASE
               WHEN road_layer = 'waterway_bridges_casing' THEN 0
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
               WHEN road_layer = 'landuse_overlay' THEN 2
@@ -3172,31 +3191,34 @@ Layer:
               WHEN road_layer = 'fill' THEN 12
               WHEN road_layer = 'fill_unpaved' THEN 12
               WHEN road_layer = 'centerline' THEN 13
-              WHEN road_layer = 'tc_fill' THEN 14
+              WHEN road_layer = 'lanes' THEN 14
+              WHEN road_layer = 'access' THEN 15
+              WHEN road_layer = 'tc_fill' THEN 16
+              WHEN road_layer = 'centerline_top' THEN 17
             END,
-            layernotnull,
-            z_order,
             CASE WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0 ELSE 1 END,
-            CASE WHEN access IN ('no', 'private') THEN 0 WHEN access IN ('destination') THEN 1 ELSE 2 END,
+            -- order by how permissive it is to the target map user
+            CASE
+              WHEN int_access IN ('no') THEN 0
+              WHEN int_access IN ('bus') THEN 1
+              WHEN int_access IN ('foot') THEN 2
+              WHEN int_access IN ('horse') THEN 3
+              WHEN int_access IN ('bicycle') THEN 4
+              WHEN int_access IN ('vehicle') THEN 5
+              WHEN int_access IN ('light') THEN 6
+              WHEN int_access IN ('bus+light') THEN 7
+              WHEN int_access IN ('foot+light') THEN 8
+              WHEN int_access IN ('horse+light') THEN 9
+              WHEN int_access IN ('bicycle+light') THEN 10
+              WHEN int_access IN ('vehicle+light') THEN 11
+              ELSE 10
+            END,
             CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 1 END,
             CASE WHEN int_bridge IN ('mountain_pass', 'ford_node') THEN 1 ELSE 0 END,
             osm_id
         ) AS roads_sql
     properties:
       minzoom: 10
-  - id: guideways
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way
-          FROM planet_osm_line
-          WHERE highway = 'bus_guideway'
-        ) AS guideways
-    properties:
-      minzoom: 13
   - id: golf-lines
     <<: *extents
     Datasource:
@@ -3578,7 +3600,8 @@ Layer:
                        WHERE ST_Intersects(h.way, e.way) AND highway IN 
                         ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
                          'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
-                         'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track')
+                         'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                         'busway', 'bus_guideway')
                         ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
                     ),
                     carto_highway_line_width('footway', z(!scale_denominator!))
@@ -3981,12 +4004,12 @@ Layer:
                     osm_id,
                     way,
                     COALESCE(
-                      CASE WHEN highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'residential') THEN highway ELSE NULL END,
+                      CASE WHEN highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'busway', 'bus_guideway', 'residential') THEN highway ELSE NULL END,
                       CASE WHEN aeroway IN ('runway', 'taxiway') THEN aeroway ELSE NULL END
                     ) AS highway,
                     string_to_array(ref, ';') AS refs
                   FROM planet_osm_line
-                  WHERE (highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'residential') OR aeroway IN ('runway', 'taxiway'))
+                  WHERE (highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'busway', 'bus_guideway', 'residential') OR aeroway IN ('runway', 'taxiway'))
                     AND ref IS NOT NULL
               ) AS p) AS q
           WHERE height <= 4 AND width <= 11
@@ -3999,6 +4022,8 @@ Layer:
               WHEN highway = 'tertiary' THEN 34
               WHEN highway = 'unclassified' THEN 33
               WHEN highway = 'residential' THEN 32
+              WHEN highway = 'bus_guideway' THEN 31
+              WHEN highway = 'busway' THEN 30
               WHEN highway = 'runway' THEN 6
               WHEN highway = 'taxiway' THEN 5
               ELSE NULL
@@ -4047,7 +4072,7 @@ Layer:
               WHEN junction IN ('roundabout') AND (oneway IS NULL OR NOT oneway IN ('no', 'reversible')) THEN 'yes'
               ELSE NULL
             END AS oneway,
-            horse, bicycle
+            carto_path_type(foot, bicycle, horse) AS path_type
           FROM planet_osm_line l
           JOIN (VALUES -- this join is also putting a condition on what is selected. features not matching it do not make it into the results.
               ('motorway', 380),
@@ -4066,12 +4091,15 @@ Layer:
               ('primary_link', 220),
               ('secondary_link', 210),
               ('tertiary_link', 200),
+              ('bus_guideway', 190),
+              ('busway', 180),
               ('service', 150),
               ('construction', 10)
             ) AS ordertable (highway, prio)
             USING (highway)
           WHERE highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link', 'tertiary', 
-                            'tertiary_link', 'residential', 'unclassified', 'road', 'service', 'pedestrian', 'raceway', 'living_street', 'construction')
+                            'tertiary_link', 'residential', 'unclassified', 'road', 'service', 'pedestrian', 'raceway', 'living_street', 'construction',
+                            'busway', 'bus_guideway')
             AND (name IS NOT NULL
               OR oneway IN ('yes', '-1')
               OR junction IN ('roundabout'))

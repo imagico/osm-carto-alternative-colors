@@ -1169,28 +1169,28 @@
 
 #cliffs {
   [natural = 'cliff'][zoom >= 13] {
-    line-pattern-file: url('symbols/cliff.svg');
+    line-pattern-file: url('symbols/line_patterns/cliff.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/cliff2.svg');
+      line-pattern-file: url('symbols/line_patterns/cliff2.svg');
     }
   }
   [natural = 'earth_bank'][zoom >= 13] {
-    line-pattern-file: url('symbols/earth_bank.svg');
+    line-pattern-file: url('symbols/line_patterns/earth_bank.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/earth_bank2.svg');
+      line-pattern-file: url('symbols/line_patterns/earth_bank2.svg');
     }
   }
   [natural = 'ridge'][zoom >= 13] {
-    line-pattern-file: url('symbols/ridge.svg');
+    line-pattern-file: url('symbols/line_patterns/ridge.svg');
   }
   [natural = 'arete'][zoom >= 13] {
-    line-pattern-file: url('symbols/arete.svg');
+    line-pattern-file: url('symbols/line_patterns/arete.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/arete2.svg');
+      line-pattern-file: url('symbols/line_patterns/arete2.svg');
     }
   }
   [man_made = 'embankment'][zoom >= 15]::man_made {
-    line-pattern-file: url('symbols/embankment.svg');
+    line-pattern-file: url('symbols/line_patterns/embankment.svg');
   }
 }
 

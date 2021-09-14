@@ -98,6 +98,7 @@ def main():
         'secondary-fill',
         'tertiary-fill',
         'road-fill',
+        'busway-fill',
         'residential-fill',
         'service-fill',
         'pedestrian-fill',

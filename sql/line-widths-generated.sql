@@ -202,6 +202,30 @@ select
         when $2 >= 19 then 17.0
         else 0.0
       end)
+    when $1 = 'bus_guideway' then
+      (case
+        when $2 = 12 then 0.8
+        when $2 = 13 then 2.5
+        when $2 = 14 then 3.0
+        when $2 = 15 then 5.0
+        when $2 = 16 then 6.0
+        when $2 = 17 then 12.0
+        when $2 = 18 then 13.0
+        when $2 >= 19 then 17.0
+        else 0.0
+      end)
+    when $1 = 'busway' then
+      (case
+        when $2 = 12 then 0.8
+        when $2 = 13 then 2.5
+        when $2 = 14 then 3.0
+        when $2 = 15 then 5.0
+        when $2 = 16 then 6.0
+        when $2 = 17 then 12.0
+        when $2 = 18 then 13.0
+        when $2 >= 19 then 17.0
+        else 0.0
+      end)
     when $1 = 'service' then
       (case
         when $2 = 13 then 0.8
@@ -456,7 +480,7 @@ select
         when $2 >= 19 then 1.0
         else 0.0
       end)
-    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
+    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
       (case
         when $2 = 12 then 0.1
         when $2 = 13 then 0.5
@@ -493,7 +517,7 @@ select
         when $2 >= 19 then 1.0
         else 0.0
       end)
-    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
+    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
       (case
         when $2 = 12 then 0.1
         when $2 = 13 then 0.5

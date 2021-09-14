@@ -13,6 +13,8 @@ mss:
     - tertiary
     - residential
     - unclassified
+    - bus-guideway
+    - busway
     - service
     - service-minor
     - living-street
@@ -42,6 +44,8 @@ sql:
     - tertiary
     - residential
     - unclassified
+    - bus-guideway
+    - busway
     - service
     - service-minor
     - living-street
@@ -89,11 +93,12 @@ tags:
   secondary: IN ('secondary', 'secondary_link')
   tertiary: IN ('tertiary', 'tertiary_link')
   living-street: = 'living_street'
+  bus-guideway: = 'bus_guideway'
   casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link')
   casing-secondary: IN ('secondary', 'secondary_link')
-  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
+  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
   bridge-casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link')
-  bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
+  bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
 
 classes:
   river:
@@ -197,6 +202,24 @@ classes:
   unclassified:
     12: 0.8
     # unclassified uses residential width at z13+
+    13: 2.5
+    14: 3
+    15: 5
+    16: 6
+    17: 12
+    18: 13
+    19: 17
+  bus-guideway:
+    12: 0.8
+    13: 2.5
+    14: 3
+    15: 5
+    16: 6
+    17: 12
+    18: 13
+    19: 17
+  busway:
+    12: 0.8
     13: 2.5
     14: 3
     15: 5
@@ -392,6 +415,3 @@ classes:
     17: 0.8
     18: 0.8
     19: 0.8
-
-
-
