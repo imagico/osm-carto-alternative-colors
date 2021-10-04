@@ -4,7 +4,7 @@ derived from https://github.com/cquest/osmfr-cartocss/blob/master/sports.mss
 
 */
 
-#landcover[zoom >= 14] {
+#landcover[zoom >= 14]::main {
   [feature = 'golf_rough'] {
     polygon-fill: mix(@grass, @scrub, 70%);
     [way_pixels >= 4]  { polygon-gamma: 0.75; }

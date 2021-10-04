@@ -99,7 +99,7 @@ Layer:
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             feature
           FROM (SELECT
-              way, name, religion, crop, surface, sport, way_area, layer, prio,
+              way, name, religion, crop, surface, sport, way_area, layer,
               COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, military, "natural", tourism, highway, railway) AS feature
             FROM (SELECT
                 way, COALESCE(name, '') AS name,
@@ -126,7 +126,7 @@ Layer:
                 CASE WHEN (tags->'crop') IN ('rice', 'tea', 'hop') THEN tags->'crop' ELSE tags->'trees' END AS crop,
                 surface,
                 (tags->'sport') AS sport,
-                way_area, layer, 0 AS prio
+                way_area, layer
               FROM planet_osm_polygon
               WHERE (landuse IS NOT NULL
                 OR leisure IS NOT NULL
@@ -142,16 +142,8 @@ Layer:
                 OR railway = 'station')
                 AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
             ) AS landcover
-            UNION ALL -- this is only needed because closed ways with a golf* tag are by default not treated as polygons
-            SELECT
-                way, COALESCE(name, '') AS name,
-                'INT-generic'::text AS religion, '' AS crop, '' AS surface, '' AS sport, 0 AS way_area, layer,
-                (CASE WHEN (tags->'golf') = 'rough' THEN -1 WHEN (tags->'golf') = 'fairway' THEN 10 WHEN (tags->'golf') = 'green' THEN 20 WHEN (tags->'golf') = 'bunker' THEN 30 ELSE 40 END) AS prio,
-                ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS feature
-              FROM planet_osm_line
-              WHERE (tags->'golf') IS NOT NULL
           ) AS landcover_all
-          ORDER BY COALESCE(layer,0), prio, way_area DESC
+          ORDER BY COALESCE(layer,0), way_area DESC
         ) AS features
     properties:
       cache-features: true

@@ -9,11 +9,17 @@ local polygon_keys = {
     'abandoned:landuse',
     'abandoned:power',
     'aeroway',
+    'allotments',
     'amenity',
     'area:highway',
+    'craft',
     'building',
     'building:part',
+    'club',
+    'golf',
+    'emergency',
     'harbour',
+    'healthcare',
     'historic',
     'landuse',
     'leisure',
@@ -33,19 +39,24 @@ local polygon_keys = {
 
 -- Objects with any of the following key/value combinations will be treated as linestring
 local linestring_values = {
-    leisure = {track = true, slipway = true},
-    man_made = {embankment = true, breakwater = true, groyne = true},
-    natural = {cliff = true, tree_row = true},
+    golf = {cartpath = true, hole = true, path = true}, 
+    emergency = {designated = true, destination = true, no = true, official = true, yes = true},
     historic = {citywalls = true},
-    waterway = {canal = true, derelict_canal = true, ditch = true, drain = true, river = true, stream = true, wadi = true, weir = true},
-    power = {line = true, minor_line = true},
-    natural = {ridge = true, arete = true}
+    leisure = {track = true, slipway = true},
+    man_made = {breakwater = true, cutline = true, embankment = true, groyne = true, pipeline = true},
+    natural = {cliff = true, earth_bank = true, tree_row = true, ridge = true, arete = true},
+    power = {cable = true, line = true, minor_line = true},
+    tourism = {yes = true},
+    waterway = {canal = true, derelict_canal = true, ditch = true, drain = true, river = true, stream = true, tidal_channel = true, wadi = true, weir = true}
 }
 
 -- Objects with any of the following key/value combinations will be treated as polygon
 local polygon_values = {
+    aerialway = {station = true},
+    boundary = {aboriginal_lands = true, national_park = true, protected_area= true},
     highway = {services = true, rest_area = true},
-    junction = {yes = true}
+    junction = {yes = true},
+    railway = {station = true}
 }
 
 -- The following keys will be deleted
@@ -59,7 +70,6 @@ local delete_tags = {
     -- Tags generally dropped by editors, not otherwise covered
     'created_by',
     'odbl',
-    'odbl:note',
     -- Lots of import tags
     -- EUROSHA (Various countries)
     'project:eurosha_2012',
@@ -69,7 +79,6 @@ local delete_tags = {
 
     -- NHN (CA)
     'accuracy:meters',
-    'sub_sea:type',
     'waterway:type',
     -- StatsCan (CA)
     'statscan:rbuid',
@@ -85,16 +94,13 @@ local delete_tags = {
 
     -- GST (DK)
     'gst:feat_id',
+    -- osak (DK)
+    'osak:identifier',
 
     -- Maa-amet (EE)
     'maaamet:ETAK',
     -- FANTOIR (FR)
     'ref:FR:FANTOIR',
-
-    -- 3dshapes (NL)
-    '3dshapes:ggmodelk',
-    -- AND (NL)
-    'AND_nosr_r',
 
     -- OPPDATERIN (NO)
     'OPPDATERIN',
@@ -108,6 +114,9 @@ local delete_tags = {
 
     -- RABA (SK)
     'raba:id',
+
+    -- LINZ (NZ)
+    'linz2osm:objectid',
     -- DCGIS (Washington DC, US)
     'dcgis:gis_id',
     -- Building Identification Number (New York, US)
@@ -138,8 +147,6 @@ delete_prefixes = {
     -- Geobase (CA)
     'geobase:',
 
-    -- osak (DK)
-    'osak:',
     -- kms (DK)
     'kms:',
 
@@ -158,7 +165,6 @@ delete_prefixes = {
 
     -- LINZ (NZ)
     'LINZ2OSM:',
-    'linz2osm:',
     'LINZ:',
 
     -- WroclawGIS (PL)
@@ -206,8 +212,7 @@ local roads_info = {
         bridleway       = {z = 100, roads = false},
         cycleway        = {z = 100, roads = false},
         steps           = {z = 90,  roads = false},
-        platform        = {z = 90,  roads = false},
-        construction    = {z = 10,  roads = false}
+        platform        = {z = 90,  roads = false}
     },
     railway = {
         rail            = {z = 440, roads = true},
@@ -248,6 +253,15 @@ function z_order(tags)
             z = math.max(z, roads_info[k][v].z)
         end
     end
+
+    if tags["highway"] == "construction" then
+        if tags["construction"] and roads_info["highway"][tags["construction"]] then
+            z = math.max(z, roads_info["highway"][tags["construction"]].z/10)
+        else
+            z = math.max(z, 33)
+        end
+    end
+
     return z ~= 0 and z or nil
 end
 
@@ -395,7 +409,7 @@ function isarea (tags)
     for k, v in pairs(tags) do
         -- Check if it has a polygon key and not a linestring override, or a polygon k=v
         for _, ptag in ipairs(polygon_keys) do
-            if k == ptag and not (linestring_values[k] and linestring_values[k][v]) then
+            if k == ptag and v ~= "no" and not (linestring_values[k] and linestring_values[k][v]) then
                 return 1
             end
         end
