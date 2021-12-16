@@ -3140,9 +3140,15 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         [feature = 'highway_living_street'],
         [feature = 'highway_pedestrian'] {
           line-color: @access-marking;
-          [feature = 'highway_unclassified'][int_surface = 'unpaved'],
-          [feature = 'highway_residential'][int_surface = 'unpaved'] {
-            line-color: @access-marking-unpaved;
+          [feature = 'highway_unclassified'],
+          [feature = 'highway_residential'] {
+            [int_surface = 'unpaved'] {
+              line-color: @access-marking-unpaved;
+              // should not be necessary here (because it is below for all roads) - but it is.
+              [int_access = 'bus+light'] {
+                line-color: @access-marking-bus;
+              }
+            }
           }
           [feature = 'highway_secondary'] {
             line-color: @access-marking-secondary;
@@ -3273,9 +3279,15 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         [feature = 'highway_living_street'],
         [feature = 'highway_pedestrian'] {
           line-color: @access-marking;
-          [feature = 'highway_unclassified'][int_surface = 'unpaved'],
-          [feature = 'highway_residential'][int_surface = 'unpaved'] {
-            line-color: @access-marking-unpaved;
+          [feature = 'highway_unclassified'],
+          [feature = 'highway_residential'] {
+            [int_surface = 'unpaved'] {
+              line-color: @access-marking-unpaved;
+              // should not be necessary here (because it is below for all roads) - but it is.
+              [int_access = 'bus'] {
+                line-color: @access-marking-bus;
+              }
+            }
           }
           [feature = 'highway_secondary'] {
             line-color: @access-marking-secondary;
@@ -3312,7 +3324,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
               line-color: @access-marking-horse;
             }
           }
-
           [int_access = 'bus'] {
             line-color: @access-marking-bus;
           }
