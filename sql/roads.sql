@@ -110,6 +110,7 @@ SELECT
       CASE
           (CASE
             WHEN ($6 IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery')) THEN $6
+            WHEN ($3 IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery')) THEN $3
             ELSE $2
           END)
         WHEN 'destination' THEN 'light'::text
@@ -181,12 +182,6 @@ SELECT
               'bicycle'::text
             WHEN $7 IN ('yes', 'designated', 'permissive') THEN
               'horse'::text
-            WHEN $5 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $4 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $3 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
             ELSE NULL /* That is for example also highway=pedestrian + foot=yes */
           END
         WHEN $1 IN  ('living_street') THEN
@@ -205,12 +200,6 @@ SELECT
               'foot'::text
             WHEN $7 IN ('yes', 'designated', 'permissive') THEN
               'horse'::text
-            WHEN $5 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $4 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $3 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
             ELSE NULL /* That is for example also highway=busway + bus=yes */
           END
       END
@@ -243,12 +232,6 @@ SELECT
               'bicycle'::text
             WHEN $7 IN ('yes', 'designated', 'permissive') THEN
               'horse'::text
-            WHEN $5 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $4 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $3 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
             ELSE
               'no'::text
           END
@@ -260,12 +243,6 @@ SELECT
               'foot'::text
             WHEN $7 IN ('yes', 'designated', 'permissive') THEN
               'horse'::text
-            WHEN $5 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $4 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
-            WHEN $3 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle'::text
             WHEN $9 IN ('yes', 'designated') THEN /* bus=yes cancels out access=no here */
               NULL
             WHEN $10 IN ('yes', 'designated') THEN /* psv=yes cancels out access=no here */
@@ -316,12 +293,6 @@ SELECT
               'bicycle+light'::text
             WHEN $7 IN ('yes', 'designated', 'permissive') THEN
               'horse+light'::text
-            WHEN $5 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle+light'::text
-            WHEN $4 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle+light'::text
-            WHEN $3 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle+light'::text
             ELSE
               'light'::text
           END
@@ -333,12 +304,6 @@ SELECT
               'foot+light'::text
             WHEN $7 IN ('yes', 'designated', 'permissive') THEN
               'horse+light'::text
-            WHEN $5 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle+light'::text
-            WHEN $4 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle+light'::text
-            WHEN $3 IN ('yes', 'designated', 'permissive') THEN
-              'vehicle+light'::text
             ELSE
               'light'::text
           END

@@ -2711,7 +2711,7 @@ Layer:
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
-                AND feature IN ('highway_living_street', 'aeroway_runway', 'aeroway_taxiway')
+                AND feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- lanes
