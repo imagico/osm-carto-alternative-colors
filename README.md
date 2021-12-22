@@ -45,6 +45,8 @@ at mid zoom levels.
   - differentiated rendering of turning circles, turning loops, mini roundabouts and passing places
   - rendering of details on steps
   - differentiation of unpaved roads
+  - new access restriction semantics based on primary mode of transport and additional permissions
+  - display of additional permissions on road classes with implicit access restrictions
 
 # Samples
 
