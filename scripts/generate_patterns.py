@@ -42,12 +42,12 @@ def svg_convert(fin, fout, transparent, inkscape, dpi):
             sys.exit("\n\n   'inkscape' error: SVG conversion failed.\n")
     else:
         if transparent:
-            if dpi > 0:
+            if int(dpi) > 0:
                 params = ["convert", "-background", "none", "-density", dpi, fin, fout]
             else:
                 params = ["convert", "-background", "none", fin, fout]
         else:
-            if dpi > 0:
+            if int(dpi) > 0:
                 params = ["convert", "-density", dpi, fin, fout]
             else:
                 params = ["convert", fin, fout]
@@ -72,6 +72,12 @@ def generate_pattern(pattern, colors, inkscape, dpi):
         source_name = os.path.join("symbols/patterns/sources", pattern_base + ".svg")
 
     if os.path.exists(source_name):
+
+        if not os.path.exists('symbols/patterns/processed'):
+            os.makedirs('symbols/patterns/processed')
+        if not os.path.exists('symbols/patterns/previews'):
+            os.makedirs('symbols/patterns/previews')
+
         png_bw_name = os.path.join("symbols/patterns/processed", pattern + "_bw.png")
         svg_bw_name = os.path.join("symbols/patterns/processed", pattern + "_bw.svg")
         preview_name = os.path.join("symbols/patterns/previews", pattern + "_preview.png")

@@ -179,8 +179,22 @@
           [crop = 'banana_plants'] {
             polygon-pattern-file: url('symbols/patterns/orchard_banana.png');
           }
-          [crop = 'oil_palms'] {
+          [crop = 'pineapple_plants'] {
+            polygon-pattern-file: url('symbols/patterns/orchard_pineapple.png');
+          }
+          [crop = 'tea_plants'],
+          [crop = 'coffea_plants'] {
+            polygon-pattern-file: url('symbols/patterns/orchard_tea.png');
+          }
+          [crop = 'oil_palms'],
+          [crop = 'coconut_palms'],
+          [crop = 'date_palms'] {
             polygon-pattern-file: url('symbols/patterns/orchard_oilpalm.png');
+          }
+          [crop = 'apple_trees'],
+          [crop = 'orange_trees'],
+          [crop = 'almond_trees'] {
+            polygon-pattern-file: url('symbols/patterns/orchard_tree.png');
           }
         }
         polygon-pattern-alignment: global;
@@ -400,6 +414,27 @@
             }
             [crop = 'hop'] {
               polygon-pattern-file: url('symbols/patterns/farmland_hop.png');
+              polygon-pattern-alignment: global;
+              [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+              [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+            }
+            [crop = 'cereal'],
+            [crop = 'corn'],
+            [crop = 'wheat'],
+            [crop = 'barley'] {
+              polygon-pattern-file: url('symbols/patterns/farmland_cereal.png');
+              polygon-pattern-alignment: global;
+              [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+              [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+            }
+            [crop = 'sugarcane'] {
+              polygon-pattern-file: url('symbols/patterns/farmland_sugarcane.png');
+              polygon-pattern-alignment: global;
+              [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+              [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+            }
+            [crop = 'grass'] {
+              polygon-pattern-file: url('symbols/patterns/farmland_grass.png');
               polygon-pattern-alignment: global;
               [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
               [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }

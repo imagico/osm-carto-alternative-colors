@@ -49,10 +49,16 @@ patterns:
   - farmland_hop
   - farmland_rice
   - farmland_tea
+  - farmland_cereal
+  - farmland_grass
+  - farmland_sugarcane
   - orchard
   - orchard_banana
+  - orchard_pineapple
   - orchard_oilpalm
   - orchard_olive
+  - orchard_tree
+  - orchard_tea
   - vineyard
   - plant_nursery
   - garden
@@ -137,10 +143,16 @@ colors:
   farmland_hop: ["#eef0d5", "#c9d285"]
   farmland_rice: ["#eef0d5", "#c9d285"]
   farmland_tea: ["#eef0d5", "#c9d285"]
+  farmland_cereal: ["#eef0d5", "#c9d285"]
+  farmland_grass: ["#eef0d5", "#c9d285"]
+  farmland_sugarcane: ["#eef0d5", "#c9d285"]
   orchard: ["#aedea3", "#749d6c"]
   orchard_banana: ["#aedea3", "#93c989"]
+  orchard_pineapple: ["#aedea3", "#96cc8b"]
   orchard_oilpalm: ["#aedea3", "#93c989"]
   orchard_olive: ["#aedea3", "#96cc8b"]
+  orchard_tree: ["#aedea3", "#8bc181"]
+  orchard_tea: ["#aedea3", "#8bc181"]
   vineyard: ["#aedea3", "#9bc991"]
   plant_nursery: ["#aedea3", "#749d6c"]
   garden: ["#d1efb4", "#95b973"]

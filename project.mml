@@ -123,7 +123,7 @@ Layer:
                 ('highway_' || (CASE WHEN highway IN ('services', 'rest_area') THEN highway ELSE NULL END)) AS highway,
                 ('railway_' || (CASE WHEN railway = 'station' THEN railway ELSE NULL END)) AS railway,
                 CASE WHEN religion IN ('christian', 'jewish', 'muslim') THEN religion ELSE 'INT-generic'::text END AS religion,
-                CASE WHEN (tags->'crop') IN ('rice', 'tea', 'hop') THEN tags->'crop' ELSE tags->'trees' END AS crop,
+                CASE WHEN landuse IN ('farmland') THEN tags->'crop' ELSE tags->'trees' END AS crop,
                 surface,
                 (tags->'sport') AS sport,
                 way_area, layer
