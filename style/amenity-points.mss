@@ -607,7 +607,7 @@
   }
 
   [feature = 'amenity_drinking_water'][zoom >= 17] {
-    marker-file: url('symbols/drinking_water.svg');
+    marker-file: url('symbols/water/drinking_water.svg');
     marker-fill: @water-icon;
     marker-placement: interior;
     marker-clip: false;
@@ -615,7 +615,7 @@
 
   [feature = 'man_made_water_tap'][zoom >= 17],
   [feature = 'amenity_water_point'][zoom >= 17] {
-    marker-file: url('symbols/water_tap.svg');
+    marker-file: url('symbols/water/water_tap.svg');
     marker-fill: @water-icon;
     marker-placement: interior;
     marker-clip: false;
@@ -1181,10 +1181,10 @@
   }
 
   [feature = 'amenity_fountain'][zoom >= 17] {
-    marker-file: url('symbols/fountain_small.svg');
-    [zoom >= 18] { marker-file: url('symbols/fountain.svg'); }
+    marker-file: url('symbols/water/fountain_small.svg');
+    [zoom >= 18] { marker-file: url('symbols/water/fountain.svg'); }
     [drinking_water = 'yes'] {
-      supplement/marker-file: url('symbols/drinking.svg');
+      supplement/marker-file: url('symbols/water/drinking.svg');
       supplement/marker-fill: @water-icon;
       supplement/marker-transform: 'translate(-9,-5)';
       supplement/marker-placement: interior;
@@ -1195,11 +1195,11 @@
   }
 
   [feature = 'man_made_water_well'][zoom >= 15] {
-    marker-file: url('symbols/well_small.svg');
+    marker-file: url('symbols/water/well_small.svg');
     [zoom >= 17] {
-      marker-file: url('symbols/well.svg');
+      marker-file: url('symbols/water/well.svg');
       [drinking_water = 'yes'] {
-        supplement/marker-file: url('symbols/drinking.svg');
+        supplement/marker-file: url('symbols/water/drinking.svg');
         supplement/marker-fill: @water-icon;
         supplement/marker-transform: 'translate(-9,-5)';
         supplement/marker-placement: interior;
@@ -1211,15 +1211,15 @@
   }
 
   [feature = 'natural_spring'][zoom >= 14] {
-    marker-file: url('symbols/spring_small.svg');
-    [zoom >= 16] { marker-file: url('symbols/spring.svg'); }
+    marker-file: url('symbols/water/spring_small.svg');
+    [zoom >= 16] { marker-file: url('symbols/water/spring.svg'); }
     [intermittent = 'yes'],
     [seasonal = 'yes'] {
-      marker-file: url('symbols/spring_small_intermittent.svg');
-      [zoom >= 16] { marker-file: url('symbols/spring_intermittent.svg'); }
+      marker-file: url('symbols/water/spring_small_intermittent.svg');
+      [zoom >= 16] { marker-file: url('symbols/water/spring_intermittent.svg'); }
     }
     [drinking_water = 'yes'][zoom >= 17] {
-      supplement/marker-file: url('symbols/drinking.svg');
+      supplement/marker-file: url('symbols/water/drinking.svg');
       supplement/marker-fill: @water-icon;
       supplement/marker-transform: 'translate(-9,-5)';
       supplement/marker-placement: interior;
@@ -1230,19 +1230,19 @@
   }
 
   [feature = 'natural_geyser'][zoom >= 14] {
-    marker-file: url('symbols/geyser_small.svg');
-    [zoom >= 16] { marker-file: url('symbols/geyser.svg'); }
+    marker-file: url('symbols/water/geyser_small.svg');
+    [zoom >= 16] { marker-file: url('symbols/water/geyser.svg'); }
     marker-placement: interior;
     marker-clip: false;
   }
 
   [feature = 'natural_hot_spring'][zoom >= 14] {
-    marker-file: url('symbols/spring_small_hot.svg');
-    [zoom >= 16] { marker-file: url('symbols/spring_hot.svg'); }
+    marker-file: url('symbols/water/spring_small_hot.svg');
+    [zoom >= 16] { marker-file: url('symbols/water/spring_hot.svg'); }
     [intermittent = 'yes'],
     [seasonal = 'yes'] {
-      marker-file: url('symbols/spring_small_hot_intermittent.svg');
-      [zoom >= 16] { marker-file: url('symbols/spring_hot_intermittent.svg'); }
+      marker-file: url('symbols/water/spring_small_hot_intermittent.svg');
+      [zoom >= 16] { marker-file: url('symbols/water/spring_hot_intermittent.svg'); }
     }
     marker-placement: interior;
     marker-clip: false;
@@ -1265,7 +1265,7 @@
       }
       marker-ignore-placement: true;
       [drinking_water = 'yes'][zoom >= 17] {
-        supplement/marker-file: url('symbols/drinking.svg');
+        supplement/marker-file: url('symbols/water/drinking.svg');
         supplement/marker-fill: @water-icon;
         supplement/marker-transform: 'translate(-9,-5)';
         supplement/marker-placement: interior;
