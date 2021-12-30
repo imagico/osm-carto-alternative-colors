@@ -35,11 +35,16 @@ def generate_sql(group, cl_list, classes, tags):
             line = "    when $1 = '{cl}' then"
             print (line.format(cl = name))
         print ("      (case")
-        width_prev = -1.0;
-        zoom_prev = -1;
-        for zoom in range(20):
+        width_prev = -1.0
+        zoom_prev = -1
+        zoom_max = -1
+        for zoom in range(24):
             if zoom in classes[name]:
-                if zoom == 19:
+                if (zoom > zoom_max):
+                    zoom_max = zoom
+        for zoom in range(24):
+            if zoom in classes[name]:
+                if zoom == zoom_max:
                     line = "        when $2 >= {z} then {wdth}"
                 else:
                     line = "        when $2 = {z} then {wdth}"
@@ -47,11 +52,13 @@ def generate_sql(group, cl_list, classes, tags):
                 width_prev = classes[name][zoom]
                 zoom_prev = zoom
             elif (width_prev >= 0.0):
-                if zoom == 19:
+                if zoom == zoom_max:
                     line = "        when $2 >= {z} then {wdth}"
                 else:
                     line = "        when $2 = {z} then {wdth}"
                 print (line.format(z = zoom, wdth = float(classes[name][zoom_prev])))
+            if zoom == zoom_max:
+                break
         print ("        else 0.0")
         print ("      end)")
 
@@ -66,7 +73,7 @@ def generate_mss(group, cl_list, classes):
     print (line.format(grp = group))
 
     for name in cl_list:
-        for zoom in range(20):
+        for zoom in range(24):
             if zoom in classes[name]:
                 line = "@{cl}-width-z{z}: {wdth};"
                 print (line.format(cl = name, z = zoom, wdth = classes[name][zoom]))
