@@ -1,6 +1,7 @@
 .thumb.png
 layers/
 symbols/patterns/previews/
+symbols/patterns/processed/
 data/
 tmp/
 *.xml

@@ -26,8 +26,7 @@ select
         when $2 = 15 then 6.0
         when $2 = 16 then 8.0
         when $2 = 17 then 10.0
-        when $2 = 18 then 12.0
-        when $2 >= 19 then 12.0
+        when $2 >= 18 then 12.0
         else 0.0
       end)
     when $1 IN ('stream', 'ditch', 'drain') then
@@ -38,8 +37,7 @@ select
         when $2 = 15 then 2.5
         when $2 = 16 then 3.0
         when $2 = 17 then 3.5
-        when $2 = 18 then 4.0
-        when $2 >= 19 then 4.0
+        when $2 >= 18 then 4.0
         else 0.0
       end)
     else 0.0
@@ -67,8 +65,7 @@ select
         when $2 = 15 then 6.0
         when $2 = 16 then 8.0
         when $2 = 17 then 10.0
-        when $2 = 18 then 12.0
-        when $2 >= 19 then 12.0
+        when $2 >= 18 then 12.0
         else 0.0
       end)
     when $1 IN ('stream', 'ditch', 'drain') then
@@ -79,8 +76,7 @@ select
         when $2 = 15 then 2.5
         when $2 = 16 then 3.0
         when $2 = 17 then 3.5
-        when $2 = 18 then 4.0
-        when $2 >= 19 then 4.0
+        when $2 >= 18 then 4.0
         else 0.0
       end)
     when $1 = 'motorway' then
@@ -271,11 +267,7 @@ select
       (case
         when $2 = 13 then 0.7
         when $2 = 14 then 0.7
-        when $2 = 15 then 3.0
-        when $2 = 16 then 3.0
-        when $2 = 17 then 3.0
-        when $2 = 18 then 3.0
-        when $2 >= 19 then 3.0
+        when $2 >= 15 then 3.0
         else 0.0
       end)
     when $1 = 'road' then
@@ -292,11 +284,7 @@ select
       (case
         when $2 = 13 then 0.2
         when $2 = 14 then 0.35
-        when $2 = 15 then 1.2
-        when $2 = 16 then 1.2
-        when $2 = 17 then 1.2
-        when $2 = 18 then 1.2
-        when $2 >= 19 then 1.2
+        when $2 >= 15 then 1.2
         else 0.0
       end)
     when $1 = 'footway' then
@@ -336,11 +324,7 @@ select
       (case
         when $2 = 13 then 0.45
         when $2 = 14 then 0.85
-        when $2 = 15 then 1.5
-        when $2 = 16 then 1.5
-        when $2 = 17 then 1.5
-        when $2 = 18 then 1.5
-        when $2 >= 19 then 1.5
+        when $2 >= 15 then 1.5
         else 0.0
       end)
     when $1 = 'rail' then
@@ -356,8 +340,7 @@ select
         when $2 = 15 then 3.0
         when $2 = 16 then 3.0
         when $2 = 17 then 3.0
-        when $2 = 18 then 4.0
-        when $2 >= 19 then 4.0
+        when $2 >= 18 then 4.0
         else 0.0
       end)
     when $1 = 'light_rail' then
@@ -367,13 +350,7 @@ select
         when $2 = 10 then 1.0
         when $2 = 11 then 1.0
         when $2 = 12 then 1.0
-        when $2 = 13 then 2.0
-        when $2 = 14 then 2.0
-        when $2 = 15 then 2.0
-        when $2 = 16 then 2.0
-        when $2 = 17 then 2.0
-        when $2 = 18 then 2.0
-        when $2 >= 19 then 2.0
+        when $2 >= 13 then 2.0
         else 0.0
       end)
     when $1 = 'tram' then
@@ -383,18 +360,12 @@ select
         when $2 = 14 then 1.0
         when $2 = 15 then 1.5
         when $2 = 16 then 1.5
-        when $2 = 17 then 2.0
-        when $2 = 18 then 2.0
-        when $2 >= 19 then 2.0
+        when $2 >= 17 then 2.0
         else 0.0
       end)
     when $1 = 'dyke' then
       (case
-        when $2 = 15 then 1.5
-        when $2 = 16 then 1.5
-        when $2 = 17 then 1.5
-        when $2 = 18 then 1.5
-        when $2 >= 19 then 1.5
+        when $2 >= 15 then 1.5
         else 0.0
       end)
     when $1 = 'runway' then
@@ -404,10 +375,7 @@ select
         when $2 = 13 then 6.0
         when $2 = 14 then 12.0
         when $2 = 15 then 18.0
-        when $2 = 16 then 24.0
-        when $2 = 17 then 24.0
-        when $2 = 18 then 24.0
-        when $2 >= 19 then 24.0
+        when $2 >= 16 then 24.0
         else 0.0
       end)
     when $1 = 'taxiway' then
@@ -417,10 +385,7 @@ select
         when $2 = 13 then 2.0
         when $2 = 14 then 4.0
         when $2 = 15 then 6.0
-        when $2 = 16 then 8.0
-        when $2 = 17 then 8.0
-        when $2 = 18 then 8.0
-        when $2 >= 19 then 8.0
+        when $2 >= 16 then 8.0
         else 0.0
       end)
     when $1 = 'raceway' then
@@ -437,10 +402,7 @@ select
       end)
     when $1 = 'platform' then
       (case
-        when $2 = 16 then 4.0
-        when $2 = 17 then 4.0
-        when $2 = 18 then 4.0
-        when $2 >= 19 then 4.0
+        when $2 >= 16 then 4.0
         else 0.0
       end)
     else 0.0
@@ -544,10 +506,7 @@ select
   case
     when $1 = 'chain' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
         else 0.0
       end)
     when $1 = 'city_wall' then
@@ -556,48 +515,35 @@ select
         when $2 = 16 then 1.5
         when $2 = 17 then 2.0
         when $2 = 18 then 3.0
-        when $2 >= 19 then 4.0
+        when $2 = 19 then 4.0
+        when $2 >= 20 then 5.0
         else 0.0
       end)
     when $1 = 'citywalls' then
       (case
         when $2 = 15 then 1.5
         when $2 = 16 then 1.5
-        when $2 = 17 then 3.0
-        when $2 = 18 then 3.0
-        when $2 >= 19 then 3.0
+        when $2 >= 17 then 3.0
         else 0.0
       end)
     when $1 = 'ditch' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
         else 0.0
       end)
     when $1 = 'fence' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
         else 0.0
       end)
     when $1 = 'guard_rail' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
         else 0.0
       end)
     when $1 = 'handrail' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
         else 0.0
       end)
     when $1 = 'hedge' then
@@ -605,23 +551,33 @@ select
         when $2 = 16 then 1.5
         when $2 = 17 then 2.0
         when $2 = 18 then 3.0
-        when $2 >= 19 then 4.0
+        when $2 = 19 then 4.0
+        when $2 >= 20 then 5.0
         else 0.0
       end)
     when $1 = 'retaining_wall' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
         else 0.0
       end)
     when $1 = 'wall' then
       (case
-        when $2 = 16 then 0.4
-        when $2 = 17 then 0.4
-        when $2 = 18 then 0.4
-        when $2 >= 19 then 0.4
+        when $2 >= 16 then 0.4
+        else 0.0
+      end)
+    when $1 = 'tree_row' then
+      (case
+        when $2 = 16 then 2.0
+        when $2 = 17 then 4.0
+        when $2 = 18 then 9.0
+        when $2 = 19 then 14.0
+        when $2 >= 20 then 19.0
+        else 0.0
+      end)
+    when $1 = 'tree_row_inner' then
+      (case
+        when $2 = 19 then 4.0
+        when $2 >= 20 then 5.5
         else 0.0
       end)
     else 0.0

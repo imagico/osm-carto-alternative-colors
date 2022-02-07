@@ -125,6 +125,9 @@ patterns:
   - wetland_marsh
   - wetland_reed
   - wetland_fen
+  - treerow
+  - treerow_broadleaved
+  - treerow_needleleaved
 
 # These are the pattern colors - first is the background, second the pattern
 # "native" as a pattern color means the source SVG file already contains
@@ -140,12 +143,12 @@ colors:
   construction: ["#c5bea6", "#b4ae96"]
   landfill: ["#c5bea6", "#aba388"]
   quarry: ["#c5bea6", "#d9d4c3"]
-  farmland_hop: ["#eef0d5", "#c9d285"]
-  farmland_rice: ["#eef0d5", "#c9d285"]
-  farmland_tea: ["#eef0d5", "#c9d285"]
-  farmland_cereal: ["#eef0d5", "#c9d285"]
-  farmland_grass: ["#eef0d5", "#c9d285"]
-  farmland_sugarcane: ["#eef0d5", "#c9d285"]
+  farmland_hop: ["#eef0d5", "#cfd792"]
+  farmland_rice: ["#eef0d5", "#cfd792"]
+  farmland_tea: ["#eef0d5", "#cfd792"]
+  farmland_cereal: ["#eef0d5", "#cfd792"]
+  farmland_grass: ["#eef0d5", "#cfd792"]
+  farmland_sugarcane: ["#eef0d5", "#cfd792"]
   orchard: ["#aedea3", "#749d6c"]
   orchard_banana: ["#aedea3", "#93c989"]
   orchard_pineapple: ["#aedea3", "#96cc8b"]
@@ -219,5 +222,8 @@ colors:
   wetland_marsh: ["#d1efb4", "native"]
   wetland_reed: ["#f2efe9", "native"]
   wetland_fen: ["#d1efb4", "native"]
+  treerow: ["#f2efe9", "#419b3b", 0.5]
+  treerow_broadleaved: ["#f2efe9", "#419b3b", 0.6]
+  treerow_needleleaved: ["#f2efe9", "#419b3b", 0.6]
 
 

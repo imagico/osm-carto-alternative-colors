@@ -3372,20 +3372,86 @@ Layer:
     properties:
       minzoom: 10
   - id: trees
-    geometry: polygon
     <<: *extents
     Datasource:
+      geometry_table: planet_osm_point
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, "natural"
-          FROM planet_osm_point
-          WHERE "natural" = 'tree'
-        UNION ALL
-        SELECT
-            way, "natural"
-          FROM planet_osm_line
-          WHERE "natural" = 'tree_row'
+            way,
+            type,
+            leaf_type,
+            leaf_cycle
+          FROM
+            (WITH tree_rows AS
+              (SELECT
+                way,
+                tags->'leaf_type' AS leaf_type,
+                tags->'leaf_cycle' AS leaf_cycle,
+                carto_barrier_line_width('tree_row', z(!scale_denominator!)) AS width,
+                carto_barrier_line_width('tree_row_inner', z(!scale_denominator!)) AS width_inner
+              FROM planet_osm_line
+              WHERE "natural" = 'tree_row'
+                AND way && !bbox!)
+            SELECT
+                way,
+                'tree' AS type,
+                CASE
+                  WHEN lower(tags->'taxon') IN ('arecaceae') THEN 'palm'
+                  WHEN lower(tags->'family') IN ('arecaceae') THEN 'palm'
+                  WHEN lower(tags->'genus') IN ('arecaceae') THEN 'palm'
+                  WHEN (tags->'leaf_type') IN ('needleleaved', 'broadleaved') THEN tags->'leaf_type'
+                  ELSE NULL
+                END AS leaf_type,
+                tags->'leaf_cycle' AS leaf_cycle
+              FROM planet_osm_point
+              WHERE "natural" = 'tree' AND way && !bbox!
+            UNION ALL
+            SELECT
+                ST_Buffer(way, width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                'tree_row_outline' AS type,
+                leaf_type,
+                leaf_cycle
+              FROM tree_rows
+            UNION ALL
+            SELECT
+                CASE WHEN width_inner <= 0.0 OR leaf_cycle = 'evergreen' THEN
+                  ST_Buffer(way, width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0))
+                ELSE
+                  ST_Difference(
+                    ST_Buffer(way, width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                    ST_Buffer(way, (width_inner + 1.0)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0))
+                  )
+                END AS way,
+                'tree_row_fill' AS type,
+                leaf_type,
+                leaf_cycle
+              FROM tree_rows
+            UNION ALL
+            SELECT
+                ST_Buffer(way, width_inner*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                'tree_row_inner' AS type,
+                leaf_type,
+                leaf_cycle
+              FROM tree_rows
+              WHERE width_inner > 0.0 AND (leaf_cycle IS NULL OR leaf_cycle NOT IN ('evergreen', 'deciduous'))
+            UNION ALL
+            SELECT
+                way,
+                'tree_row_centerline' AS type,
+                leaf_type,
+                leaf_cycle
+              FROM tree_rows
+              WHERE width_inner > 0.0 AND leaf_cycle = 'deciduous'
+          ) AS t
+          ORDER BY -- drawing order
+            CASE
+              WHEN type = 'tree_row_fill' THEN 1
+              WHEN type = 'tree_row_outline' THEN 2
+              WHEN type = 'tree_row_inner' THEN 3
+              WHEN type = 'tree_row_centerline' THEN 4
+              ELSE 5 -- individual trees are on top
+            END
         ) AS trees
     properties:
       minzoom: 16

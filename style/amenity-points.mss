@@ -18,6 +18,8 @@
 @advertising-grey: @man-made-icon;
 @landform-color: #d08f55;
 @leisure-icon: @amenity-brown;
+@tree-icon: #4d9945;
+@tree-text: @tree-icon;
 
 @landcover-font-size: 10;
 @landcover-wrap-width-size: 30; // 3 em
@@ -2748,7 +2750,7 @@
     text-size: @standard-font-size;
     text-wrap-width: @standard-wrap-width;
     text-line-spacing: @standard-line-spacing-size;
-    text-fill: green;
+    text-fill: @tree-text;
     text-dy: 7;
     [zoom >= 18] { text-dy: 8; }
     [zoom >= 19] { text-dy: 11; }
@@ -2769,66 +2771,111 @@
 }
 
 #trees [zoom >= 16] {
-  ::canopy {
-    opacity: 0.3;
-    [natural = 'tree_row'] {
-      line-color: green;
-      line-cap: round;
-      line-width: 2.5;
-      [zoom >= 17] {
-        line-width: 5;
-      }
-      [zoom >= 18] {
-        line-width: 10;
-      }
-      [zoom >= 19] {
-        line-width: 15;
-      }
-      [zoom >= 20] {
-        line-width: 30;
-      }
+  [type = 'tree_row_outline'] {
+    [zoom >= 18] {
+      line-width: 0.8;
+      line-opacity: 0.65;
+      line-color: @tree-icon;
     }
-    [natural = 'tree'] {
-      marker-fill: green;
-      marker-allow-overlap: true;
-      marker-line-width: 0;
-      marker-width: 2.5;
-      marker-height: 2.5;
-      marker-ignore-placement: true;
-      [zoom >= 17] {
-        marker-width: 5;
-        marker-height: 5;
-      }
-      [zoom >= 18] {
-        marker-width: 10;
-        marker-height: 10;
-      }
+  }
+  [type = 'tree_row_fill'] {
+    polygon-fill: @tree-icon;
+    polygon-opacity: 0.35;
+    [zoom >= 18] {
+      polygon-opacity: 0.0;
+      polygon-pattern-file: url('symbols/patterns/treerow.png');
+      polygon-pattern-alignment: global;
       [zoom >= 19] {
-        marker-width: 15;
-        marker-height: 15;
-      }
-      [zoom >= 20] {
-        marker-width: 30;
-        marker-height: 30;
+        [leaf_type = 'broadleaved'] {
+          polygon-pattern-file: url('symbols/patterns/treerow_broadleaved.png');
+        }
+        [leaf_type = 'needleleaved'] {
+          polygon-pattern-file: url('symbols/patterns/treerow_needleleaved.png');
+        }
       }
     }
   }
-  [natural = 'tree']::trunk {
-    [zoom >= 18] {
-      trunk/marker-fill: #b27f36;
-      trunk/marker-allow-overlap: true;
-      trunk/marker-line-width: 0;
-      trunk/marker-width: 2;
-      trunk/marker-height: 2;
-      trunk/marker-ignore-placement: true;
-    }
-    [zoom >= 19] {
-      trunk/marker-width: 3;
-      trunk/marker-height: 3;
-    }
-    [zoom >= 20] {
-      trunk/marker-width: 6;
-      trunk/marker-height: 6;
+  [type = 'tree_row_inner'] {
+    line-width: 0.8;
+    line-opacity: 0.65;
+    line-color: @tree-icon;
+  }
+  [type = 'tree_row_centerline'] {
+    line-width: 2;
+    line-join: round;
+    line-cap: round;
+    line-dasharray: 2.5,7;
+    line-color: @tree-icon;
+    line-opacity: 0.65;
+  }
+  [type = 'tree'] {
+    marker-opacity: 0.4;
+    marker-fill: @tree-icon;
+    marker-allow-overlap: true;
+    marker-line-width: 0;
+    marker-width: 2.5;
+    marker-height: 2.5;
+    marker-ignore-placement: true;
+    [zoom >= 17] {
+      marker-width: 5;
+      marker-height: 5;
+      [zoom >= 18] {
+        marker-opacity: 0.75;
+        marker-file: url('symbols/tree/tree_unknown_10.svg');
+        [leaf_type = 'broadleaved'] {
+          marker-opacity: 0.85;
+          marker-file: url('symbols/tree/tree_broadleaved_10.svg');
+        }
+        [leaf_type = 'needleleaved'] {
+          marker-opacity: 0.85;
+          marker-file: url('symbols/tree/tree_needleleaved_10.svg');
+        }
+        [leaf_type = 'palm'] {
+          marker-file: url('symbols/tree/tree_palm_10.svg');
+        }
+        marker-width: 10;
+        marker-height: 10;
+        [zoom >= 19] {
+          marker-opacity: 0.75;
+          marker-file: url('symbols/tree/tree_unknown_15.svg');
+          [leaf_cycle = 'evergreen'] {
+            marker-file: url('symbols/tree/tree_unknown_evergreen_15.svg');
+          }
+          [leaf_cycle = 'deciduous'] {
+            marker-file: url('symbols/tree/tree_unknown_deciduous_15.svg');
+          }
+          [leaf_type = 'broadleaved'] {
+            marker-file: url('symbols/tree/tree_broadleaved_15.svg');
+            [leaf_cycle = 'evergreen'] {
+              marker-file: url('symbols/tree/tree_broadleaved_evergreen_15.svg');
+            }
+            [leaf_cycle = 'deciduous'] {
+              marker-file: url('symbols/tree/tree_broadleaved_deciduous_15.svg');
+            }
+          }
+          [leaf_type = 'needleleaved'] {
+            marker-file: url('symbols/tree/tree_needleleaved_15.svg');
+            [leaf_cycle = 'evergreen'] {
+              marker-file: url('symbols/tree/tree_needleleaved_evergreen_15.svg');
+            }
+            [leaf_cycle = 'deciduous'] {
+              marker-file: url('symbols/tree/tree_needleleaved_deciduous_15.svg');
+            }
+          }
+          [leaf_type = 'palm'] {
+            // lower opacity because the palm symbol is heavier
+            marker-opacity: 0.65;
+            marker-file: url('symbols/tree/tree_palm_15.svg');
+          }
+          marker-width: 15;
+          marker-height: 15;
+          [zoom >= 20] {
+            marker-transform: scale(1.333,1.333);
+            marker-width: 20;
+            marker-height: 20;
+          }
+        }
+      }
     }
   }
 }
