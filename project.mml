@@ -3123,6 +3123,7 @@ Layer:
                 z_order
               FROM planet_osm_line
               WHERE route = 'ferry'
+                AND way && !bbox!
             UNION ALL
             SELECT -- landuse_overlay
                 way,
@@ -3152,6 +3153,7 @@ Layer:
               FROM planet_osm_polygon
               WHERE landuse = 'military'
                 AND building IS NULL
+                AND way && !bbox!
             ) AS roads_sublayers
           -- this is the full ordering of the roads stack
           ORDER BY
@@ -4399,6 +4401,7 @@ Layer:
                 AND (name IS NOT NULL
                      OR (ref IS NOT NULL AND aeroway IN ('gate'))
                     )
+                AND way && !bbox!
              UNION ALL
              SELECT
                 ST_ClosestPoint(oway,ST_PointOnSurface(way)),
@@ -4436,6 +4439,7 @@ Layer:
                 WHERE "place" IN ('archipelago')
                   AND building IS NULL
                   AND name IS NOT NULL
+                  AND way && !bbox!
               ) AS archipelagos
             ) AS labels
           ORDER BY way_pixels DESC
@@ -4611,6 +4615,8 @@ Layer:
                          OR amenity = 'shelter'))
                      OR (ref IS NOT NULL AND aeroway IN ('gate'))
                     )
+                -- we need an explicit bounding box because !bbox! is used further up and that confuses mapnik.
+                AND way && !bbox!
               ) AS p
           ORDER BY score DESC NULLS LAST
           ) AS text
