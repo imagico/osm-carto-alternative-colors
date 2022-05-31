@@ -1234,22 +1234,6 @@
     line-width: 0.4;
     line-color: #444;
   }
-  [feature = 'barrier_hedge'][zoom >= 16] {
-    line-width: 1.5;
-    line-color: @hedge;
-    [zoom >= 17] {
-      line-width: 2;
-    }
-    [zoom >= 18] {
-      line-width: 3;
-    }
-    [zoom >= 19] {
-      line-width: 4;
-    }
-    [zoom >= 20] {
-      line-width: 5;
-    }
-  }
   [feature = 'historic_citywalls'],
   [feature = 'barrier_city_wall'] {
     [zoom >= 15] {

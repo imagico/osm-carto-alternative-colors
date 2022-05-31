@@ -23,18 +23,18 @@ allows more conscious color design choices.
 saltwater waterbodies and waterways.
 * different color for administrative boundaries, distinct rendering of maritime boundaries.
 * changed road colors with purple motorways and yellow tertiary roads
-* different color scheme and different design of path/footway/cycleway rendering as well as track rendering 
+* different color scheme and different design of `path`/`footway`/`cycleway` rendering as well as `track` rendering 
 at mid zoom levels.
 * more sophisticated rendering of waterway barriers (dams, lock gates, weirs and waterfalls) as well as fords.
 * different rendering of springs and addition of rendering of other water related point features.
 * different color for transportation and accomodation related point symbols.
-* different patterns for woodland and differentiated rendering of leaf_cycle.
-* rendering of implicit embankments and cuttings (embankment=yes/cutting=yes) in highways, railways and waterways
+* different patterns for woodland and differentiated rendering of `leaf_cycle`.
+* rendering of implicit embankments and cuttings (`embankment=yes`/`cutting=yes`) in highways, railways and waterways
 * rendering of archipelagos based on convex hull
 * rendering of various farmland and orchard types with special patterns
-* rendering of natural=earth_bank
-* rendering of landuse=salt_pond
-* rendering of natura=ridge and natural=arete with a linear structure pattern
+* rendering of `natural=earth_bank`
+* rendering of `landuse=salt_pond`
+* rendering of `natural=ridge` and `natural=arete` with a linear structure pattern
 * golf course rendering derived from the French style
 * rendering sport type on pitches using single symbol patterns
 * rendering of entrances in barriers mapped with nodes
@@ -47,6 +47,8 @@ at mid zoom levels.
   - differentiation of unpaved roads
   - new access restriction semantics based on primary mode of transport and additional permissions
   - display of additional permissions on road classes with implicit access restrictions
+* rendering of `natural=tree`, `natural=shrub`, `natural=tree_row` and `natural=hedge` differentiated by `leaf_type`/`leaf_cycle`
+* embankment like illustration of `hedge=hedge_bank`
 
 # Samples
 
@@ -71,6 +73,7 @@ install the a number of functions in PostGIS supplied in:
 * `sql/line-widths-generated.sql`
 * `sql/scale_factor.sql`
 * `sql/roads.sql`
+* `sql/symbols.sql`
 
 Be aware that this style does not work well together with Postgresql JIT optimization.  It is highly 
 advisable to turn that feature off in your Postgresql configuration

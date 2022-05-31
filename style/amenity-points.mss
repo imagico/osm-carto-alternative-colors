@@ -2751,10 +2751,7 @@
     text-wrap-width: @standard-wrap-width;
     text-line-spacing: @standard-line-spacing-size;
     text-fill: @tree-text;
-    text-dy: 7;
-    [zoom >= 18] { text-dy: 8; }
-    [zoom >= 19] { text-dy: 11; }
-    [zoom >= 20] { text-dy: 18; }
+    text-dy: [text_offset];
     text-face-name: @standard-font;
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
@@ -2771,111 +2768,25 @@
 }
 
 #trees [zoom >= 16] {
-  [type = 'tree_row_outline'] {
-    [zoom >= 18] {
-      line-width: 0.8;
-      line-opacity: 0.65;
-      line-color: @tree-icon;
-    }
-  }
-  [type = 'tree_row_fill'] {
-    polygon-fill: @tree-icon;
-    polygon-opacity: 0.35;
-    [zoom >= 18] {
-      polygon-opacity: 0.0;
-      polygon-pattern-file: url('symbols/patterns/treerow.png');
-      polygon-pattern-alignment: global;
-      [zoom >= 19] {
-        [leaf_type = 'broadleaved'] {
-          polygon-pattern-file: url('symbols/patterns/treerow_broadleaved.png');
-        }
-        [leaf_type = 'needleleaved'] {
-          polygon-pattern-file: url('symbols/patterns/treerow_needleleaved.png');
-        }
+  ::plain {
+    [type = 'hedge'],
+    [type = 'tree_small'],
+    [type = 'tree_row'] {
+      polygon-fill: @tree-icon;
+      opacity: 0.5;
+      [type = 'hedge'] {
+        polygon-opacity: 0.75;
       }
     }
   }
-  [type = 'tree_row_inner'] {
-    line-width: 0.8;
-    line-opacity: 0.65;
-    line-color: @tree-icon;
-  }
-  [type = 'tree_row_centerline'] {
-    line-width: 2;
-    line-join: round;
-    line-cap: round;
-    line-dasharray: 2.5,7;
-    line-color: @tree-icon;
-    line-opacity: 0.65;
-  }
-  [type = 'tree'] {
-    marker-opacity: 0.4;
-    marker-fill: @tree-icon;
-    marker-allow-overlap: true;
-    marker-line-width: 0;
-    marker-width: 2.5;
-    marker-height: 2.5;
-    marker-ignore-placement: true;
-    [zoom >= 17] {
-      marker-width: 5;
-      marker-height: 5;
-      [zoom >= 18] {
-        marker-opacity: 0.75;
-        marker-file: url('symbols/tree/tree_unknown_10.svg');
-        [leaf_type = 'broadleaved'] {
-          marker-opacity: 0.85;
-          marker-file: url('symbols/tree/tree_broadleaved_10.svg');
-        }
-        [leaf_type = 'needleleaved'] {
-          marker-opacity: 0.85;
-          marker-file: url('symbols/tree/tree_needleleaved_10.svg');
-        }
-        [leaf_type = 'palm'] {
-          marker-file: url('symbols/tree/tree_palm_10.svg');
-        }
-        marker-width: 10;
-        marker-height: 10;
-        [zoom >= 19] {
-          marker-opacity: 0.75;
-          marker-file: url('symbols/tree/tree_unknown_15.svg');
-          [leaf_cycle = 'evergreen'] {
-            marker-file: url('symbols/tree/tree_unknown_evergreen_15.svg');
-          }
-          [leaf_cycle = 'deciduous'] {
-            marker-file: url('symbols/tree/tree_unknown_deciduous_15.svg');
-          }
-          [leaf_type = 'broadleaved'] {
-            marker-file: url('symbols/tree/tree_broadleaved_15.svg');
-            [leaf_cycle = 'evergreen'] {
-              marker-file: url('symbols/tree/tree_broadleaved_evergreen_15.svg');
-            }
-            [leaf_cycle = 'deciduous'] {
-              marker-file: url('symbols/tree/tree_broadleaved_deciduous_15.svg');
-            }
-          }
-          [leaf_type = 'needleleaved'] {
-            marker-file: url('symbols/tree/tree_needleleaved_15.svg');
-            [leaf_cycle = 'evergreen'] {
-              marker-file: url('symbols/tree/tree_needleleaved_evergreen_15.svg');
-            }
-            [leaf_cycle = 'deciduous'] {
-              marker-file: url('symbols/tree/tree_needleleaved_deciduous_15.svg');
-            }
-          }
-          [leaf_type = 'palm'] {
-            // lower opacity because the palm symbol is heavier
-            marker-opacity: 0.65;
-            marker-file: url('symbols/tree/tree_palm_15.svg');
-          }
-          marker-width: 15;
-          marker-height: 15;
-          [zoom >= 20] {
-            marker-transform: scale(1.333,1.333);
-            marker-width: 20;
-            marker-height: 20;
-          }
-        }
-      }
+  ::symbols {
+    [type = 'row_tree'],
+    [type = 'tree'] {
+      polygon-fill: @tree-icon;
+    }
+    [type = 'tree_plain'] {
+      polygon-fill: @tree-icon;
+      polygon-opacity: 0.5;
     }
   }
 }

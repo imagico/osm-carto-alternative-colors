@@ -70,6 +70,7 @@ sql:
     - light_rail
     - tram
     - dyke
+    - hedge
     - runway
     - taxiway
     - raceway
@@ -92,8 +93,9 @@ sql:
     - hedge
     - retaining_wall
     - wall
+    - tree
+    - shrub
     - tree_row
-    - tree_row_inner
 
 tags:
   river: IN ('river', 'canal')
@@ -375,17 +377,24 @@ classes:
     16: 1.5
     17: 2
     18: 3
-    19: 4
-    20: 5
+    19: 4.5
+    20: 9
+  shrub:
+    18: 2.5
+    19: 5
+    20: 9
+  tree:
+    16: 2.5
+    17: 4.9
+    18: 10
+    19: 15
+    20: 20
   tree_row:
     16: 2
     17: 4
     18: 9
     19: 14
     20: 19
-  tree_row_inner:
-    19: 4
-    20: 5.5
   retaining_wall:
     16: 0.4
   wall:

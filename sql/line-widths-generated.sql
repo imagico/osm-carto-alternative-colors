@@ -368,6 +368,15 @@ select
         when $2 >= 15 then 1.5
         else 0.0
       end)
+    when $1 = 'hedge' then
+      (case
+        when $2 = 16 then 1.5
+        when $2 = 17 then 2.0
+        when $2 = 18 then 3.0
+        when $2 = 19 then 4.5
+        when $2 >= 20 then 9.0
+        else 0.0
+      end)
     when $1 = 'runway' then
       (case
         when $2 = 11 then 2.0
@@ -551,8 +560,8 @@ select
         when $2 = 16 then 1.5
         when $2 = 17 then 2.0
         when $2 = 18 then 3.0
-        when $2 = 19 then 4.0
-        when $2 >= 20 then 5.0
+        when $2 = 19 then 4.5
+        when $2 >= 20 then 9.0
         else 0.0
       end)
     when $1 = 'retaining_wall' then
@@ -565,6 +574,22 @@ select
         when $2 >= 16 then 0.4
         else 0.0
       end)
+    when $1 = 'tree' then
+      (case
+        when $2 = 16 then 2.5
+        when $2 = 17 then 4.9
+        when $2 = 18 then 10.0
+        when $2 = 19 then 15.0
+        when $2 >= 20 then 20.0
+        else 0.0
+      end)
+    when $1 = 'shrub' then
+      (case
+        when $2 = 18 then 2.5
+        when $2 = 19 then 5.0
+        when $2 >= 20 then 9.0
+        else 0.0
+      end)
     when $1 = 'tree_row' then
       (case
         when $2 = 16 then 2.0
@@ -572,12 +597,6 @@ select
         when $2 = 18 then 9.0
         when $2 = 19 then 14.0
         when $2 >= 20 then 19.0
-        else 0.0
-      end)
-    when $1 = 'tree_row_inner' then
-      (case
-        when $2 = 19 then 4.0
-        when $2 >= 20 then 5.5
         else 0.0
       end)
     else 0.0

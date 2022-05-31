@@ -1,0 +1,641 @@
+settings:
+  temp_schema: loading
+  schema: public
+  database: gis
+  symbols_table: carto_symbols
+  srid: 900913
+symbols:
+  tree_needleleaved_5:
+    type: tree
+    size: 5
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_5.svg
+  tree_needleleaved_deciduous_5:
+    type: tree
+    size: 5
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_5.svg
+  tree_needleleaved_evergreen_5:
+    type: tree
+    size: 5
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_5.svg
+  tree_broadleaved_5:
+    type: tree
+    size: 5
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_5.svg
+  tree_broadleaved_deciduous_5:
+    type: tree
+    size: 5
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_5.svg
+  tree_broadleaved_evergreen_5:
+    type: tree
+    size: 5
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_5.svg
+  tree_needleleaved_9:
+    type: tree
+    size: 9
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_9.svg
+  tree_needleleaved_deciduous_9:
+    type: tree
+    size: 9
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_9.svg
+  tree_needleleaved_evergreen_9:
+    type: tree
+    size: 9
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_9.svg
+  tree_broadleaved_9:
+    type: tree
+    size: 9
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_9.svg
+  tree_broadleaved_deciduous_9:
+    type: tree
+    size: 9
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_9.svg
+  tree_broadleaved_evergreen_9:
+    type: tree
+    size: 9
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_9.svg
+  tree_needleleaved_10:
+    type: tree
+    min-size: 10
+    max-size: 12
+    scaled: true
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_10.svg
+  tree_needleleaved_deciduous_10:
+    type: tree
+    min-size: 10
+    max-size: 12
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_10.svg
+  tree_needleleaved_evergreen_10:
+    type: tree
+    min-size: 10
+    max-size: 12
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_10.svg
+  tree_broadleaved_10:
+    type: tree
+    min-size: 10
+    max-size: 12
+    scaled: true
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_10.svg
+  tree_broadleaved_deciduous_10:
+    type: tree
+    min-size: 10
+    max-size: 12
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_10.svg
+  tree_broadleaved_evergreen_10:
+    type: tree
+    min-size: 10
+    max-size: 12
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_10.svg
+  tree_needleleaved_15:
+    type: tree
+    min-size: 13
+    max-size: 20
+    scaled: true
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_deciduous_15.svg
+    sql: &tree_ring_supp |-
+        ST_Union(
+          ST_Difference(
+            !file_scaled!,
+            ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 3.75 ELSE 3.75 + (!size!-29)*0.05 END)
+          ),
+          CASE
+            WHEN ((!size! % 2) = 0) THEN
+              ST_Difference(
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 2.55 ELSE 2.55 + (!size!-29)*0.05 END),
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 35 THEN 1.8 ELSE 1.8 + (!size!-35)*0.0535 END)
+              )
+            ELSE
+              ST_Difference(
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 2.5 ELSE 2.5 + (!size!-29)*0.05 END),
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 35 THEN 1.75 ELSE 1.75 + (!size!-35)*0.0535 END)
+              )
+          END
+        )
+  tree_needleleaved_deciduous_15:
+    type: tree
+    min-size: 13
+    max-size: 15
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_deciduous_15.svg
+  tree_needleleaved_evergreen_15:
+    type: tree
+    min-size: 13
+    max-size: 15
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_evergreen_15.svg
+  tree_broadleaved_15:
+    type: tree
+    min-size: 13
+    max-size: 20
+    scaled: true
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_15.svg
+    sql: *tree_ring_supp
+  tree_broadleaved_deciduous_15:
+    type: tree
+    min-size: 13
+    max-size: 15
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_deciduous_15.svg
+  tree_broadleaved_evergreen_15:
+    type: tree
+    min-size: 13
+    max-size: 20
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_15.svg
+    sql: &tree_dot_supp_small |-
+        ST_Union(
+          !file_scaled!,
+          ST_Buffer(ST_Point(0,0), 0.65+(!size!-13)*0.09)
+        )
+  tree_needleleaved_25:
+    type: tree
+    min-size: 21
+    max-size: 25
+    scaled: true
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_25.svg
+    sql: *tree_ring_supp
+  tree_needleleaved_deciduous_25:
+    type: tree
+    size: 25
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_deciduous_25.svg
+  tree_needleleaved_evergreen_25:
+    type: tree
+    size: 25
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_evergreen_25.svg
+  tree_broadleaved_25:
+    type: tree
+    min-size: 21
+    max-size: 30
+    scaled: true
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_25.svg
+    sql: *tree_ring_supp
+  tree_broadleaved_deciduous_25:
+    type: tree
+    min-size: 25
+    max-size: 30
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_deciduous_25.svg
+  tree_broadleaved_evergreen_25:
+    type: tree
+    min-size: 21
+    max-size: 30
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_25.svg
+    sql: &tree_dot_supp |-
+        ST_Union(
+          ST_Difference(
+            !file_scaled!,
+            ST_Buffer(ST_Point(0,0), 2.5)
+          ),
+          ST_Buffer(ST_Point(0,0), CASE WHEN !size! <= 30 THEN 1.4 ELSE 1.7 END)
+        )
+  tree_needleleaved_35:
+    type: tree
+    min-size: 26
+    max-size: 35
+    scaled: true
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_41for25.svg
+    sql: *tree_ring_supp
+  tree_needleleaved_deciduous_35:
+    type: tree
+    min-size: 26
+    max-size: 35
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_deciduous_41for25.svg
+    sql: &tree_41for25_center_unscaled |-
+        ST_Union(
+          ST_Difference(
+            !file_scaled!,
+            ST_Buffer(ST_Point(0,0), 19*0.5*!size!/41.0)
+          ),
+          ST_Intersection(
+            !file!,
+            ST_Buffer(ST_Point(0,0), 19*0.5)
+          )
+        )
+  tree_needleleaved_evergreen_35:
+    type: tree
+    min-size: 26
+    max-size: 35
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_evergreen_41for25.svg
+    sql: *tree_41for25_center_unscaled
+  tree_broadleaved_35:
+    type: tree
+    min-size: 31
+    max-size: 41
+    scaled: true
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_35.svg
+    sql: &tree_ring_supp_comp |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(!file_scaled!, -((!size!-!size_orig!)/75.0)),
+            ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 3.5 ELSE 3.5 + (!size!-29)*0.05 END)
+          ),
+          CASE
+            WHEN ((!size! % 2) = 0) THEN
+              ST_Difference(
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 2.55 ELSE 2.55 + (!size!-29)*0.05 END),
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 35 THEN 1.8 ELSE 1.8 + (!size!-35)*0.0535 END)
+              )
+            ELSE
+              ST_Difference(
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 2.5 ELSE 2.5 + (!size!-29)*0.05 END),
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 35 THEN 1.75 ELSE 1.75 + (!size!-35)*0.0535 END)
+              )
+          END
+        )
+  tree_broadleaved_deciduous_35:
+    type: tree
+    min-size: 31
+    max-size: 41
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_deciduous_35.svg
+    sql: &tree_35_center_unscaled |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(!file_scaled!, -((!size!-!size_orig!)/75.0)),
+            ST_Buffer(ST_Point(0,0), 19.5*0.5*!size!/35.0)
+          ),
+          ST_Intersection(
+            !file!,
+            ST_Buffer(ST_Point(0,0), CASE WHEN !size! <= 35 THEN 15*0.5 ELSE 19.5*0.5 END)
+          )
+        )
+  tree_broadleaved_evergreen_35:
+    type: tree
+    min-size: 31
+    max-size: 41
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_35.svg
+    sql: &tree_dot_supp_comp |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(!file_scaled!, -((!size!-!size_orig!)/75.0)),
+            ST_Buffer(ST_Point(0,0), 2.5)
+          ),
+          ST_Buffer(ST_Point(0,0), CASE WHEN !size! <= 30 THEN 1.4 ELSE 1.7 END)
+        )
+  tree_needleleaved_41:
+    type: tree
+    min-size: 36
+    max-size: 43
+    scaled: true
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_41.svg
+    sql: *tree_ring_supp
+  tree_needleleaved_deciduous_41:
+    type: tree
+    min-size: 36
+    max-size: 43
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_deciduous_41.svg
+    sql: &tree_41_center_unscaled |-
+        ST_Union(
+          ST_Difference(
+            !file_scaled!,
+            ST_Buffer(ST_Point(0,0), 12.5*!size!/41.0)
+          ),
+          ST_Intersection(
+            !file!,
+            ST_Buffer(ST_Point(0,0), 12.5)
+          )
+        )
+  tree_needleleaved_evergreen_41:
+    type: tree
+    min-size: 36
+    max-size: 43
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_evergreen_41.svg
+    sql: *tree_41_center_unscaled
+  tree_needleleaved_49:
+    type: tree
+    min-size: 42
+    max-size: 50
+    scaled: true
+    leaf_type: needleleaved
+    file: tree/tree_needleleaved_49.svg
+    sql: *tree_ring_supp
+  tree_needleleaved_deciduous_49:
+    type: tree
+    min-size: 42
+    max-size: 50
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: deciduous
+    file: tree/tree_needleleaved_deciduous_49.svg
+    sql: &tree_49_center_unscaled |-
+        ST_Union(
+          ST_Difference(
+            !file_scaled!,
+            ST_Buffer(ST_Point(0,0), 15*!size!/49.0)
+          ),
+          ST_Intersection(
+            !file!,
+            ST_Buffer(ST_Point(0,0), 15)
+          )
+        )
+  tree_needleleaved_evergreen_49:
+    type: tree
+    min-size: 42
+    max-size: 50
+    scaled: true
+    leaf_type: needleleaved
+    leaf_cycle: evergreen
+    file: tree/tree_needleleaved_evergreen_49.svg
+    sql: *tree_49_center_unscaled
+  tree_broadleaved_49:
+    type: tree
+    min-size: 42
+    max-size: 50
+    scaled: true
+    leaf_type: broadleaved
+    file: tree/tree_broadleaved_49.svg
+    sql: *tree_ring_supp
+  tree_broadleaved_deciduous_49:
+    type: tree
+    min-size: 42
+    max-size: 50
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: deciduous
+    file: tree/tree_broadleaved_deciduous_49.svg
+    sql: *tree_49_center_unscaled
+  tree_broadleaved_evergreen_49:
+    type: tree
+    min-size: 42
+    max-size: 50
+    scaled: true
+    leaf_type: broadleaved
+    leaf_cycle: evergreen
+    file: tree/tree_broadleaved_49.svg
+    sql: *tree_dot_supp
+  tree_unknown_5:
+    type: tree
+    size: 5
+    sql: &tree_plain_5 |-
+        ST_Difference(
+          ST_Buffer(ST_Point(0,0), (!size!-0.25)*0.5),
+          ST_Buffer(ST_Point(0,0), (!size!-1.45)*0.5)
+        )
+  tree_unknown_9:
+    type: tree
+    size: 9
+    sql: &tree_plain_dot_9 |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(ST_Point(0,0), !size!*0.5),
+            ST_Buffer(ST_Point(0,0), !size!*0.5-0.65)
+          ),
+          ST_Buffer(ST_Point(0,0), 1)
+        )
+  tree_unknown_10:
+    type: tree
+    size: 10
+    sql: &tree_plain_dot_10 |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(ST_Point(0,0), !size!*0.5),
+            ST_Buffer(ST_Point(0,0), !size!*0.5-0.75)
+          ),
+          ST_Buffer(ST_Point(0,0), 1)
+        )
+  tree_unknown_12:
+    type: tree
+    min-size: 11
+    max-size: 12
+    sql: &tree_plain_dot |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(ST_Point(0,0), !size!*0.5),
+            ST_Buffer(ST_Point(0,0), !size!*0.5-0.75-(!size!-10)*0.0135)
+          ),
+          ST_Buffer(ST_Point(0,0), CASE WHEN !size! <= 15 THEN 1.0+(!size!-10)*0.08 WHEN !size! <= 30 THEN 1.4 ELSE 1.7 END)
+        )
+  tree_unknown_:
+    type: tree
+    min-size: 13
+    max-size: 50
+    sql: &tree_plain_ring |-
+        ST_Union(
+          ST_Difference(
+            ST_Buffer(ST_Point(0,0), !size!*0.5),
+            ST_Buffer(ST_Point(0,0), !size!*0.5-0.75-(!size!-10)*0.0135)
+          ),
+          CASE
+            WHEN ((!size! % 2) = 0) THEN
+              ST_Difference(
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 2.55 ELSE 2.55 + (!size!-29)*0.05 END),
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 35 THEN 1.8 ELSE 1.8 + (!size!-35)*0.0535 END)
+              )
+            ELSE
+              ST_Difference(
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 29 THEN 2.5 ELSE 2.5 + (!size!-29)*0.05 END),
+                ST_Buffer(ST_Point(0,0), CASE WHEN !size! < 35 THEN 1.75 ELSE 1.75 + (!size!-35)*0.0535 END)
+              )
+          END
+        )
+  tree_unknown_evergreen_5:
+    type: tree
+    size: 5
+    leaf_cycle: evergreen
+    sql: *tree_plain_5
+  tree_unknown_evergreen_9:
+    type: tree
+    size: 9
+    leaf_cycle: evergreen
+    sql: *tree_plain_dot_9
+  tree_unknown_evergreen_10:
+    type: tree
+    size: 10
+    leaf_cycle: evergreen
+    sql: *tree_plain_dot_10
+  tree_unknown_evergreen_12:
+    type: tree
+    min-size: 11
+    max-size: 12
+    leaf_cycle: evergreen
+    sql: *tree_plain_dot
+  tree_unknown_evergreen_:
+    type: tree
+    min-size: 12
+    max-size: 50
+    leaf_cycle: evergreen
+    sql: *tree_plain_dot
+  tree_unknown_deciduous_5:
+    type: tree
+    size: 5
+    leaf_cycle: deciduous
+    sql: *tree_plain_5
+  tree_unknown_deciduous_9:
+    type: tree
+    size: 9
+    leaf_cycle: deciduous
+    sql: *tree_plain_dot_9
+  tree_unknown_deciduous_10:
+    type: tree
+    size: 10
+    leaf_cycle: deciduous
+    sql: *tree_plain_dot_10
+  tree_unknown_deciduous_12:
+    type: tree
+    min-size: 11
+    max-size: 12
+    leaf_cycle: deciduous
+    sql: *tree_plain_dot
+  tree_unknown_deciduous_:
+    type: tree
+    min-size: 13
+    max-size: 50
+    leaf_cycle: deciduous
+    sql: &tree_plain_deciduous |-
+        ST_Union(
+          -- this is the outer ring
+          ST_Difference(
+            ST_Buffer(ST_Point(0,0), !size!*0.5),
+            ST_Buffer(ST_Point(0,0), !size!*0.5-0.3-(!size!-10)*0.0135)
+          ),
+          ST_Union(
+            -- this is the center star
+            ST_Buffer(
+              ST_Rotate(
+                ST_Collect(ARRAY[
+                  ST_Rotate(ST_MakeLine(ST_Point(0,-2.5-(!size!-13)*0.02), ST_Point(0,2.5+(!size!-13)*0.02)), -PI()/4 + PI()/3),
+                  ST_Rotate(ST_MakeLine(ST_Point(0,-2.5-(!size!-13)*0.02), ST_Point(0,2.5+(!size!-13)*0.02)), -PI()/4 - PI()/3),
+                  ST_Rotate(ST_MakeLine(ST_Point(0,-2.5-(!size!-13)*0.02), ST_Point(0,2.5+(!size!-13)*0.02)), -PI()/4)
+                ]),
+                CASE
+                  WHEN ((!size! % 2) = 0) THEN
+                    0.0
+                  ELSE
+                    -PI()/8
+                END
+              ),
+              0.375+(!size!-13)*0.005
+            ),
+            -- these are the outer ring dents
+            ST_Intersection(
+              ST_Buffer(ST_Point(0,0), !size!*0.499),
+              ST_Difference(
+                (
+                  SELECT
+                    ST_Union(
+                      ST_MakePolygon(
+                        ST_MakeLine(ARRAY[
+                          ST_Point(0,0),
+                          ST_Rotate(ST_Point(0,!size!*1.1), 2.0*PI()*generate_series/ROUND(12+(!size!-13)*0.2)),
+                          ST_Rotate(ST_Point(0,!size!*1.1), (PI()+2.0*PI()*generate_series)/ROUND(12+(!size!-13)*0.2)),
+                          ST_Point(0,0)
+                        ])
+                      )
+                    )
+                  FROM generate_series(1, ROUND(12+(!size!-13)*0.2))
+                ),
+                ST_Buffer(ST_Point(0,0), !size!*0.5-1.2-(!size!-10)*0.0135)
+              )
+            )
+          )
+        )
+  tree_palm_5:
+    type: tree
+    size: 5
+    leaf_type: palm
+    sql: *tree_plain_5
+  tree_palm_9:
+    type: tree
+    size: 9
+    leaf_type: palm
+    file: tree/tree_palm_9.svg
+  tree_palm_10:
+    type: tree
+    size: 10
+    leaf_type: palm
+    file: tree/tree_palm_10.svg
+  tree_palm_15:
+    type: tree
+    size: 15
+    leaf_type: palm
+    file: tree/tree_palm_15.svg
+  tree_palm_35:
+    type: tree
+    size: 35
+    leaf_type: palm
+    file: tree/tree_palm_35.svg
+  tree_palm_45:
+    type: tree
+    size: 45
+    scaled: true
+    leaf_type: palm
+    file: tree/tree_palm_35.svg
+  tree_palm_49:
+    type: tree
+    size: 49
+    leaf_type: palm
+    file: tree/tree_palm_49.svg

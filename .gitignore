@@ -2,6 +2,7 @@
 layers/
 symbols/patterns/previews/
 symbols/patterns/processed/
+symbols/pdf/
 data/
 tmp/
 *.xml
