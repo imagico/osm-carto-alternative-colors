@@ -282,15 +282,15 @@ select
       end)
     when $1 = 'bridleway' then
       (case
-        when $2 = 13 then 0.2
-        when $2 = 14 then 0.35
+        when $2 = 13 then 0.35
+        when $2 = 14 then 0.45
         when $2 >= 15 then 1.2
         else 0.0
       end)
     when $1 = 'footway' then
       (case
-        when $2 = 13 then 0.2
-        when $2 = 14 then 0.35
+        when $2 = 13 then 0.35
+        when $2 = 14 then 0.45
         when $2 = 15 then 0.85
         when $2 = 16 then 1.0
         when $2 = 17 then 1.1
@@ -300,8 +300,8 @@ select
       end)
     when $1 = 'cycleway' then
       (case
-        when $2 = 13 then 0.2
-        when $2 = 14 then 0.35
+        when $2 = 13 then 0.35
+        when $2 = 14 then 0.45
         when $2 = 15 then 0.85
         when $2 = 16 then 1.0
         when $2 = 17 then 1.1
@@ -311,8 +311,8 @@ select
       end)
     when $1 = 'path' then
       (case
-        when $2 = 13 then 0.2
-        when $2 = 14 then 0.35
+        when $2 = 13 then 0.35
+        when $2 = 14 then 0.45
         when $2 = 15 then 0.8
         when $2 = 16 then 0.9
         when $2 = 17 then 1.0
@@ -322,7 +322,7 @@ select
       end)
     when $1 = 'track' then
       (case
-        when $2 = 13 then 0.45
+        when $2 = 13 then 0.55
         when $2 = 14 then 0.85
         when $2 >= 15 then 1.5
         else 0.0
