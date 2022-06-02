@@ -86,7 +86,7 @@ class Table:
                          '''(name, width, height, feature_type, symbol_size, leaf_type, leaf_cycle, way) '''
                          '''SELECT '{name}' AS name, {width} AS width, {height} AS height, '''
                          '''  '{ftype}' AS feature_type, {size} AS symbol_size, {leaf_type} AS leaf_type, {leaf_cycle} AS leaf_cycle, '''
-                         '''  ST_CollectionExtract(ST_Multi(way), 3) AS way FROM "{temp_schema}"."{name}"'''
+                         '''  ST_CollectionExtract(ST_Multi(ST_MakeValid(way)), 3) AS way FROM "{temp_schema}"."{name}"'''
                          '''  ON CONFLICT (name) DO UPDATE SET width = EXCLUDED.width, height = EXCLUDED.height, way = EXCLUDED.way, feature_type = EXCLUDED.feature_type,'''
                          '''                                   symbol_size = EXCLUDED.symbol_size, leaf_type = EXCLUDED.leaf_type, leaf_cycle = EXCLUDED.leaf_cycle;'''
                          )
@@ -105,7 +105,7 @@ class Table:
                          '''(name, width, height, feature_type, symbol_size, leaf_type, leaf_cycle, way) '''
                          '''SELECT '{name}' AS name, {width} AS width, {height} AS height, '''
                          '''  '{ftype}' AS feature_type, {size} AS symbol_size, {leaf_type} AS leaf_type, {leaf_cycle} AS leaf_cycle, '''
-                         '''  ST_Scale(ST_CollectionExtract(ST_Multi(way), 3), {scale}, {scale}) AS way FROM "{temp_schema}"."{name}"'''
+                         '''  ST_Scale(ST_CollectionExtract(ST_Multi(ST_MakeValid(way)), 3), {scale}, {scale}) AS way FROM "{temp_schema}"."{name}"'''
                          '''  ON CONFLICT (name) DO UPDATE SET width = EXCLUDED.width, height = EXCLUDED.height, way = EXCLUDED.way, feature_type = EXCLUDED.feature_type,'''
                          '''                                   symbol_size = EXCLUDED.symbol_size, leaf_type = EXCLUDED.leaf_type, leaf_cycle = EXCLUDED.leaf_cycle;'''
                          )
@@ -120,7 +120,7 @@ class Table:
     def update_symbol(self, name, sql, width, height, scale, ftype):
         with self._conn.cursor() as cur:
             cur.execute(('''UPDATE "{schema}"."{symbols_table}" '''
-                         '''SET way = ST_SetSRID(ST_CollectionExtract(ST_Multi(ST_Translate({sql}, width*0.5, height*0.5)), 3), ST_SRID(way)) '''
+                         '''SET way = ST_SetSRID(ST_CollectionExtract(ST_Multi(ST_MakeValid(ST_Translate({sql}, width*0.5, height*0.5))), 3), ST_SRID(way)) '''
                          '''WHERE name = '{name}' AND feature_type = '{ftype}';'''
                          )
                          .format(schema=self._dst_schema, symbols_table=self._symbols_table,
@@ -136,7 +136,7 @@ class Table:
                          '''(name, width, height, feature_type, symbol_size, leaf_type, leaf_cycle, way) '''
                          '''SELECT '{name}' AS name, ST_XMax(way)-ST_XMin(way) AS width, ST_YMax(way)-ST_YMin(way) AS height, '''
                          '''  '{ftype}' AS feature_type, {size} AS symbol_size, {leaf_type} AS leaf_type, {leaf_cycle} AS leaf_cycle, '''
-                         '''  ST_CollectionExtract(ST_Multi(ST_Translate(way, -ST_XMin(way), -ST_YMin(way))), 3) AS way FROM (SELECT {sql} AS way) AS _'''
+                         '''  ST_CollectionExtract(ST_Multi(ST_MakeValid(ST_Translate(way, -ST_XMin(way), -ST_YMin(way)))), 3) AS way FROM (SELECT {sql} AS way) AS _'''
                          '''  ON CONFLICT (name) DO UPDATE SET width = EXCLUDED.width, height = EXCLUDED.height, way = EXCLUDED.way, feature_type = EXCLUDED.feature_type,'''
                          '''                                   symbol_size = EXCLUDED.symbol_size, leaf_type = EXCLUDED.leaf_type, leaf_cycle = EXCLUDED.leaf_cycle;'''
                          )
