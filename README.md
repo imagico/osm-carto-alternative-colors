@@ -9,6 +9,8 @@ and overall a different approach to cartographic design.
 ![screenshot2](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview2.png)
 ![screenshot3](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview3.png)
 ![screenshot4](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview4.png)
+![screenshot5](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview5.png)
+![screenshot6](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/preview6.png)
 
 # Features
 
