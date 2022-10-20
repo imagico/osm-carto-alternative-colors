@@ -10,6 +10,8 @@ point:
     where: waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
   barrier_entrance:
     where: barrier IN ('entrance')
+  trees:
+    where: ("natural" IN ('tree', 'shrub'))
 line:
   name:
     where: name IS NOT NULL
@@ -19,6 +21,8 @@ line:
     where: waterway = 'river'
   water_barrier:
     where: waterway IN ('dam', 'weir', 'lock_gate')
+  tree_rows:
+    where: ("natural" = 'tree_row' OR barrier = 'hedge')
 polygon:
   # The polygon table is by far the largest, and generally the slowest
   name:
