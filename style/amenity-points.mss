@@ -37,6 +37,8 @@
 @standard-line-spacing-size: -1.5; // -0.15 em
 @standard-font: @book-fonts;
 
+@private-opacity: 0.33;
+
 /* Note that .points is also used in water-features.mss */
 .points {
   [feature = 'tourism_alpine_hut'][zoom >= 13],
@@ -107,7 +109,6 @@
   }
 
   [feature = 'highway_elevator'][zoom >= 18] {
-    [access = null],
     [access = 'yes'] {
       marker-file: url('symbols/elevator.12.svg');
       marker-fill: @transportation-icon;
@@ -426,8 +427,8 @@
     marker-placement: interior;
     marker-clip: false;
     marker-fill: @transportation-icon;
-    [access != ''][access != 'permissive'][access != 'yes'] {
-      marker-opacity: 0.33;
+    [access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
   }
 
@@ -550,8 +551,8 @@
     marker-fill: @amenity-brown;
     marker-placement: interior;
     marker-clip: false;
-    [access != ''][access != 'permissive'][access != 'yes'] {
-      marker-opacity: 0.33;
+    [access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
   }
 
@@ -1069,8 +1070,8 @@
     marker-fill: @leisure-icon;
     marker-placement: interior;
     marker-clip: false;
-    [access != ''][access != 'permissive'][access != 'yes'] {
-      marker-opacity: 0.33;
+    [access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
   }
 
@@ -1138,7 +1139,7 @@
     marker-fill: @airtransport;
   }
 
-  [feature = 'aeroway_aerodrome']['access' != 'private']['icao' != null]['iata' != null][zoom >= 10][zoom < 14],
+  [feature = 'aeroway_aerodrome']['access' = 'yes']['icao' != null]['iata' != null][zoom >= 10][zoom < 14],
   [feature = 'aeroway_aerodrome'][zoom >= 11][zoom < 14] {
     marker-file: url('symbols/aerodrome.12.svg');
     marker-placement: interior;
@@ -1309,8 +1310,6 @@
 
   // waste_disposal tagging on ways - tagging on nodes is defined later
   [feature = 'amenity_waste_disposal'][zoom >= 19] {
-    [access = null],
-    [access = 'permissive'],
     [access = 'yes'] {
       marker-file: url('symbols/waste_disposal.svg');
       marker-fill: @amenity-brown;
@@ -1343,8 +1342,8 @@
     marker-placement: interior;
     marker-clip: false;
     marker-fill: @transportation-icon;
-    [access != ''][access != 'permissive'][access != 'yes'] {
-      marker-opacity: 0.33;
+    [access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
   }
 
@@ -1402,8 +1401,6 @@
 
   // waste_disposal tagging on nodes - tagging on ways is defined earlier
   [feature = 'amenity_waste_disposal'][zoom >= 19]::amenity {
-    [access = null],
-    [access = 'permissive'],
     [access = 'yes'] {
       marker-file: url('symbols/waste_disposal.svg');
       marker-fill: @amenity-brown;
@@ -1551,8 +1548,8 @@
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
     text-placement: interior;
-    [access != ''][access != 'permissive'][access != 'yes'] {
-      text-opacity: 0.33;
+    [access = 'restricted'] {
+      text-opacity: @private-opacity;
       text-halo-radius: 0;
     }
     [feature = 'amenity_bicycle_parking'],
@@ -1813,7 +1810,7 @@
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       text-placement: interior;
-      [access != ''][access != 'permissive'][access != 'yes'] {
+      [access = 'restricted'] {
         text-fill: desaturate(lighten(@leisure-icon, 15%), 25%);
       }
     }
@@ -2718,7 +2715,7 @@
     text-placement: interior;
   }
 
-  [feature = 'aeroway_aerodrome']['access' != 'private']['icao' != null]['iata' != null][zoom >= 10][zoom < 14],
+  [feature = 'aeroway_aerodrome']['access' = 'yes']['icao' != null]['iata' != null][zoom >= 10][zoom < 14],
   [feature = 'aeroway_aerodrome'][zoom >= 11][zoom < 14] {
     text-name: "[name]";
     text-size: @standard-font-size;

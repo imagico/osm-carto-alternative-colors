@@ -4157,7 +4157,7 @@ Layer:
               'power_' || CASE WHEN power IN ('generator') THEN power ELSE NULL END,
               'tourism_' || CASE WHEN tourism IN ('viewpoint') THEN tourism ELSE NULL END
             ) AS feature,
-            access,
+            CASE WHEN access IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS access,
             religion,
             tags->'denomination' as denomination,
             tags->'generator:source' as "generator:source",
@@ -4278,7 +4278,7 @@ Layer:
               'man_made_' || CASE WHEN man_made IN ('cross') THEN man_made ELSE NULL END,
               'historic_' || CASE WHEN historic IN ('wayside_cross', 'wayside_shrine') THEN historic ELSE NULL END
             ) AS feature,
-            access,
+            CASE WHEN access IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS access,
             CASE
               WHEN "natural" IN ('peak', 'volcano', 'saddle') THEN
                 CASE
@@ -4749,7 +4749,7 @@ Layer:
                   'waterway_' || CASE WHEN waterway IN ('dam', 'dock') THEN waterway ELSE NULL END,
                   'tourism_' || CASE WHEN tourism IN ('viewpoint', 'attraction') THEN tourism ELSE NULL END
                 ) AS feature,
-                access,
+                CASE WHEN access IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS access,
                 CONCAT(
                     name,
                     CASE
@@ -4952,7 +4952,7 @@ Layer:
                   'man_made_' || CASE WHEN man_made IN ('cross') THEN man_made ELSE NULL END,
                   'historic_' || CASE WHEN historic IN ('wayside_cross', 'wayside_shrine') THEN historic ELSE NULL END
                 ) AS feature,
-                access,
+                CASE WHEN access IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS access,
                 name,
                 CASE
                   WHEN "natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes')
@@ -5155,7 +5155,7 @@ Layer:
               'man_made_' || CASE WHEN man_made IN ('cross') THEN man_made ELSE NULL END,
               'barrier_' || CASE WHEN barrier IN ('bollard', 'gate', 'lift_gate', 'swing_gate', 'block', 'log') THEN barrier ELSE NULL END
             )  AS feature,
-            access,
+            CASE WHEN access IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS access,
             CASE WHEN amenity IN ('waste_basket', 'waste_disposal') THEN 2 ELSE 1 END AS prio
           FROM planet_osm_point p
           WHERE highway IN ('mini_roundabout')
@@ -5181,7 +5181,7 @@ Layer:
               'amenity_' || CASE WHEN amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking') THEN amenity ELSE NULL END,
               'barrier_' || CASE WHEN barrier IN ('bollard', 'gate', 'lift_gate', 'swing_gate', 'block', 'log') THEN barrier ELSE NULL END
             )  AS feature,
-            access
+            CASE WHEN access IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS access
           FROM planet_osm_polygon p
           WHERE amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking')
              OR barrier IN ('bollard', 'gate', 'lift_gate', 'swing_gate', 'block', 'log')
