@@ -3,7 +3,7 @@ settings:
   schema: public
   database: gis
   symbols_table: carto_symbols
-  srid: 900913
+  srid: 3857
 symbols:
   tree_needleleaved_5:
     type: tree
