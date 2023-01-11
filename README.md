@@ -112,3 +112,14 @@ by using (with kosmtik) the following in `localconfig.json`:
         }
     }
 ```
+
+# License
+
+Design components of the project are subject to the Creative Commons
+Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+
+Software components of the project are subject to the GNU Affero General
+Public License s published by the Free Software Foundation, either
+version 3 of the License, or (at your option) any later version.
+
+See [LICENSE.md](LICENSE.md) for details.
