@@ -1,0 +1,335 @@
+# ---------------------------------------------------------------------------
+#  water-barriers-line.mml
+#
+#  water barriers layer (full version, relatively expensive)
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: water-barriers-line
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (-- All of this assumes a metric coordinate system, won't work with geographic coordinates
+         -- This is the full complexity version of the water-barrier rendering which is relatively slow
+         -- First query: barriers mapped using ways not intersecting a waterway
+         SELECT
+            way,
+            waterway,
+            'line' AS wtype
+          FROM planet_osm_line b
+          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
+          AND NOT EXISTS
+            (SELECT 1 FROM planet_osm_line l WHERE ST_Intersects(b.way, l.way)
+              AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
+         UNION ALL
+         -- Second query: barriers mapped using ways intersecting a waterway
+         SELECT
+            way,
+            waterway,
+            wtype
+          FROM
+          ( -- This aggregates all barrier ways intersecting at a common point
+            WITH barriers_grouped AS
+            (SELECT DISTINCT ON (osm_id)
+                barrier,
+                ST_LineSubstring(
+                  line,
+                  GREATEST(0.0, ST_LineLocatePoint(line, point)-1.0/ST_Length(line)),
+                  LEAST(1.0, ST_LineLocatePoint(line, point)+1.0/ST_Length(line))) AS line,
+                point,
+                waterway,
+                wtype,
+                contructed_width,
+                mapped_width,
+                angle
+              FROM
+                (SELECT
+                    MIN(b.osm_id) AS osm_id,
+                    ST_LineMerge(ST_Collect(b.way)) AS barrier,
+                    l.way AS line,
+                    ST_PointOnSurface(ST_Intersection(ST_LineMerge(ST_Collect(b.way)), l.way)) AS point,
+                    MIN(b.waterway) AS waterway,
+                    MIN(l.waterway) AS wtype,
+                    MAX(carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                      (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                        NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                    SUM(ST_Length(b.way)) AS mapped_width,
+                    (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
+                  FROM planet_osm_line b
+                  JOIN planet_osm_line l ON ST_Intersects(b.way, l.way)
+                  WHERE b.waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
+                    AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+                  GROUP BY ST_Intersection(b.way, l.way), l.way
+                ) AS barriers
+                ORDER BY osm_id, contructed_width DESC,
+                  ST_LineLocatePoint(line, point) ASC -- this gives downstream waterways priority
+            ) -- end barriers_grouped
+            -- directly render the way if the mapped size is larger than the contrcted alternative (high zoom)
+            SELECT
+                barrier AS way,
+                waterway,
+                wtype
+              FROM barriers_grouped WHERE contructed_width <= mapped_width
+            UNION ALL
+            -- render the barrier line contructed from intersection point (low zoom)
+            SELECT
+                ST_MakeLine(ARRAY[
+                  ST_Rotate(
+                    ST_SetSRID(ST_MakePoint(
+                    ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                    ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+                  ), 3857), -angle, point),
+                  point,
+                  ST_Rotate(
+                    ST_SetSRID(ST_MakePoint(
+                    ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                    ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+                  ), 3857), angle, point)
+                ]) AS way,
+                waterway,
+                wtype
+              FROM barriers_grouped WHERE contructed_width > mapped_width
+          ) AS blines
+         UNION ALL
+         -- Third query: barriers mapped using polygons not intersecting a waterway
+         SELECT
+            way,
+            waterway,
+            'polygon' AS wtype
+          FROM planet_osm_polygon b
+          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
+          AND NOT EXISTS
+            (SELECT 1 FROM planet_osm_line l WHERE ST_Intersects(b.way, l.way)
+              AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
+         UNION ALL
+         -- Fourth query: barriers mapped using polygons intersecting a waterway
+         SELECT
+            way,
+            waterway,
+            wtype
+          FROM
+          (
+            WITH barriers_grouped AS
+            (SELECT DISTINCT ON (osm_id)
+                osm_id,
+                barrier,
+                waterarea,
+                ST_LineSubstring(
+                  line,
+                  GREATEST(0.0, ST_LineLocatePoint(line, point)-1.0/ST_Length(line)),
+                  LEAST(1.0, ST_LineLocatePoint(line, point)+1.0/ST_Length(line))) AS line,
+                line AS line_orig,
+                point,
+                waterway,
+                wtype,
+                contructed_width,
+                -- ST_Length(ST_Intersection(ST_Boundary(barrier), waterarea)) AS linear_width,
+                polygon_width,
+                angle
+              FROM
+                (SELECT
+                    MIN(b.osm_id) AS osm_id,
+                    ST_Collect(b.way) AS barrier,
+                    (SELECT
+                        ST_Union(w.way)
+                      FROM planet_osm_polygon w
+                      WHERE
+                        (w.waterway IN ('dock', 'riverbank')
+                          OR w.landuse IN ('reservoir', 'basin')
+                          OR w."natural" IN ('water', 'glacier'))
+                        AND w.building IS NULL
+                        AND ST_Intersects(w.way, ST_Collect(b.way))
+                    ) AS waterarea,
+                    l.way AS line,
+                    (ST_Dump(ST_Intersection(ST_Boundary(b.way), l.way))).geom AS point,
+                    MIN(b.waterway) AS waterway,
+                    MIN(l.waterway) AS wtype,
+                    MAX(carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                      (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                        NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                    MAX(ST_Length(ST_BoundingDiagonal(b.way))) AS polygon_width,
+                    (CASE WHEN MIN(b.waterway) = 'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
+                  FROM planet_osm_polygon b
+                  JOIN planet_osm_line l ON ST_Intersects(ST_Boundary(b.way), l.way)
+                  WHERE b.waterway IN ('dam') AND (b.way && !bbox!)
+                    AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+                  GROUP BY ST_Intersection(ST_Boundary(b.way), l.way), l.way
+                ) AS barriers
+                ORDER BY osm_id, contructed_width DESC,
+                  ST_LineLocatePoint(line, point) ASC
+            ) -- end barriers_grouped
+            -- large enough polygon - render directly
+            SELECT
+                barrier AS way,
+                waterway,
+                'polygon' AS wtype
+              FROM barriers_grouped
+              WHERE polygon_width >= 2.5*contructed_width
+            UNION ALL
+            -- has intersecting water areas and medium size polygon - render linear representation
+            (SELECT DISTINCT ON (osm_id)
+                way,
+                waterway,
+                wtype
+              FROM
+                (SELECT
+                    osm_id,
+                    (ST_Dump(ST_CollectionExtract(ST_Intersection(way, line_orig), 1))).geom AS point,
+                    line_orig,
+                    way,
+                    waterway,
+                    wtype
+                  FROM
+                    (SELECT
+                        osm_id,
+                        (ST_Dump(ST_CollectionExtract(ST_Intersection(ST_Boundary(barrier), waterarea), 2))).geom AS way,
+                        line_orig,
+                        waterway,
+                        wtype
+                      FROM barriers_grouped
+                      WHERE (waterarea IS NOT NULL AND polygon_width < 2.5*contructed_width AND polygon_width >= contructed_width)
+                    ) AS bparts
+                ) AS bparts2
+              -- this selects the first part of the intersection between barrier polygon and water area
+              -- in waterway direction
+              ORDER BY osm_id, ST_LineLocatePoint(line_orig, point) ASC)
+            UNION ALL
+            -- no intersecting water areas and polygon medium or small - treat as node
+            -- has intersecting water areas and polygon small - treat as node
+            SELECT
+                ST_MakeLine(ARRAY[
+                  ST_Rotate(
+                    ST_SetSRID(ST_MakePoint(
+                    ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                    ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+                  ), 3857), -angle, point),
+                  point,
+                  ST_Rotate(
+                    ST_SetSRID(ST_MakePoint(
+                    ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                    ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+                  ), 3857), angle, point)
+                ]) AS way,
+                waterway,
+                wtype
+              FROM barriers_grouped
+                WHERE (waterarea IS NULL AND polygon_width < 2.5*contructed_width)
+                  OR (waterarea IS NOT NULL AND polygon_width < contructed_width)
+          ) AS bpolys
+         UNION ALL
+         -- Fifth query: barriers mapped using nodes on a waterway
+         SELECT
+             ST_MakeLine(ARRAY[
+               ST_Rotate(
+                 ST_SetSRID(ST_MakePoint(
+                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+               ), 3857), -angle, point),
+               point,
+               ST_Rotate(
+                 ST_SetSRID(ST_MakePoint(
+                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+               ), 3857), angle, point)
+             ]) AS way,
+             waterway,
+             wtype
+           FROM
+             -- outer query: points with either nominal contructed waterway width or riverbank width
+             (SELECT
+                 point,
+                 line,
+                 waterway,
+                 wtype,
+                 GREATEST(
+                   contructed_width,
+                   -- this selects only the center part of the multilinestring returned
+                   -- by the inner select (in case of large and complex water polygons)
+                   (SELECT
+                       ST_Length(geom)
+                     FROM
+                       -- this selects the part of a line orthogonal to the waterway
+                       -- ten times the nominal contructed waterway width that intersects
+                       -- the water polygon intersecting the barrier point
+                       (SELECT
+                           (ST_Dump(ST_Intersection(
+                             ST_Union(poly.way),
+                             ST_MakeLine(ARRAY[
+                               ST_Rotate(
+                                 ST_SetSRID(ST_MakePoint(
+                                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*5/ST_Length(line),
+                                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*5/ST_Length(line)
+                               ), 3857), -pi()/2, point),
+                               ST_Rotate(
+                                 ST_SetSRID(ST_MakePoint(
+                                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*5/ST_Length(line),
+                                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*5/ST_Length(line)
+                               ), 3857), pi()/2, point)
+                             ])))).geom AS geom
+                         FROM planet_osm_polygon poly
+                         WHERE (waterway IN ('dock', 'riverbank') OR landuse IN ('reservoir', 'basin') OR "natural" IN ('water'))
+                           AND ST_Intersects(poly.way, point) AND (poly.way && !bbox!)
+                       ) AS line_segments
+                     WHERE ST_DWithin(geom, point, 0.1) ORDER BY ST_Length(geom) DESC LIMIT 1
+                   )
+                 ) AS contructed_width,
+                 angle
+               FROM
+                 -- inner query: points with nominal contructed waterway width
+                 (SELECT DISTINCT ON (p.osm_id)
+                     p.way AS point,
+                     ST_LineSubstring(
+                       l.way,
+                       GREATEST(0.0, ST_LineLocatePoint(l.way, p.way)-1.0/ST_Length(l.way)),
+                       LEAST(1.0, ST_LineLocatePoint(l.way, p.way)+1.0/ST_Length(l.way))) AS line,
+                     p.waterway AS waterway,
+                     l.waterway AS wtype,
+                     (carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                       (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END) +
+                       (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                         NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                     (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
+                   FROM planet_osm_point p
+                   JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1)
+                   WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall') AND (p.way && !bbox!)
+                     AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+                   ORDER BY p.osm_id, contructed_width DESC,
+                     ST_LineLocatePoint(l.way, p.way) ASC -- this gives downstream waterways priority
+                 ) AS plines
+             ) AS plines2
+          WHERE line IS NOT NULL
+        ) AS water_barriers_line
+    properties:
+      minzoom: 11

@@ -1,0 +1,63 @@
+# ---------------------------------------------------------------------------
+#  golf-lines.mml
+#
+#  golf course features layer
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: golf-lines
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way, geo, golf, ref, name_label[1] AS name, name_label[3] AS font
+          FROM
+            (SELECT
+                way, tags->'golf' AS golf, carto_label_name(way, name, tags, E'\n') AS name_label, ref, 0 AS prio, 'polygon' AS geo
+              FROM planet_osm_polygon
+              WHERE (tags->'golf') IS NOT NULL AND way && !bbox!
+            UNION ALL
+            SELECT
+                p.way, p.tags->'golf' AS golf, carto_label_name(p.way, p.name, p.tags, E'\n') AS name_label, coalesce(p.ref,l.ref) AS ref, 0 AS prio, 'point' AS geo
+              FROM planet_osm_point p LEFT JOIN planet_osm_line l ON (ST_Intersects(p.way, l.way) AND (l.tags->'golf') IS NOT NULL)
+              WHERE p.tags ? 'golf' AND p.way && !bbox!
+            UNION ALL
+            SELECT
+                way, tags->'golf' AS golf, carto_label_name(way, name, tags, E'\n') AS name_label, ref, 1 AS prio, 'line' AS geo
+              FROM planet_osm_line WHERE (tags->'golf') IS NOT NULL AND way && !bbox!
+            ) AS golf
+          ORDER BY prio
+        ) AS golf_lines
+    properties:
+      minzoom: 16

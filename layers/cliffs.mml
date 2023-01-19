@@ -1,0 +1,64 @@
+# ---------------------------------------------------------------------------
+#  cliffs.mml
+#
+#  topography line features (cliffs, ridges etc.)
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: cliffs
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way, "natural", man_made
+          FROM planet_osm_line
+          WHERE ("natural" IN ('cliff', 'earth_bank') OR man_made = 'embankment')
+            AND way && !bbox!
+         UNION ALL
+         SELECT
+            ST_Difference(
+              way,
+              (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                 FROM planet_osm_point p
+                 WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
+                   AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+              )
+            ) AS way, "natural", man_made
+          FROM planet_osm_line l
+          WHERE "natural" IN ('ridge', 'arete')
+            AND l.way && !bbox!
+        ) AS cliffs
+    properties:
+      minzoom: 13

@@ -1,0 +1,287 @@
+# ---------------------------------------------------------------------------
+#  road-text.mml
+#
+#  road text layers
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: roads-text-ref-low-zoom
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            highway,
+            height,
+            width,
+            refs
+          FROM (
+            SELECT
+                way,
+                osm_id,
+                highway,
+                array_length(refs,1) AS height,
+                (SELECT MAX(char_length(ref)) FROM unnest(refs) AS u(ref)) AS width,
+                array_to_string(refs, E'\n') AS refs
+              FROM (
+                SELECT
+                    way,
+                    osm_id,
+                    highway,
+                    string_to_array(ref, ';') AS refs
+                FROM planet_osm_roads
+                  WHERE highway IN ('motorway', 'trunk', 'primary', 'secondary')
+                  AND ref IS NOT NULL
+              ) AS p) AS q
+          WHERE height <= 4 AND width <= 11
+          ORDER BY
+            CASE
+              WHEN highway = 'motorway' THEN 38
+              WHEN highway = 'trunk' THEN 37
+              WHEN highway = 'primary' THEN 36
+              WHEN highway = 'secondary' THEN 35
+              WHEN highway = 'tertiary' THEN 34
+              WHEN highway = 'unclassified' THEN 33
+              WHEN highway = 'residential' THEN 32
+              WHEN highway = 'runway' THEN 6
+              WHEN highway = 'taxiway' THEN 5
+              ELSE NULL
+            END DESC NULLS LAST,
+            height DESC,
+            width DESC,
+            refs,
+            osm_id
+        ) AS roads_text_ref_low_zoom
+    properties:
+      minzoom: 10
+      maxzoom: 12
+  - id: junctions
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            highway,
+            junction,
+            ref,
+            name_label[1] AS name,
+            name_label[3] AS font
+          FROM
+            (SELECT
+                way,
+                highway,
+                junction,
+                ref,
+                carto_label_name(way, name, tags, E'\n') AS name_label
+              FROM planet_osm_point
+              WHERE highway = 'motorway_junction' OR highway = 'traffic_signals' OR junction = 'yes') AS _
+        ) AS junctions
+    properties:
+      minzoom: 11
+  - id: roads-text-ref
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            highway,
+            height,
+            width,
+            refs
+          FROM (
+            SELECT
+                osm_id,
+                way,
+                highway,
+                array_length(refs,1) AS height,
+                (SELECT MAX(char_length(ref)) FROM unnest(refs) AS u(ref)) AS width,
+                array_to_string(refs, E'\n') AS refs
+              FROM (
+                SELECT
+                    osm_id,
+                    way,
+                    COALESCE(
+                      CASE WHEN highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'busway', 'bus_guideway', 'residential') THEN highway ELSE NULL END,
+                      CASE WHEN aeroway IN ('runway', 'taxiway') THEN aeroway ELSE NULL END
+                    ) AS highway,
+                    string_to_array(ref, ';') AS refs
+                  FROM planet_osm_line
+                  WHERE (highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'unclassified', 'busway', 'bus_guideway', 'residential') OR aeroway IN ('runway', 'taxiway'))
+                    AND ref IS NOT NULL
+              ) AS p) AS q
+          WHERE height <= 4 AND width <= 11
+          ORDER BY
+            CASE
+              WHEN highway = 'motorway' THEN 38
+              WHEN highway = 'trunk' THEN 37
+              WHEN highway = 'primary' THEN 36
+              WHEN highway = 'secondary' THEN 35
+              WHEN highway = 'tertiary' THEN 34
+              WHEN highway = 'unclassified' THEN 33
+              WHEN highway = 'residential' THEN 32
+              WHEN highway = 'bus_guideway' THEN 31
+              WHEN highway = 'busway' THEN 30
+              WHEN highway = 'runway' THEN 6
+              WHEN highway = 'taxiway' THEN 5
+              ELSE NULL
+            END DESC NULLS LAST,
+            height DESC,
+            width DESC,
+            refs,
+            osm_id
+        ) AS roads_text_ref
+    properties:
+      minzoom: 13
+  - id: roads-area-text-name
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            way_pixels,
+            highway,
+            name_label[1] AS name,
+            name_label[3] AS font
+          FROM
+            (SELECT
+                way,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
+                COALESCE(highway, railway) AS highway,
+                carto_label_name(way, name, tags, E'\n') AS name_label
+              FROM planet_osm_polygon
+              WHERE highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'track', 'path', 'platform')
+                OR railway IN ('platform')) AS _
+          WHERE name_label[1] IS NOT NULL
+          ORDER BY way_pixels DESC
+        ) AS roads_area_text_name
+    properties:
+      minzoom: 15
+  - id: roads-text-name
+    class: directions
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            highway,
+            tunnel,
+            construction,
+            name_label[1] AS name,
+            name_label[3] AS font,
+            -- name,
+            oneway,
+            path_type
+          FROM
+            (SELECT
+                way,
+                CASE WHEN substr(highway, length(highway)-4, 5) = '_link' THEN substr(highway, 0, length(highway)-4) ELSE highway END AS highway,
+                CASE WHEN (tunnel = 'yes' OR tunnel = 'building_passage' OR covered = 'yes') THEN 'yes' ELSE 'no' END AS tunnel,
+                construction,
+                carto_label_name(way, name, tags, ' - ') AS name_label,
+                name,
+                CASE
+                  WHEN oneway IN ('yes', '-1') THEN oneway
+                  WHEN junction IN ('roundabout') AND (oneway IS NULL OR NOT oneway IN ('no', 'reversible')) THEN 'yes'
+                  ELSE NULL
+                END AS oneway,
+                carto_path_type(foot, bicycle, horse) AS path_type,
+                z_order,
+                COALESCE(layer, 0) AS layernotnull,
+                l.osm_id AS osm_id
+              FROM planet_osm_line l
+              JOIN (VALUES -- this join is also putting a condition on what is selected. features not matching it do not make it into the results.
+                  ('motorway', 380),
+                  ('trunk', 370),
+                  ('primary', 360),
+                  ('secondary', 350),
+                  ('tertiary', 340),
+                  ('residential', 330),
+                  ('unclassified', 330),
+                  ('road', 330),
+                  ('living_street', 320),
+                  ('pedestrian', 310),
+                  ('raceway', 300),
+                  ('motorway_link', 240),
+                  ('trunk_link', 230),
+                  ('primary_link', 220),
+                  ('secondary_link', 210),
+                  ('tertiary_link', 200),
+                  ('bus_guideway', 190),
+                  ('busway', 180),
+                  ('service', 150),
+                  ('construction', 10)
+                ) AS ordertable (highway, prio)
+                USING (highway)
+              WHERE highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link',
+              'tertiary', 'tertiary_link', 'residential', 'unclassified', 'road', 'service', 'pedestrian', 'raceway', 'living_street',
+              'construction', 'busway', 'bus_guideway')) AS _
+          ORDER BY
+            z_order DESC, -- put important roads first
+            layernotnull, -- put top layered roads first
+            length(name) DESC, -- Try to fit big labels in first
+            name DESC, -- Force a consistent ordering between differently named streets
+            osm_id DESC -- Force an ordering for streets of the same name, e.g. dualized roads
+        ) AS roads_text_name
+    properties:
+      minzoom: 13
+  - id: paths-text-name
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            highway,
+            name_label[1] AS name,
+            name_label[3] AS font
+          FROM
+            (SELECT
+                way,
+                highway,
+                carto_label_name(way, name, tags, ' - ') AS name_label
+              FROM planet_osm_line
+              WHERE highway IN ('bridleway', 'footway', 'cycleway', 'path', 'track', 'steps')) AS _
+        ) AS paths_text_name
+    properties:
+      minzoom: 15

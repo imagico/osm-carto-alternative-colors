@@ -1,0 +1,101 @@
+# ---------------------------------------------------------------------------
+#  landcover.mml
+#
+#  landcover layer
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            name,
+            religion,
+            crop,
+            surface,
+            sport,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
+            feature
+          FROM (SELECT
+              way, COALESCE(name_label[1], '') AS name, religion, crop, surface, sport, way_area, layer,
+              COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, military, "natural", tourism, highway, railway) AS feature
+            FROM (SELECT
+                way, carto_label_name(way, name, tags, E'\n') AS name_label,
+                ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
+                ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS golf,
+                ('amenity_' || (CASE WHEN amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'university', 'college', 'school',
+                                                      'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic')
+                                                      THEN amenity ELSE NULL END)) AS amenity,
+                ('landuse_' || (CASE WHEN landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
+                                                      'allotments', 'forest', 'farmyard', 'farmland', 'greenhouse_horticulture',
+                                                      'recreation_ground', 'village_green', 'retail', 'industrial', 'railway', 'commercial',
+                                                      'brownfield', 'landfill', 'construction', 'plant_nursery', 'salt_pond') THEN landuse ELSE NULL END)) AS landuse,
+                ('leisure_' || (CASE WHEN leisure IN ('swimming_pool', 'playground', 'park', 'recreation_ground', 'common', 'garden',
+                                                      'golf_course', 'miniature_golf', 'picnic_table', 'fitness_centre', 'sports_centre', 'stadium', 'pitch',
+                                                      'track', 'dog_park') THEN leisure ELSE NULL END)) AS leisure,
+                ('military_' || (CASE WHEN military IN ('danger_area') THEN military ELSE NULL END)) AS military,
+                ('natural_' || (CASE WHEN "natural" IN ('beach', 'shoal', 'heath', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub') THEN "natural" ELSE NULL END)) AS "natural",
+                ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
+                ('power_' || (CASE WHEN power IN ('station', 'sub_station', 'substation', 'generator') THEN power ELSE NULL END)) AS power,
+                ('tourism_' || (CASE WHEN tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site') THEN tourism ELSE NULL END)) AS tourism,
+                ('highway_' || (CASE WHEN highway IN ('services', 'rest_area') THEN highway ELSE NULL END)) AS highway,
+                ('railway_' || (CASE WHEN railway = 'station' THEN railway ELSE NULL END)) AS railway,
+                CASE WHEN religion IN ('christian', 'jewish', 'muslim') THEN religion ELSE 'INT-generic'::text END AS religion,
+                CASE WHEN landuse IN ('farmland') THEN tags->'crop' ELSE tags->'trees' END AS crop,
+                surface,
+                (tags->'sport') AS sport,
+                way_area, layer
+              FROM planet_osm_polygon
+              WHERE (landuse IS NOT NULL
+                OR leisure IS NOT NULL
+                OR (tags->'golf') IS NOT NULL
+                OR aeroway IN ('apron', 'aerodrome')
+                OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'university', 'college', 'school', 'hospital', 'kindergarten',
+                               'grave_yard', 'place_of_worship', 'prison', 'clinic')
+                OR military IN ('danger_area')
+                OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
+                OR power IN ('station', 'sub_station', 'substation', 'generator')
+                OR tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site')
+                OR highway IN ('services', 'rest_area')
+                OR railway = 'station')
+                AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+            ) AS landcover
+          ) AS landcover_all
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS features
+    properties:
+      cache-features: true
+      minzoom: 10

@@ -1,0 +1,73 @@
+# ---------------------------------------------------------------------------
+#  text-line.mml
+#
+#  general line labels layer
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: text-line
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            way_pixels,
+            feature,
+            access,
+            name_label[1] AS name,
+            name_label[3] AS font,
+            operator,
+            ref,
+            way_area,
+            is_building
+          FROM
+            (SELECT
+                way,
+                NULL as way_pixels,
+                COALESCE('man_made_' || man_made, 'waterway_' || waterway, 'natural_' || "natural") AS feature,
+                access,
+                carto_label_name(way, name, tags, E'\n') AS name_label,
+                tags->'operator' as operator,
+                ref,
+                NULL AS way_area,
+                CASE WHEN building = 'no' OR building IS NULL THEN 'no' ELSE 'yes' END AS is_building
+              FROM planet_osm_line
+              WHERE (man_made IN ('pier', 'breakwater', 'groyne', 'embankment')
+                  OR waterway IN ('dam', 'weir', 'lock_gate')
+                  OR "natural" IN ('cliff', 'earth_bank'))) AS _
+          WHERE name_label[1] IS NOT NULL OR ref IS NOT NULL OR operator IS NOT NULL
+        ) AS text_line
+    properties:
+      minzoom: 10

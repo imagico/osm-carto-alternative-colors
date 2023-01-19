@@ -1,0 +1,130 @@
+# ---------------------------------------------------------------------------
+#  water-backdrop.mml
+#
+#  water backdrop layers
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: ocean-lz-backdrop
+    class: "ocean-backdrop"
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM simplified_water_polygons
+        ) AS ocean_lz
+    properties:
+      minzoom: 7
+      maxzoom: 9
+  - id: ocean-backdrop
+    class: "ocean-backdrop"
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM water_polygons
+        ) AS ocean
+    properties:
+      minzoom: 10
+  - id: river-areas-backdrop
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            "natural",
+            waterway,
+            water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE
+            (waterway IN ('riverbank')
+              OR ("natural" IN ('water') AND water IN ('river', 'canal')))
+            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS river_areas_backdrop
+    properties:
+      minzoom: 7
+  - id: saltwater-areas-backdrop
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            "natural",
+            waterway,
+            water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            tags->'salt' as salt,
+            landuse,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE
+            (waterway IN ('dock')
+              OR landuse IN ('reservoir', 'basin')
+              OR "natural" IN ('water'))
+            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
+            -- water = ocean is for testing only
+            AND ((tags @> 'salt=>yes') OR water = 'ocean')
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS saltwater_areas
+    properties:
+      minzoom: 7
+  - id: water-areas-backdrop
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            ST_MakeEnvelope(-20037508.342789244, -20037508.342789244, 20037508.342789244, 20037508.342789244, 3857) AS way
+        ) AS water_areas_backdrop
+    properties:
+      minzoom: 7

@@ -1,0 +1,117 @@
+# ---------------------------------------------------------------------------
+#  water-barriers-line-simple.mml
+#
+#  water barriers layer (simplified, less expensive version)
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: water-barriers-line-simple
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (-- All of this assumes a metric coordinate system, won't work with geographic coordinates
+         -- This is the simplified version of the water-barrier rendering:
+         --  * always rendering lines and polygon directly
+         --  * construct lines from nodes but not take riverbank polygons into account there
+         -- First query: barriers mapped using ways
+         SELECT
+            way,
+            waterway,
+            'line' AS wtype
+          FROM planet_osm_line b
+          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
+         UNION ALL
+         -- Second query: barriers mapped using polygons
+         SELECT
+            way,
+            waterway,
+            'polygon' AS wtype
+          FROM planet_osm_polygon b
+          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
+         UNION ALL
+         -- Fifth query: barriers mapped using nodes on a waterway
+         SELECT
+             ST_MakeLine(ARRAY[
+               ST_Rotate(
+                 ST_SetSRID(ST_MakePoint(
+                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+               ), 3857), -angle, point),
+               point,
+               ST_Rotate(
+                 ST_SetSRID(ST_MakePoint(
+                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
+                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
+               ), 3857), angle, point)
+             ]) AS way,
+             waterway,
+             wtype
+           FROM
+             -- outer query: points with nominal contructed waterway width
+             -- in this simplified version we do not do the riverbank polygon analysis
+             (SELECT
+                 point,
+                 line,
+                 waterway,
+                 wtype,
+                 contructed_width,
+                 angle
+               FROM
+                 -- inner query: points with nominal contructed waterway width
+                 (SELECT DISTINCT ON (p.osm_id)
+                     p.way AS point,
+                     ST_LineSubstring(
+                       l.way,
+                       GREATEST(0.0, ST_LineLocatePoint(l.way, p.way)-1.0/ST_Length(l.way)),
+                       LEAST(1.0, ST_LineLocatePoint(l.way, p.way)+1.0/ST_Length(l.way))) AS line,
+                     p.waterway AS waterway,
+                     l.waterway AS wtype,
+                     (carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
+                       (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END) +
+                       (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
+                         NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
+                     (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
+                   FROM planet_osm_point p
+                   JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1)
+                   WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall') AND (p.way && !bbox!)
+                     AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+                   ORDER BY p.osm_id, contructed_width DESC,
+                     ST_LineLocatePoint(l.way, p.way) ASC -- this gives downstream waterways priority
+                 ) AS plines
+             ) AS plines2
+          WHERE line IS NOT NULL
+        ) AS water_barriers_line
+    properties:
+      minzoom: 11

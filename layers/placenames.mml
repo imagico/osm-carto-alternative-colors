@@ -1,0 +1,199 @@
+# ---------------------------------------------------------------------------
+#  placenames.mml
+#
+#  high priority placenames layers
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: country-names
+    class: country
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            way_pixels,
+            name_label[1] AS name,
+            name_label[3] AS font
+          FROM
+            (SELECT
+                way,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
+                carto_label_name(way, name, tags, E'\n') AS name_label
+              FROM planet_osm_polygon
+              WHERE boundary = 'administrative'
+                AND admin_level = '2'
+                AND way_area > 100*!pixel_width!::real*!pixel_height!::real
+              ORDER BY way_area DESC) AS _
+          WHERE name_label[1] IS NOT NULL
+        ) AS country_names
+    properties:
+      minzoom: 2
+  - id: capital-names
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            name_label[1] AS name,
+            name_label[3] AS font,
+            population,
+            dir
+          FROM
+            (SELECT
+                way,
+                carto_label_name(way, name, tags, E'\n') AS name_label,
+                CASE
+                  WHEN (tags->'population' ~ '^[0-9]{1,8}$') THEN (tags->'population')::INTEGER ELSE 0
+                END AS population,
+                round(ascii(md5(osm_id::text)) / 55) AS dir -- base direction factor on geometry to be consistent across metatiles
+              FROM planet_osm_point
+              WHERE place IN ('city', 'town', 'village', 'hamlet')
+                AND tags @> 'capital=>yes'
+              ORDER BY population DESC) AS _
+          WHERE name_label[1] IS NOT NULL
+        ) AS capital_names
+    properties:
+      minzoom: 3
+      maxzoom: 15
+  - id: state-names
+    class: state
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            way_pixels,
+            name_label[1] AS name,
+            name_label[3] AS font,
+            ref
+          FROM
+            (SELECT
+                way,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
+                carto_label_name(way, name, tags, E'\n') AS name_label,
+                ref
+              FROM planet_osm_polygon
+              WHERE boundary = 'administrative'
+                AND admin_level = '4'
+                AND way_area > 100*!pixel_width!::real*!pixel_height!::real
+              ORDER BY way_area DESC) AS _
+          WHERE name_label[1] IS NOT NULL
+        ) AS state_names
+    properties:
+      minzoom: 4
+  - id: placenames-medium
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            name_label[1] AS name,
+            name_label[3] AS font,
+            score,
+            CASE
+              WHEN (place = 'city') THEN 1
+              ELSE 2
+            END as category,
+            round(ascii(md5(osm_id::text)) / 55) AS dir -- base direction factor on geometry to be consistent across metatiles
+          FROM 
+            (SELECT
+                osm_id,
+                way,
+                place,
+                carto_label_name(way, name, tags, E'\n') AS name_label,
+                (
+                  (CASE
+                    WHEN (tags->'population' ~ '^[0-9]{1,8}$') THEN (tags->'population')::INTEGER
+                    WHEN (place = 'city') THEN 100000
+                    WHEN (place = 'town') THEN 1000
+                    ELSE 1
+                  END)
+                  *
+                  (CASE
+                    WHEN (tags @> 'capital=>4') THEN 2
+                    ELSE 1
+                  END)
+                ) AS score
+              FROM planet_osm_point
+              WHERE place IN ('city', 'town')
+                AND NOT (tags @> 'capital=>yes')
+            ) as p
+          WHERE name_label[1] IS NOT NULL
+          ORDER BY score DESC, length(name_label[1]) DESC, name_label[1]
+        ) AS placenames_medium
+    properties:
+      minzoom: 4
+      maxzoom: 15
+  - id: placenames-small
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            place,
+            -- for debugging: name_label[1]||' '||COALESCE(name_label[2], '')||' '||COALESCE(name_label[3], '') AS name,
+            name_label[1] AS name,
+            name_label[3] AS font
+          FROM
+            (SELECT
+                way,
+                place,
+                carto_label_name(way, name, tags, E'\n') AS name_label
+              FROM planet_osm_point
+              WHERE place IN ('village', 'hamlet')
+                 AND NOT tags @> 'capital=>yes'
+                 OR place IN ('suburb', 'neighbourhood', 'locality', 'isolated_dwelling', 'farm')) AS _
+          WHERE name_label[1] IS NOT NULL
+          ORDER BY CASE
+              WHEN place = 'suburb' THEN 3
+              WHEN place = 'village' THEN 4
+              WHEN place = 'hamlet' THEN 5
+              WHEN place = 'neighbourhood' THEN 6
+              WHEN place = 'locality' THEN 7
+              WHEN place = 'isolated_dwelling' THEN 8
+              WHEN place = 'farm' THEN 9
+            END ASC, length(name_label[1]) DESC, name_label[1]
+        ) AS placenames_small
+    properties:
+      minzoom: 12

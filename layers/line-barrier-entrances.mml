@@ -1,0 +1,97 @@
+# ---------------------------------------------------------------------------
+#  line-barrier-entrances.mml
+#
+#  barrier=entrance on line barriers layer
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: line-barrier-entrances
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      geometry_table: planet_osm_point
+      table: |-
+        (SELECT way, COALESCE(historic, barrier) AS feature FROM
+          (WITH entrance_lines AS
+            (SELECT
+              ST_Intersection(
+                l.way,
+                ST_Buffer(
+                  e.way,
+                  (COALESCE(
+                    (SELECT
+                       GREATEST(
+                         carto_highway_line_width(highway, service, z(!scale_denominator!)),
+                         carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!))
+                       FROM planet_osm_line h 
+                       WHERE ST_Intersects(h.way, e.way) AND highway IN 
+                        ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
+                         'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
+                         'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                         'busway', 'bus_guideway')
+                        ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
+                    ),
+                    carto_highway_line_width('footway', z(!scale_denominator!))
+                  ) + 2.5 + carto_barrier_line_width(
+                        CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
+                        z(!scale_denominator!)
+                  ))*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)
+                )
+              ) AS way,
+              ('barrier_' || (CASE WHEN l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                    'handrail', 'hedge', 'retaining_wall', 'wall') THEN l.barrier ELSE NULL END)) AS barrier,
+              ('historic_' || (CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE NULL END)) AS historic
+              FROM planet_osm_point e
+              JOIN planet_osm_line l ON ST_Intersects(l.way, e.way)
+              WHERE e.barrier IN ('entrance')
+                AND (e.way && ST_Expand(!bbox!, (0.5*(carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 +
+                     carto_barrier_line_width('citywalls', z(!scale_denominator!)))*NULLIF(!scale_denominator!*0.001*0.28,0))))
+                AND (l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                    'handrail', 'hedge', 'retaining_wall', 'wall')
+                  OR l.historic = 'citywalls')
+                AND (l.waterway IS NULL OR l.waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi'))
+                GROUP BY e.way, l.way, l.barrier, l.historic)
+           SELECT
+               ST_StartPoint(way) AS way,
+               historic, barrier
+             FROM entrance_lines
+           UNION ALL
+           SELECT
+               ST_EndPoint(way) AS way,
+               historic, barrier
+             FROM entrance_lines
+          ) AS lbe
+        ) AS line_barrier_entrances
+    properties:
+      minzoom: 16

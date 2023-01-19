@@ -1,0 +1,137 @@
+# ---------------------------------------------------------------------------
+#  highway-embankments.mml
+#
+#  implicit embankments/cuttings on roads
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: highway-embankments
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            ST_Difference(
+              ST_Boundary(way),
+              -- this clips the embankment/cutting outlines with the adjacent lines that are not embankment/cutting
+              (SELECT
+                  COALESCE(
+                    ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
+                      (0.5*
+                        CASE WHEN o.barrier = 'hedge' THEN
+                          GREATEST(
+                            carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
+                            LEAST(carto_treerow_line_width_mapped(o.barrier, o.tags->'width', o.tags->'height', !bbox!, !scale_denominator!), 60)
+                          )
+                        ELSE
+                          GREATEST(
+                            carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
+                            carto_highway_line_width_mapped(o.highway, o.tags->'width', o.tags->'lanes', !bbox!, !scale_denominator!)
+                          ) +
+                          (CASE WHEN
+                            z(!scale_denominator!) >= 18 AND
+                            ((o.tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
+                             (o.tags->'sidewalk:left') IN ('yes') OR
+                             (o.tags->'sidewalk:right') IN ('yes') OR
+                             (o.tags->'cycleway') IN ('track') OR
+                             (o.tags->'cycleway:left')  IN ('track') OR
+                             (o.tags->'cycleway:right') IN ('track')) THEN 7.5
+                           WHEN
+                            z(!scale_denominator!) >= 18 AND
+                            ((o.tags->'handrail') IN ('yes') OR
+                             (o.tags->'handrail:left') IN ('yes') OR
+                             (o.tags->'handrail:right') IN ('yes')) THEN 4.0
+                           ELSE 0.0 END)
+                        END + 5.0
+                      )*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                FROM planet_osm_line o
+                WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.barrier = 'hedge' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
+                  carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)) > 0.0 AND
+                  ST_DWithin(l.line, o.way, 0.1) AND
+                  o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
+                  (
+                    (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
+                    (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
+                    (l.type = 'hedge_bank' AND NOT(o.tags @> 'hedge=>hedge_bank')) OR
+                    (l.type = 'dyke' AND (o.man_made IS NULL OR o.man_made NOT IN ('dyke')))
+                  )
+              )
+            ) AS way,
+            type
+          FROM
+            -- this queries the lines with embankment/cutting and buffers + aggregates them separately for embankment and cutting
+            (SELECT
+                ST_Union(ST_Buffer(way, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))) AS way,
+                ST_Collect(way) AS line,
+                type
+              FROM
+                (SELECT
+                    way,
+                    GREATEST(
+                      carto_highway_line_width(COALESCE(highway, railway, waterway, man_made, barrier), service, z(!scale_denominator!)),
+                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!)) + 
+                    (CASE WHEN
+                      z(!scale_denominator!) >= 18 AND
+                      ((tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
+                       (tags->'sidewalk:left') IN ('yes') OR
+                       (tags->'sidewalk:right') IN ('yes') OR
+                       (tags->'cycleway') IN ('track') OR
+                       (tags->'cycleway:left')  IN ('track') OR
+                       (tags->'cycleway:right') IN ('track')) THEN 7.5
+                      WHEN
+                       z(!scale_denominator!) >= 18 AND
+                       ((tags->'handrail') IN ('yes') OR
+                        (tags->'handrail:left') IN ('yes') OR
+                        (tags->'handrail:right') IN ('yes')) THEN 4.0
+                      ELSE 0.0 END) AS width_px,
+                    (CASE
+                       WHEN (tags @> 'cutting=>yes') THEN 'cutting'
+                       WHEN (man_made = 'dyke') THEN 'dyke'
+                       WHEN (barrier = 'hedge') THEN 'hedge_bank'
+                       ELSE 'embankment'
+                    END) AS type
+                  FROM planet_osm_line
+                  WHERE ((man_made = 'dyke') OR (barrier = 'hedge' AND (tags @> 'hedge=>hedge_bank')) OR
+                    ((highway IS NOT NULL OR railway IS NOT NULL OR (man_made = 'dyke') OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
+                    AND ((tags @> 'embankment=>yes') OR (tags @> 'cutting=>yes'))))
+                    AND way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                ) AS embankments
+              WHERE width_px > 0.0
+              GROUP BY type
+            ) AS l
+        ) AS highway_embankments
+    properties:
+      minzoom: 16
