@@ -1,29 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   xmlns:dc="http://purl.org/dc/elements/1.1/"
-   xmlns:cc="http://creativecommons.org/ns#"
-   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-   xmlns:svg="http://www.w3.org/2000/svg"
-   xmlns="http://www.w3.org/2000/svg"
    version="1.1"
    id="svg2"
    viewBox="0 0 14 14"
    height="14"
-   width="14">
-  <metadata
-     id="metadata24">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs22" />
+   width="14"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
   <rect
      width="14"
      height="14"
@@ -31,55 +17,7 @@
      y="0"
      id="canvas"
      style="fill:none;stroke:none;visibility:hidden" />
-  <g
-     transform="translate(0,1)"
-     id="hbars">
-    <rect
-       id="rect5"
-       height="0.5"
-       width="11"
-       y="6"
-       x="1" />
-    <rect
-       id="rect7"
-       height="0.5"
-       width="9.5"
-       y="8"
-       x="2" />
-  </g>
-  <g
-     transform="translate(0,1)"
-     id="vbars">
-    <rect
-       id="rect10"
-       height="5.5"
-       width="0.5"
-       y="4.5"
-       x="3" />
-    <rect
-       id="rect12"
-       height="5.5"
-       width="0.5"
-       y="4.5"
-       x="5" />
-    <rect
-       id="rect14"
-       height="5.5"
-       width="0.5"
-       y="4.5"
-       x="7.5" />
-    <rect
-       id="rect16"
-       height="5.5"
-       width="0.5"
-       y="4.5"
-       x="9.5" />
-  </g>
   <path
-     d="m 5.9,5 2,-3 A 0.50618672,0.50618672 0 0 1 8.83,2.4 L 7.1,5 Z"
-     id="handle" />
-  <path
-     style="fill-rule:evenodd"
-     d="m 0,5 13,0 -2,7 -9,0 z m 1.25,1 10.5,0 -1.5,5 -7.5,0 z"
-     id="body" />
+     id="rect5"
+     d="M 8.3066406 1.6972656 A 0.50618672 0.50618672 0 0 0 7.9003906 2 L 5.9003906 5 L 0 5 L 2 12 L 11 12 L 13 5 L 7.0996094 5 L 8.8300781 2.4003906 A 0.50618672 0.50618672 0 0 0 8.3066406 1.6972656 z M 1.25 6 L 3 6 L 3 7 L 1.5507812 7 L 1.25 6 z M 3.5 6 L 5 6 L 5 7 L 3.5 7 L 3.5 6 z M 5.5 6 L 7.5 6 L 7.5 7 L 5.5 7 L 5.5 6 z M 8 6 L 9.5 6 L 9.5 7 L 8 7 L 8 6 z M 10 6 L 11.75 6 L 11.449219 7 L 10 7 L 10 6 z M 1.6992188 7.5 L 3 7.5 L 3 9 L 2.1503906 9 L 1.6992188 7.5 z M 3.5 7.5 L 5 7.5 L 5 9 L 3.5 9 L 3.5 7.5 z M 5.5 7.5 L 7.5 7.5 L 7.5 9 L 5.5 9 L 5.5 7.5 z M 8 7.5 L 9.5 7.5 L 9.5 9 L 8 9 L 8 7.5 z M 10 7.5 L 11.300781 7.5 L 10.849609 9 L 10 9 L 10 7.5 z M 2.3007812 9.5 L 3 9.5 L 3 11 L 2.75 11 L 2.3007812 9.5 z M 3.5 9.5 L 5 9.5 L 5 11 L 3.5 11 L 3.5 9.5 z M 5.5 9.5 L 7.5 9.5 L 7.5 11 L 5.5 11 L 5.5 9.5 z M 8 9.5 L 9.5 9.5 L 9.5 11 L 8 11 L 8 9.5 z M 10 9.5 L 10.699219 9.5 L 10.25 11 L 10 11 L 10 9.5 z " style="fill:#000000" />
 </svg>
