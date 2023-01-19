@@ -35,6 +35,10 @@
     }
     text-fill: @country-labels;
     text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-halo-fill: @standard-halo-fill;
     text-halo-radius: @standard-halo-radius * 1.5;
     text-placement: interior;
@@ -51,6 +55,10 @@
     text-margin: 7.0; // 0.7 em
     text-fill: @state-labels;
     text-face-name: @oblique-fonts;
+    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
+    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
+    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
+    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
     text-halo-fill: @standard-halo-fill;
     text-halo-radius: @standard-halo-radius * 1.5;
     text-placement: interior;
@@ -71,6 +79,10 @@
     shield-text-dy: 6;
     shield-name: '[name]';
     shield-face-name: @book-fonts;
+    [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+    [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+    [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+    [font = 'ur'] { shield-face-name: @book-fonts-ur; }
     shield-fill: @placenames;
     shield-size: 11;
     shield-wrap-width: 30; // 2.7 em
@@ -104,6 +116,10 @@
   [zoom >= 8] {
     text-name: '[name]';
     text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-fill: @placenames;
     text-size: 13;
     text-wrap-width: 65; // 5.0 em
@@ -136,6 +152,10 @@
       shield-text-dy: 4;
       shield-name: '[name]';
       shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
       shield-fill: @placenames;
       shield-size: 11;
       shield-wrap-width: 30; // 2.7 em
@@ -171,6 +191,10 @@
     [zoom >= 8][score >= 400000] {
       text-name: '[name]';
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-fill: @placenames;
       text-size: 13;
       text-wrap-width: 65; // 5.0 em
@@ -206,6 +230,10 @@
       shield-size: 10;
       shield-fill: @placenames;
       shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
       shield-halo-fill: @standard-halo-fill;
       shield-halo-radius: @standard-halo-radius * 1.5;
       shield-wrap-width: 30; // 3.0 em
@@ -226,6 +254,10 @@
       text-size: 10;
       text-fill: @placenames;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-fill: @standard-halo-fill;
       text-halo-radius: @standard-halo-radius * 1.5;
       text-wrap-width: 40; // 4.0 em
@@ -266,6 +298,10 @@
       text-size: 10;
       text-fill: @placenames;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-fill: @standard-halo-fill;
       text-halo-radius: @standard-halo-radius * 1.5;
       text-wrap-width: 45; // 4.5 em
@@ -299,6 +335,10 @@
     text-size: 11;
     text-fill: @placenames;
     text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-halo-fill: @standard-halo-fill;
     text-halo-radius: @standard-halo-radius * 1.5;
     text-wrap-width: 55; // 5.0 em
@@ -334,6 +374,10 @@
       text-size: 10;
       text-fill: @placenames;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-fill: @standard-halo-fill;
       text-halo-radius: @standard-halo-radius * 1.5;
       text-wrap-width: 50; // 5.0 em
@@ -380,6 +424,11 @@
       text-size: 10;
       text-fill: @placenames;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-fill: @standard-halo-fill;
       text-halo-radius: @standard-halo-radius * 1.5;
       text-wrap-width: 45; // 4.5 em

@@ -5,7 +5,7 @@
 point:
   # The point table is small, but so are the partial indexes
   place:
-    where: place IS NOT NULL AND name IS NOT NULL
+    where: place IS NOT NULL
   water_barrier:
     where: waterway IN ('dam', 'weir', 'lock_gate', 'waterfall')
   barrier_entrance:

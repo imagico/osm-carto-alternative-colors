@@ -3565,6 +3565,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-fill: @junction-text-color;
       text-min-distance: 2;
       text-face-name: @oblique-fonts;
+      [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
+      [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
+      [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
+      [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       text-wrap-character: ";";
       text-wrap-width: 2; // effectively break after every wrap character
@@ -3591,6 +3595,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-size: 10;
       text-fill: black;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       text-wrap-width: 30;  // 3.0 em
@@ -3604,46 +3612,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         [highway = 'traffic_signals'] {
           text-dy: 14;
         }
-      }
-    }
-  }
-}
-
-#bridge-text  {
-  [man_made = 'bridge'] {
-    [zoom >= 12][way_pixels > 62.5] {
-      text-name: "[name]";
-      text-size: 10;
-      text-wrap-width: 30; // 3 em
-      text-line-spacing: -1.2; // -0.15 em
-      text-fill: black;
-      text-face-name: @book-fonts;
-      text-halo-radius: @standard-halo-radius;
-      text-halo-fill: @standard-halo-fill;
-      text-min-distance: 2;
-      text-wrap-width: 30;
-      text-placement: interior;
-      [way_pixels > 250] {
-        text-size: 11;
-        text-wrap-width: 33; // 3 em
-        text-line-spacing: -1.35; // -0.15 em
-      }
-      [way_pixels > 1000] {
-        text-size: 12;
-        text-wrap-width: 36; // 3 em
-        text-line-spacing: -1.65; // -0.15 em
-        text-halo-radius: @standard-halo-radius * 1.5;
-      }
-      [way_pixels > 4000] {
-        text-size: 13;
-        text-wrap-width: 39; // 3 em
-        text-line-spacing: -1.80; // -0.15 em
-      }
-      [way_pixels > 16000] {
-        text-size: 14;
-        text-wrap-width: 42; // 3 em
-        text-line-spacing: -1.95; // -0.15 em
-        text-halo-radius: 2;
       }
     }
   }
@@ -3828,6 +3796,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-clip: false;
       text-placement: line;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       [tunnel = 'no'] {
         text-halo-radius: @standard-halo-radius;
         [highway = 'motorway'] { text-halo-fill: @motorway-fill; }
@@ -3858,6 +3830,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-clip: false;
       text-placement: line;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @secondary-fill;
     }
@@ -3884,6 +3860,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-clip: false;
       text-placement: line;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @tertiary-fill;
     }
@@ -3901,9 +3881,13 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     text-spacing: 300;
     text-clip: false;
     text-placement: line;
+    text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
-    text-face-name: @book-fonts;
 
     [zoom >= 17] {
       text-size: 11;
@@ -3931,9 +3915,13 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-spacing: 300;
       text-clip: false;
       text-placement: line;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @residential-fill;
-      text-face-name: @book-fonts;
     }
     [zoom >= 16] {
       text-size: 9;
@@ -3959,10 +3947,14 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-spacing: 300;
       text-clip: false;
       text-placement: line;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       [highway = 'raceway'] { text-halo-fill: @raceway-fill; }
       [highway = 'service'] { text-halo-fill: @service-fill; }
-      text-face-name: @book-fonts;
     }
     [zoom >= 17] {
       text-size: 11;
@@ -3980,10 +3972,14 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-spacing: 300;
       text-clip: false;
       text-placement: line;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-halo-radius: @standard-halo-radius;
       [highway = 'living_street'] { text-halo-fill: @living-street-fill; }
       [highway = 'pedestrian'] { text-halo-fill: @pedestrian-fill; }
-      text-face-name: @book-fonts;
     }
     [zoom >= 16] {
       text-size: 9;
@@ -4003,6 +3999,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     text-name: "[name]";
     text-size: 11;
     text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-placement: interior;
     text-wrap-width: 30; // 2.7 em
     text-line-spacing: -1.7; // -0.15 em
@@ -4021,6 +4021,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-clip: false;
       text-placement: line;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-vertical-alignment: middle;
       text-dy: 5;
     }
@@ -4049,6 +4053,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       text-clip: false;
       text-placement: line;
       text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
       text-vertical-alignment: middle;
       text-dy: 7;
     }

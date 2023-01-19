@@ -516,7 +516,7 @@
 
     [feature = 'power_station'][zoom >= 10],
     [feature = 'power_generator'][zoom >= 10],
-    [feature = 'power_sub_station'][zoom >= 13],
+    [feature = 'power_plant'][zoom >= 10],
     [feature = 'power_substation'][zoom >= 13] {
       polygon-fill: @built-up-lowzoom;
       [zoom >= 13] {
@@ -861,7 +861,7 @@
         [way_pixels >= 64] { polygon-gamma: 0.3;  }
         [zoom >= 15][way_pixels >= 480] {
           [sport = 'soccer'] {
-            marker-file: url('symbols/soccer.svg');
+            marker-file: url('symbols/sport/soccer.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -870,7 +870,7 @@
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
           }
           [sport = 'handball'] {
-            marker-file: url('symbols/handball.svg');
+            marker-file: url('symbols/sport/handball.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -879,7 +879,7 @@
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
           }
           [sport = 'baseball'] {
-            marker-file: url('symbols/baseball.svg');
+            marker-file: url('symbols/sport/baseball.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -888,7 +888,7 @@
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
           }
           [sport = 'basketball'] {
-            marker-file: url('symbols/basketball.svg');
+            marker-file: url('symbols/sport/basketball.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -897,7 +897,7 @@
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
           }
           [sport = 'american_football'] {
-            marker-file: url('symbols/american_football.svg');
+            marker-file: url('symbols/sport/american_football.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -906,7 +906,7 @@
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
           }
           [sport = 'tennis'] {
-            marker-file: url('symbols/tennis.svg');
+            marker-file: url('symbols/sport/tennis.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -915,7 +915,7 @@
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
           }
           [sport = 'skateboard'] {
-            marker-file: url('symbols/skateboard.svg');
+            marker-file: url('symbols/sport/skateboard.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -925,7 +925,7 @@
           }
           [sport = 'boules'],
           [sport = 'bowls'] {
-            marker-file: url('symbols/boules.svg');
+            marker-file: url('symbols/sport/boules.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -935,7 +935,7 @@
           }
           [sport = 'volleyball'],
           [sport = 'beachvolleyball'] {
-            marker-file: url('symbols/volleyball.svg');
+            marker-file: url('symbols/sport/volleyball.svg');
             marker-placement: interior;
             marker-clip: false;
             marker-fill: desaturate(darken(@pitch, 16%), 5%);
@@ -1324,6 +1324,10 @@
     }
     text-size: 10;
     text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-placement: line;
     text-dy: 8;
     text-vertical-alignment: middle;

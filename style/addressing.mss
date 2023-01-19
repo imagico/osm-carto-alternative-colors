@@ -45,6 +45,10 @@ no official postal addresses) */
     text-name: "[name]";
     text-placement: interior;
     text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
     text-fill: #444;
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;

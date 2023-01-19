@@ -79,3 +79,15 @@ sources:
         - ne_110m_admin_0_boundary_lines_land.prj
         - ne_110m_admin_0_boundary_lines_land.shp
         - ne_110m_admin_0_boundary_lines_land.shx
+  language_regions:
+    type: shp
+    url: https://imagico.de/files/language_regions.zip
+    file: language_regions/language_regions.shp
+    archive:
+      format: zip
+      files:
+        - language_regions/language_regions.cpg
+        - language_regions/language_regions.dbf
+        - language_regions/language_regions.prj
+        - language_regions/language_regions.shp
+        - language_regions/language_regions.shx

@@ -1,0 +1,397 @@
+# ---------------------------------------------------------------------------
+#  layers.yaml
+#
+#  input for scripts/assemble_project.py
+#
+#  defines available layers and tags of those for the style
+#  so they can assembled into a project.mml file according to tags
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+
+layers:
+  header:
+    source: layers/header.mml
+    stylesheets:
+      - style/style.mss
+      - style/fonts.mss
+  landcover-low-zoom:
+    source: layers/landcover-low-zoom.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  landcover:
+    source: layers/landcover.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  builtup:
+    source: layers/builtup.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  landcover-line:
+    source: layers/landcover-line.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  icesheet-poly:
+    source: layers/icesheet-poly.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  water-lines-casing:
+    source: layers/water-lines-casing.mml
+    stylesheets:
+      - style/water.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  rivers-low-zoom:
+    source: layers/rivers-low-zoom.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  lakes-low-zoom:
+    source: layers/lakes-low-zoom.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  water-areas:
+    source: layers/water-areas.mml
+    stylesheets:
+      - style/water.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  ocean-low-zoom:
+    source: layers/ocean-low-zoom.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  ocean:
+    source: layers/ocean.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  landcover-water:
+    source: layers/landcover-water.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  water-lines:
+    source: layers/water-lines.mml
+    stylesheets:
+      - style/water.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  water-backdrop:
+    source: layers/water-backdrop.mml
+    stylesheets:
+      - style/water.mss
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  landcover-area-symbols:
+    source: layers/landcover-area-symbols.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  icesheet-outlines:
+    source: layers/icesheet-outlines.mml
+    stylesheets:
+      - style/shapefiles.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  cliffs:
+    source: layers/cliffs.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  highway-embankments:
+    source: layers/highway-embankments.mml
+    stylesheets:
+      - style/roads.mss
+    tags:
+      - ac
+  marinas-area:
+    source: layers/marinas-area.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  water-barriers-line-simple:
+    source: layers/water-barriers-line-simple.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - simple
+  water-barriers-line:
+    source: layers/water-barriers-line.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - ac
+  springs-connected:
+    source: layers/springs-connected.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  piers:
+    source: layers/piers.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  bridge:
+    source: layers/bridge.mml
+    stylesheets:
+      - style/buildings.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  buildings:
+    source: layers/buildings.mml
+    stylesheets:
+      - style/buildings.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  landuse-overlay-lz:
+    source: layers/landuse-overlay-lz.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  ferry-routes-lz:
+    source: layers/ferry-routes-lz.mml
+    stylesheets:
+      - style/ferry-routes.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  roads-low-zoom:
+    source: layers/roads-low-zoom.mml
+    stylesheets:
+      - style/roads.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  roads:
+    source: layers/roads.mml
+    stylesheets:
+      - style/roads.mss
+      - style/road-colors-generated.mss
+      - style/line-widths-generated.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  golf-lines:
+    source: layers/golf-lines.mml
+    stylesheets:
+      - style/golf.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  aerialways:
+    source: layers/aerialways.mml
+    stylesheets:
+      - style/aerialways.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  admin:
+    source: layers/admin.mml
+    stylesheets:
+      - style/admin.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  admin:
+    source: layers/admin.mml
+    stylesheets:
+      - style/admin.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  power-line:
+    source: layers/power-line.mml
+    stylesheets:
+      - style/power.mss
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  tourism-boundary:
+    source: layers/tourism-boundary.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  trees:
+    source: layers/trees.mml
+    stylesheets:
+      - style/amenity-points.mss
+    tags:
+      - ac
+  placenames:
+    source: layers/placenames.mml
+    stylesheets:
+      - style/placenames.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  line-barrier-entrances:
+    source: layers/line-barrier-entrances.mml
+    stylesheets:
+      - style/landcover.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  amenity-points:
+    source: layers/symbols-labels-generated.mml
+    stylesheets:
+      - style/symbols-labels-generated.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  power-towers:
+    source: layers/power-towers.mml
+    stylesheets:
+      - style/power.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  road-text:
+    source: layers/road-text.mml
+    stylesheets:
+      - style/roads.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  text-poly-low-zoom:
+    source: layers/text-poly-low-zoom.mml
+    stylesheets:
+      - style/amenity-points.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  text-line:
+    source: layers/text-line.mml
+    stylesheets:
+      - style/landcover.mss
+      - style/water-features.mss
+    tags:
+      - ac
+      - simple
+      - legacy
+  minor-labels:
+    source: layers/minor-labels.mml
+    stylesheets:
+      - style/addressing.mss
+      - style/water.mss
+      - style/ferry-routes.mss
+      - style/admin.mss
+    tags:
+      - ac
+      - simple
+      - legacy

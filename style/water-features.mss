@@ -77,36 +77,36 @@
   }
 
   [waterway = 'lock_gate'][zoom >= 12] {
-      [wtype = 'river'],
-      [wtype = 'canal'],
-      [wtype = 'line'],
-      [wtype = 'polygon'],
-      [zoom >= 13] {
-        line-width: 1;
-        [wtype = 'river'][zoom >= 13],
-        [zoom >= 14] {
-          line-width: 1.5;
-          [zoom >= 16] {
-            line-width: 2;
-          }
+    [wtype = 'river'],
+    [wtype = 'canal'],
+    [wtype = 'line'],
+    [wtype = 'polygon'],
+    [zoom >= 13] {
+      line-width: 1;
+      [wtype = 'river'][zoom >= 13],
+      [zoom >= 14] {
+        line-width: 1.5;
+        [zoom >= 16] {
+          line-width: 2;
         }
-        line-color: @lock-gate-line;
       }
+      line-color: @lock-gate-line;
+    }
   }
+}
 
+#water-barriers-line {
   [waterway = 'waterfall'] {
-    #water-barriers-line {
-      [wtype = 'river'][zoom >= 11],
-      [wtype = 'canal'][zoom >= 12],
-      [zoom >= 13] {
-        line-width: 1;
-        [wtype = 'river'][zoom >= 13],
-        [wtype = 'canal'][zoom >= 14],
-        [zoom >= 15] {
-          line-width: 1.5;
-        }
-        line-color: @waterfall-line;
+    [wtype = 'river'][zoom >= 11],
+    [wtype = 'canal'][zoom >= 12],
+    [zoom >= 13] {
+      line-width: 1;
+      [wtype = 'river'][zoom >= 13],
+      [wtype = 'canal'][zoom >= 14],
+      [zoom >= 15] {
+        line-width: 1.5;
       }
+      line-color: @waterfall-line;
     }
   }
 }
@@ -123,30 +123,31 @@
   }
 }
 
-#piers-poly, #piers-line {
+#piers-poly {
   [man_made = 'pier'][zoom >= 12] {
-    #piers-poly {
-      polygon-fill: @land-color;
-    }
-    #piers-line {
-      line-width: 1.5;
-      line-color: @land-color;
-      [zoom >= 13] { line-width: 3; }
-      [zoom >= 16] { line-width: 7; }
-    }
+    polygon-fill: @land-color;
   }
 
   [man_made = 'breakwater'][zoom >= 12],
   [man_made = 'groyne'][zoom >= 12] {
-    #piers-poly {
-      polygon-fill: @breakwater-color;
-    }
-    #piers-line {
-      line-width: 1;
-      line-color: @breakwater-color;
-      [zoom >= 13] { line-width: 2; }
-      [zoom >= 16] { line-width: 4; }
-    }
+    polygon-fill: @breakwater-color;
+  }
+}
+
+#piers-line {
+  [man_made = 'pier'][zoom >= 12] {
+    line-width: 1.5;
+    line-color: @land-color;
+    [zoom >= 13] { line-width: 3; }
+    [zoom >= 16] { line-width: 7; }
+  }
+
+  [man_made = 'breakwater'][zoom >= 12],
+  [man_made = 'groyne'][zoom >= 12] {
+    line-width: 1;
+    line-color: @breakwater-color;
+    [zoom >= 13] { line-width: 2; }
+    [zoom >= 16] { line-width: 4; }
   }
 }
 
@@ -173,67 +174,31 @@
   }
 }
 
-.text,
-#text-line {
+#text-line[zoom >= 15] {
   [feature = 'waterway_dam'],
   [feature = 'waterway_weir'],
   [feature = 'waterway_lock_gate'] {
-    #text-poly[zoom >= 15],
-    #text-line[zoom >= 15],
-    #text-point[zoom >= 17] {
-      text-name: "[name]";
-      text-halo-radius: @standard-halo-radius;
-      text-halo-fill: @standard-halo-fill;
-      text-fill: #222;
-      text-size: 10;
-      text-face-name: @book-fonts;
-      #text-poly {
-        text-placement: interior;
-      }
-      #text-line {
-        text-placement: line;
-        text-dy: 8;
-        text-spacing: 400;
-      }
-      #text-point {
-        text-placement: point;
-        text-dy: 8;
-      }
-    }
-  }
-
-  [feature = 'man_made_breakwater'][zoom >= 15],
-  [feature = 'man_made_groyne'][zoom >= 15],
-  [feature = 'man_made_pier'][zoom >= 15] {
-    #text-poly,
-    #text-line {
-      text-name: "[name]";
-      text-halo-radius: @standard-halo-radius;
-      text-halo-fill: @standard-halo-fill;
-      text-fill: #222;
-      text-size: 10;
-      text-face-name: @book-fonts;
-      #text-poly {
-        text-placement: interior;
-      }
-      #text-line {
-        text-placement: line;
-        text-spacing: 400;
-      }
-    }
-  }
-}
-
-
-#text-point {
-  [feature = 'waterway_waterfall'][zoom >= 15] {
     text-name: "[name]";
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
-    text-fill: @water-text;
+    text-fill: #222;
     text-size: 10;
     text-face-name: @book-fonts;
-    text-placement: point;
+    text-placement: line;
     text-dy: 8;
+    text-spacing: 400;
+  }
+
+  [feature = 'man_made_breakwater'],
+  [feature = 'man_made_groyne'],
+  [feature = 'man_made_pier'] {
+    text-name: "[name]";
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+    text-fill: #222;
+    text-size: 10;
+    text-face-name: @book-fonts;
+    text-placement: line;
+    text-spacing: 400;
   }
 }

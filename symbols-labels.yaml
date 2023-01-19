@@ -1,0 +1,3087 @@
+# ---------------------------------------------------------------------------
+#  symbols_labels.yaml
+#
+#  input for scripts/generate_symbols_labels.py
+#
+#  defines how point symbols and labels are rendered by the style
+#  for file syntax see comments below
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+
+# General settings are given here - some can be overridden by command line
+# parameters
+#
+# database access is needed to determine which tags have columns 
+# and which are in hstore
+#
+# labels_symbols decided if symbols and labels are rendered separately
+# (as traditionally in OSM-Carto) or preferably in combination (using shield
+# symbolizers).
+
+settings:
+  database: gis
+  layer: amenity-points
+  min_zoom: 10
+  mml: layers/symbols-labels-generated.mml
+  mss: style/symbols-labels-generated.mss
+  table_points: planet_osm_point
+  table_lines: planet_osm_line
+  table_polygons: planet_osm_polygon
+  #labels_symbols: separate
+  labels_symbols: combined
+
+# For tag interpretation priorities for geometries with tags
+# matching different feature types:
+#
+# The following key list prioritizes primary keys.
+# Priorities in the feature parameters will overrride this
+
+keys:
+  - aeroway
+  - tourism
+  - amenity
+  - office
+  - advertising
+  - emergency
+  - shop
+  - leisure
+  - power
+  - man_made
+  - landuse
+  - natural
+  - waterway
+  - place
+  - historic
+  - military
+  - highway
+  - ford
+  - boundary
+  - barrier
+  - golf
+
+# colors used for symbols and labels
+# these are defined here and not in MSS only because the SVGs
+# need to be colored for use in shield symbolizers
+
+colors:
+  marina-text: "#576ddf"
+  # darken(#4aa5fa, 25%);
+  wetland-text: "#0665bf"
+  shop-icon: "#ac39ac"
+  shop-text: "#939"
+  transportation-icon: &transportation-icon "#8461C4"
+  # darken(@transportation-icon, 10%);
+  transportation-text: &transportation-text "#6942b0"
+  airtransport: *transportation-icon
+  accommodation-icon: *transportation-icon
+  accommodation-text: *transportation-text
+  health-color: &health-color "#da0092"
+  health-icon: *health-color
+  health-text: *health-color
+  amenity-brown: &amenity-brown "#734a08"
+  amenity-icon: *amenity-brown
+  amenity-text: *amenity-brown
+  gastronomy-icon: *amenity-brown
+  gastronomy-text: *amenity-brown
+  memorial-icon: *amenity-brown
+  memorial-text: *amenity-brown
+  culture-icon: *amenity-brown
+  culture-text: *amenity-brown
+  public-service-icon: *amenity-brown
+  public-service-text: *amenity-brown
+  office-icon: &office-icon "#4863A0"
+  office-text: *office-icon
+  man-made-icon: &man-made-icon "#555"
+  man-made-text: "#000000"
+  cave-icon: "#000000"
+  cave-text: "#000000"
+  island-text: "#000000"
+  bridge-text: "#000000"
+  advertising-grey: *man-made-icon
+  landform-icon: "#d08f55"
+  # darken(@landform-color, 30%);
+  landform-text: "#6e441e"
+  leisure-icon: *amenity-brown
+  leisure-text: *amenity-brown
+  airtransport-icon: *transportation-icon
+  airtransport-text: *transportation-text
+  water-icon: "#24a6cc"
+  water-hot: "#ff4020"
+  water-text: "#2f8099"
+  place-of-worship-icon: "#000000"
+  place-of-worship-text: "#000033"
+  station-icon: "#7981b0"
+  # darken(saturate(@station-color, 15%), 10%);
+  station-text: "#4957ad"
+  traffic-light-icon: "#0a0a0a"
+  level-crossing-icon: "#4d4d4d"
+  gate-icon: "#3f3f3f"
+  bollard-icon: "#7d7c7c"
+  tree-text: "#4d9945"
+  aeroway-gate-text: "#aa66cc"
+
+# styling types for symbols and labels
+
+styles:
+  standard: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: [[label_size]];
+      shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * [[halo_radius]];
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: [[label_color]];
+      shield-text-dy: [[text_dy]];
+      shield-unlock-image: true;
+      shield-file: url('[[symbol_file]]');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('[[symbol_file]]');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: [[text_dy]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      text-halo-fill: @standard-halo-fill;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      text-halo-fill: @standard-halo-fill;
+    }
+
+  standard-symbol-zoom-variant: |
+    [zoom >= [[start_symbol]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-file: url('[[symbol_file]]');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('[[symbol_file]]');
+        shield-size: [[label_size]];
+        shield-text-dy: [[text_dy]];
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-size: [[label_size]];
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-dy: [[text_dy]];
+        text-size: [[label_size]];
+      }
+      [vis_type = 'label-only'] { text-size: [[label_size]]; }
+    }
+
+  standard-symbol-attribute-variant: |
+    [[attribute_selector]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-file: url('[[symbol_file]]');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('[[symbol_file]]');
+        shield-size: [[label_size]];
+        shield-text-dy: [[text_dy]];
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-size: [[label_size]];
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-dy: [[text_dy]];
+        text-size: [[label_size]];
+      }
+      [vis_type = 'label-only'] { text-size: [[label_size]]; }
+    }
+
+  standard-symbol-zoom-attribute-variant: |
+    [[attribute_selector]][zoom >= [[start_symbol]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-file: url('[[symbol_file]]');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('[[symbol_file]]');
+        shield-size: [[label_size]];
+        shield-text-dy: [[text_dy]];
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-size: [[label_size]];
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-dy: [[text_dy]];
+        text-size: [[label_size]];
+      }
+      [vis_type = 'label-only'] { text-size: [[label_size]]; }
+    }
+
+  zoom-limited: |
+    [zoom < [[zoom_limit]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-placement: interior;
+        marker-clip: false;
+        marker-file: url('[[symbol_file]]');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-placement: interior;
+        shield-clip: false;
+        shield-name: '[name]';
+        shield-size: [[label_size]];
+        shield-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+        shield-halo-radius: @standard-halo-radius * [[halo_radius]];
+        shield-halo-fill: @standard-halo-fill;
+        shield-wrap-width: @standard-wrap-width;
+        shield-line-spacing: @standard-line-spacing-size;
+        shield-fill: [[label_color]];
+        shield-text-dy: [[text_dy]];
+        shield-unlock-image: true;
+        shield-file: url('[[symbol_file]]');
+        symbolonly/marker-placement: interior;
+        symbolonly/marker-clip: false;
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: [[label_size]];
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: [[label_color]];
+        textonly/text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: [[label_size]];
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: [[label_color]];
+        text-dy: [[text_dy]];
+        text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * [[halo_radius]];
+        text-halo-fill: @standard-halo-fill;
+      }
+      [vis_type = 'label-only'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: [[label_size]];
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: [[label_color]];
+        text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * [[halo_radius]];
+        text-halo-fill: @standard-halo-fill;
+      }
+    }
+
+  access-light: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+      [int_access = 'restricted'] {
+        marker-opacity: @private-opacity;
+      }
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: [[label_size]];
+      shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * [[halo_radius]];
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: [[label_color]];
+      shield-text-dy: [[text_dy]];
+      shield-unlock-image: true;
+      shield-file: url('[[symbol_file]]');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('[[symbol_file]]');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+      [int_access = 'restricted'] {
+        shield-opacity: @private-opacity;
+        shield-text-opacity: @private-opacity;
+        shield-halo-radius: 0;
+        symbolonly/marker-opacity: @private-opacity;
+        textonly/text-opacity: @private-opacity;
+        textonly/text-halo-radius: 0;
+      }
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: [[text_dy]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      text-halo-fill: @standard-halo-fill;
+      [int_access = 'restricted'] {
+        text-opacity: @private-opacity;
+        text-halo-radius: 0;
+      }
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      text-halo-fill: @standard-halo-fill;
+      [int_access = 'restricted'] {
+        text-opacity: @private-opacity;
+        text-halo-radius: 0;
+      }
+    }
+
+  ref: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[ref]';
+      shield-size: [[label_size]];
+      shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: [[label_color]];
+      shield-text-dy: [[text_dy]];
+      shield-unlock-image: true;
+      shield-file: url('[[symbol_file]]');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('[[symbol_file]]');
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[ref]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: [[text_dy]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+      [int_access = 'restricted'] {
+        text-opacity: @private-opacity;
+        text-halo-radius: 0;
+      }
+    }
+
+  operator: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[operator]';
+      shield-size: [[label_size]];
+      shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: [[label_color]];
+      shield-text-dy: [[text_dy]];
+      shield-unlock-image: true;
+      shield-file: url('[[symbol_file]]');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('[[symbol_file]]');
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[operator]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: [[text_dy]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+      [int_access = 'restricted'] {
+        text-opacity: @private-opacity;
+        text-halo-radius: 0;
+      }
+    }
+
+  with-elevation: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      shield-size: [[label_size]];
+      shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: [[label_color]];
+      shield-text-dy: [[text_dy]];
+      shield-unlock-image: true;
+      shield-file: url('[[symbol_file]]');
+      symbolnameonly/shield-placement: interior;
+      symbolnameonly/shield-clip: false;
+      symbolnameonly/shield-name: '[name]';
+      symbolnameonly/shield-size: @standard-font-size;
+      symbolnameonly/shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { symbolnameonly/shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { symbolnameonly/shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { symbolnameonly/shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { symbolnameonly/shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { symbolnameonly/shield-face-name: @[[font_type]]-fonts-bg; }
+      symbolnameonly/shield-halo-radius: @standard-halo-radius;
+      symbolnameonly/shield-halo-fill: @standard-halo-fill;
+      symbolnameonly/shield-wrap-width: 100;
+      symbolnameonly/shield-line-spacing: @standard-line-spacing-size;
+      symbolnameonly/shield-fill: [[label_color]];
+      symbolnameonly/shield-text-dy: [[text_dy]];
+      symbolnameonly/shield-unlock-image: true;
+      symbolnameonly/shield-file: url('[[symbol_file]]');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('[[symbol_file]]');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-vertical-alignment: bottom;
+      textonly/text-avoid-edges: true;
+      nameonly/text-placement: interior;
+      nameonly/text-name: '[name]';
+      nameonly/text-size: [[label_size]];
+      nameonly/text-wrap-width: @standard-wrap-width;
+      nameonly/text-line-spacing: @standard-line-spacing-size;
+      nameonly/text-fill: [[label_color]];
+      nameonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { nameonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { nameonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { nameonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { nameonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { nameonly/text-face-name: @[[font_type]]-fonts-bg; }
+      nameonly/text-halo-radius: @standard-halo-radius;
+      nameonly/text-halo-fill: @standard-halo-fill;
+      nameonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: [[text_dy]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+    }
+
+  symbol-only: |
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('[[symbol_file]]');
+
+  symbol-only-zoom-variant: |
+    [zoom >= [[start_symbol]]] {
+      marker-file: url('[[symbol_file]]');
+    }
+
+  symbol-only-access-light: |
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('[[symbol_file]]');
+    [int_access = 'restricted'] {
+      marker-opacity: @private-opacity;
+    }
+
+  dot-only: |
+    marker-width: [[marker_width]];
+    marker-line-width: 0;
+    marker-fill: [[symbol_color]];
+    marker-placement: interior;
+
+  dot-only-zoom-size-variant: |
+    [zoom >= [[start_symbol]]] {
+      marker-width: [[marker_width]];
+    }
+
+  spring: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/water/[[feature]]_small.svg');
+      [zoom >= 16] { marker-file: url('symbols/water/[[feature]].svg'); }
+      [intermittent = 'yes'] {
+        marker-file: url('symbols/water/[[feature]]_small_intermittent.svg');
+        [zoom >= 16] { marker-file: url('symbols/water/[[feature]]_intermittent.svg'); }
+      }
+      [drinking_water = 'yes'][zoom >= 17] {
+        supplement/marker-file: url('symbols/water/drinking.svg');
+        supplement/marker-fill: @water-icon;
+        supplement/marker-transform: 'translate(-9,-5)';
+        supplement/marker-placement: interior;
+        supplement/marker-clip: false;
+      }
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: [[label_size]];
+      shield-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: [[label_color]];
+      shield-text-dy: [[text_dy]];
+      shield-unlock-image: true;
+      shield-file: url('symbols/water/[[feature]]_small.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/water/[[feature]]_small.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+      [zoom >= 16] {
+        shield-file: url('symbols/water/[[feature]].svg');
+        symbolonly/marker-file: url('symbols/water/[[feature]].svg');
+      }
+      [intermittent = 'yes'] {
+        shield-file: url('symbols/water/[[feature]]_small_intermittent.svg');
+        symbolonly/marker-file: url('symbols/water/[[feature]]_small_intermittent.svg');
+        [zoom >= 16] {
+          shield-file: url('symbols/water/[[feature]]_intermittent.svg');
+          symbolonly/marker-file: url('symbols/water/[[feature]]_intermittent.svg');
+        }
+      }
+      [drinking_water = 'yes'][zoom >= 17] {
+        supplement/marker-file: url('symbols/water/drinking.svg');
+        supplement/marker-fill: @water-icon;
+        supplement/marker-transform: 'translate(-9,-5)';
+        supplement/marker-placement: interior;
+        supplement/marker-clip: false;
+      }
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: [[text_dy]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+    }
+
+  spring-connected: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'],
+    [vis_type = 'symbol-label'] {
+      marker-fill: [[symbol_color]];
+      marker-allow-overlap: true;
+      marker-line-width: 0;
+      marker-width: 1.5;
+      marker-height: 1.5;
+      [zoom >= 16] {
+        marker-width: 2.5;
+        marker-height: 2.5;
+      }
+      marker-ignore-placement: true;
+      [drinking_water = 'yes'][zoom >= 17] {
+        supplement/marker-file: url('symbols/water/drinking.svg');
+        supplement/marker-fill: @water-icon;
+        supplement/marker-transform: 'translate(-9,-5)';
+        supplement/marker-placement: interior;
+        supplement/marker-clip: false;
+      }
+    }
+    [vis_type = 'symbol-label'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+      text-dy: 7;
+      [drinking_water = 'yes'][zoom >= 17] {
+        supplement/marker-file: url('symbols/water/drinking.svg');
+        supplement/marker-fill: @water-icon;
+        supplement/marker-transform: 'translate(-9,-5)';
+        supplement/marker-placement: interior;
+        supplement/marker-clip: false;
+      }
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-dy: 7;
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+    }
+
+  water-symbol-variant: |
+    [zoom >= [[start_symbol]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-file: url('[[symbol_file]]');
+        [drinking_water = 'yes'] {
+          supplement/marker-file: url('symbols/water/drinking.svg');
+          supplement/marker-fill: @water-icon;
+          supplement/marker-transform: 'translate(-9,-5)';
+          supplement/marker-placement: interior;
+          supplement/marker-clip: false;
+        }
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('[[symbol_file]]');
+        shield-size: [[label_size]];
+        shield-text-dy: [[text_dy]];
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-size: [[label_size]];
+        [drinking_water = 'yes'] {
+          supplement/marker-file: url('symbols/water/drinking.svg');
+          supplement/marker-fill: @water-icon;
+          supplement/marker-transform: 'translate(-9,-5)';
+          supplement/marker-placement: interior;
+          supplement/marker-clip: false;
+        }
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-dy: [[text_dy]];
+        text-size: [[label_size]];
+      }
+      [vis_type = 'label-only'] { text-size: [[label_size]]; }
+    }
+
+  bridges: |
+    [vis_type = 'label-only'] {
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-wrap-width: 30; // 3 em
+      text-line-spacing: -1.2; // -0.15 em
+      text-fill: [[label_color]];
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+      text-min-distance: 2;
+      text-wrap-width: 30;
+      text-placement: interior;
+      [way_pixels > 250] {
+        text-size: 11;
+        text-wrap-width: 33; // 3 em
+        text-line-spacing: -1.35; // -0.15 em
+      }
+      [way_pixels > 1000] {
+        text-size: 12;
+        text-wrap-width: 36; // 3 em
+        text-line-spacing: -1.65; // -0.15 em
+        text-halo-radius: @standard-halo-radius * 1.5;
+      }
+      [way_pixels > 4000] {
+        text-size: 13;
+        text-wrap-width: 39; // 3 em
+        text-line-spacing: -1.80; // -0.15 em
+      }
+      [way_pixels > 16000] {
+        text-size: 14;
+        text-wrap-width: 42; // 3 em
+        text-line-spacing: -1.95; // -0.15 em
+        text-halo-radius: 2;
+      }
+    }
+
+  label-offset: |
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-dy: [[text_dy]];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+    }
+
+  label-tree: |
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: [[label_size]];
+    text-dy: [int_text_offset];
+    text-wrap-width: @standard-wrap-width;
+    text-line-spacing: @standard-line-spacing-size;
+    text-fill: [[label_color]];
+    text-face-name: @[[font_type]]-fonts;
+    [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+    [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+    [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+    [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+    [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+
+  label-only: |
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: [[label_size]];
+    text-wrap-width: @standard-wrap-width;
+    text-line-spacing: @standard-line-spacing-size;
+    text-fill: [[label_color]];
+    text-face-name: @[[font_type]]-fonts;
+    [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+    [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+    [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+    [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+    [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+
+  ref-only: |
+    text-placement: interior;
+    text-name: '[ref]';
+    text-size: [[label_size]];
+    text-wrap-width: @standard-wrap-width;
+    text-line-spacing: @standard-line-spacing-size;
+    text-fill: [[label_color]];
+    text-face-name: @[[font_type]]-fonts;
+    [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+    [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+    [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+    [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+    [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+    text-halo-radius: @standard-halo-radius;
+    text-halo-fill: @standard-halo-fill;
+
+  label-variable-size: |
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: @landcover-font-size;
+    text-wrap-width: @landcover-wrap-width-size;
+    text-line-spacing: @landcover-line-spacing-size;
+    text-fill: [[label_color]];
+    text-face-name: @[[font_type]]-fonts;
+    [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+    [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+    [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+    [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+    [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+    text-halo-radius: @standard-halo-radius * [[halo_radius]];
+    text-halo-fill: @standard-halo-fill;
+    [way_pixels > 12000] {
+      text-size: @landcover-font-size-big;
+      text-wrap-width: @landcover-wrap-width-size-big;
+      text-line-spacing: @landcover-line-spacing-size-big;
+    }
+    [way_pixels > 48000] {
+      text-size: @landcover-font-size-bigger;
+      text-wrap-width: @landcover-wrap-width-size-bigger;
+      text-line-spacing: @landcover-line-spacing-size-bigger;
+    }
+
+  label-variable-size-water: |
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: @landcover-font-size;
+    text-wrap-width: @landcover-wrap-width-size;
+    text-line-spacing: @landcover-line-spacing-size;
+    text-fill: [[label_color]];
+    text-face-name: @[[font_type]]-fonts;
+    [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+    [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+    [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+    [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+    [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+    text-halo-radius: @standard-halo-radius * [[halo_radius]];
+    text-halo-fill: @standard-halo-fill;
+    [way_pixels > 12000] {
+      text-size: @landcover-font-size-big;
+      text-wrap-width: 37;
+      text-line-spacing: -1.6;
+    }
+    [way_pixels > 48000] {
+      text-size: @landcover-font-size-bigger;
+      text-wrap-width: 59;
+      text-line-spacing: -1.5;
+    }
+    [way_pixels > 192000] {
+      text-size: 19;
+      text-wrap-width: 95;
+      text-line-spacing: -0.95;
+    }
+
+
+# Attributes to have as columns - together with the code to generate them.
+# Only attributes referred to in features below are actually used.
+# Attributes referred to in features but not in here are used as is.
+#
+# The attribute itself can be assumed to be in a distinct column, even if
+# it is in hstore.  Any other attributes referenced in SQL might be in
+# hstore only though.
+#
+# Attributes starting with '_' or 'int_' are assumed to be generated and
+# do not derive from OSM data.
+#
+#   sql: SQL code to generate the column value
+#   score: if to use this column as score for sorting
+#   always: if to always generate a column for this (even if not listed in feature attributes)
+#   expand: list of column names to expland an array attribute to
+
+attributes:
+  _name_label:
+    sql: carto_label_name(way, name, tags, E'\n')
+    always: true
+    expand:
+      - name
+      - lang
+      - font
+  name:
+    always: true
+  ref:
+    always: true
+  operator:
+    always: true
+  brand:
+    always: true
+  int_access:
+    sql: CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
+    attributes:
+      - access
+  int_text_offset:
+    sql: >-
+      ROUND(GREATEST(
+        carto_barrier_line_width('tree', z(!scale_denominator!)),
+        LEAST(carto_tree_diameter_mapped('tree', diameter_crown, height, circumference, diameter, !bbox!, !scale_denominator!), 60)
+      )*0.5)+2.0
+    attributes:
+      - diameter_crown
+      - height
+      - circumference
+      - diameter
+  height:
+    sql: CASE WHEN height ~ '^\d{1,3}(\.\d+)?( m)?$' THEN (SUBSTRING(height, '^(\d{1,3}(\.\d+)?)( m)?$'))::NUMERIC END
+    score: true
+    attributes:
+      - height
+  intermittent:
+    sql: CASE WHEN tags->'intermittent' IN ('yes') OR tags->'seasonal' IN ('yes') THEN 'yes' END
+  drinking_water:
+    sql: CASE WHEN amenity = 'drinking_water' OR (tags->'drinking_water') = 'yes' THEN 'yes' END
+    attributes:
+      - amenity
+  religion:
+    sql: CASE WHEN religion IN ('christian') AND tags->'denomination' IN ('jehovahs_witness', 'la_luz_del_mundo', 'iglesia_ni_cristo', 'mormon') THEN NULL ELSE religion END
+    attributes:
+      - religion
+  int_elevation:
+    sql: CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(E'\n', REPLACE(ROUND((tags->'ele')::NUMERIC)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') END
+  shop:
+    sql: >-
+      CASE WHEN shop IN ('supermarket', 'bag', 'bakery', 'beauty', 'bed', 'bookmaker', 'books', 'butcher', 'carpet', 'clothes', 'computer',
+                         'confectionery', 'fashion', 'convenience', 'department_store', 'doityourself', 'hardware', 'fabric', 'fishmonger', 'florist',
+                         'garden_centre', 'hairdresser', 'hifi', 'car', 'car_repair', 'bicycle', 'mall', 'pet',
+                         'photo', 'photo_studio', 'photography', 'seafood', 'shoes', 'alcohol', 'gift', 'furniture', 'kiosk',
+                         'mobile_phone', 'motorcycle', 'musical_instrument', 'newsagent', 'optician', 'jewelry', 'jewellery',
+                         'electronics', 'chemist', 'toys', 'travel_agency', 'car_parts', 'greengrocer', 'farm', 'stationery',
+                         'laundry', 'dry_cleaning', 'beverages', 'perfumery', 'cosmetics', 'variety_store', 'wine', 'outdoor',
+                         'copyshop', 'sports', 'deli', 'tobacco', 'art', 'tea', 'coffee', 'tyres', 'pastry', 'chocolate',
+                         'music', 'medical_supply', 'dairy', 'video_games', 'houseware', 'ticket', 'charity', 'second_hand',
+                         'interior_decoration', 'video', 'paint', 'massage', 'trade', 'wholesale') THEN shop
+        ELSE 'other' END
+    attributes:
+      - shop
+
+
+# defaults for feature parameters
+
+defaults:
+  style: standard
+  symbol_color: "#000000"
+  label_color: "#000000"
+  text_dy: 11
+  label_size: 10
+  font_type: book
+  type: point+polygon
+  halo_radius: 1.0
+  marker_width: 0
+  zoom_limit: 22
+
+
+# templates for feature parameters
+# these are essentially predefined collections of parameters
+# and are referenced with a 'template: foo' in the features
+
+templates:
+  shop:
+    attribute: shop
+    style: standard-symbol-zoom-attribute-variant
+    start_symbol: 18
+    text_dy: 11
+
+  label-variable-size-nobuilding:
+    style: label-variable-size
+    start_label: 10
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+    condition: (building IS NULL OR building = 'no')
+    attributes:
+      - building
+
+  label-variable-size-water:
+    style: label-variable-size-water
+    start_label: 10
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+    condition: (building IS NULL OR building = 'no')
+    attributes:
+      - building
+
+# These are the feature types rendered in some way with symbols or labels
+# Order betweeen keys does not matter, priorities will be based on starting zoom levels
+# Order within different features with the same key matters as it affects the order in the COALESCE()
+# Possible parameters and defaults:
+#
+#   symbol_file: SVG filename, default: 
+#                symbols/key_value_variant.svg,
+#                symbols/key_value.svg,
+#                symbols/value.svg or
+#                symbols/key/value.svg if exists
+#   start_symbol: Starting zoom level for symbol, default: infinity
+#   start_label: Starting zoom level for label, default: infinity
+#   zoom_limit: Upper zoom level limit for rendering this feature, default: infinity
+#   style: default: standard
+#   symbol_color: symbol color, default: unchanged (for SVG), black (for MSS)
+#   label_color: label color, default: black
+#   text_dy: text offset for label above/below symbol, default: 11
+#   type: point, line, polygon or pp (point and polygon) or all.  default: pp
+#   condition: SQL filter condition, no default
+#   attributes: Attributes needed by the feature - either as a list or with an SQL condition, no default
+#   variants: Rendering variants of this features (with different starting zoom levels or condition)
+#             Order of these matters, it determines priorities in case of equal starting zoom levels
+#   modifications: Rendering variants in styling only with no difference in starting zoom levels
+
+features:
+  amenity=shelter:
+    style: with-elevation
+    symbol_file: symbols/shelter/shelter.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 16
+    start_label: 17
+    attributes:
+      - int_elevation
+  tourism=alpine_hut:
+    style: with-elevation
+    symbol_file: symbols/shelter/alpine_hut.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 13
+    start_label: 14
+    attributes:
+      - int_elevation
+  tourism=wilderness_hut:
+    style: with-elevation
+    symbol_file: symbols/shelter/wilderness_hut.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 13
+    start_label: 14
+    attributes:
+      - int_elevation
+  tourism=charlet:
+    symbol_file: symbols/accommodation/chalet.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+  tourism=hostel:
+    symbol_file: symbols/accommodation/hostel.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+  tourism=hotel:
+    symbol_file: symbols/accommodation/hotel.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+  tourism=motel:
+    symbol_file: symbols/accommodation/motel.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 13
+  tourism=guest_house:
+    symbol_file: symbols/accommodation/guest_house.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+  tourism=apartment:
+    symbol_file: symbols/accommodation/apartment.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 18
+    start_label: 18
+
+
+  tourism=information:
+    symbol_file: symbols/tourism/office.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    condition: (tags->'information' IN ('audioguide', 'board', 'guidepost', 'map', 'office', 'tactile_map', 'terminal'))
+    attributes:
+      - information
+    variants:
+      information=audioguide:
+        condition: information IN ('audioguide')
+        symbol_file: symbols/tourism/audioguide.svg
+        symbol_color: man-made-icon
+        label_color: man-made-text
+        start_symbol: 19
+        start_label: 19
+      information=board:
+        condition: information IN ('board')
+        symbol_file: symbols/tourism/board.svg
+        symbol_color: man-made-icon
+        label_color: man-made-text
+        start_symbol: 19
+        start_label: 19
+      information=guidepost:
+        condition: information IN ('guidepost')
+        symbol_file: symbols/tourism/guidepost.svg
+        symbol_color: man-made-icon
+        label_color: man-made-text
+        start_symbol: 19
+        start_label: 19
+      information=map:
+        condition: information IN ('map', 'tactile_map')
+        symbol_file: symbols/tourism/map.svg
+        symbol_color: man-made-icon
+        label_color: man-made-text
+        start_symbol: 19
+        start_label: 19
+      information=terminal:
+        condition: information IN ('terminal')
+        symbol_file: symbols/tourism/terminal.svg
+        symbol_color: man-made-icon
+        label_color: man-made-text
+        start_symbol: 19
+        start_label: 19
+  amenity=atm:
+    style: operator
+    symbol_file: symbols/amenity/atm.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  amenity=bank:
+    symbol_file: symbols/amenity/bank.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 9
+  amenity=bar:
+    symbol_file: symbols/amenity/bar.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 13
+  amenity=bbq:
+    symbol_file: symbols/amenity/bbq.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  amenity=cafe:
+    symbol_file: symbols/amenity/cafe.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=ice_cream:
+    symbol_file: symbols/shop/ice_cream.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=nightclub:
+    symbol_file: symbols/amenity/nightclub.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  amenity=pub:
+    symbol_file: symbols/amenity/pub.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=biergarten:
+    symbol_file: symbols/amenity/biergarten.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=biergarten:
+    symbol_file: symbols/amenity/biergarten.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=restaurant:
+    symbol_file: symbols/amenity/restaurant.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=food_court:
+    symbol_file: symbols/amenity/restaurant.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+  amenity=fast_food:
+    symbol_file: symbols/amenity/fast_food.svg
+    symbol_color: gastronomy-icon
+    label_color: gastronomy-text
+    start_symbol: 17
+    start_label: 17
+
+  amenity=fire_station:
+    symbol_file: symbols/amenity/fire_station.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 16
+    start_label: 17
+  amenity=cinema:
+    symbol_file: symbols/amenity/cinema.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 16
+    start_label: 17
+  tourism=museum:
+    symbol_file: symbols/tourism/museum.svg
+    symbol_color: culture-icon
+    label_color: culture-text
+    start_symbol: 16
+    start_label: 17
+  amenity=library:
+    symbol_file: symbols/amenity/library.svg
+    symbol_color: culture-icon
+    label_color: culture-text
+    start_symbol: 16
+    start_label: 17
+  amenity=courthouse:
+    symbol_file: symbols/amenity/courthouse.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 13
+  amenity=townhall:
+    symbol_file: symbols/amenity/townhall.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 13
+  amenity=police:
+    symbol_file: symbols/amenity/police.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 16
+    start_label: 17
+  amenity=prison:
+    symbol_file: symbols/amenity/prison.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  amenity=post_box:
+    symbol_file: symbols/amenity/post_box.12.svg
+    symbol_color: public-service-icon
+    start_symbol: 17
+  amenity=post_office:
+    symbol_file: symbols/amenity/post_office.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 17
+    start_label: 17
+
+  amenity=theatre:
+    symbol_file: symbols/amenity/theatre.svg
+    symbol_color: culture-icon
+    label_color: culture-text
+    start_symbol: 16
+    start_label: 17
+  amenity=arts_centre:
+    symbol_file: symbols/amenity/arts_centre.svg
+    symbol_color: culture-icon
+    label_color: culture-text
+    start_symbol: 17
+    start_label: 17
+  amenity=community_centre:
+    symbol_file: symbols/amenity/community_centre.svg
+    symbol_color: culture-icon
+    label_color: culture-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  amenity=social_facility:
+    symbol_file: symbols/amenity/social_facility.svg
+    symbol_color: public-service-icon
+    label_color: public-service-text
+    start_symbol: 17
+    start_label: 17
+  amenity=shower:
+    symbol_file: symbols/amenity/shower.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 18
+    start_label: 18
+    text_dy: 10
+  amenity=public_bath:
+    symbol_file: symbols/amenity/public_bath.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+  amenity=toilets:
+    style: symbol-only-access-light
+    symbol_file: symbols/amenity/toilets.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 18
+    variants:
+      access_yes:
+        condition: int_access = 'yes'
+        start_symbol: 17
+    attributes:
+      - int_access
+  amenity=parking:
+    style: access-light
+    symbol_file: symbols/transport/parking.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 10
+    start_label: 10
+    text_dy: 9
+    way_pixels_min: 900
+    way_pixels_start_all: 17
+    attributes:
+      - int_access
+  amenity=motorcycle_parking:
+    style: access-light
+    symbol_file: symbols/transport/motorcycle_parking.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 10
+    start_label: 10
+    text_dy: 12
+    way_pixels_min: 900
+    way_pixels_start_all: 17
+    attributes:
+      - int_access
+  amenity=bicycle_parking:
+    style: access-light
+    symbol_file: symbols/transport/bicycle_parking.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 10
+    start_label: 10
+    text_dy: 12
+    way_pixels_min: 900
+    way_pixels_start_all: 17
+    attributes:
+      - int_access
+  amenity=bicycle_rental:
+    symbol_file: symbols/transport/bicycle_rental.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  highway=bus_stop:
+    symbol_file: symbols/square.6.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 9
+    modifications:
+      high_zoom:
+        style: standard-symbol-zoom-variant
+        symbol_file: symbols/transport/bus_stop.svg
+        start_symbol: 17
+  amenity=bus_station:
+    symbol_file: symbols/transport/bus_station.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 16
+    start_label: 17
+  amenity=car_rental:
+    symbol_file: symbols/transport/car_rental.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  amenity=car_wash:
+    symbol_file: symbols/amenity/car_wash.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  amenity=charging_station:
+    symbol_file: symbols/transport/charging_station.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 17
+    start_label: 17
+  amenity=fuel:
+    symbol_file: symbols/transport/fuel.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 17
+    start_label: 17
+  amenity=taxi:
+    symbol_file: symbols/transport/taxi.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 17
+    start_label: 17
+
+  emergency=phone:
+    style: symbol-only
+    symbol_file: symbols/amenity/emergency_phone.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
+  amenity=phone:
+    style: symbol-only
+    symbol_file: symbols/amenity/telephone.svg
+    symbol_color: amenity-icon
+    start_symbol: 17
+  highway=elevator:
+    style: symbol-only
+    symbol_file: symbols/transport/elevator.svg
+    symbol_color: transportation-icon
+    start_symbol: 18
+    condition: ("access" IS NULL OR "access" NOT IN ('private', 'no', 'customers', 'permit', 'delivery'))
+    attributes:
+      - int_access
+  highway=traffic_signals:
+    style: symbol-only
+    symbol_file: symbols/traffic/light.svg
+    symbol_color: traffic-light-icon
+    start_symbol: 17
+    modifications:
+      high_zoom:
+        style: symbol-only-zoom-variant
+        symbol_file: symbols/traffic/light.16.svg
+        start_symbol: 19
+  railway=crossing:
+    style: symbol-only
+    symbol_file: symbols/traffic/level_crossing.svg
+    symbol_color: level-crossing-icon
+    start_symbol: 15
+    modifications:
+      high_zoom:
+        style: symbol-only-zoom-variant
+        symbol_file: symbols/traffic/level_crossing2.svg
+        start_symbol: 16
+  railway=level_crossing:
+    style: symbol-only
+    symbol_file: symbols/traffic/level_crossing.svg
+    symbol_color: level-crossing-icon
+    start_symbol: 14
+    modifications:
+      high_zoom:
+        style: symbol-only-zoom-variant
+        symbol_file: symbols/traffic/level_crossing2.svg
+        start_symbol: 16
+
+  amenity=bench:
+    style: symbol-only
+    symbol_file: symbols/amenity/bench.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
+  amenity=waste_basket:
+    style: symbol-only
+    symbol_file: symbols/amenity/waste_basket.10.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
+  amenity=waste_disposal:
+    style: symbol-only
+    symbol_file: symbols/amenity/waste_disposal.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
+    condition: ("access" IS NULL OR "access" NOT IN ('private', 'no', 'customers', 'permit', 'delivery'))
+    attributes:
+      - int_access
+  amenity=recycling:
+    style: access-light
+    symbol_file: symbols/amenity/recycling.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 19
+    start_label: 19
+    text_dy: 10
+    variants:
+      centre:
+        condition: recycling_type IN ('centre')
+        start_symbol: 17
+        start_label: 17
+    attributes:
+      - recycling_type
+  barrier=gate:
+    style: symbol-only
+    symbol_file: symbols/barrier/gate.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+  barrier=lift_gate:
+    style: symbol-only
+    symbol_file: symbols/barrier/liftgate.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+  barrier=swing_gate:
+    style: symbol-only
+    symbol_file: symbols/barrier/liftgate.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+  barrier=bollard:
+    style: dot-only
+    marker_width: 3
+    symbol_color: bollard-icon
+    start_symbol: 17
+    modifications:
+      high_zoom:
+        style: dot-only-zoom-size-variant
+        marker_width: 4
+        start_symbol: 18
+  barrier=block:
+    style: dot-only
+    marker_width: 3
+    symbol_color: bollard-icon
+    start_symbol: 17
+    modifications:
+      high_zoom:
+        style: dot-only-zoom-size-variant
+        marker_width: 4
+        start_symbol: 18
+  barrier=log:
+    style: dot-only
+    marker_width: 3
+    symbol_color: bollard-icon
+    start_symbol: 17
+    modifications:
+      high_zoom:
+        style: dot-only-zoom-size-variant
+        marker_width: 4
+        start_symbol: 18
+
+  barrier=toll_booth:
+    symbol_file: symbols/transport/toll_booth.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 13
+  tourism=viewpoint:
+    symbol_file: symbols/tourism/viewpoint.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 16
+    start_label: 16
+  tourism=artwork:
+    symbol_file: symbols/tourism/artwork.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 17
+    start_label: 17
+  tourism=camp_site:
+    symbol_file: symbols/accommodation/camping.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  tourism=caravan_site:
+    symbol_file: symbols/accommodation/caravan_park.svg
+    symbol_color: accommodation-icon
+    label_color: accommodation-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  railway=subway_entrance:
+    style: ref
+    symbol_file: symbols/entrance.10.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 18
+    start_label: 19
+    text_dy: 10
+  railway=station:
+    symbol_file: symbols/square.4.svg
+    symbol_color: station-icon
+    label_color: station-text
+    start_symbol: 12
+    start_label: 14
+    font_type: bold
+    halo_radius: 1.5
+    text_dy: 9
+    modifications:
+      size_6:
+        style: standard-symbol-zoom-variant
+        start_symbol: 13
+        symbol_file: symbols/square.6.svg
+      size_9:
+        style: standard-symbol-zoom-variant
+        start_symbol: 15
+        symbol_file: symbols/square.9.svg
+        text_dy: 10
+        label_size: 11
+  railway=halt:
+    symbol_file: symbols/square.4.svg
+    symbol_color: station-icon
+    label_color: station-text
+    start_symbol: 13
+    start_label: 15
+    font_type: bold
+    halo_radius: 1.5
+    modifications:
+      size_6:
+        style: standard-symbol-zoom-variant
+        start_symbol: 15
+        symbol_file: symbols/square.6.svg
+  railway=tram_stop:
+    symbol_file: symbols/square.4.svg
+    symbol_color: station-icon
+    label_color: station-text
+    start_symbol: 13
+    start_label: 16
+    halo_radius: 1.5
+    modifications:
+      size_6:
+        style: standard-symbol-zoom-variant
+        start_symbol: 15
+        symbol_file: symbols/square.6.svg
+  aerialway=station:
+    symbol_file: symbols/square.4.svg
+    symbol_color: station-icon
+    label_color: station-text
+    start_symbol: 13
+    start_label: 14
+    halo_radius: 1.5
+    modifications:
+      size_6:
+        style: standard-symbol-zoom-variant
+        start_symbol: 15
+        symbol_file: symbols/square.6.svg
+  aeroway=helipad:
+    symbol_file: symbols/aeroway/helipad.svg
+    symbol_color: airtransport-icon
+    label_color: airtransport-text
+    start_symbol: 16
+    start_label: 16
+    text_dy: -10
+  aeroway=aerodrome:
+    style: zoom-limited
+    symbol_file: symbols/aeroway/aerodrome.svg
+    symbol_color: airtransport-icon
+    label_color: airtransport-text
+    font_type: oblique
+    start_symbol: 11
+    zoom_limit: 14
+    start_label: 11
+    text_dy: 10
+    variants:
+      public:
+        condition: int_access = 'yes' AND icao IS NOT NULL AND iata IS NOT NULL
+        start_symbol: 10
+        start_label: 10
+    attributes:
+      - icao
+      - iata
+  aeroway=gate:
+    style: ref-only
+    start_symbol: 17
+    label_color: aeroway-gate-text
+
+  amenity=drinking_water:
+    symbol_file: symbols/water/drinking_water.svg
+    symbol_color: water-icon
+    label_color: water-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  amenity=water_point:
+    symbol_file: symbols/water/water_tap.svg
+    symbol_color: water-icon
+    label_color: water-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  man_made=water_tap:
+    symbol_file: symbols/water/water_tap.svg
+    symbol_color: water-icon
+    label_color: water-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  natural=spring:
+    style: spring
+    label_color: water-text
+    start_symbol: 14
+    start_label: 16
+    text_dy: 6
+    variants:
+      connected:
+        condition: EXISTS (SELECT 1 FROM planet_osm_line l WHERE ST_DWithin(features.way, l.way, 0.1) AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
+        style: spring-connected
+        symbol_color: water-icon
+    attributes:
+      - intermittent
+      - drinking_water
+  natural=hot_spring:
+    style: spring
+    label_color: water-text
+    start_symbol: 14
+    start_label: 16
+    text_dy: 6
+    variants:
+      connected:
+        condition: EXISTS (SELECT 1 FROM planet_osm_line l WHERE ST_DWithin(features.way, l.way, 0.1) AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
+        style: spring-connected
+        symbol_color: water-hot
+    attributes:
+      - intermittent
+      - drinking_water
+  man_made=water_well:
+    symbol_file: symbols/water/well_small.svg
+    symbol_color: water-icon
+    label_color: water-text
+    start_symbol: 15
+    start_label: 16
+    text_dy: 6
+    modifications:
+      large:
+        style: water-symbol-variant
+        start_symbol: 17
+        symbol_file: symbols/water/well.svg
+    attributes:
+      - drinking_water
+  amenity=fountain:
+    symbol_file: symbols/water/fountain_small.svg
+    symbol_color: water-icon
+    label_color: water-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 6
+    modifications:
+      large:
+        style: water-symbol-variant
+        start_symbol: 18
+        text_dy: 9
+        symbol_file: symbols/water/fountain.svg
+    attributes:
+      - drinking_water
+  natural=geyser:
+    symbol_file: symbols/water/geyser_small.svg
+    symbol_color: water-icon
+    label_color: water-text
+    start_symbol: 14
+    start_label: 16
+    text_dy: 9
+    modifications:
+      large:
+        style: standard-symbol-zoom-variant
+        start_symbol: 16
+        symbol_file: symbols/water/geyser.svg
+
+  natural=bay:
+    style: label-only
+    label_color: water-text
+    start_label: 14 
+    text_dy: 0
+
+  natural=tree:
+    style: label-tree
+    label_color: tree-text
+    start_label: 17
+    attributes:
+      - int_text_offset
+
+  natural=peak:
+    style: with-elevation
+    symbol_file: symbols/natural/peak_small.svg
+    symbol_color: landform-icon
+    label_color: landform-text
+    start_symbol: 11
+    start_label: 13
+    text_dy: 7
+    modifications:
+      large:
+        style: water-symbol-variant
+        start_symbol: 12
+        symbol_file: symbols/natural/peak.svg
+    attributes:
+      - int_elevation
+  natural=volcano:
+    style: with-elevation
+    symbol_file: symbols/natural/volcano_small.svg
+    symbol_color: landform-icon
+    label_color: landform-text
+    start_symbol: 13
+    start_label: 15
+    text_dy: 11
+    modifications:
+      large:
+        style: water-symbol-variant
+        start_symbol: 14
+        symbol_file: symbols/natural/volcano.svg
+    attributes:
+      - int_elevation
+  natural=saddle:
+    style: with-elevation
+    symbol_file: symbols/natural/saddle.svg
+    symbol_color: landform-icon
+    label_color: landform-text
+    start_symbol: 15
+    start_label: 15
+    text_dy: 7
+    attributes:
+      - int_elevation
+  natural=cave_entrance:
+    symbol_file: symbols/natural/cave.svg
+    symbol_color: cave-icon
+    label_color: cave-text
+    start_symbol: 15
+    start_label: 15
+
+  power=generator:
+    symbol_file: symbols/man_made/generator_wind.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 15
+    start_label: 17
+    condition: tags->'generator:source' = 'wind'
+    variants:
+      roof:
+        condition: location IN ('roof', 'rooftop')
+        start_symbol: 19
+        start_label: 19
+    attributes:
+      - location
+  military=bunker:
+    symbol_file: symbols/man_made/bunker.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 9
+  amenity=hunting_stand:
+    symbol_file: symbols/amenity/hunting_stand.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 16
+    start_label: 17
+  man_made=windmill:
+    symbol_file: symbols/man_made/windmill.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 12
+  man_made=water_tower:
+    symbol_file: symbols/towers/water_tower.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+  man_made=lighthouse:
+    symbol_file: symbols/towers/lighthouse.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 15
+    start_label: 15
+    text_dy: 12
+  man_made=mast:
+    symbol_file: symbols/towers/mast.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 18
+    start_label: 18
+    text_dy: 10
+    modifications:
+      lighting:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/mast_lighting.svg
+      communication:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/mast_communication.svg
+    variants:
+      height=160:
+        condition: (height >= 160) AND "tower:type" NOT IN ('lighting')
+        start_symbol: 14
+      height=80:
+        condition: (height >= 80) AND "tower:type" NOT IN ('lighting')
+        start_symbol: 15
+      height=40:
+        condition: (height >= 40) AND "tower:type" NOT IN ('lighting')
+        start_symbol: 16
+      height=20:
+        condition: (height >= 20) AND "tower:type" NOT IN ('lighting')
+        start_symbol: 17
+    attributes:
+      height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
+      "tower:type":
+  man_made=tower:
+    symbol_file: symbols/towers/tower_generic.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 18
+    text_dy: 10
+    modifications:
+      defensive:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_defensive.svg
+      observation:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_observation.svg
+      bell_tower:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/bell_tower.svg
+      communication:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_cantilever_communication.svg
+      communication+lattice:
+        filters: >-
+          ["tower:type" = 'communication']["tower:construction" = 'lattice']
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_lattice_communication.svg
+      lighting:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_lighting.svg
+      lighting+lattice:
+        filters: >-
+          ["tower:type" = 'lighting']["tower:construction" = 'lattice']
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_lattice_lighting.svg
+      lattice:
+        attribute: "tower:construction"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/towers/tower_lattice.svg
+    variants:
+      height=160:
+        condition: (height >= 160) AND "tower:type" NOT IN ('lighting', 'bell_tower')
+        start_symbol: 14
+        start_label: 17
+      height=80:
+        condition: (height >= 80) AND "tower:type" NOT IN ('lighting', 'bell_tower')
+        start_symbol: 15
+        start_label: 17
+      height=40:
+        condition: (height >= 40) AND "tower:type" NOT IN ('lighting', 'bell_tower')
+        start_symbol: 16
+        start_label: 17
+      minor_types:
+        condition: >-
+          "tower:type" IN ('lighting', 'bell_tower')
+        start_symbol: 18
+        start_label: 19
+    attributes:
+      height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
+      "tower:type":
+      "tower:construction":
+  man_made=communications_tower:
+    symbol_file: symbols/towers/communications_tower.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 14
+    start_label: 17
+    text_dy: 10
+  historic=city_gate:
+    symbol_file: symbols/historic/city_gate.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  historic=memorial:
+    symbol_file: symbols/historic/memorial.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 17
+    start_label: 17
+    modifications:
+      statue:
+        attribute: memorial
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/statue.svg
+      bust:
+        attribute: memorial
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/bust.svg
+      stone:
+        attribute: memorial
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/stone.svg
+      plaque:
+        attribute: memorial
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/plaque.svg
+      blue_plaque:
+        attribute: memorial
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/plaque.svg
+    variants:
+      medium:
+        condition: memorial IN ('bust', 'stele', 'stone')
+        start_symbol: 18
+        start_label: 18
+      small:
+        condition: memorial IN ('plaque', 'blue_plaque')
+        start_symbol: 19
+        start_label: 19
+    attributes:
+      - memorial
+  man_made=obelisk:
+    symbol_file: symbols/historic/obelisk.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 17
+    start_label: 17
+  historic=monument:
+    symbol_file: symbols/historic/monument.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 16
+    start_label: 16
+  historic=fort:
+    symbol_file: symbols/historic/fort.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 16
+    start_label: 16
+  historic=castle:
+    symbol_file: symbols/historic/castle.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 15
+    start_label: 16
+    modifications:
+      manor:
+        attribute: castle_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/manor.svg
+      palace:
+        filters: >-
+          [castle_type = 'palace'], [castle_type = 'stately']
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/palace.svg
+      fortress:
+        filters: >-
+          [castle_type = 'fortress'], [castle_type = 'defensive'], [castle_type = 'castrum'], [castle_type = 'shiro'], [castle_type = 'kremlin']
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/historic/fortress.svg
+    variants:
+      minor_types:
+        condition: castle_type IN ('stately', 'manor')
+        start_symbol: 16
+        start_label: 16
+    attributes:
+      - castle_type
+  historic=manor:
+    symbol_file: symbols/historic/manor.svg
+    symbol_color: memorial-icon
+    label_color: memorial-text
+    start_symbol: 16
+    start_label: 16
+  historic=archaeological_site:
+    symbol_file: symbols/historic/archaeological_site.svg
+    symbol_color: culture-icon
+    label_color: culture-text
+    start_symbol: 16
+    start_label: 17
+  amenity=place_of_worship:
+    symbol_file: symbols/religion/place_of_worship.svg
+    symbol_color: place-of-worship-icon
+    label_color: place-of-worship-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 12
+    modifications:
+      christian:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/christian.svg
+      muslim:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/muslim.svg
+      sikh:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/sikhist.svg
+      jewish:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/jewish.svg
+      hindu:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/hinduist.svg
+      buddhist:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/buddhist.svg
+      shinto:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/shintoist.svg
+      taoist:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/religion/taoist.svg
+    attributes:
+      - religion
+  man_made=cross:
+    symbol_file: symbols/religion/christian.9.svg
+    symbol_color: place-of-worship-icon
+    label_color: place-of-worship-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 6
+  historic=wayside_cross:
+    symbol_file: symbols/religion/christian.9.svg
+    symbol_color: place-of-worship-icon
+    label_color: place-of-worship-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 6
+  historic=wayside_shrine:
+    symbol_file: symbols/religion/shrine.svg
+    symbol_color: man-made-icon
+    label_color: place-of-worship-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 10
+
+  waterway=waterfall:
+    style: label-offset
+    label_color: water-text
+    attributes:
+      - height
+  man_made=bridge:
+    style: bridges
+    label_color: bridge-text
+    start_label: 12
+    way_pixels_min: 62.5
+  amenity=hospital:
+    symbol_file: symbols/health/hospital.svg
+    symbol_color: health-icon
+    label_color: health-text
+    start_symbol: 15
+    start_label: 16
+    text_dy: 10
+  amenity=pharmacy:
+    symbol_file: symbols/health/pharmacy.svg
+    symbol_color: health-icon
+    label_color: health-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  amenity=dentist:
+    symbol_file: symbols/health/dentist.svg
+    symbol_color: health-icon
+    label_color: health-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  amenity=doctors:
+    symbol_file: symbols/health/doctors.svg
+    symbol_color: health-icon
+    label_color: health-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+  amenity=clinic:
+    symbol_file: symbols/health/doctors.svg
+    symbol_color: health-icon
+    label_color: health-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 12
+  amenity=veterinary:
+    symbol_file: symbols/health/veterinary.svg
+    symbol_color: health-icon
+    label_color: health-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+
+  amenity=driving_school:
+    symbol_file: symbols/circle.4.svg
+    symbol_color: shop-icon
+    label_color: shop-text
+    start_symbol: 17
+    start_label: 18
+    text_dy: 8
+    modifications:
+      high_zoom:
+        style: standard-symbol-zoom-variant
+        symbol_file: symbols/circle.6.svg
+        start_symbol: 18
+  amenity=marketplace:
+    symbol_file: symbols/shop/marketplace.svg
+    symbol_color: shop-icon
+    label_color: shop-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 12
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+
+  shop=massage:
+    symbol_file: symbols/shop/massage.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 17
+    start_label: 17
+  shop:
+    symbol_file: symbols/circle.4.svg
+    symbol_color: shop-icon
+    label_color: shop-text
+    start_symbol: 17
+    start_label: 18
+    text_dy: 8
+    condition: (shop IS NOT NULL AND shop NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty', 'mall', 'massage'))
+    modifications:
+      other:
+        attribute: shop
+        style: standard-symbol-zoom-variant
+        symbol_file: symbols/circle.6.svg
+        start_symbol: 18
+        text_dy: 8
+      supermarket:
+        attribute: shop
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/shop/supermarket.svg
+        text_dy: 10
+      department_store:
+        attribute: shop
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/shop/department_store.svg
+        text_dy: 11
+      alcohol:
+        template: shop
+        symbol_file: symbols/shop/alcohol.svg
+      wine:
+        template: shop
+        symbol_file: symbols/shop/alcohol.svg
+      art:
+        template: shop
+        symbol_file: symbols/shop/art.svg
+      bag:
+        template: shop
+        symbol_file: symbols/shop/bag.svg
+      bakery:
+        template: shop
+        symbol_file: symbols/shop/bakery.svg
+      beauty:
+        template: shop
+        symbol_file: symbols/shop/beauty.svg
+      bed:
+        template: shop
+        symbol_file: symbols/shop/bed.svg
+      beverages:
+        template: shop
+        symbol_file: symbols/shop/beverages.svg
+      bicycle:
+        template: shop
+        symbol_file: symbols/shop/bicycle.svg
+      books:
+        template: shop
+        symbol_file: symbols/amenity/library.svg
+      butcher:
+        template: shop
+        symbol_file: symbols/shop/butcher.svg
+      chemist:
+        template: shop
+        symbol_file: symbols/shop/chemist.svg
+      car:
+        template: shop
+        symbol_file: symbols/shop/car.svg
+      car_parts:
+        template: shop
+        symbol_file: symbols/shop/car_parts.svg
+      car_repair:
+        template: shop
+        symbol_file: symbols/shop/car_repair.svg
+      carpet:
+        template: shop
+        symbol_file: symbols/shop/carpet.svg
+      charity:
+        template: shop
+        symbol_file: symbols/shop/charity.svg
+      clothes:
+        template: shop
+        symbol_file: symbols/shop/clothes.svg
+      fashion:
+        template: shop
+        symbol_file: symbols/shop/clothes.svg
+      coffee:
+        template: shop
+        symbol_file: symbols/shop/coffee.svg
+      computer:
+        template: shop
+        symbol_file: symbols/shop/computer.svg
+      convenience:
+        template: shop
+        symbol_file: symbols/shop/convenience.svg
+      chocolate:
+        template: shop
+        symbol_file: symbols/shop/confectionery.svg
+      confectionery:
+        template: shop
+        symbol_file: symbols/shop/confectionery.svg
+      pastry:
+        template: shop
+        symbol_file: symbols/shop/confectionery.svg
+      copyshop:
+        template: shop
+        symbol_file: symbols/shop/copyshop.svg
+      cosmetics:
+        template: shop
+        symbol_file: symbols/shop/perfumery.svg
+      perfumery:
+        template: shop
+        symbol_file: symbols/shop/perfumery.svg
+      dairy:
+        template: shop
+        symbol_file: symbols/shop/dairy.svg
+      deli:
+        template: shop
+        symbol_file: symbols/shop/deli.svg
+      doityourself:
+        template: shop
+        symbol_file: symbols/shop/diy.svg
+      hardware:
+        template: shop
+        symbol_file: symbols/shop/diy.svg
+      dry_cleaning:
+        template: shop
+        symbol_file: symbols/shop/laundry.svg
+      laundry:
+        template: shop
+        symbol_file: symbols/shop/laundry.svg
+      electronics:
+        template: shop
+        symbol_file: symbols/shop/electronics.svg
+      fabric:
+        template: shop
+        symbol_file: symbols/shop/fabric.svg
+      fishmonger:
+        template: shop
+        symbol_file: symbols/shop/seafood.svg
+        text_dy: 9
+      seafood:
+        template: shop
+        symbol_file: symbols/shop/seafood.svg
+        text_dy: 9
+      florist:
+        template: shop
+        symbol_file: symbols/shop/florist.svg
+      furniture:
+        template: shop
+        symbol_file: symbols/shop/furniture.svg
+        text_dy: 10
+      garden_centre:
+        template: shop
+        symbol_file: symbols/shop/garden_centre.svg
+      gift:
+        template: shop
+        symbol_file: symbols/shop/gift.svg
+      greengrocer:
+        template: shop
+        symbol_file: symbols/shop/greengrocer.svg
+      farm:
+        template: shop
+        symbol_file: symbols/shop/greengrocer.svg
+      hairdresser:
+        template: shop
+        symbol_file: symbols/shop/hairdresser.svg
+      hifi:
+        template: shop
+        symbol_file: symbols/shop/hifi.svg
+      houseware:
+        template: shop
+        symbol_file: symbols/shop/houseware.svg
+      interior_decoration:
+        template: shop
+        symbol_file: symbols/shop/interior_decoration.svg
+      jewelry:
+        template: shop
+        symbol_file: symbols/shop/jewelry.svg
+      jewellry:
+        template: shop
+        symbol_file: symbols/shop/jewelry.svg
+      medical_supply:
+        template: shop
+        symbol_file: symbols/shop/medical_supply.svg
+      mobile_phone:
+        template: shop
+        symbol_file: symbols/shop/mobile_phone.svg
+      motorcycle:
+        template: shop
+        symbol_file: symbols/shop/motorcycle.svg
+      music:
+        template: shop
+        symbol_file: symbols/shop/music.svg
+      musical_instrument:
+        template: shop
+        symbol_file: symbols/shop/musical_instrument.svg
+      kiosk:
+        template: shop
+        symbol_file: symbols/shop/newsagent.svg
+      newsagent:
+        template: shop
+        symbol_file: symbols/shop/newsagent.svg
+      optician:
+        template: shop
+        symbol_file: symbols/shop/optician.svg
+      outdoor:
+        template: shop
+        symbol_file: symbols/shop/outdoor.svg
+      pet:
+        template: shop
+        symbol_file: symbols/shop/pet.svg
+      photo:
+        template: shop
+        symbol_file: symbols/shop/photo.svg
+      photo_studio:
+        template: shop
+        symbol_file: symbols/shop/photo.svg
+      photography:
+        template: shop
+        symbol_file: symbols/shop/photo.svg
+      paint:
+        template: shop
+        symbol_file: symbols/shop/paint.svg
+      shoes:
+        template: shop
+        symbol_file: symbols/shop/shoes.svg
+      second_hand:
+        template: shop
+        symbol_file: symbols/shop/second_hand.svg
+      sports:
+        template: shop
+        symbol_file: symbols/shop/sports.svg
+      stationery:
+        template: shop
+        symbol_file: symbols/shop/stationery.svg
+      tobacco:
+        template: shop
+        symbol_file: symbols/shop/tobacco.svg
+      tea:
+        template: shop
+        symbol_file: symbols/shop/tea.svg
+      ticket:
+        template: shop
+        symbol_file: symbols/shop/ticket.svg
+        text_dy: 9
+      toys:
+        template: shop
+        symbol_file: symbols/shop/toys.svg
+      trade:
+        template: shop
+        symbol_file: symbols/shop/trade.svg
+      wholesale:
+        template: shop
+        symbol_file: symbols/shop/trade.svg
+      travel_agency:
+        template: shop
+        symbol_file: symbols/shop/travel_agency.svg
+      tyres:
+        template: shop
+        symbol_file: symbols/shop/tyres.svg
+      variety_store:
+        template: shop
+        symbol_file: symbols/shop/variety_store.svg
+      video:
+        template: shop
+        symbol_file: symbols/shop/video.svg
+      video_games:
+        template: shop
+        symbol_file: symbols/shop/video_games.svg
+    variants:
+      early:
+        condition: shop IN ('supermarket', 'department_store')
+        start_symbol: 16
+    attributes:
+      - shop
+
+  advertising=column:
+    symbol_file: symbols/advertising/column.svg
+    symbol_color: advertising-grey
+    start_symbol: 19
+
+  office:
+    symbol_file: symbols/circle.6.svg
+    symbol_color: office-icon
+    label_color: office-text
+    start_symbol: 18
+    start_label: 19
+    text_dy: 8
+    condition: (office IS NOT NULL AND office NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty'))
+    modifications:
+      embassy:
+        attribute: diplomatic
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/office/embassy.svg
+        text_dy: 11
+      consulate:
+        attribute: diplomatic
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/office/consulate.svg
+        text_dy: 11
+    variants:
+      diplomatic:
+        start_symbol: 17
+        start_label: 17
+        condition: diplomatic IN ('embassy', 'consulate')
+      large:
+        start_label: 18
+        condition: office IN ('accountant', 'adoption_agency', 'advertising_agency', 'architect', 'association', 'charity', 'company', 'educational_institution', 'employment_agency',  'energy_supplier', 'estate_agent', 'financial', 'forestry', 'foundation', 'government', 'guide', 'insurance', 'it', 'lawyer', 'logistics', 'moving_company', 'newspaper', 'ngo', 'notary', 'political_party', 'private_investigator', 'property_management', 'quango', 'religion', 'research', 'surveyor', 'tax', 'tax_advisor', 'telecommunication', 'travel_agent', 'water_utility')
+    attributes:
+      - office
+      - diplomatic
+
+  leisure=water_park:
+    symbol_file: symbols/leisure/water_park.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 14
+    start_label: 14
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+    text_dy: 12
+  leisure=fitness_centre:
+    symbol_file: symbols/leisure/fitness.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 14
+    start_label: 14
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+  leisure=fitness_station:
+    style: access-light
+    symbol_file: symbols/leisure/fitness.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 17
+    start_label: 18
+    attributes:
+      - int_access
+  leisure=playground:
+    style: access-light
+    symbol_file: symbols/leisure/playground.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+    attributes:
+      - int_access
+  leisure=miniature_golf:
+    symbol_file: symbols/leisure/miniature_golf.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 13
+  leisure=golf_course:
+    symbol_file: symbols/leisure/golf.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 15
+    start_label: 15
+    text_dy: 13
+  tourism=picnic_site:
+    symbol_file: symbols/leisure/picnic.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 16
+    start_label: 17
+  leisure=picnic_table:
+    symbol_file: symbols/leisure/picnic.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 10
+  leisure=firepit:
+    symbol_file: symbols/leisure/firepit.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 17
+  leisure=sauna:
+    symbol_file: symbols/leisure/sauna.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 17
+    start_label: 17
+  leisure=beach_resort:
+    symbol_file: symbols/leisure/beach_resort.svg
+    symbol_color: leisure-icon
+    label_color: leisure-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 10
+
+  leisure=slipway:
+    symbol_file: symbols/transport/slipway.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 13
+
+  leisure=dog_park:
+    style: label-variable-size
+    label_color: darken(@park, 60%)
+    start_label: 10
+    font_type: oblique
+    halo_radius: 1.5
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+    condition: (building IS NULL OR building = 'no')
+    attributes:
+      - building
+  leisure=swimming_pool:
+    style: label-variable-size
+    label_color: "@marina-text"
+    start_label: 14
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+    condition: (building IS NULL OR building = 'no')
+    attributes:
+      - building
+
+  shop=mall:
+    style: label-variable-size
+    label_color: darken(@retail, 50%)
+    start_label: 10
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+
+  place=archipelago:
+    style: label-variable-size
+    type: convex_hull
+    label_color: island-text
+    start_label: 10
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 16
+  place=island:
+    style: label-variable-size
+    label_color: island-text
+    start_label: 10
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 16
+  place=islet:
+    style: label-variable-size
+    label_color: island-text
+    start_label: 11
+    font_type: oblique
+    way_pixels_min: 3000
+    way_pixels_start_all: 17
+
+  military=danger_area:
+    template: label-variable-size-nobuilding
+    label_color: darken(@military, 20%)
+
+  highway=services:
+    template: label-variable-size-nobuilding
+    label_color: darken(@rest_area, 40%)
+    start_label: 13
+  highway=rest_area:
+    template: label-variable-size-nobuilding
+    label_color: darken(@rest_area, 40%)
+    start_label: 13
+  landuse=garages:
+    template: label-variable-size-nobuilding
+    label_color: darken(@garages, 50%)
+    start_label: 13
+  landuse=retail:
+    template: label-variable-size-nobuilding
+    label_color: darken(@retail, 50%)
+    start_label: 13
+  landuse=residential:
+    template: label-variable-size-nobuilding
+    label_color: darken(@residential, 50%)
+    start_label: 13
+  landuse=industrial:
+    template: label-variable-size-nobuilding
+    label_color: darken(@industrial, 50%)
+    start_label: 13
+  landuse=railway:
+    template: label-variable-size-nobuilding
+    label_color: darken(@industrial, 50%)
+    start_label: 13
+  man_made=works:
+    template: label-variable-size-nobuilding
+    label_color: darken(@industrial, 50%)
+    start_label: 13
+  landuse=cemetery:
+    template: label-variable-size-nobuilding
+    label_color: darken(@cemetery, 50%)
+    halo_radius: 1.5
+  amenity=grave_yard:
+    template: label-variable-size-nobuilding
+    label_color: darken(@cemetery, 50%)
+    halo_radius: 1.5
+  landuse=commercial:
+    template: label-variable-size-nobuilding
+    label_color: darken(@commercial, 50%)
+  landuse=quarry:
+    template: label-variable-size-nobuilding
+    label_color: darken(@construction, 50%)
+  landuse=brownfield:
+    template: label-variable-size-nobuilding
+    label_color: darken(@construction, 50%)
+  landuse=landfill:
+    template: label-variable-size-nobuilding
+    label_color: darken(@construction, 50%)
+  landuse=construction:
+    template: label-variable-size-nobuilding
+    label_color: darken(@construction, 50%)
+  landuse=village_green:
+    template: label-variable-size-nobuilding
+    label_color: darken(@grass, 50%)
+  leisure=common:
+    template: label-variable-size-nobuilding
+    label_color: darken(@grass, 50%)
+  leisure=garden:
+    template: label-variable-size-nobuilding
+    label_color: darken(@grass, 50%)
+  landuse=meadow:
+    template: label-variable-size-nobuilding
+    label_color: darken(@grass, 50%)
+  landuse=grass:
+    template: label-variable-size-nobuilding
+    label_color: darken(@grass, 50%)
+  natural=grassland:
+    template: label-variable-size-nobuilding
+    label_color: darken(@grass, 50%)
+  landuse=allotments:
+    template: label-variable-size-nobuilding
+    label_color: darken(@allotments, 50%)
+  landuse=farmyard:
+    template: label-variable-size-nobuilding
+    label_color: darken(@farmyard, 50%)
+  landuse=farmland:
+    template: label-variable-size-nobuilding
+    label_color: darken(@farmland, 50%)
+  landuse=greenhouse_horticulture:
+    template: label-variable-size-nobuilding
+    label_color: darken(@farmland, 50%)
+  landuse=forest:
+    template: label-variable-size-nobuilding
+    label_color: "@forest-text"
+  natural=wood:
+    template: label-variable-size-nobuilding
+    label_color: "@forest-text"
+  natural=wetland:
+    template: label-variable-size-nobuilding
+    label_color: "@wetland-text"
+  natural=reef:
+    template: label-variable-size-nobuilding
+    label_color: "@wetland-text"
+  natural=mud:
+    template: label-variable-size-nobuilding
+    label_color: "@wetland-text"
+  natural=heath:
+    template: label-variable-size-nobuilding
+    label_color: darken(@heath, 50%)
+  natural=scrub:
+    template: label-variable-size-nobuilding
+    label_color: darken(@scrub, 50%)
+  natural=beach:
+    template: label-variable-size-nobuilding
+    label_color: darken(@beach, 60%)
+  natural=shoal:
+    template: label-variable-size-nobuilding
+    label_color: darken(@beach, 60%)
+  natural=sand:
+    template: label-variable-size-nobuilding
+    label_color: darken(@sand, 50%)
+  natural=scree:
+    template: label-variable-size-nobuilding
+    label_color: darken(@bare_ground, 50%)
+  natural=shingle:
+    template: label-variable-size-nobuilding
+    label_color: darken(@bare_ground, 50%)
+  natural=bare_rock:
+    template: label-variable-size-nobuilding
+    label_color: darken(@bare_ground, 50%)
+  natural=glacier:
+    template: label-variable-size-nobuilding
+    label_color: mix(darken(@glacier, 40%), darken(@glacier-line, 30%), 50%)
+    way_pixels_min: 750
+  natural=water:
+    template: label-variable-size-water
+    label_color: "@water-text"
+  landuse=reservoir:
+    template: label-variable-size-water
+    label_color: "@water-text"
+  landuse=basin:
+    template: label-variable-size-water
+    label_color: "@water-text"
+  leisure=sport_centre:
+    template: label-variable-size-nobuilding
+    label_color: darken(@stadium, 60%)
+  leisure=stadium:
+    template: label-variable-size-nobuilding
+    label_color: darken(@stadium, 60%)
+  leisure=fitness_centre:
+    template: label-variable-size-nobuilding
+    label_color: darken(@stadium, 60%)
+  leisure=fitness_station:
+    template: label-variable-size-nobuilding
+    label_color: darken(@stadium, 60%)
+  leisure=park:
+    template: label-variable-size-nobuilding
+    label_color: darken(@park, 60%)
+  landuse=recreation_ground:
+    template: label-variable-size-nobuilding
+    label_color: darken(@park, 60%)
+  tourism=theme_park:
+    template: label-variable-size-nobuilding
+    label_color: "@tourism"
+    font_type: bold
+  tourism=zoo:
+    template: label-variable-size-nobuilding
+    label_color: "@tourism"
+    font_type: bold
+  leisure=marina:
+    template: label-variable-size-nobuilding
+    label_color: "@marina-text"
+    start_label: 15
+  amenity=kindergarten:
+    template: label-variable-size-nobuilding
+    label_color: darken(@societal_amenities, 60%)
+  amenity=school:
+    template: label-variable-size-nobuilding
+    label_color: darken(@societal_amenities, 60%)
+  amenity=college:
+    template: label-variable-size-nobuilding
+    label_color: darken(@societal_amenities, 60%)
+  amenity=university:
+    template: label-variable-size-nobuilding
+    label_color: darken(@societal_amenities, 60%)
+  power=plant:
+    template: label-variable-size-nobuilding
+    label_color: darken(@power, 40%)
+  power=generator:
+    template: label-variable-size-nobuilding
+    label_color: darken(@power, 40%)
+    condition: (tags->'generator:type' IS NULL OR tags->'generator:type' NOT IN ('wind'))
+  power=substation:
+    template: label-variable-size-nobuilding
+    label_color: darken(@power, 40%)
+    start_label: 13
+  aeroway=apron:
+    template: label-variable-size-nobuilding
+    label_color: darken(@apron, 50%)

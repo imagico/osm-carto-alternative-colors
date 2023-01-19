@@ -51,6 +51,14 @@ at mid zoom levels.
   - display of additional permissions on road classes with implicit access restrictions
 * rendering of `natural=tree`, `natural=shrub`, `natural=tree_row` and `natural=hedge` differentiated by `leaf_type`/`leaf_cycle`
 * embankment like illustration of `hedge=hedge_bank`
+* a modular style definition with different layers in separate files and the possibility to define style variants
+like with simplified versions of specific high complexity layers.
+* script generated MSS/SQL code for the POI symbol and label rendering making the style scale better
+with a large number of POI types.
+* regionally differentiated font lists for label rendering to better conform with different regional typographic 
+conventions (using preprocessed administrative area polygons for lookup).
+* rendering of compound name labels in multilingual regions based on matching `name:<lang>` tags with
+parts of the `name` tag and interpreting `default_language` tags.
 
 # Samples
 
@@ -73,45 +81,31 @@ install the a number of functions in PostGIS supplied in:
 
 * `sql/z.sql`
 * `sql/line-widths-generated.sql`
-* `sql/scale_factor.sql`
+* `sql/map_functions.sql`
 * `sql/roads.sql`
+* `sql/names.sql`
 * `sql/symbols.sql`
 
 Be aware that this style does not work well together with Postgresql JIT optimization.  It is highly 
-advisable to turn that feature off in your Postgresql configuration
+advisable to turn that feature off in your Postgresql configuration.
+
+Also the newest changes depend on [a custom version of Carto](https://github.com/imagico/carto/tree/xml-support).
+If you don't want to use that you can remove the XML code within CartoCSS code in [symbols-labels.yaml](symbols-labels.yaml)
+but you will loose the features that depend on that of course.  How you can modify kosmtik to use a custom local 
+version of carto can be found [here](https://github.com/imagico/kosmtik).
+
+For rendering all languages as intended you also need to download custom fonts - for which i adapted the
+[get-fonts.sh](get-fonts.sh) from upstream.  To get just the AC-Style specific fonts you can run the script without parameters,
+to get all the fonts used by OSM-Carto run `get-fonts.sh all`.
 
 ## Simplified version for faster rendering
 
-Some of the features of this style are fairly slow in rendering due to complex SQL code.  There is builtin 
-support for a more simple version of the style that disables the slowest parts, in particular parts of the 
-water barriers and the variable width road rendering.
+The style uses a new, modular concept for setting up the rendering layers that allows specifying different
+variants and simplified versions of layers that are expensive in rendering.
 
-To enable this simplified version you need to:
+`scripts/assemble_project.py -t simple`
 
-* run `sql/ac-lite.sql` on your database (which overrides some of the functions in roads.sql)
-* disable the `water-barriers-line` layer and enable the `water-barriers-line-simple` layer, for example
-by using (with kosmtik) the following in `localconfig.json`:
-
-```
-    {
-        "where": "Layer",
-        "if": {
-            "id": "water-barriers-line-simple"
-        },
-        "then": {
-            "properties.minzoom": 11
-        }
-    },
-    {
-        "where": "Layer",
-        "if": {
-            "id": "water-barriers-line"
-        },
-        "then": {
-            "Datasource.table": " (SELECT way, waterway, 'line' AS wtype, name FROM planet_osm_line WHERE FALSE) AS water_barriers_line"
-        }
-    }
-```
+is going to be the way to invoke that.  This feature has not been finalized yet.
 
 # License
 
@@ -119,7 +113,7 @@ Design components of the project are subject to the Creative Commons
 Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
 
 Software components of the project are subject to the GNU Affero General
-Public License s published by the Free Software Foundation, either
+Public License as published by the Free Software Foundation, either
 version 3 of the License, or (at your option) any later version.
 
-See [LICENSE.md](LICENSE.md) for details.
+See [LICENSE.txt](LICENSE.txt) for details.

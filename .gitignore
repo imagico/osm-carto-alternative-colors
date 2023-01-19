@@ -3,7 +3,9 @@ layers/
 symbols/patterns/previews/
 symbols/patterns/processed/
 symbols/pdf/
+symbols/colored/
 data/
+fonts/
 tmp/
 *.xml
 *.osm.pbf
