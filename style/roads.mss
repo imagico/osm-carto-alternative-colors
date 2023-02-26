@@ -4171,6 +4171,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     line-pattern-file: url('symbols/line_patterns/embankment_a2.svg');
     [zoom >= 17] { line-pattern-file: url('symbols/line_patterns/dyke.svg'); }
     [zoom >= 18] { line-pattern-file: url('symbols/line_patterns/dyke2.svg'); }
+    [zoom >= 19] { line-pattern-file: url('symbols/line_patterns/dyke3.svg'); }
   }
   [type = 'hedge_bank'][zoom >= 18] {
     line-width: 0.75;

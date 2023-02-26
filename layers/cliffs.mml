@@ -42,20 +42,29 @@
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, "natural", man_made
+            way,
+            "natural",
+            man_made,
+            tags->'earth_bank' AS earth_bank
           FROM planet_osm_line
-          WHERE ("natural" IN ('cliff', 'earth_bank') OR man_made = 'embankment')
+          WHERE ("natural" IN ('cliff', 'earth_bank', 'gully') OR man_made = 'embankment')
             AND way && !bbox!
          UNION ALL
          SELECT
             ST_Difference(
               way,
-              (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
-                 FROM planet_osm_point p
-                 WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
-                   AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+              COALESCE(
+                (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                   FROM planet_osm_point p
+                   WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
+                     AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+                ),
+                ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
               )
-            ) AS way, "natural", man_made
+            ) AS way,
+            "natural",
+            man_made,
+            NULL AS earth_bank
           FROM planet_osm_line l
           WHERE "natural" IN ('ridge', 'arete')
             AND l.way && !bbox!

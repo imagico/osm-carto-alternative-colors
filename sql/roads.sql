@@ -420,3 +420,21 @@ SELECT (CASE
   ELSE 0.0
 END)
 $func$;
+
+/* tagged width or width estimated from length */
+/* parameters: barrier tag, width tag, way, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_barrier_line_width_mapped (text, text, geometry, numeric)
+  returns numeric
+  language sql
+  immutable
+AS $func$
+SELECT (CASE
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 10) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $1 = 'wall' THEN
+    /* this is the minimum assumed ground unit wall width */
+    0.5 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $1 IN ('city_wall', 'citywalls') THEN
+    1.0 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  ELSE 0.0
+END)
+$func$;

@@ -530,9 +530,12 @@ select
       end)
     when $1 = 'citywalls' then
       (case
-        when $2 = 15 then 1.5
+        when $2 = 15 then 1.0
         when $2 = 16 then 1.5
-        when $2 >= 17 then 3.0
+        when $2 = 17 then 2.0
+        when $2 = 18 then 3.0
+        when $2 = 19 then 4.0
+        when $2 >= 20 then 5.0
         else 0.0
       end)
     when $1 = 'ditch' then
@@ -566,12 +569,17 @@ select
       end)
     when $1 = 'retaining_wall' then
       (case
-        when $2 >= 16 then 0.4
+        when $2 = 16 then 0.4
+        when $2 = 17 then 1.6
+        when $2 >= 18 then 2.2
         else 0.0
       end)
     when $1 = 'wall' then
       (case
-        when $2 >= 16 then 0.4
+        when $2 = 16 then 0.4
+        when $2 = 17 then 0.4
+        when $2 = 18 then 2.75
+        when $2 >= 19 then 3.0
         else 0.0
       end)
     when $1 = 'tree' then

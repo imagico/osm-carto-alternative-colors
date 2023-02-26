@@ -706,20 +706,29 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, "natural", man_made
+            way,
+            "natural",
+            man_made,
+            tags->'earth_bank' AS earth_bank
           FROM planet_osm_line
-          WHERE ("natural" IN ('cliff', 'earth_bank') OR man_made = 'embankment')
+          WHERE ("natural" IN ('cliff', 'earth_bank', 'gully') OR man_made = 'embankment')
             AND way && !bbox!
          UNION ALL
          SELECT
             ST_Difference(
               way,
-              (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
-                 FROM planet_osm_point p
-                 WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
-                   AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+              COALESCE(
+                (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                   FROM planet_osm_point p
+                   WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
+                     AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+                ),
+                ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
               )
-            ) AS way, "natural", man_made
+            ) AS way,
+            "natural",
+            man_made,
+            NULL AS earth_bank
           FROM planet_osm_line l
           WHERE "natural" IN ('ridge', 'arete')
             AND l.way && !bbox!
@@ -2486,7 +2495,102 @@ Layer:
                       FROM tc_combos
                       WHERE tc_type IN ('passing_place')) AS pp_combos
                 ) AS turning_circle_features
-            ) -- end of tc_all CTE
+            ), -- end of tc_all CTE
+            line_barriers_all AS
+            (SELECT -- line barriers without intersecting barrier=entrance nodes
+                way,
+                COALESCE(
+                  ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                   'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)),
+                  ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END))
+                ) AS feature,
+                GREATEST(
+                  carto_barrier_line_width(
+                    CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
+                    z(!scale_denominator!)
+                  ),
+                  carto_barrier_line_width_mapped(
+                    CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
+                    tags->'width',
+                    !bbox!, !scale_denominator!
+                  )
+                ) AS width,
+                layer,
+                osm_id,
+                z_order
+              FROM planet_osm_line l
+              WHERE (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                    'handrail', 'retaining_wall', 'wall')
+                OR historic = 'citywalls')
+                AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)
+                AND (l.way && !bbox!)
+                AND z(!scale_denominator!) >= 15
+                AND NOT EXISTS
+                  (SELECT 1 FROM planet_osm_point e WHERE ST_Intersects(l.way, e.way)
+                    AND e.barrier IN ('entrance'))
+            UNION ALL
+            -- barriers with entrance nodes cut out
+            SELECT
+                ST_Difference(
+                  lway,
+                  ST_Union(ST_Buffer(
+                    eway,
+                    (COALESCE(
+                      (SELECT
+                         GREATEST(
+                          carto_highway_line_width(highway, service, z(!scale_denominator!)),
+                          carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!))
+                         FROM planet_osm_line h
+                         WHERE ST_Intersects(h.way, eway) AND highway IN
+                          ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                           'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                           'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                           'busway', 'bus_guideway')
+                          ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
+                      ),
+                      carto_highway_line_width('footway', z(!scale_denominator!))
+                    ) + 2.5 + width)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ))
+                ) AS way,
+                COALESCE(barrier, historic) AS feature,
+                width,
+                layer,
+                osm_id,
+                z_order
+              FROM
+                (SELECT
+                    l.way AS lway,
+                    e.way AS eway,
+                    ('barrier_' || (CASE WHEN l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                     'handrail', 'retaining_wall', 'wall') THEN l.barrier ELSE NULL END)) AS barrier,
+                    ('historic_' || (CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE NULL END)) AS historic,
+                    GREATEST(
+                      carto_barrier_line_width(
+                        CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
+                        z(!scale_denominator!)
+                      ),
+                      carto_barrier_line_width_mapped(
+                        CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
+                        l.tags->'width',
+                        !bbox!, !scale_denominator!
+                      )
+                    ) AS width,
+                    l.layer AS layer,
+                    l.osm_id AS osm_id,
+                    l.z_order AS z_order
+                  FROM planet_osm_point e
+                  JOIN planet_osm_line l ON ST_Intersects(l.way, e.way)
+                  WHERE e.barrier IN ('entrance')
+                    AND (l.waterway IS NULL OR l.waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)) AS _
+              WHERE (eway && ST_Expand(!bbox!, (0.5*(carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 +
+                     width)*NULLIF(!scale_denominator!*0.001*0.28,0))))
+                AND (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                    'handrail', 'retaining_wall', 'wall')
+                  OR historic = 'citywalls')
+                AND (lway && !bbox!)
+                AND z(!scale_denominator!) >= 15
+                GROUP BY lway, barrier, historic, width, layer, osm_id, z_order
+            ) -- end of line_barriers_all CTE
             SELECT -- casing
                 way,
                 'casing' AS road_layer,
@@ -3005,7 +3109,7 @@ Layer:
             SELECT -- line_barriers
                 way,
                 'line_barriers' AS road_layer,
-                COALESCE(historic, barrier) AS feature,
+                feature,
                 'null' AS path_type,
                 'null' AS intermittent,
                 'null' AS seasonal,
@@ -3022,78 +3126,91 @@ Layer:
                 'null' tc_type,
                 0 AS width_nominal,
                 0 AS width_max,
-                0 AS width,
+                width,
                 0 AS casing_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
                 z_order
-              FROM (
-                -- line barriers without intersecting barrier=entrance nodes
-                SELECT way,
-                    ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                     'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
-                    ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic,
-                    layer,
-                    osm_id,
-                    z_order
-                  FROM planet_osm_line l
-                  WHERE (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                        'handrail', 'retaining_wall', 'wall')
-                    OR historic = 'citywalls')
-                    AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi'))
-                    AND (l.way && !bbox!)
-                    AND NOT EXISTS
-                      (SELECT 1 FROM planet_osm_point e WHERE ST_Intersects(l.way, e.way)
-                        AND e.barrier IN ('entrance'))
-                UNION ALL
-                -- barriers with entrance nodes cut out
-                SELECT
-                    ST_Difference(
-                      l.way,
-                      ST_Union(ST_Buffer(
-                        e.way,
-                        (COALESCE(
-                          (SELECT
-                             GREATEST(
-                              carto_highway_line_width(highway, service, z(!scale_denominator!)),
-                              carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!))
-                             FROM planet_osm_line h
-                             WHERE ST_Intersects(h.way, e.way) AND highway IN 
-                              ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
-                               'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
-                               'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
-                               'busway', 'bus_guideway')
-                              ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
-                          ),
-                          carto_highway_line_width('footway', z(!scale_denominator!))
-                        ) + 2.5 + carto_barrier_line_width(
-                              CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
-                              z(!scale_denominator!)
-                        ))*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)
-                      ))
-                    ) AS way,
-                    ('barrier_' || (CASE WHEN l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                     'handrail', 'retaining_wall', 'wall') THEN l.barrier ELSE NULL END)) AS barrier,
-                    ('historic_' || (CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE NULL END)) AS historic,
-                    l.layer AS layer,
-                    l.osm_id AS osm_id,
-                    l.z_order AS z_order
-                  FROM planet_osm_point e
-                  JOIN planet_osm_line l ON ST_Intersects(l.way, e.way)
-                  WHERE e.barrier IN ('entrance')
-                    AND (e.way && ST_Expand(!bbox!, (0.5*(carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 +
-                         carto_barrier_line_width(
-                           CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
-                           z(!scale_denominator!)
-                         ))*NULLIF(!scale_denominator!*0.001*0.28,0))))
-                    AND (l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                        'handrail', 'retaining_wall', 'wall')
-                      OR l.historic = 'citywalls')
-                    AND (l.waterway IS NULL OR l.waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi'))
-                    AND (l.way && !bbox!)
-                    GROUP BY l.way, l.barrier, l.historic, l.layer, l.osm_id, l.z_order
-                ) AS line_barriers
-                WHERE z(!scale_denominator!) >= 15
+              FROM line_barriers_all
+                WHERE z(!scale_denominator!) < 18 OR width < 2.4 OR feature NOT IN ('barrier_city_wall', 'historic_citywalls')
+            UNION ALL
+            SELECT -- line_barrier_areas
+                ST_Difference(
+                  ST_Reverse(ST_OffsetCurve(way, width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 'join=round')),
+                  COALESCE(
+                    (SELECT
+                        ST_Union(ST_Buffer(way, width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round'))
+                      FROM line_barriers_all
+                      WHERE feature IN ('barrier_wall', 'barrier_city_wall', 'historic_citywalls')
+                        AND osm_id != l1.osm_id
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                ) AS way,
+                'line_barrier_areas' AS road_layer,
+                feature,
+                'inner' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lane_right,
+                'null' AS int_lane_left,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_nominal,
+                0 AS width_max,
+                width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM line_barriers_all AS l1
+                WHERE z(!scale_denominator!) >= 18 AND width >= 2.4 AND feature IN ('barrier_wall', 'barrier_city_wall', 'historic_citywalls')
+            UNION ALL
+            SELECT -- line_barrier_areas
+                ST_Difference(
+                  ST_Reverse(ST_OffsetCurve(way, -width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 'join=round')),
+                  COALESCE(
+                    (SELECT
+                        ST_Union(ST_Buffer(way, width*0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round'))
+                      FROM line_barriers_all
+                      WHERE feature IN ('barrier_wall', 'barrier_city_wall', 'historic_citywalls')
+                        AND osm_id != l1.osm_id
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                ) AS way,
+                'line_barrier_areas' AS road_layer,
+                feature,
+                'outer' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lane_right,
+                'null' AS int_lane_left,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_nominal,
+                0 AS width_max,
+                width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM line_barriers_all AS l1
+                WHERE z(!scale_denominator!) >= 18 AND width >= 2.4 AND feature IN ('barrier_wall', 'barrier_city_wall', 'historic_citywalls')
             UNION ALL
             SELECT -- ferry_routes
                 way,
@@ -3173,22 +3290,23 @@ Layer:
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
               WHEN road_layer = 'landuse_overlay' THEN 2
               WHEN road_layer = 'line_barriers' THEN 3
-              WHEN road_layer = 'ferry_routes' THEN 4
-              WHEN road_layer = 'tc_casing' THEN 5
-              WHEN road_layer = 'area_casing' THEN 5
-              WHEN road_layer = 'junction_casing' THEN 5
-              WHEN road_layer = 'casing' THEN 5
-              WHEN road_layer = 'background' THEN 6
-              WHEN road_layer = 'background_unpaved' THEN 6
-              WHEN road_layer = 'area_fill' THEN 7
-              WHEN road_layer = 'junction_fill' THEN 7
-              WHEN road_layer = 'fill' THEN 7
-              WHEN road_layer = 'fill_unpaved' THEN 7
-              WHEN road_layer = 'centerline' THEN 7
-              WHEN road_layer = 'lanes' THEN 7
-              WHEN road_layer = 'access' THEN 7
-              WHEN road_layer = 'tc_fill' THEN 7
-              WHEN road_layer = 'centerline_top' THEN 8
+              WHEN road_layer = 'line_barrier_areas' THEN 4
+              WHEN road_layer = 'ferry_routes' THEN 5
+              WHEN road_layer = 'tc_casing' THEN 6
+              WHEN road_layer = 'area_casing' THEN 6
+              WHEN road_layer = 'junction_casing' THEN 6
+              WHEN road_layer = 'casing' THEN 6
+              WHEN road_layer = 'background' THEN 7
+              WHEN road_layer = 'background_unpaved' THEN 7
+              WHEN road_layer = 'area_fill' THEN 8
+              WHEN road_layer = 'junction_fill' THEN 8
+              WHEN road_layer = 'fill' THEN 8
+              WHEN road_layer = 'fill_unpaved' THEN 8
+              WHEN road_layer = 'centerline' THEN 8
+              WHEN road_layer = 'lanes' THEN 8
+              WHEN road_layer = 'access' THEN 8
+              WHEN road_layer = 'tc_fill' THEN 8
+              WHEN road_layer = 'centerline_top' THEN 9
             END,
             layernotnull,
             z_order,
@@ -3197,22 +3315,23 @@ Layer:
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
               WHEN road_layer = 'landuse_overlay' THEN 2
               WHEN road_layer = 'line_barriers' THEN 3
-              WHEN road_layer = 'ferry_routes' THEN 4
-              WHEN road_layer = 'tc_casing' THEN 5
-              WHEN road_layer = 'area_casing' THEN 6
-              WHEN road_layer = 'junction_casing' THEN 7
-              WHEN road_layer = 'casing' THEN 8
-              WHEN road_layer = 'background' THEN 9
-              WHEN road_layer = 'background_unpaved' THEN 9
-              WHEN road_layer = 'area_fill' THEN 10
-              WHEN road_layer = 'junction_fill' THEN 11
-              WHEN road_layer = 'fill' THEN 12
-              WHEN road_layer = 'fill_unpaved' THEN 12
-              WHEN road_layer = 'centerline' THEN 13
-              WHEN road_layer = 'lanes' THEN 14
-              WHEN road_layer = 'access' THEN 15
-              WHEN road_layer = 'tc_fill' THEN 16
-              WHEN road_layer = 'centerline_top' THEN 17
+              WHEN road_layer = 'line_barrier_areas' THEN 4
+              WHEN road_layer = 'ferry_routes' THEN 5
+              WHEN road_layer = 'tc_casing' THEN 6
+              WHEN road_layer = 'area_casing' THEN 7
+              WHEN road_layer = 'junction_casing' THEN 8
+              WHEN road_layer = 'casing' THEN 9
+              WHEN road_layer = 'background' THEN 10
+              WHEN road_layer = 'background_unpaved' THEN 10
+              WHEN road_layer = 'area_fill' THEN 11
+              WHEN road_layer = 'junction_fill' THEN 12
+              WHEN road_layer = 'fill' THEN 13
+              WHEN road_layer = 'fill_unpaved' THEN 14
+              WHEN road_layer = 'centerline' THEN 15
+              WHEN road_layer = 'lanes' THEN 16
+              WHEN road_layer = 'access' THEN 17
+              WHEN road_layer = 'tc_fill' THEN 18
+              WHEN road_layer = 'centerline_top' THEN 19
             END,
             CASE WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0 ELSE 1 END,
             -- order by how permissive it is to the target map user
