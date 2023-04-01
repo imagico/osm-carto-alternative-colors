@@ -1296,11 +1296,11 @@ features:
 
   tourism=information:
     symbol_file: symbols/tourism/office.svg
-    symbol_color: amenity-icon
-    label_color: amenity-text
+    symbol_color: office-icon
+    label_color: office-text
     start_symbol: 17
     start_label: 17
-    condition: (tags->'information' IN ('audioguide', 'board', 'guidepost', 'map', 'office', 'tactile_map', 'terminal'))
+    condition: (tags->'information' IN ('audioguide', 'board', 'guidepost', 'map', 'office', 'sign', 'tactile_map', 'terminal', 'visitor_centre'))
     attributes:
       - information
     variants:
@@ -1318,6 +1318,15 @@ features:
         label_color: man-made-text
         start_symbol: 19
         start_label: 19
+        text_dy: 10
+      information=sign:
+        condition: information IN ('sign')
+        symbol_file: symbols/tourism/sign.svg
+        symbol_color: man-made-icon
+        label_color: man-made-text
+        start_symbol: 19
+        start_label: 19
+        text_dy: 10
       information=guidepost:
         condition: information IN ('guidepost')
         symbol_file: symbols/tourism/guidepost.svg
@@ -1332,6 +1341,7 @@ features:
         label_color: man-made-text
         start_symbol: 19
         start_label: 19
+        text_dy: 10
       information=terminal:
         condition: information IN ('terminal')
         symbol_file: symbols/tourism/terminal.svg
@@ -1339,6 +1349,14 @@ features:
         label_color: man-made-text
         start_symbol: 19
         start_label: 19
+      information=visitor_centre:
+        condition: information IN ('visitor_centre')
+        symbol_file: symbols/tourism/visitor_centre.svg
+        symbol_color: amenity-icon
+        label_color: amenity-text
+        start_symbol: 17
+        start_label: 17
+        text_dy: 11
   amenity=atm:
     style: operator
     symbol_file: symbols/amenity/atm.svg

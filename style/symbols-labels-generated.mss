@@ -795,7 +795,7 @@
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
-      shield-fill: #734a08;
+      shield-fill: #4863A0;
       shield-text-dy: 11;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/tourism_information.svg');
@@ -807,7 +807,7 @@
       textonly/text-size: 10;
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #734a08;
+      textonly/text-fill: #4863A0;
       textonly/text-face-name: @book-fonts;
       [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
@@ -824,7 +824,7 @@
       text-size: 10;
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
-      text-fill: #734a08;
+      text-fill: #4863A0;
       text-dy: 11;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
@@ -841,7 +841,7 @@
       text-size: 10;
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
-      text-fill: #734a08;
+      text-fill: #4863A0;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -954,7 +954,7 @@
         shield-wrap-width: @standard-wrap-width;
         shield-line-spacing: @standard-line-spacing-size;
         shield-fill: #000000;
-        shield-text-dy: 11;
+        shield-text-dy: 10;
         shield-unlock-image: true;
         shield-file: url('symbols/colored/tourism_information_information_board.svg');
         symbolonly/marker-placement: interior;
@@ -983,7 +983,86 @@
         text-wrap-width: @standard-wrap-width;
         text-line-spacing: @standard-line-spacing-size;
         text-fill: #000000;
-        text-dy: 11;
+        text-dy: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+      }
+      [vis_type = 'label-only'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #000000;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+      }
+  }
+  [feature = 'tourism_information'][variant = 'information_sign'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-placement: interior;
+        marker-clip: false;
+        marker-file: url('symbols/colored/tourism_information_information_sign.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-placement: interior;
+        shield-clip: false;
+        shield-name: '[name]';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-halo-radius: @standard-halo-radius * 1.0;
+        shield-halo-fill: @standard-halo-fill;
+        shield-wrap-width: @standard-wrap-width;
+        shield-line-spacing: @standard-line-spacing-size;
+        shield-fill: #000000;
+        shield-text-dy: 10;
+        shield-unlock-image: true;
+        shield-file: url('symbols/colored/tourism_information_information_sign.svg');
+        symbolonly/marker-placement: interior;
+        symbolonly/marker-clip: false;
+        symbolonly/marker-file: url('symbols/colored/tourism_information_information_sign.svg');
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #000000;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #000000;
+        text-dy: 10;
         text-face-name: @book-fonts;
         [font = 'jp'] { text-face-name: @book-fonts-jp; }
         [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -1112,7 +1191,7 @@
         shield-wrap-width: @standard-wrap-width;
         shield-line-spacing: @standard-line-spacing-size;
         shield-fill: #000000;
-        shield-text-dy: 11;
+        shield-text-dy: 10;
         shield-unlock-image: true;
         shield-file: url('symbols/colored/tourism_information_information_map.svg');
         symbolonly/marker-placement: interior;
@@ -1141,7 +1220,7 @@
         text-wrap-width: @standard-wrap-width;
         text-line-spacing: @standard-line-spacing-size;
         text-fill: #000000;
-        text-dy: 11;
+        text-dy: 10;
         text-face-name: @book-fonts;
         [font = 'jp'] { text-face-name: @book-fonts-jp; }
         [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -1237,6 +1316,85 @@
         text-wrap-width: @standard-wrap-width;
         text-line-spacing: @standard-line-spacing-size;
         text-fill: #000000;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+      }
+  }
+  [feature = 'tourism_information'][variant = 'information_visitor_centre'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-placement: interior;
+        marker-clip: false;
+        marker-file: url('symbols/colored/tourism_information_information_visitor_centre.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-placement: interior;
+        shield-clip: false;
+        shield-name: '[name]';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-halo-radius: @standard-halo-radius * 1.0;
+        shield-halo-fill: @standard-halo-fill;
+        shield-wrap-width: @standard-wrap-width;
+        shield-line-spacing: @standard-line-spacing-size;
+        shield-fill: #734a08;
+        shield-text-dy: 11;
+        shield-unlock-image: true;
+        shield-file: url('symbols/colored/tourism_information_information_visitor_centre.svg');
+        symbolonly/marker-placement: interior;
+        symbolonly/marker-clip: false;
+        symbolonly/marker-file: url('symbols/colored/tourism_information_information_visitor_centre.svg');
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #734a08;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #734a08;
+        text-dy: 11;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+      }
+      [vis_type = 'label-only'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #734a08;
         text-face-name: @book-fonts;
         [font = 'jp'] { text-face-name: @book-fonts-jp; }
         [font = 'tc'] { text-face-name: @book-fonts-tc; }
