@@ -5072,7 +5072,9 @@ Layer:
             END) ASC NULLS LAST,
             prio ASC NULLS LAST,
             way_pixels DESC NULLS LAST,
-            way_length DESC NULLS LAST
+            way_length DESC NULLS LAST,
+            char_length(name) DESC NULLS LAST,
+            name DESC NULLS LAST
         ) AS amenity_points
     properties:
       minzoom: 10

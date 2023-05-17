@@ -1344,7 +1344,9 @@ def main():
     print (indent_base+"    END) ASC NULLS LAST,", file=file_mml)
     print (indent_base+"    prio ASC NULLS LAST,", file=file_mml)
     print (indent_base+"    way_pixels DESC NULLS LAST,", file=file_mml)
-    print (indent_base+"    way_length DESC NULLS LAST", file=file_mml)
+    print (indent_base+"    way_length DESC NULLS LAST,", file=file_mml)
+    print (indent_base+"    char_length(name) DESC NULLS LAST,", file=file_mml)
+    print (indent_base+"    name DESC NULLS LAST", file=file_mml)
     print (indent_base+") AS "+config["settings"].get("layer").replace("-", "_"), file=file_mml)
 
     print ("    properties:", file=file_mml)
