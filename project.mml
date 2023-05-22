@@ -1081,13 +1081,23 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            ST_LineMerge(ST_Collect(way)) AS way,
+            CASE WHEN ST_IsClosed(way) THEN ST_BuildArea(way) ELSE way END AS way,
             admin_level
-          FROM planet_osm_admin
-          WHERE admin_level BETWEEN 0 AND 4
-            AND way && !bbox!
-          GROUP BY admin_level
-          ORDER BY admin_level DESC
+          FROM
+            (SELECT
+                (ST_Dump(lines.way)).geom AS way,
+                admin_level
+              FROM
+                (SELECT
+                    ST_LineMerge(ST_Collect(way)) AS way,
+                    admin_level
+                  FROM planet_osm_admin
+                  WHERE admin_level BETWEEN 0 AND 4
+                    AND way && !bbox!
+                  GROUP BY admin_level
+                  ORDER BY admin_level DESC
+                ) AS lines
+            ) AS lines_flat
         ) AS admin_low_zoom
     properties:
       minzoom: 4
@@ -1099,13 +1109,23 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            ST_LineMerge(ST_Collect(way)) AS way,
+            CASE WHEN ST_IsClosed(way) THEN ST_BuildArea(way) ELSE way END AS way,
             admin_level
-          FROM planet_osm_admin
-          WHERE admin_level BETWEEN 0 AND 8
-            AND way && !bbox!
-          GROUP BY admin_level
-          ORDER BY admin_level DESC
+          FROM
+            (SELECT
+                (ST_Dump(lines.way)).geom AS way,
+                admin_level
+              FROM
+                (SELECT
+                    ST_LineMerge(ST_Collect(way)) AS way,
+                    admin_level
+                  FROM planet_osm_admin
+                  WHERE admin_level BETWEEN 0 AND 8
+                    AND way && !bbox!
+                  GROUP BY admin_level
+                  ORDER BY admin_level DESC
+                ) AS lines
+            ) AS lines_flat
         ) AS admin_mid_zoom
     properties:
       minzoom: 8
@@ -1117,13 +1137,23 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            ST_LineMerge(ST_Collect(way)) AS way,
+            CASE WHEN ST_IsClosed(way) THEN ST_BuildArea(way) ELSE way END AS way,
             admin_level
-          FROM planet_osm_admin
-          WHERE admin_level BETWEEN 0 AND 10
-            AND way && !bbox!
-          GROUP BY admin_level
-          ORDER BY admin_level DESC
+          FROM
+            (SELECT
+                (ST_Dump(lines.way)).geom AS way,
+                admin_level
+              FROM
+                (SELECT
+                    ST_LineMerge(ST_Collect(way)) AS way,
+                    admin_level
+                  FROM planet_osm_admin
+                  WHERE admin_level BETWEEN 0 AND 10
+                    AND way && !bbox!
+                  GROUP BY admin_level
+                  ORDER BY admin_level DESC
+                ) AS lines
+            ) AS lines_flat
         ) AS admin_high_zoom
     properties:
       minzoom: 13
