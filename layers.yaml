@@ -172,10 +172,16 @@ layers:
       - ac
       - simple
       - legacy
+  crevasses:
+    source: layers/crevasses.mml
+    stylesheets:
+      - style/barriers.mss
+    tags:
+      - ac
   cliffs:
     source: layers/cliffs.mml
     stylesheets:
-      - style/landcover.mss
+      - style/barriers.mss
     tags:
       - ac
       - simple
@@ -268,6 +274,7 @@ layers:
       - style/roads.mss
       - style/road-colors-generated.mss
       - style/line-widths-generated.mss
+      - style/barriers.mss
     tags:
       - ac
       - simple
@@ -338,7 +345,7 @@ layers:
   line-barrier-entrances:
     source: layers/line-barrier-entrances.mml
     stylesheets:
-      - style/landcover.mss
+      - style/barriers.mss
     tags:
       - ac
       - simple
@@ -378,7 +385,7 @@ layers:
   text-line:
     source: layers/text-line.mml
     stylesheets:
-      - style/landcover.mss
+      - style/barriers.mss
       - style/water-features.mss
     tags:
       - ac

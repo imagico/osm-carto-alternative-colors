@@ -607,6 +607,18 @@ select
         when $2 >= 20 then 19.0
         else 0.0
       end)
+    when $1 = 'crevasse' then
+      (case
+        when $2 = 13 then 2.5
+        when $2 = 14 then 3.0
+        when $2 = 15 then 3.5
+        when $2 = 16 then 5.0
+        when $2 = 17 then 7.0
+        when $2 = 18 then 10.0
+        when $2 = 19 then 12.0
+        when $2 >= 20 then 14.0
+        else 0.0
+      end)
     else 0.0
   end;
 $func$;

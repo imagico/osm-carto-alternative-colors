@@ -153,9 +153,9 @@
                       tags->'leaf_type' AS leaf_type,
                       tags->'leaf_cycle' AS leaf_cycle,
                       tags->'taxon' AS taxon,
-                      tags->'family' AS family,
-                      tags->'genus' AS genus,
-                      tags->'species' AS species,
+                      COALESCE(tags->'family', tags->'taxon:family') AS family,
+                      COALESCE(tags->'genus', tags->'taxon:genus') AS genus,
+                      COALESCE(tags->'species', tags->'taxon:species') AS species,
                       GREATEST(
                         carto_barrier_line_width("natural", z(!scale_denominator!)),
                         -- we round the mapped width to integer pixels to possibly get a pixel aligned symbol
@@ -174,42 +174,92 @@
               ),
             tree_rows AS
               (SELECT
+                -- this cuts out barrier=entrance nodes - in a width reflecting whatever highway=* intersects
+                ST_Difference(
                   way,
-                  feature,
-                  length,
-                  height,
-                  leaf_type,
-                  leaf_cycle,
-                  taxon,
-                  family,
-                  genus,
-                  species,
-                  width_px,
-                  width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
-                FROM
-                  (SELECT
-                      way,
-                      COALESCE("natural", barrier) AS feature,
-                      ST_Length(way)*(CASE WHEN "natural" = 'tree_row' THEN 1000 ELSE 1.0 END) AS length,
-                      CASE
-                        WHEN tags->'height' ~ '^-?\d{1,3}(\.\d+)?$' THEN (tags->'height')::NUMERIC
-                        ELSE 0.0
-                      END AS height,
-                      tags->'leaf_type' AS leaf_type,
-                      tags->'leaf_cycle' AS leaf_cycle,
-                      tags->'taxon' AS taxon,
-                      tags->'family' AS family,
-                      tags->'genus' AS genus,
-                      tags->'species' AS species,
-                      GREATEST(
-                        carto_barrier_line_width(COALESCE("natural", barrier), z(!scale_denominator!)),
-                        -- we do not round the mapped width here because tree row symbols are not pixel aligned
-                        -- we cap it at 60 pixel to avoid blowing up existing symbols too much
-                        LEAST(carto_treerow_line_width_mapped(COALESCE("natural", barrier), tags->'width', tags->'height', !bbox!, !scale_denominator!), 60)
-                      ) AS width_px
-                    FROM planet_osm_line
-                    WHERE ("natural" = 'tree_row' OR barrier = 'hedge') AND way && !bbox!
-                  ) AS _
+                  COALESCE(
+                    (SELECT
+                        ST_Union(ST_Buffer(way, width))
+                      FROM
+                        (SELECT
+                            e.way AS way,
+                            (COALESCE(
+                              (SELECT
+                                  GREATEST(
+                                    carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
+                                    carto_highway_line_width_mapped(h.highway, h.tags->'width', h.tags->'lanes', !bbox!, !scale_denominator!))
+                                FROM planet_osm_line h
+                                WHERE ST_Intersects(h.way, e.way) AND h.highway IN
+                                  ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                                   'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                                   'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                                   'busway', 'bus_guideway')
+                                ORDER BY carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)) DESC LIMIT 1
+                              ),
+                              carto_highway_line_width('footway', z(!scale_denominator!))
+                            ) + 2.5 + l.width_px)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                          FROM planet_osm_point e
+                          WHERE ST_Intersects(l.way, e.way)
+                            AND e.barrier IN ('entrance')
+                        ) AS entrances
+                      WHERE (way && ST_Expand(!bbox!, (0.5*
+                              (carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 + l.width_px)*
+                              NULLIF(!scale_denominator!*0.001*0.28,0)))
+                            )
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                ) AS way,
+                feature,
+                length,
+                height,
+                leaf_type,
+                leaf_cycle,
+                taxon,
+                family,
+                genus,
+                species,
+                width_px,
+                width
+              FROM
+                (SELECT
+                    way,
+                    feature,
+                    length,
+                    height,
+                    leaf_type,
+                    leaf_cycle,
+                    taxon,
+                    family,
+                    genus,
+                    species,
+                    width_px,
+                    width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                  FROM
+                    (SELECT
+                        way,
+                        COALESCE("natural", barrier) AS feature,
+                        ST_Length(way)*(CASE WHEN "natural" = 'tree_row' THEN 1000 ELSE 1.0 END) AS length,
+                        CASE
+                          WHEN tags->'height' ~ '^-?\d{1,3}(\.\d+)?$' THEN (tags->'height')::NUMERIC
+                          ELSE 0.0
+                        END AS height,
+                        tags->'leaf_type' AS leaf_type,
+                        tags->'leaf_cycle' AS leaf_cycle,
+                        tags->'taxon' AS taxon,
+                        COALESCE(tags->'family', tags->'taxon:family') AS family,
+                        COALESCE(tags->'genus', tags->'taxon:genus') AS genus,
+                        COALESCE(tags->'species', tags->'taxon:species') AS species,
+                        GREATEST(
+                          carto_barrier_line_width(COALESCE("natural", barrier), z(!scale_denominator!)),
+                          -- we do not round the mapped width here because tree row symbols are not pixel aligned
+                          -- we cap it at 60 pixel to avoid blowing up existing symbols too much
+                          LEAST(carto_treerow_line_width_mapped(COALESCE("natural", barrier), tags->'width', tags->'height', !bbox!, !scale_denominator!), 60)
+                        ) AS width_px
+                      FROM planet_osm_line
+                      WHERE ("natural" = 'tree_row' OR barrier = 'hedge') AND way && !bbox!
+                    ) AS _
+                ) AS l
               ),
             row_trees_raw AS
               (SELECT
@@ -317,9 +367,9 @@
                                       tags->'leaf_type' AS leaf_type,
                                       tags->'leaf_cycle' AS leaf_cycle,
                                       tags->'taxon' AS taxon,
-                                      tags->'family' AS family,
-                                      tags->'genus' AS genus,
-                                      tags->'species' AS species,
+                                      COALESCE(tags->'family', tags->'taxon:family') AS family,
+                                      COALESCE(tags->'genus', tags->'taxon:genus') AS genus,
+                                      COALESCE(tags->'species', tags->'taxon:species') AS species,
                                       GREATEST(
                                         carto_barrier_line_width(COALESCE("natural", barrier), z(!scale_denominator!)),
                                         -- we do not round the mapped width here because tree row symbols are not pixel aligned

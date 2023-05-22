@@ -49,6 +49,7 @@ Stylesheet:
   - style/landcover.mss
   - style/shapefiles.mss
   - style/water.mss
+  - style/barriers.mss
   - style/roads.mss
   - style/water-features.mss
   - style/buildings.mss
@@ -699,6 +700,115 @@ Layer:
         ) AS icesheet_outlines
     properties:
       minzoom: 4
+  - id: crevasse-area
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM planet_osm_polygon
+          WHERE "natural" IN ('crevasse')
+        ) AS crevasse_area
+    properties:
+      minzoom: 11
+  - id: crevasse-line
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      geometry_table: planet_osm_line
+      table: |-
+        (SELECT
+            way,
+            crevasse_class
+          FROM
+          (
+            WITH lines_raw AS
+            (SELECT
+                way,
+                osm_id,
+                CASE
+                  WHEN (len < 8.0*width_orig) OR (width_orig <= 0) THEN 'tiny' 
+                  WHEN len < 12.0*width_orig THEN 'small' 
+                  WHEN len < 18.0*width_orig THEN 'medium' 
+                  ELSE 'large' 
+                END AS crevasse_class,
+                CASE WHEN len < 12.0*width_orig THEN LEAST(width_orig, 3.5*NULLIF(!scale_denominator!*0.001*0.28,0)) ELSE width_orig END AS width,
+                width_orig
+              FROM
+                (SELECT
+                    way,
+                    osm_id,
+                    ST_Length(way) AS len,
+                    carto_barrier_line_width('crevasse', z(!scale_denominator!))*NULLIF(!scale_denominator!*0.001*0.28,0) AS width_orig
+                  FROM planet_osm_line
+                  WHERE "natural" IN ('crevasse')
+                  AND (way && !bbox!)
+                ) AS _
+            ), -- line_raw
+            points_offset AS
+            (SELECT
+                osm_id,
+                MAX(crevasse_class) AS crevasse_class,
+                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, SQRT(CASE WHEN f <= 0.5 THEN f*2.0 ELSE (1.0-f)*2.0 END)*width*0.5), f)) AS line1,
+                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, -SQRT(CASE WHEN f <= 0.5 THEN f*2.0 ELSE (1.0-f)*2.0 END)*width*0.5), f)) AS line2
+              FROM              
+                (SELECT
+                    way,
+                    osm_id,
+                    ST_LineLocatePoint(way, (way_points).geom) AS f,
+                    crevasse_class,
+                    width
+                  FROM
+                    (SELECT
+                        way,
+                        osm_id,
+                        ST_DumpPoints(way) AS way_points,
+                        crevasse_class,
+                        width
+                      FROM
+                        (SELECT
+                            ST_Segmentize(way, width_orig*2.5) AS way,
+                            osm_id,
+                            crevasse_class,
+                            width
+                          FROM lines_raw
+                          WHERE crevasse_class != 'tiny'
+                        ) AS line_resampled
+                    ) AS line_mod
+                    ORDER BY osm_id, f
+                ) AS line_points
+              GROUP BY osm_id
+            ) -- end points_offset
+            SELECT -- the constructed polygons
+                ST_BuildArea(ST_Collect(line1, line2)) AS way,
+                crevasse_class
+              FROM points_offset
+            UNION ALL
+            SELECT -- the centerlines
+                way,
+                'center_' || crevasse_class AS crevasse_class
+              FROM lines_raw
+          ) AS _
+        ) AS crevasse_line
+    properties:
+      minzoom: 13
+  - id: crevasse-line-lz
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM planet_osm_line
+          WHERE "natural" IN ('crevasse')
+        ) AS crevasse_line_lz
+    properties:
+      minzoom: 11
+      maxzoom: 12
   - id: cliffs
     geometry: linestring
     <<: *extents
@@ -707,31 +817,42 @@ Layer:
       table: |-
         (SELECT
             way,
-            "natural",
-            man_made,
-            tags->'earth_bank' AS earth_bank
-          FROM planet_osm_line
-          WHERE ("natural" IN ('cliff', 'earth_bank', 'gully') OR man_made = 'embankment')
-            AND way && !bbox!
-         UNION ALL
-         SELECT
-            ST_Difference(
-              way,
-              COALESCE(
-                (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
-                   FROM planet_osm_point p
-                   WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
-                     AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
-                ),
-                ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-              )
-            ) AS way,
-            "natural",
-            man_made,
-            NULL AS earth_bank
-          FROM planet_osm_line l
-          WHERE "natural" IN ('ridge', 'arete')
-            AND l.way && !bbox!
+            COALESCE(int_natural, man_made) AS feature
+          FROM
+            (SELECT
+                way,
+                ('natural_' || 
+                  (CASE WHEN "natural" IN ('cliff', 'earth_bank', 'gully') THEN
+                    (CASE
+                      WHEN "natural" IN ('cliff') THEN (CASE WHEN surface = 'ice' THEN 'icecliff' ELSE 'cliff' END)
+                      WHEN "natural" IN ('earth_bank') THEN (CASE WHEN tags @> 'earth_bank=>grassy_steep_slope' THEN 'earth_bank_grass' ELSE 'earth_bank' END)
+                      ELSE "natural" END
+                    )
+                  ELSE NULL END)
+                ) AS int_natural,
+                ('man_made_' || (CASE WHEN man_made IN ('embankment') THEN man_made ELSE NULL END)) AS man_made
+              FROM planet_osm_line
+              WHERE ("natural" IN ('cliff', 'crevasse', 'earth_bank', 'gully') OR man_made = 'embankment')
+                AND way && !bbox!
+             UNION ALL
+             SELECT
+                ST_Difference(
+                  way,
+                  COALESCE(
+                    (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                       FROM planet_osm_point p
+                       WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
+                         AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                ) AS way,
+                ('natural_' || "natural") AS int_natural,
+                NULL AS man_made
+              FROM planet_osm_line l
+              WHERE "natural" IN ('ridge', 'arete')
+                AND l.way && !bbox!
+            ) AS _
         ) AS cliffs
     properties:
       minzoom: 13
@@ -2497,99 +2618,89 @@ Layer:
                 ) AS turning_circle_features
             ), -- end of tc_all CTE
             line_barriers_all AS
-            (SELECT -- line barriers without intersecting barrier=entrance nodes
-                way,
-                COALESCE(
-                  ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                   'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)),
-                  ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END))
-                ) AS feature,
-                GREATEST(
-                  carto_barrier_line_width(
-                    CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
-                    z(!scale_denominator!)
-                  ),
-                  carto_barrier_line_width_mapped(
-                    CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
-                    tags->'width',
-                    !bbox!, !scale_denominator!
-                  )
-                ) AS width,
-                layer,
-                osm_id,
-                z_order
-              FROM planet_osm_line l
-              WHERE (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                    'handrail', 'retaining_wall', 'wall')
-                OR historic = 'citywalls')
-                AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)
-                AND (l.way && !bbox!)
-                AND z(!scale_denominator!) >= 15
-                AND NOT EXISTS
-                  (SELECT 1 FROM planet_osm_point e WHERE ST_Intersects(l.way, e.way)
-                    AND e.barrier IN ('entrance'))
-            UNION ALL
-            -- barriers with entrance nodes cut out
-            SELECT
+            (SELECT
+                -- this cuts out barrier=entrance nodes - in a width reflecting whatever highway=* intersects
                 ST_Difference(
-                  lway,
-                  ST_Union(ST_Buffer(
-                    eway,
-                    (COALESCE(
-                      (SELECT
-                         GREATEST(
-                          carto_highway_line_width(highway, service, z(!scale_denominator!)),
-                          carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!))
-                         FROM planet_osm_line h
-                         WHERE ST_Intersects(h.way, eway) AND highway IN
-                          ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
-                           'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
-                           'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
-                           'busway', 'bus_guideway')
-                          ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
-                      ),
-                      carto_highway_line_width('footway', z(!scale_denominator!))
-                    ) + 2.5 + width)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0)
-                  ))
+                  way,
+                  COALESCE(
+                    (SELECT
+                        ST_Union(ST_Buffer(way, width))
+                      FROM
+                        (SELECT
+                            e.way AS way,
+                            (COALESCE(
+                              (SELECT
+                                  GREATEST(
+                                    carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
+                                    carto_highway_line_width_mapped(h.highway, h.tags->'width', h.tags->'lanes', !bbox!, !scale_denominator!))
+                                FROM planet_osm_line h
+                                WHERE ST_Intersects(h.way, e.way) AND h.highway IN
+                                  ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                                   'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                                   'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                                   'busway', 'bus_guideway')
+                                ORDER BY carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)) DESC LIMIT 1
+                              ),
+                              carto_highway_line_width('footway', z(!scale_denominator!))
+                            ) + 2.5 + l.width)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                          FROM planet_osm_point e
+                          WHERE ST_Intersects(l.way, e.way)
+                            AND e.barrier IN ('entrance')
+                        ) AS entrances
+                      WHERE (way && ST_Expand(!bbox!, (0.5*
+                              (carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 + l.width)*
+                              NULLIF(!scale_denominator!*0.001*0.28,0)))
+                            )
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
                 ) AS way,
                 COALESCE(barrier, historic) AS feature,
                 width,
+                height,
                 layer,
                 osm_id,
                 z_order
               FROM
                 (SELECT
-                    l.way AS lway,
-                    e.way AS eway,
-                    ('barrier_' || (CASE WHEN l.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                     'handrail', 'retaining_wall', 'wall') THEN l.barrier ELSE NULL END)) AS barrier,
-                    ('historic_' || (CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE NULL END)) AS historic,
+                    way,                    
+                    ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                     'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
+                    ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic,
                     GREATEST(
                       carto_barrier_line_width(
-                        CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
+                        CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
                         z(!scale_denominator!)
                       ),
                       carto_barrier_line_width_mapped(
-                        CASE WHEN l.historic = 'citywalls' THEN l.historic ELSE l.barrier END,
-                        l.tags->'width',
+                        CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
+                        tags->'width',
                         !bbox!, !scale_denominator!
                       )
                     ) AS width,
-                    l.layer AS layer,
-                    l.osm_id AS osm_id,
-                    l.z_order AS z_order
-                  FROM planet_osm_point e
-                  JOIN planet_osm_line l ON ST_Intersects(l.way, e.way)
-                  WHERE e.barrier IN ('entrance')
-                    AND (l.waterway IS NULL OR l.waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)) AS _
-              WHERE (eway && ST_Expand(!bbox!, (0.5*(carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 +
-                     width)*NULLIF(!scale_denominator!*0.001*0.28,0))))
-                AND (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                    'handrail', 'retaining_wall', 'wall')
-                  OR historic = 'citywalls')
-                AND (lway && !bbox!)
-                AND z(!scale_denominator!) >= 15
-                GROUP BY lway, barrier, historic, width, layer, osm_id, z_order
+                    CASE WHEN (tags->'height') ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'height')::NUMERIC ELSE 1.0 END AS height,
+                    layer,
+                    osm_id,
+                    CASE (CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END)
+                      WHEN 'ditch' THEN -2
+                      WHEN 'retaining_wall' THEN -1
+                      WHEN 'city_wall' THEN 1
+                      WHEN 'citywalls' THEN 1
+                      WHEN 'wall' THEN 2
+                      WHEN 'guard_rail' THEN 3
+                      WHEN 'handrail' THEN 4
+                      WHEN 'fence' THEN 5
+                      WHEN 'chain' THEN 6
+                      ELSE 0
+                    END AS z_order
+                  FROM planet_osm_line
+                  WHERE (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                        'handrail', 'retaining_wall', 'wall')
+                    OR historic = 'citywalls')
+                    AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)
+                    AND (way && !bbox!)
+                    AND z(!scale_denominator!) >= 15
+                ) AS l
             ) -- end of line_barriers_all CTE
             SELECT -- casing
                 way,
@@ -3119,7 +3230,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS int_access,
+                CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -3132,7 +3243,6 @@ Layer:
                 osm_id,
                 z_order
               FROM line_barriers_all
-                WHERE z(!scale_denominator!) < 18 OR width < 2.4 OR feature NOT IN ('barrier_city_wall', 'historic_citywalls')
             UNION ALL
             SELECT -- line_barrier_areas
                 ST_Difference(
@@ -3158,7 +3268,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS int_access,
+                CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -3197,7 +3307,7 @@ Layer:
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 'null' AS int_lanes,
-                'null' AS int_access,
+                CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
@@ -3645,9 +3755,9 @@ Layer:
                       tags->'leaf_type' AS leaf_type,
                       tags->'leaf_cycle' AS leaf_cycle,
                       tags->'taxon' AS taxon,
-                      tags->'family' AS family,
-                      tags->'genus' AS genus,
-                      tags->'species' AS species,
+                      COALESCE(tags->'family', tags->'taxon:family') AS family,
+                      COALESCE(tags->'genus', tags->'taxon:genus') AS genus,
+                      COALESCE(tags->'species', tags->'taxon:species') AS species,
                       GREATEST(
                         carto_barrier_line_width("natural", z(!scale_denominator!)),
                         -- we round the mapped width to integer pixels to possibly get a pixel aligned symbol
@@ -3666,42 +3776,92 @@ Layer:
               ),
             tree_rows AS
               (SELECT
+                -- this cuts out barrier=entrance nodes - in a width reflecting whatever highway=* intersects
+                ST_Difference(
                   way,
-                  feature,
-                  length,
-                  height,
-                  leaf_type,
-                  leaf_cycle,
-                  taxon,
-                  family,
-                  genus,
-                  species,
-                  width_px,
-                  width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
-                FROM
-                  (SELECT
-                      way,
-                      COALESCE("natural", barrier) AS feature,
-                      ST_Length(way)*(CASE WHEN "natural" = 'tree_row' THEN 1000 ELSE 1.0 END) AS length,
-                      CASE
-                        WHEN tags->'height' ~ '^-?\d{1,3}(\.\d+)?$' THEN (tags->'height')::NUMERIC
-                        ELSE 0.0
-                      END AS height,
-                      tags->'leaf_type' AS leaf_type,
-                      tags->'leaf_cycle' AS leaf_cycle,
-                      tags->'taxon' AS taxon,
-                      tags->'family' AS family,
-                      tags->'genus' AS genus,
-                      tags->'species' AS species,
-                      GREATEST(
-                        carto_barrier_line_width(COALESCE("natural", barrier), z(!scale_denominator!)),
-                        -- we do not round the mapped width here because tree row symbols are not pixel aligned
-                        -- we cap it at 60 pixel to avoid blowing up existing symbols too much
-                        LEAST(carto_treerow_line_width_mapped(COALESCE("natural", barrier), tags->'width', tags->'height', !bbox!, !scale_denominator!), 60)
-                      ) AS width_px
-                    FROM planet_osm_line
-                    WHERE ("natural" = 'tree_row' OR barrier = 'hedge') AND way && !bbox!
-                  ) AS _
+                  COALESCE(
+                    (SELECT
+                        ST_Union(ST_Buffer(way, width))
+                      FROM
+                        (SELECT
+                            e.way AS way,
+                            (COALESCE(
+                              (SELECT
+                                  GREATEST(
+                                    carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
+                                    carto_highway_line_width_mapped(h.highway, h.tags->'width', h.tags->'lanes', !bbox!, !scale_denominator!))
+                                FROM planet_osm_line h
+                                WHERE ST_Intersects(h.way, e.way) AND h.highway IN
+                                  ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                                   'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                                   'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                                   'busway', 'bus_guideway')
+                                ORDER BY carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)) DESC LIMIT 1
+                              ),
+                              carto_highway_line_width('footway', z(!scale_denominator!))
+                            ) + 2.5 + l.width_px)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                          FROM planet_osm_point e
+                          WHERE ST_Intersects(l.way, e.way)
+                            AND e.barrier IN ('entrance')
+                        ) AS entrances
+                      WHERE (way && ST_Expand(!bbox!, (0.5*
+                              (carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 + l.width_px)*
+                              NULLIF(!scale_denominator!*0.001*0.28,0)))
+                            )
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                ) AS way,
+                feature,
+                length,
+                height,
+                leaf_type,
+                leaf_cycle,
+                taxon,
+                family,
+                genus,
+                species,
+                width_px,
+                width
+              FROM
+                (SELECT
+                    way,
+                    feature,
+                    length,
+                    height,
+                    leaf_type,
+                    leaf_cycle,
+                    taxon,
+                    family,
+                    genus,
+                    species,
+                    width_px,
+                    width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                  FROM
+                    (SELECT
+                        way,
+                        COALESCE("natural", barrier) AS feature,
+                        ST_Length(way)*(CASE WHEN "natural" = 'tree_row' THEN 1000 ELSE 1.0 END) AS length,
+                        CASE
+                          WHEN tags->'height' ~ '^-?\d{1,3}(\.\d+)?$' THEN (tags->'height')::NUMERIC
+                          ELSE 0.0
+                        END AS height,
+                        tags->'leaf_type' AS leaf_type,
+                        tags->'leaf_cycle' AS leaf_cycle,
+                        tags->'taxon' AS taxon,
+                        COALESCE(tags->'family', tags->'taxon:family') AS family,
+                        COALESCE(tags->'genus', tags->'taxon:genus') AS genus,
+                        COALESCE(tags->'species', tags->'taxon:species') AS species,
+                        GREATEST(
+                          carto_barrier_line_width(COALESCE("natural", barrier), z(!scale_denominator!)),
+                          -- we do not round the mapped width here because tree row symbols are not pixel aligned
+                          -- we cap it at 60 pixel to avoid blowing up existing symbols too much
+                          LEAST(carto_treerow_line_width_mapped(COALESCE("natural", barrier), tags->'width', tags->'height', !bbox!, !scale_denominator!), 60)
+                        ) AS width_px
+                      FROM planet_osm_line
+                      WHERE ("natural" = 'tree_row' OR barrier = 'hedge') AND way && !bbox!
+                    ) AS _
+                ) AS l
               ),
             row_trees_raw AS
               (SELECT
@@ -3809,9 +3969,9 @@ Layer:
                                       tags->'leaf_type' AS leaf_type,
                                       tags->'leaf_cycle' AS leaf_cycle,
                                       tags->'taxon' AS taxon,
-                                      tags->'family' AS family,
-                                      tags->'genus' AS genus,
-                                      tags->'species' AS species,
+                                      COALESCE(tags->'family', tags->'taxon:family') AS family,
+                                      COALESCE(tags->'genus', tags->'taxon:genus') AS genus,
+                                      COALESCE(tags->'species', tags->'taxon:species') AS species,
                                       GREATEST(
                                         carto_barrier_line_width(COALESCE("natural", barrier), z(!scale_denominator!)),
                                         -- we do not round the mapped width here because tree row symbols are not pixel aligned

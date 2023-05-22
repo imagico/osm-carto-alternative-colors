@@ -96,6 +96,7 @@ sql:
     - tree
     - shrub
     - tree_row
+    - crevasse
 
 tags:
   river: IN ('river', 'canal')
@@ -399,6 +400,15 @@ classes:
     18: 9
     19: 14
     20: 19
+  crevasse:
+    13: 2.5
+    14: 3
+    15: 3.5
+    16: 5
+    17: 7
+    18: 10
+    19: 12
+    20: 14
   retaining_wall:
     16: 0.4
     17: 1.6

@@ -43,31 +43,42 @@
       table: |-
         (SELECT
             way,
-            "natural",
-            man_made,
-            tags->'earth_bank' AS earth_bank
-          FROM planet_osm_line
-          WHERE ("natural" IN ('cliff', 'earth_bank', 'gully') OR man_made = 'embankment')
-            AND way && !bbox!
-         UNION ALL
-         SELECT
-            ST_Difference(
-              way,
-              COALESCE(
-                (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
-                   FROM planet_osm_point p
-                   WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
-                     AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
-                ),
-                ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-              )
-            ) AS way,
-            "natural",
-            man_made,
-            NULL AS earth_bank
-          FROM planet_osm_line l
-          WHERE "natural" IN ('ridge', 'arete')
-            AND l.way && !bbox!
+            COALESCE(int_natural, man_made) AS feature
+          FROM
+            (SELECT
+                way,
+                ('natural_' || 
+                  (CASE WHEN "natural" IN ('cliff', 'earth_bank', 'gully') THEN
+                    (CASE
+                      WHEN "natural" IN ('cliff') THEN (CASE WHEN surface = 'ice' THEN 'icecliff' ELSE 'cliff' END)
+                      WHEN "natural" IN ('earth_bank') THEN (CASE WHEN tags @> 'earth_bank=>grassy_steep_slope' THEN 'earth_bank_grass' ELSE 'earth_bank' END)
+                      ELSE "natural" END
+                    )
+                  ELSE NULL END)
+                ) AS int_natural,
+                ('man_made_' || (CASE WHEN man_made IN ('embankment') THEN man_made ELSE NULL END)) AS man_made
+              FROM planet_osm_line
+              WHERE ("natural" IN ('cliff', 'crevasse', 'earth_bank', 'gully') OR man_made = 'embankment')
+                AND way && !bbox!
+             UNION ALL
+             SELECT
+                ST_Difference(
+                  way,
+                  COALESCE(
+                    (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                       FROM planet_osm_point p
+                       WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
+                         AND ST_DWithin(l.way, p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                  )
+                ) AS way,
+                ('natural_' || "natural") AS int_natural,
+                NULL AS man_made
+              FROM planet_osm_line l
+              WHERE "natural" IN ('ridge', 'arete')
+                AND l.way && !bbox!
+            ) AS _
         ) AS cliffs
     properties:
       minzoom: 13
