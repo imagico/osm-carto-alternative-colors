@@ -481,6 +481,25 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
+    [feature = 'highway_platform'],
+    [feature = 'railway_platform'] {
+      line-width: [width_max] + 2;
+      line-color: grey;
+      line-cap: round;
+      line-join: round;
+      [int_tunnel != 'no'] {
+        line-dasharray: 4,2;
+        line-cap: butt;
+      }
+      [int_bridge != 'no'] {
+        [zoom >= 16] {
+          line-color: @bridge-casing;
+          line-join: round;
+          line-cap: butt;
+        }
+      }
+    }
+
     [feature = 'highway_steps'] {
       [int_bridge = 'yes'] {
         [zoom >= 14][int_access != 'no'],
@@ -1318,16 +1337,19 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
+/*
     [feature = 'highway_platform'],
     [feature = 'railway_platform'] {
-      [zoom >= 16] {
-        line-width: [width_max] + 2;
-        line-color: grey;
-        line-cap: round;
-        line-join: round;
+      [int_bridge != 'no'] {
+        [zoom >= 16] {
+          line-width: [width_max] + 2;
+          line-color: grey;
+          line-cap: round;
+          line-join: round;
+        }
       }
     }
-
+*/
     // paths with mapped width at high zoom levels
     // their fill is rendered as background so the center line is above it
     // excludes unpaved - which are a separate sublayer below
@@ -2240,7 +2262,8 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [feature = 'highway_platform'],
     [feature = 'railway_platform'] {
       [zoom >= 16] {
-        [int_surface != 'unpaved'] {
+        [int_surface != 'unpaved'],
+        [int_tunnel != 'no'] {
           line-width: [width_max];
           line-color: @platform-fill;
           line-cap: round;
@@ -2574,6 +2597,9 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           line-width: 2;
           line-cap: round;
           line-join: round;
+          [int_bridge = 'yes'] {
+            line-color: @bridge-casing;
+          }
           [int_tunnel != 'no'] {
             line-dasharray: 4,2;
             line-cap: butt;
