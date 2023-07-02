@@ -1,0 +1,179 @@
+# ---------------------------------------------------------------------------
+#  line_patterns.yaml
+#
+#  input for scripts/generate_line_patterns.py
+#
+#  defines colors of different line pattern SVGs to generate from
+#  plain color source files
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+
+settings:
+  database: gis
+  dir: symbols/line_patterns
+
+symbols:
+  dyke:
+    min-size: 3
+    max-size: 95
+    pattern-width: 4
+    pattern-height: "!line_width!"
+    sql: |-
+        ST_Union(
+          ST_Translate(
+            ST_Scale(
+              'POLYGON((0.75 -0.01,0.75 0.0,1.25 1.0, 1.75 1.0, 2.25 0.0, 2.25 -0.01, 0.75 -0.01))'::geometry,
+              1.0, (!line_width! + 1.0)/2.0
+            ),
+            0.0, -0.5
+          ),
+          ST_Translate(
+            'POLYGON((0 0,4 0,4 1,0 1,0 0))'::geometry,
+            0.0, -1.5
+          )
+        )
+    color: "#7b7b7b"
+  ditch:
+    min-size: 9
+    max-size: 25
+    pattern-width: 3
+    pattern-height: "!line_width!"
+    sql: |-
+        ST_Union(
+          ST_Scale(
+            ST_Union(
+              'POLYGON((1.5  0.5,2  2.5,1.5  4.5,1  2.5, 1.5  0.5))'::geometry,
+              'POLYGON((1.5 -0.5,2 -2.5,1.5 -4.5,1 -2.5, 1.5 -0.5))'::geometry
+            ),
+            1.0, !line_width!/9.0
+          ),
+          CASE WHEN !line_width! >= 15 THEN
+            ST_Buffer('LINESTRING(1.4 0,1.6 0)'::geometry, 0.5)
+          ELSE
+            'GEOMETRYCOLLECTION EMPTY'::geometry
+          END
+        )
+    color: "#7b7b7b"
+  cliff:
+    file: cliff.svg
+    color: "#999999"
+  cliff2:
+    file: cliff2.svg
+    color: "#999999"
+  icecliff:
+    file: cliff.svg
+    color: "#72acd6"
+  icecliff2:
+    file: cliff2.svg
+    color: "#72acd6"
+  arete:
+    file: arete.svg
+    color: "#999999"
+  arete2:
+    file: arete2.svg
+    color: "#999999"
+  arete3:
+    file: arete3.svg
+    color: "#999999"
+  ridge:
+    file: ridge.svg
+    file_start: ridge_start.svg
+    file_end: ridge_end.svg
+    color: "#999999"
+  embankment:
+    file: embankment.svg
+    color: "#7b7b7b"
+  embankment2:
+    file: embankment2.svg
+    color: "#7b7b7b"
+  embankment_a1:
+    file: embankment_a1.svg
+    color: "#7b7b7b"
+  embankment_a2:
+    file: embankment_a2.svg
+    color: "#7b7b7b"
+  hedge_bank:
+    file: hedge_bank.svg
+    color: "#bb8e81"
+  earth_bank:
+    file: earth_bank.svg
+    color: "#7b7b7b"
+  earth_bank2:
+    file: earth_bank2.svg
+    color: "#7b7b7b"
+  earth_bank3:
+    file: earth_bank3.svg
+    color: "#7b7b7b"
+  earth_bank_grass:
+    file: earth_bank.svg
+    color: "#84b27a"
+  earth_bank_grass2:
+    file: earth_bank2.svg
+    color: "#84b27a"
+  earth_bank_grass3:
+    file: earth_bank3.svg
+    color: "#84b27a"
+  citywall_outer:
+    file: citywall_outer.svg
+    color: "#444444"
+  gully_left:
+    file: gully_left.svg
+    color: "#7b7b7b"
+  gully_right:
+    file: gully_right.svg
+    color: "#7b7b7b"
+  gully2_left:
+    file: gully2_left.svg
+    color: "#7b7b7b"
+  gully2_right:
+    file: gully2_right.svg
+    color: "#7b7b7b"
+  gully:
+    file: gully.svg
+    file_start: gully_start.svg
+    color: "#7b7b7b"
+  gully2:
+    file: gully2.svg
+    file_start: gully2_start.svg
+    color: "#7b7b7b"
+  crevasse_outline:
+    file: crevasse_outline.svg
+    color: "#99ccff"
+  crevasse_outline2:
+    file: crevasse_outline2.svg
+    color: "#99ccff"
+  crevasse_outline3:
+    file: crevasse_outline3.svg
+    color: "#99ccff"
+  crevasse_outline4:
+    file: crevasse_outline4.svg
+    color: "#99ccff"

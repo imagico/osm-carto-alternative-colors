@@ -28,6 +28,8 @@
 # you can switch back to PNG images
 #
 
+settings:
+  dir: symbols/patterns
 
 # These are the mss files containing patterns that can be switched between PNG and SVG
 

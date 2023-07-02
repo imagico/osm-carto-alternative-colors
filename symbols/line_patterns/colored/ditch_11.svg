@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   height="11"
+   width="3"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <path
+     d="M 1.5 4.888888888888889 L 2 2.444444444444445 1.5 8.881784197001252e-16 1 2.444444444444445 Z M 1.5 6.111111111111111 L 2 8.555555555555555 1.5 11 1 8.555555555555555 Z"
+     style="fill:#7b7b7b" />
+  <rect
+     width="3"
+     height="11"
+     x="0"
+     y="0"
+     style="fill:none;fill-opacity:1" />
+</svg>
+

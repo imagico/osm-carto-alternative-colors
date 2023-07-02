@@ -58,9 +58,38 @@ def load_settings(config_file):
     """Read the settings from YAML."""
     return yaml.safe_load(open(config_file, 'r'))
 
-def colorize_svg(source, symbol_name, color):
+def svg_convert(fin, fout, inkscape, dpi):
+
+    sys.stdout.flush()
+
+    if inkscape:
+        if dpi > 0:
+            params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, fin]
+        else:
+            params = ["inkscape", "-z", "--export-png="+fout, fin]
+
+        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
+            logging.warning("inkscape' error: SVG conversion failed")
+
+        if not(os.path.exists(fout)):
+            logging.warning("inkscape' error: SVG conversion failed")
+    else:
+        if int(dpi) > 0:
+            params = ["convert", "-background", "none", "-density", dpi, fin, fout]
+        else:
+            params = ["convert", "-background", "none", fin, fout]
+
+        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
+            logging.warning("convert' error: SVG conversion failed")
+
+        if not(os.path.exists(fout)):
+            logging.warning("convert' error: SVG conversion failed")
+
+    sys.stdout.flush()
+
+def colorize_svg(source, basedir, symbol_name, color):
     with open(source, 'rt') as fin:
-        with open('symbols/colored/' + symbol_name + '.svg', 'wt') as fout:
+        with open(basedir + "/colored/" + symbol_name + '.svg', 'wt') as fout:
             logging.info("Colorizing symbol for {name} ({col})...".format(name=symbol_name, col=color))
             for line in fin:
                 fout.write(line.replace('#000000', color))
@@ -76,6 +105,12 @@ def main():
 
     parser.add_argument("-c", "--config", action="store", default="symbols-labels.yaml",
                         help="Name of configuration file (default symbols-labels.yaml)")
+
+    parser.add_argument('-b', '--basedir', dest='basedir', help='Base directory for symbols', action='store')
+    parser.add_argument('-i', '--inkscape', dest='inkscape', help='Use inkscape for SVG rasterization', action='store_true', default=False)
+    parser.add_argument("-D", "--dpi", dest="dpi", help="Set SVG rasterizing resolution (default is 72, 90 or 96 dpi depending on RSVG/inkscape version)", default=0)
+
+    parser.add_argument('-N', '--nopreviews', dest='nopreviews', help='Do not generate previews (to run faster)', action='store_true', default=False)
 
     parser.add_argument('-l', '--mml', dest='mml', help='Name of mml file to write query code to', action='store')
     parser.add_argument('-m', '--mss', dest='mss', help='Name of mss file to write mms code to', action='store')
@@ -106,8 +141,12 @@ def main():
 
     config = load_settings(opts.config)
 
-    if not os.path.exists('symbols/colored'):
-        os.makedirs('symbols/colored')
+    basedir = opts.basedir or config["settings"].get("dir")
+
+    if not os.path.exists(basedir+'/colored'):
+        os.makedirs(basedir+'/colored')
+    if not os.path.exists(basedir+'/previews'):
+        os.makedirs(basedir+'/previews')
 
     mml_fnm = opts.mml or config["settings"].get("mml")
     mss_fnm = opts.mss or config["settings"].get("mss")
@@ -267,6 +306,8 @@ def main():
     have_lines = False
     have_polygons = False
     have_convex_hulls = False
+
+    contactsheet_files = []
 
     # assemble the data needed to generate the query
     # color the SVG symbols needed
@@ -477,15 +518,25 @@ def main():
             if 'start_symbol' in params:
                 zooms[fn][None]['start_symbol'] = params['start_symbol']
                 if symbol_file is None:
-                    if os.path.exists("symbols/"+fn+".svg"):
-                        symbol_file = "symbols/"+fn+".svg"
+                    if os.path.exists(basedir+"/sources/"+fn+".svg"):
+                        symbol_file = basedir+"/sources/"+fn+".svg"
                     elif fval is not None:
-                        if os.path.exists("symbols/"+fkey+"/"+fval+".svg"):
-                            symbol_file = "symbols/"+fkey+"/"+fval+".svg"
-                        elif os.path.exists("symbols/"+fkey+"_"+fval+".svg"):
-                            symbol_file = "symbols/"+fkey+"_"+fval+".svg"
-                        elif os.path.exists("symbols/"+fval+".svg"):
-                            symbol_file = "symbols/"+fval+".svg"
+                        if os.path.exists(basedir+"/sources/"+fkey+"/"+fval+".svg"):
+                            symbol_file = basedir+"/sources/"+fkey+"/"+fval+".svg"
+                        elif os.path.exists(basedir+"/sources/"+fkey+"_"+fval+".svg"):
+                            symbol_file = basedir+"/sources/"+fkey+"_"+fval+".svg"
+                        elif os.path.exists(basedir+"/sources/"+fval+".svg"):
+                            symbol_file = basedir+"/sources/"+fval+".svg"
+                if symbol_file is None:
+                    if os.path.exists(basedir+"/"+fn+".svg"):
+                        symbol_file = basedir+"/"+fn+".svg"
+                    elif fval is not None:
+                        if os.path.exists(basedir+"/"+fkey+"/"+fval+".svg"):
+                            symbol_file = basedir+"/"+fkey+"/"+fval+".svg"
+                        elif os.path.exists(basedir+"/"+fkey+"_"+fval+".svg"):
+                            symbol_file = basedir+"/"+fkey+"_"+fval+".svg"
+                        elif os.path.exists(basedir+"/"+fval+".svg"):
+                            symbol_file = basedir+"/"+fval+".svg"
             else:
                 zooms[fn][None]['start_symbol'] = 'NULL'
             if 'start_label' in params:
@@ -508,11 +559,15 @@ def main():
 
             if symbol_file is not None:
                 if 'symbol_color' in params:
-                    colorize_svg(symbol_file, fn, symbol_color)
+                    colorize_svg(symbol_file, basedir, fn, symbol_color)
                 else:
                     logging.info("Copying symbol for {}...".format(fn))
-                    copyfile(symbol_file, "symbols/colored/"+fn+".svg")
-                zooms[fn][None]['symbol_file'] = "symbols/colored/"+fn+".svg"
+                    copyfile(symbol_file, basedir+"/colored/"+fn+".svg")
+                zooms[fn][None]['symbol_file'] = basedir+"/colored/"+fn+".svg"
+
+                if not(opts.nopreviews):
+                    svg_convert(basedir+"/colored/"+fn+".svg", basedir+"/previews/"+fn+'.png', opts.inkscape, opts.dpi)
+                    contactsheet_files.append(basedir+"/previews/"+fn+".png")
 
             zooms[fn][None]['symbol_color'] = symbol_color
             zooms[fn][None]['label_color'] = label_color
@@ -584,14 +639,19 @@ def main():
                             # only colorize own symbol for variant if a different symbol file or color is set
                             if ('symbol_file' in params_m) or ('symbol_color' in params_m):
                                 if symbol_color_mod is not None:
-                                    colorize_svg(symbol_file_mod, fn+"_"+modification, symbol_color_mod)
+                                    colorize_svg(symbol_file_mod, basedir, fn+"_"+modification, symbol_color_mod)
                                 else:
                                     logging.info("Copying symbol for {}...".format(fn+"_"+modification))
-                                    copyfile(symbol_file_mod, "symbols/colored/"+fn+"_"+modification+".svg")
+                                    copyfile(symbol_file_mod, basedir+"/colored/"+fn+"_"+modification+".svg")
 
-                                modifications[fn][modification]['symbol_file'] = "symbols/colored/"+fn+"_"+modification+".svg"
+                                modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fn+"_"+modification+".svg"
+
+                                if not(opts.nopreviews):
+                                    svg_convert(basedir+"/colored/"+fn+"_"+modification+".svg", basedir+"/previews/"+fn+"_"+modification+'.png', opts.inkscape, opts.dpi)
+                                    contactsheet_files.append(basedir+"/previews/"+fn+"_"+modification+".png")
+
                             else:
-                                modifications[fn][modification]['symbol_file'] = "symbols/colored/"+fn+".svg"
+                                modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fn+".svg"
 
                         modifications[fn][modification]['symbol_color'] = symbol_color_mod
                         modifications[fn][modification]['label_color'] = label_color_mod
@@ -686,14 +746,19 @@ def main():
                         # only colorize own symbol for variant if a different symbol file or color is set
                         if ('symbol_file' in params_v) or ('symbol_color' in params_v):
                             if symbol_color_variant is not None:
-                                colorize_svg(symbol_file_variant, fn+"_"+variant, symbol_color_variant)
+                                colorize_svg(symbol_file_variant, basedir, fn+"_"+variant, symbol_color_variant)
                             else:
                                 logging.info("Copying symbol for {}...".format(fn+"_"+variant))
-                                copyfile(symbol_file_variant, "symbols/colored/"+fn+"_"+variant+".svg")
+                                copyfile(symbol_file_variant, basedir+"/colored/"+fn+"_"+variant+".svg")
 
-                            zooms[fn][variant]['symbol_file'] = "symbols/colored/"+fn+"_"+variant+".svg"
+                            zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fn+"_"+variant+".svg"
+
+                            if not(opts.nopreviews):
+                                svg_convert(basedir+"/colored/"+fn+"_"+variant+".svg", basedir+"/previews/"+fn+"_"+variant+'.png', opts.inkscape, opts.dpi)
+                                contactsheet_files.append(basedir+"/previews/"+fn+"_"+variant+".png")
+
                         else:
-                            zooms[fn][variant]['symbol_file'] = "symbols/colored/"+fn+".svg"
+                            zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fn+".svg"
 
                     zooms[fn][variant]['symbol_color'] = symbol_color_variant
                     zooms[fn][variant]['label_color'] = label_color_variant
@@ -1359,6 +1424,21 @@ def main():
     print ("}", file=file_mss)
     file_mss.close()
 
+    if not(opts.nopreviews):
+        if contactsheet_files:
+
+            logging.info("Assembling contact sheet...")
+
+            sys.stdout.flush()
+
+            if subprocess.call(
+                ["montage" ] + contactsheet_files +
+                ["-tile", "16x", "-geometry", "1x1+4+4<", "-background", "#f2efe9",
+                 "doc/contactsheet_symbols.png"],
+                stderr=subprocess.STDOUT) != 0:
+                logging.warning("'montage' error: contaxt sheet generation failed")
+
+            sys.stdout.flush()
 
 if __name__ == "__main__":
     main()

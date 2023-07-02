@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   height="90"
+   width="4"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <path
+     d="M 1.25 0 L 1.75 0 2.25 45.5 4 45.5 4 46.5 0 46.5 0 45.5 0.75 45.5 Z"
+     style="fill:#7b7b7b" />
+  <rect
+     width="4"
+     height="90"
+     x="0"
+     y="0"
+     style="fill:none;fill-opacity:1" />
+</svg>
+

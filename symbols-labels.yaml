@@ -48,6 +48,7 @@
 # symbolizers).
 
 settings:
+  dir: symbols
   database: gis
   layer: amenity-points
   min_zoom: 10
@@ -1208,7 +1209,11 @@ templates:
 # Order within different features with the same key matters as it affects the order in the COALESCE()
 # Possible parameters and defaults:
 #
-#   symbol_file: SVG filename, default: 
+#   symbol_file: SVG filename, default:
+#                symbols/sources/key_value_variant.svg,
+#                symbols/sources/key_value.svg,
+#                symbols/sources/value.svg,
+#                symbols/sources/key/value.svg,
 #                symbols/key_value_variant.svg,
 #                symbols/key_value.svg,
 #                symbols/value.svg or
@@ -1230,7 +1235,7 @@ templates:
 features:
   amenity=shelter:
     style: with-elevation
-    symbol_file: symbols/shelter/shelter.svg
+    symbol_file: symbols/sources/shelter/shelter.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 16
@@ -1239,7 +1244,7 @@ features:
       - int_elevation
   tourism=alpine_hut:
     style: with-elevation
-    symbol_file: symbols/shelter/alpine_hut.svg
+    symbol_file: symbols/sources/shelter/alpine_hut.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 13
@@ -1248,7 +1253,7 @@ features:
       - int_elevation
   tourism=wilderness_hut:
     style: with-elevation
-    symbol_file: symbols/shelter/wilderness_hut.svg
+    symbol_file: symbols/sources/shelter/wilderness_hut.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 13
@@ -1256,38 +1261,38 @@ features:
     attributes:
       - int_elevation
   tourism=charlet:
-    symbol_file: symbols/accommodation/chalet.svg
+    symbol_file: symbols/sources/accommodation/chalet.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
     start_label: 17
   tourism=hostel:
-    symbol_file: symbols/accommodation/hostel.svg
+    symbol_file: symbols/sources/accommodation/hostel.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
     start_label: 17
   tourism=hotel:
-    symbol_file: symbols/accommodation/hotel.svg
+    symbol_file: symbols/sources/accommodation/hotel.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
     start_label: 17
   tourism=motel:
-    symbol_file: symbols/accommodation/motel.svg
+    symbol_file: symbols/sources/accommodation/motel.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
     start_label: 17
     text_dy: 13
   tourism=guest_house:
-    symbol_file: symbols/accommodation/guest_house.svg
+    symbol_file: symbols/sources/accommodation/guest_house.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
     start_label: 17
   tourism=apartment:
-    symbol_file: symbols/accommodation/apartment.svg
+    symbol_file: symbols/sources/accommodation/apartment.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 18
@@ -1295,7 +1300,7 @@ features:
 
 
   tourism=information:
-    symbol_file: symbols/tourism/office.svg
+    symbol_file: symbols/sources/tourism/office.svg
     symbol_color: office-icon
     label_color: office-text
     start_symbol: 17
@@ -1306,14 +1311,14 @@ features:
     variants:
       information=audioguide:
         condition: information IN ('audioguide')
-        symbol_file: symbols/tourism/audioguide.svg
+        symbol_file: symbols/sources/tourism/audioguide.svg
         symbol_color: man-made-icon
         label_color: man-made-text
         start_symbol: 19
         start_label: 19
       information=board:
         condition: information IN ('board')
-        symbol_file: symbols/tourism/board.svg
+        symbol_file: symbols/sources/tourism/board.svg
         symbol_color: man-made-icon
         label_color: man-made-text
         start_symbol: 19
@@ -1321,7 +1326,7 @@ features:
         text_dy: 10
       information=sign:
         condition: information IN ('sign')
-        symbol_file: symbols/tourism/sign.svg
+        symbol_file: symbols/sources/tourism/sign.svg
         symbol_color: man-made-icon
         label_color: man-made-text
         start_symbol: 19
@@ -1329,14 +1334,14 @@ features:
         text_dy: 10
       information=guidepost:
         condition: information IN ('guidepost')
-        symbol_file: symbols/tourism/guidepost.svg
+        symbol_file: symbols/sources/tourism/guidepost.svg
         symbol_color: man-made-icon
         label_color: man-made-text
         start_symbol: 19
         start_label: 19
       information=map:
         condition: information IN ('map', 'tactile_map')
-        symbol_file: symbols/tourism/map.svg
+        symbol_file: symbols/sources/tourism/map.svg
         symbol_color: man-made-icon
         label_color: man-made-text
         start_symbol: 19
@@ -1344,14 +1349,14 @@ features:
         text_dy: 10
       information=terminal:
         condition: information IN ('terminal')
-        symbol_file: symbols/tourism/terminal.svg
+        symbol_file: symbols/sources/tourism/terminal.svg
         symbol_color: man-made-icon
         label_color: man-made-text
         start_symbol: 19
         start_label: 19
       information=visitor_centre:
         condition: information IN ('visitor_centre')
-        symbol_file: symbols/tourism/visitor_centre.svg
+        symbol_file: symbols/sources/tourism/visitor_centre.svg
         symbol_color: amenity-icon
         label_color: amenity-text
         start_symbol: 17
@@ -1359,192 +1364,192 @@ features:
         text_dy: 11
   amenity=atm:
     style: operator
-    symbol_file: symbols/amenity/atm.svg
+    symbol_file: symbols/sources/amenity/atm.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   amenity=bank:
-    symbol_file: symbols/amenity/bank.svg
+    symbol_file: symbols/sources/amenity/bank.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
     text_dy: 9
   amenity=bar:
-    symbol_file: symbols/amenity/bar.svg
+    symbol_file: symbols/sources/amenity/bar.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
     text_dy: 13
   amenity=bbq:
-    symbol_file: symbols/amenity/bbq.svg
+    symbol_file: symbols/sources/amenity/bbq.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   amenity=cafe:
-    symbol_file: symbols/amenity/cafe.svg
+    symbol_file: symbols/sources/amenity/cafe.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=ice_cream:
-    symbol_file: symbols/shop/ice_cream.svg
+    symbol_file: symbols/sources/shop/ice_cream.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=nightclub:
-    symbol_file: symbols/amenity/nightclub.svg
+    symbol_file: symbols/sources/amenity/nightclub.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
     text_dy: 12
   amenity=pub:
-    symbol_file: symbols/amenity/pub.svg
+    symbol_file: symbols/sources/amenity/pub.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=biergarten:
-    symbol_file: symbols/amenity/biergarten.svg
+    symbol_file: symbols/sources/amenity/biergarten.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=biergarten:
-    symbol_file: symbols/amenity/biergarten.svg
+    symbol_file: symbols/sources/amenity/biergarten.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=restaurant:
-    symbol_file: symbols/amenity/restaurant.svg
+    symbol_file: symbols/sources/amenity/restaurant.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=food_court:
-    symbol_file: symbols/amenity/restaurant.svg
+    symbol_file: symbols/sources/amenity/restaurant.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
   amenity=fast_food:
-    symbol_file: symbols/amenity/fast_food.svg
+    symbol_file: symbols/sources/amenity/fast_food.svg
     symbol_color: gastronomy-icon
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
 
   amenity=fire_station:
-    symbol_file: symbols/amenity/fire_station.svg
+    symbol_file: symbols/sources/amenity/fire_station.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 16
     start_label: 17
   amenity=cinema:
-    symbol_file: symbols/amenity/cinema.svg
+    symbol_file: symbols/sources/amenity/cinema.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 16
     start_label: 17
   tourism=museum:
-    symbol_file: symbols/tourism/museum.svg
+    symbol_file: symbols/sources/tourism/museum.svg
     symbol_color: culture-icon
     label_color: culture-text
     start_symbol: 16
     start_label: 17
   amenity=library:
-    symbol_file: symbols/amenity/library.svg
+    symbol_file: symbols/sources/amenity/library.svg
     symbol_color: culture-icon
     label_color: culture-text
     start_symbol: 16
     start_label: 17
   amenity=courthouse:
-    symbol_file: symbols/amenity/courthouse.svg
+    symbol_file: symbols/sources/amenity/courthouse.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 16
     start_label: 17
     text_dy: 13
   amenity=townhall:
-    symbol_file: symbols/amenity/townhall.svg
+    symbol_file: symbols/sources/amenity/townhall.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 16
     start_label: 17
     text_dy: 13
   amenity=police:
-    symbol_file: symbols/amenity/police.svg
+    symbol_file: symbols/sources/amenity/police.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 16
     start_label: 17
   amenity=prison:
-    symbol_file: symbols/amenity/prison.svg
+    symbol_file: symbols/sources/amenity/prison.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 17
     start_label: 17
     text_dy: 12
   amenity=post_box:
-    symbol_file: symbols/amenity/post_box.12.svg
+    symbol_file: symbols/sources/amenity/post_box.12.svg
     symbol_color: public-service-icon
     start_symbol: 17
   amenity=post_office:
-    symbol_file: symbols/amenity/post_office.svg
+    symbol_file: symbols/sources/amenity/post_office.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 17
     start_label: 17
 
   amenity=theatre:
-    symbol_file: symbols/amenity/theatre.svg
+    symbol_file: symbols/sources/amenity/theatre.svg
     symbol_color: culture-icon
     label_color: culture-text
     start_symbol: 16
     start_label: 17
   amenity=arts_centre:
-    symbol_file: symbols/amenity/arts_centre.svg
+    symbol_file: symbols/sources/amenity/arts_centre.svg
     symbol_color: culture-icon
     label_color: culture-text
     start_symbol: 17
     start_label: 17
   amenity=community_centre:
-    symbol_file: symbols/amenity/community_centre.svg
+    symbol_file: symbols/sources/amenity/community_centre.svg
     symbol_color: culture-icon
     label_color: culture-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   amenity=social_facility:
-    symbol_file: symbols/amenity/social_facility.svg
+    symbol_file: symbols/sources/amenity/social_facility.svg
     symbol_color: public-service-icon
     label_color: public-service-text
     start_symbol: 17
     start_label: 17
   amenity=shower:
-    symbol_file: symbols/amenity/shower.svg
+    symbol_file: symbols/sources/amenity/shower.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 18
     start_label: 18
     text_dy: 10
   amenity=public_bath:
-    symbol_file: symbols/amenity/public_bath.svg
+    symbol_file: symbols/sources/amenity/public_bath.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
   amenity=toilets:
     style: symbol-only-access-light
-    symbol_file: symbols/amenity/toilets.svg
+    symbol_file: symbols/sources/amenity/toilets.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 18
@@ -1556,7 +1561,7 @@ features:
       - int_access
   amenity=parking:
     style: access-light
-    symbol_file: symbols/transport/parking.svg
+    symbol_file: symbols/sources/transport/parking.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 10
@@ -1568,7 +1573,7 @@ features:
       - int_access
   amenity=motorcycle_parking:
     style: access-light
-    symbol_file: symbols/transport/motorcycle_parking.svg
+    symbol_file: symbols/sources/transport/motorcycle_parking.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 10
@@ -1580,7 +1585,7 @@ features:
       - int_access
   amenity=bicycle_parking:
     style: access-light
-    symbol_file: symbols/transport/bicycle_parking.svg
+    symbol_file: symbols/sources/transport/bicycle_parking.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 10
@@ -1591,14 +1596,14 @@ features:
     attributes:
       - int_access
   amenity=bicycle_rental:
-    symbol_file: symbols/transport/bicycle_rental.svg
+    symbol_file: symbols/sources/transport/bicycle_rental.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   highway=bus_stop:
-    symbol_file: symbols/square.6.svg
+    symbol_file: symbols/sources/square.6.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 16
@@ -1607,42 +1612,42 @@ features:
     modifications:
       high_zoom:
         style: standard-symbol-zoom-variant
-        symbol_file: symbols/transport/bus_stop.svg
+        symbol_file: symbols/sources/transport/bus_stop.svg
         start_symbol: 17
   amenity=bus_station:
-    symbol_file: symbols/transport/bus_station.svg
+    symbol_file: symbols/sources/transport/bus_station.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 16
     start_label: 17
   amenity=car_rental:
-    symbol_file: symbols/transport/car_rental.svg
+    symbol_file: symbols/sources/transport/car_rental.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   amenity=car_wash:
-    symbol_file: symbols/amenity/car_wash.svg
+    symbol_file: symbols/sources/amenity/car_wash.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   amenity=charging_station:
-    symbol_file: symbols/transport/charging_station.svg
+    symbol_file: symbols/sources/transport/charging_station.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 17
     start_label: 17
   amenity=fuel:
-    symbol_file: symbols/transport/fuel.svg
+    symbol_file: symbols/sources/transport/fuel.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 17
     start_label: 17
   amenity=taxi:
-    symbol_file: symbols/transport/taxi.svg
+    symbol_file: symbols/sources/transport/taxi.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 17
@@ -1650,17 +1655,17 @@ features:
 
   emergency=phone:
     style: symbol-only
-    symbol_file: symbols/amenity/emergency_phone.svg
+    symbol_file: symbols/sources/amenity/emergency_phone.svg
     symbol_color: amenity-icon
     start_symbol: 19
   amenity=phone:
     style: symbol-only
-    symbol_file: symbols/amenity/telephone.svg
+    symbol_file: symbols/sources/amenity/telephone.svg
     symbol_color: amenity-icon
     start_symbol: 17
   highway=elevator:
     style: symbol-only
-    symbol_file: symbols/transport/elevator.svg
+    symbol_file: symbols/sources/transport/elevator.svg
     symbol_color: transportation-icon
     start_symbol: 18
     condition: ("access" IS NULL OR "access" NOT IN ('private', 'no', 'customers', 'permit', 'delivery'))
@@ -1668,48 +1673,48 @@ features:
       - int_access
   highway=traffic_signals:
     style: symbol-only
-    symbol_file: symbols/traffic/light.svg
+    symbol_file: symbols/sources/traffic/light.svg
     symbol_color: traffic-light-icon
     start_symbol: 17
     modifications:
       high_zoom:
         style: symbol-only-zoom-variant
-        symbol_file: symbols/traffic/light.16.svg
+        symbol_file: symbols/sources/traffic/light.16.svg
         start_symbol: 19
   railway=crossing:
     style: symbol-only
-    symbol_file: symbols/traffic/level_crossing.svg
+    symbol_file: symbols/sources/traffic/level_crossing.svg
     symbol_color: level-crossing-icon
     start_symbol: 15
     modifications:
       high_zoom:
         style: symbol-only-zoom-variant
-        symbol_file: symbols/traffic/level_crossing2.svg
+        symbol_file: symbols/sources/traffic/level_crossing2.svg
         start_symbol: 16
   railway=level_crossing:
     style: symbol-only
-    symbol_file: symbols/traffic/level_crossing.svg
+    symbol_file: symbols/sources/traffic/level_crossing.svg
     symbol_color: level-crossing-icon
     start_symbol: 14
     modifications:
       high_zoom:
         style: symbol-only-zoom-variant
-        symbol_file: symbols/traffic/level_crossing2.svg
+        symbol_file: symbols/sources/traffic/level_crossing2.svg
         start_symbol: 16
 
   amenity=bench:
     style: symbol-only
-    symbol_file: symbols/amenity/bench.svg
+    symbol_file: symbols/sources/amenity/bench.svg
     symbol_color: amenity-icon
     start_symbol: 19
   amenity=waste_basket:
     style: symbol-only
-    symbol_file: symbols/amenity/waste_basket.10.svg
+    symbol_file: symbols/sources/amenity/waste_basket.10.svg
     symbol_color: amenity-icon
     start_symbol: 19
   amenity=waste_disposal:
     style: symbol-only
-    symbol_file: symbols/amenity/waste_disposal.svg
+    symbol_file: symbols/sources/amenity/waste_disposal.svg
     symbol_color: amenity-icon
     start_symbol: 19
     condition: ("access" IS NULL OR "access" NOT IN ('private', 'no', 'customers', 'permit', 'delivery'))
@@ -1717,7 +1722,7 @@ features:
       - int_access
   amenity=recycling:
     style: access-light
-    symbol_file: symbols/amenity/recycling.svg
+    symbol_file: symbols/sources/amenity/recycling.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 19
@@ -1732,17 +1737,17 @@ features:
       - recycling_type
   barrier=gate:
     style: symbol-only
-    symbol_file: symbols/barrier/gate.svg
+    symbol_file: symbols/sources/barrier/gate.svg
     symbol_color: gate-icon
     start_symbol: 17
   barrier=lift_gate:
     style: symbol-only
-    symbol_file: symbols/barrier/liftgate.svg
+    symbol_file: symbols/sources/barrier/liftgate.svg
     symbol_color: gate-icon
     start_symbol: 17
   barrier=swing_gate:
     style: symbol-only
-    symbol_file: symbols/barrier/liftgate.svg
+    symbol_file: symbols/sources/barrier/liftgate.svg
     symbol_color: gate-icon
     start_symbol: 17
   barrier=bollard:
@@ -1777,33 +1782,33 @@ features:
         start_symbol: 18
 
   barrier=toll_booth:
-    symbol_file: symbols/transport/toll_booth.svg
+    symbol_file: symbols/sources/transport/toll_booth.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 16
     start_label: 17
     text_dy: 13
   tourism=viewpoint:
-    symbol_file: symbols/tourism/viewpoint.svg
+    symbol_file: symbols/sources/tourism/viewpoint.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 16
     start_label: 16
   tourism=artwork:
-    symbol_file: symbols/tourism/artwork.svg
+    symbol_file: symbols/sources/tourism/artwork.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 17
     start_label: 17
   tourism=camp_site:
-    symbol_file: symbols/accommodation/camping.svg
+    symbol_file: symbols/sources/accommodation/camping.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
     start_label: 17
     text_dy: 12
   tourism=caravan_site:
-    symbol_file: symbols/accommodation/caravan_park.svg
+    symbol_file: symbols/sources/accommodation/caravan_park.svg
     symbol_color: accommodation-icon
     label_color: accommodation-text
     start_symbol: 17
@@ -1811,14 +1816,14 @@ features:
     text_dy: 12
   railway=subway_entrance:
     style: ref
-    symbol_file: symbols/entrance.10.svg
+    symbol_file: symbols/sources/entrance.10.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 18
     start_label: 19
     text_dy: 10
   railway=station:
-    symbol_file: symbols/square.4.svg
+    symbol_file: symbols/sources/square.4.svg
     symbol_color: station-icon
     label_color: station-text
     start_symbol: 12
@@ -1830,15 +1835,15 @@ features:
       size_6:
         style: standard-symbol-zoom-variant
         start_symbol: 13
-        symbol_file: symbols/square.6.svg
+        symbol_file: symbols/sources/square.6.svg
       size_9:
         style: standard-symbol-zoom-variant
         start_symbol: 15
-        symbol_file: symbols/square.9.svg
+        symbol_file: symbols/sources/square.9.svg
         text_dy: 10
         label_size: 11
   railway=halt:
-    symbol_file: symbols/square.4.svg
+    symbol_file: symbols/sources/square.4.svg
     symbol_color: station-icon
     label_color: station-text
     start_symbol: 13
@@ -1849,9 +1854,9 @@ features:
       size_6:
         style: standard-symbol-zoom-variant
         start_symbol: 15
-        symbol_file: symbols/square.6.svg
+        symbol_file: symbols/sources/square.6.svg
   railway=tram_stop:
-    symbol_file: symbols/square.4.svg
+    symbol_file: symbols/sources/square.4.svg
     symbol_color: station-icon
     label_color: station-text
     start_symbol: 13
@@ -1861,9 +1866,9 @@ features:
       size_6:
         style: standard-symbol-zoom-variant
         start_symbol: 15
-        symbol_file: symbols/square.6.svg
+        symbol_file: symbols/sources/square.6.svg
   aerialway=station:
-    symbol_file: symbols/square.4.svg
+    symbol_file: symbols/sources/square.4.svg
     symbol_color: station-icon
     label_color: station-text
     start_symbol: 13
@@ -1873,9 +1878,9 @@ features:
       size_6:
         style: standard-symbol-zoom-variant
         start_symbol: 15
-        symbol_file: symbols/square.6.svg
+        symbol_file: symbols/sources/square.6.svg
   aeroway=helipad:
-    symbol_file: symbols/aeroway/helipad.svg
+    symbol_file: symbols/sources/aeroway/helipad.svg
     symbol_color: airtransport-icon
     label_color: airtransport-text
     start_symbol: 16
@@ -1883,7 +1888,7 @@ features:
     text_dy: -10
   aeroway=aerodrome:
     style: zoom-limited
-    symbol_file: symbols/aeroway/aerodrome.svg
+    symbol_file: symbols/sources/aeroway/aerodrome.svg
     symbol_color: airtransport-icon
     label_color: airtransport-text
     font_type: oblique
@@ -1905,21 +1910,21 @@ features:
     label_color: aeroway-gate-text
 
   amenity=drinking_water:
-    symbol_file: symbols/water/drinking_water.svg
+    symbol_file: symbols/sources/water/drinking_water.svg
     symbol_color: water-icon
     label_color: water-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   amenity=water_point:
-    symbol_file: symbols/water/water_tap.svg
+    symbol_file: symbols/sources/water/water_tap.svg
     symbol_color: water-icon
     label_color: water-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   man_made=water_tap:
-    symbol_file: symbols/water/water_tap.svg
+    symbol_file: symbols/sources/water/water_tap.svg
     symbol_color: water-icon
     label_color: water-text
     start_symbol: 17
@@ -1954,7 +1959,7 @@ features:
       - intermittent
       - drinking_water
   man_made=water_well:
-    symbol_file: symbols/water/well_small.svg
+    symbol_file: symbols/sources/water/well_small.svg
     symbol_color: water-icon
     label_color: water-text
     start_symbol: 15
@@ -1964,11 +1969,11 @@ features:
       large:
         style: water-symbol-variant
         start_symbol: 17
-        symbol_file: symbols/water/well.svg
+        symbol_file: symbols/sources/water/well.svg
     attributes:
       - drinking_water
   amenity=fountain:
-    symbol_file: symbols/water/fountain_small.svg
+    symbol_file: symbols/sources/water/fountain_small.svg
     symbol_color: water-icon
     label_color: water-text
     start_symbol: 17
@@ -1979,11 +1984,11 @@ features:
         style: water-symbol-variant
         start_symbol: 18
         text_dy: 9
-        symbol_file: symbols/water/fountain.svg
+        symbol_file: symbols/sources/water/fountain.svg
     attributes:
       - drinking_water
   natural=geyser:
-    symbol_file: symbols/water/geyser_small.svg
+    symbol_file: symbols/sources/water/geyser_small.svg
     symbol_color: water-icon
     label_color: water-text
     start_symbol: 14
@@ -1993,7 +1998,7 @@ features:
       large:
         style: standard-symbol-zoom-variant
         start_symbol: 16
-        symbol_file: symbols/water/geyser.svg
+        symbol_file: symbols/sources/water/geyser.svg
 
   natural=bay:
     style: label-only
@@ -2010,7 +2015,7 @@ features:
 
   natural=peak:
     style: with-elevation
-    symbol_file: symbols/natural/peak_small.svg
+    symbol_file: symbols/sources/natural/peak_small.svg
     symbol_color: landform-icon
     label_color: landform-text
     start_symbol: 11
@@ -2020,12 +2025,12 @@ features:
       large:
         style: water-symbol-variant
         start_symbol: 12
-        symbol_file: symbols/natural/peak.svg
+        symbol_file: symbols/sources/natural/peak.svg
     attributes:
       - int_elevation
   natural=volcano:
     style: with-elevation
-    symbol_file: symbols/natural/volcano_small.svg
+    symbol_file: symbols/sources/natural/volcano_small.svg
     symbol_color: landform-icon
     label_color: landform-text
     start_symbol: 13
@@ -2035,12 +2040,12 @@ features:
       large:
         style: water-symbol-variant
         start_symbol: 14
-        symbol_file: symbols/natural/volcano.svg
+        symbol_file: symbols/sources/natural/volcano.svg
     attributes:
       - int_elevation
   natural=saddle:
     style: with-elevation
-    symbol_file: symbols/natural/saddle.svg
+    symbol_file: symbols/sources/natural/saddle.svg
     symbol_color: landform-icon
     label_color: landform-text
     start_symbol: 15
@@ -2049,14 +2054,14 @@ features:
     attributes:
       - int_elevation
   natural=cave_entrance:
-    symbol_file: symbols/natural/cave.svg
+    symbol_file: symbols/sources/natural/cave.svg
     symbol_color: cave-icon
     label_color: cave-text
     start_symbol: 15
     start_label: 15
 
   power=generator:
-    symbol_file: symbols/man_made/generator_wind.svg
+    symbol_file: symbols/sources/man_made/generator_wind.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 15
@@ -2070,40 +2075,40 @@ features:
     attributes:
       - location
   military=bunker:
-    symbol_file: symbols/man_made/bunker.svg
+    symbol_file: symbols/sources/man_made/bunker.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 17
     start_label: 17
     text_dy: 9
   amenity=hunting_stand:
-    symbol_file: symbols/amenity/hunting_stand.svg
+    symbol_file: symbols/sources/amenity/hunting_stand.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 16
     start_label: 17
   man_made=windmill:
-    symbol_file: symbols/man_made/windmill.svg
+    symbol_file: symbols/sources/man_made/windmill.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 16
     start_label: 17
     text_dy: 12
   man_made=water_tower:
-    symbol_file: symbols/towers/water_tower.svg
+    symbol_file: symbols/sources/towers/water_tower.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 17
     start_label: 17
   man_made=lighthouse:
-    symbol_file: symbols/towers/lighthouse.svg
+    symbol_file: symbols/sources/towers/lighthouse.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 15
     start_label: 15
     text_dy: 12
   man_made=mast:
-    symbol_file: symbols/towers/mast.svg
+    symbol_file: symbols/sources/towers/mast.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 18
@@ -2113,11 +2118,11 @@ features:
       lighting:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/mast_lighting.svg
+        symbol_file: symbols/sources/towers/mast_lighting.svg
       communication:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/mast_communication.svg
+        symbol_file: symbols/sources/towers/mast_communication.svg
     variants:
       height=160:
         condition: (height >= 160) AND "tower:type" NOT IN ('lighting')
@@ -2135,7 +2140,7 @@ features:
       height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
       "tower:type":
   man_made=tower:
-    symbol_file: symbols/towers/tower_generic.svg
+    symbol_file: symbols/sources/towers/tower_generic.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 17
@@ -2145,37 +2150,37 @@ features:
       defensive:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_defensive.svg
+        symbol_file: symbols/sources/towers/tower_defensive.svg
       observation:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_observation.svg
+        symbol_file: symbols/sources/towers/tower_observation.svg
       bell_tower:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/bell_tower.svg
+        symbol_file: symbols/sources/towers/bell_tower.svg
       communication:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_cantilever_communication.svg
+        symbol_file: symbols/sources/towers/tower_cantilever_communication.svg
       communication+lattice:
         filters: >-
           ["tower:type" = 'communication']["tower:construction" = 'lattice']
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_lattice_communication.svg
+        symbol_file: symbols/sources/towers/tower_lattice_communication.svg
       lighting:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_lighting.svg
+        symbol_file: symbols/sources/towers/tower_lighting.svg
       lighting+lattice:
         filters: >-
           ["tower:type" = 'lighting']["tower:construction" = 'lattice']
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_lattice_lighting.svg
+        symbol_file: symbols/sources/towers/tower_lattice_lighting.svg
       lattice:
         attribute: "tower:construction"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/towers/tower_lattice.svg
+        symbol_file: symbols/sources/towers/tower_lattice.svg
     variants:
       height=160:
         condition: (height >= 160) AND "tower:type" NOT IN ('lighting', 'bell_tower')
@@ -2199,21 +2204,21 @@ features:
       "tower:type":
       "tower:construction":
   man_made=communications_tower:
-    symbol_file: symbols/towers/communications_tower.svg
+    symbol_file: symbols/sources/towers/communications_tower.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 14
     start_label: 17
     text_dy: 10
   historic=city_gate:
-    symbol_file: symbols/historic/city_gate.svg
+    symbol_file: symbols/sources/historic/city_gate.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   historic=memorial:
-    symbol_file: symbols/historic/memorial.svg
+    symbol_file: symbols/sources/historic/memorial.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 17
@@ -2222,23 +2227,23 @@ features:
       statue:
         attribute: memorial
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/statue.svg
+        symbol_file: symbols/sources/historic/statue.svg
       bust:
         attribute: memorial
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/bust.svg
+        symbol_file: symbols/sources/historic/bust.svg
       stone:
         attribute: memorial
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/stone.svg
+        symbol_file: symbols/sources/historic/stone.svg
       plaque:
         attribute: memorial
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/plaque.svg
+        symbol_file: symbols/sources/historic/plaque.svg
       blue_plaque:
         attribute: memorial
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/plaque.svg
+        symbol_file: symbols/sources/historic/plaque.svg
     variants:
       medium:
         condition: memorial IN ('bust', 'stele', 'stone')
@@ -2251,25 +2256,25 @@ features:
     attributes:
       - memorial
   man_made=obelisk:
-    symbol_file: symbols/historic/obelisk.svg
+    symbol_file: symbols/sources/historic/obelisk.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 17
     start_label: 17
   historic=monument:
-    symbol_file: symbols/historic/monument.svg
+    symbol_file: symbols/sources/historic/monument.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 16
     start_label: 16
   historic=fort:
-    symbol_file: symbols/historic/fort.svg
+    symbol_file: symbols/sources/historic/fort.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 16
     start_label: 16
   historic=castle:
-    symbol_file: symbols/historic/castle.svg
+    symbol_file: symbols/sources/historic/castle.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 15
@@ -2278,17 +2283,17 @@ features:
       manor:
         attribute: castle_type
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/manor.svg
+        symbol_file: symbols/sources/historic/manor.svg
       palace:
         filters: >-
           [castle_type = 'palace'], [castle_type = 'stately']
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/palace.svg
+        symbol_file: symbols/sources/historic/palace.svg
       fortress:
         filters: >-
           [castle_type = 'fortress'], [castle_type = 'defensive'], [castle_type = 'castrum'], [castle_type = 'shiro'], [castle_type = 'kremlin']
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/historic/fortress.svg
+        symbol_file: symbols/sources/historic/fortress.svg
     variants:
       minor_types:
         condition: castle_type IN ('stately', 'manor')
@@ -2297,19 +2302,19 @@ features:
     attributes:
       - castle_type
   historic=manor:
-    symbol_file: symbols/historic/manor.svg
+    symbol_file: symbols/sources/historic/manor.svg
     symbol_color: memorial-icon
     label_color: memorial-text
     start_symbol: 16
     start_label: 16
   historic=archaeological_site:
-    symbol_file: symbols/historic/archaeological_site.svg
+    symbol_file: symbols/sources/historic/archaeological_site.svg
     symbol_color: culture-icon
     label_color: culture-text
     start_symbol: 16
     start_label: 17
   amenity=place_of_worship:
-    symbol_file: symbols/religion/place_of_worship.svg
+    symbol_file: symbols/sources/religion/place_of_worship.svg
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
     start_symbol: 16
@@ -2319,53 +2324,53 @@ features:
       christian:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/christian.svg
+        symbol_file: symbols/sources/religion/christian.svg
       muslim:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/muslim.svg
+        symbol_file: symbols/sources/religion/muslim.svg
       sikh:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/sikhist.svg
+        symbol_file: symbols/sources/religion/sikhist.svg
       jewish:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/jewish.svg
+        symbol_file: symbols/sources/religion/jewish.svg
       hindu:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/hinduist.svg
+        symbol_file: symbols/sources/religion/hinduist.svg
       buddhist:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/buddhist.svg
+        symbol_file: symbols/sources/religion/buddhist.svg
       shinto:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/shintoist.svg
+        symbol_file: symbols/sources/religion/shintoist.svg
       taoist:
         attribute: religion
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/religion/taoist.svg
+        symbol_file: symbols/sources/religion/taoist.svg
     attributes:
       - religion
   man_made=cross:
-    symbol_file: symbols/religion/christian.9.svg
+    symbol_file: symbols/sources/religion/christian.9.svg
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
     start_symbol: 16
     start_label: 17
     text_dy: 6
   historic=wayside_cross:
-    symbol_file: symbols/religion/christian.9.svg
+    symbol_file: symbols/sources/religion/christian.9.svg
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
     start_symbol: 16
     start_label: 17
     text_dy: 6
   historic=wayside_shrine:
-    symbol_file: symbols/religion/shrine.svg
+    symbol_file: symbols/sources/religion/shrine.svg
     symbol_color: man-made-icon
     label_color: place-of-worship-text
     start_symbol: 16
@@ -2383,42 +2388,42 @@ features:
     start_label: 12
     way_pixels_min: 62.5
   amenity=hospital:
-    symbol_file: symbols/health/hospital.svg
+    symbol_file: symbols/sources/health/hospital.svg
     symbol_color: health-icon
     label_color: health-text
     start_symbol: 15
     start_label: 16
     text_dy: 10
   amenity=pharmacy:
-    symbol_file: symbols/health/pharmacy.svg
+    symbol_file: symbols/sources/health/pharmacy.svg
     symbol_color: health-icon
     label_color: health-text
     start_symbol: 17
     start_label: 17
     text_dy: 12
   amenity=dentist:
-    symbol_file: symbols/health/dentist.svg
+    symbol_file: symbols/sources/health/dentist.svg
     symbol_color: health-icon
     label_color: health-text
     start_symbol: 17
     start_label: 17
     text_dy: 12
   amenity=doctors:
-    symbol_file: symbols/health/doctors.svg
+    symbol_file: symbols/sources/health/doctors.svg
     symbol_color: health-icon
     label_color: health-text
     start_symbol: 17
     start_label: 17
     text_dy: 12
   amenity=clinic:
-    symbol_file: symbols/health/doctors.svg
+    symbol_file: symbols/sources/health/doctors.svg
     symbol_color: health-icon
     label_color: health-text
     start_symbol: 16
     start_label: 17
     text_dy: 12
   amenity=veterinary:
-    symbol_file: symbols/health/veterinary.svg
+    symbol_file: symbols/sources/health/veterinary.svg
     symbol_color: health-icon
     label_color: health-text
     start_symbol: 17
@@ -2426,7 +2431,7 @@ features:
     text_dy: 12
 
   amenity=driving_school:
-    symbol_file: symbols/circle.4.svg
+    symbol_file: symbols/sources/circle.4.svg
     symbol_color: shop-icon
     label_color: shop-text
     start_symbol: 17
@@ -2435,10 +2440,10 @@ features:
     modifications:
       high_zoom:
         style: standard-symbol-zoom-variant
-        symbol_file: symbols/circle.6.svg
+        symbol_file: symbols/sources/circle.6.svg
         start_symbol: 18
   amenity=marketplace:
-    symbol_file: symbols/shop/marketplace.svg
+    symbol_file: symbols/sources/shop/marketplace.svg
     symbol_color: shop-icon
     label_color: shop-text
     start_symbol: 16
@@ -2448,13 +2453,13 @@ features:
     way_pixels_start_all: 17
 
   shop=massage:
-    symbol_file: symbols/shop/massage.svg
+    symbol_file: symbols/sources/shop/massage.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 17
     start_label: 17
   shop:
-    symbol_file: symbols/circle.4.svg
+    symbol_file: symbols/sources/circle.4.svg
     symbol_color: shop-icon
     label_color: shop-text
     start_symbol: 17
@@ -2465,260 +2470,260 @@ features:
       other:
         attribute: shop
         style: standard-symbol-zoom-variant
-        symbol_file: symbols/circle.6.svg
+        symbol_file: symbols/sources/circle.6.svg
         start_symbol: 18
         text_dy: 8
       supermarket:
         attribute: shop
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/shop/supermarket.svg
+        symbol_file: symbols/sources/shop/supermarket.svg
         text_dy: 10
       department_store:
         attribute: shop
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/shop/department_store.svg
+        symbol_file: symbols/sources/shop/department_store.svg
         text_dy: 11
       alcohol:
         template: shop
-        symbol_file: symbols/shop/alcohol.svg
+        symbol_file: symbols/sources/shop/alcohol.svg
       wine:
         template: shop
-        symbol_file: symbols/shop/alcohol.svg
+        symbol_file: symbols/sources/shop/alcohol.svg
       art:
         template: shop
-        symbol_file: symbols/shop/art.svg
+        symbol_file: symbols/sources/shop/art.svg
       bag:
         template: shop
-        symbol_file: symbols/shop/bag.svg
+        symbol_file: symbols/sources/shop/bag.svg
       bakery:
         template: shop
-        symbol_file: symbols/shop/bakery.svg
+        symbol_file: symbols/sources/shop/bakery.svg
       beauty:
         template: shop
-        symbol_file: symbols/shop/beauty.svg
+        symbol_file: symbols/sources/shop/beauty.svg
       bed:
         template: shop
-        symbol_file: symbols/shop/bed.svg
+        symbol_file: symbols/sources/shop/bed.svg
       beverages:
         template: shop
-        symbol_file: symbols/shop/beverages.svg
+        symbol_file: symbols/sources/shop/beverages.svg
       bicycle:
         template: shop
-        symbol_file: symbols/shop/bicycle.svg
+        symbol_file: symbols/sources/shop/bicycle.svg
       books:
         template: shop
-        symbol_file: symbols/amenity/library.svg
+        symbol_file: symbols/sources/amenity/library.svg
       butcher:
         template: shop
-        symbol_file: symbols/shop/butcher.svg
+        symbol_file: symbols/sources/shop/butcher.svg
       chemist:
         template: shop
-        symbol_file: symbols/shop/chemist.svg
+        symbol_file: symbols/sources/shop/chemist.svg
       car:
         template: shop
-        symbol_file: symbols/shop/car.svg
+        symbol_file: symbols/sources/shop/car.svg
       car_parts:
         template: shop
-        symbol_file: symbols/shop/car_parts.svg
+        symbol_file: symbols/sources/shop/car_parts.svg
       car_repair:
         template: shop
-        symbol_file: symbols/shop/car_repair.svg
+        symbol_file: symbols/sources/shop/car_repair.svg
       carpet:
         template: shop
-        symbol_file: symbols/shop/carpet.svg
+        symbol_file: symbols/sources/shop/carpet.svg
       charity:
         template: shop
-        symbol_file: symbols/shop/charity.svg
+        symbol_file: symbols/sources/shop/charity.svg
       clothes:
         template: shop
-        symbol_file: symbols/shop/clothes.svg
+        symbol_file: symbols/sources/shop/clothes.svg
       fashion:
         template: shop
-        symbol_file: symbols/shop/clothes.svg
+        symbol_file: symbols/sources/shop/clothes.svg
       coffee:
         template: shop
-        symbol_file: symbols/shop/coffee.svg
+        symbol_file: symbols/sources/shop/coffee.svg
       computer:
         template: shop
-        symbol_file: symbols/shop/computer.svg
+        symbol_file: symbols/sources/shop/computer.svg
       convenience:
         template: shop
-        symbol_file: symbols/shop/convenience.svg
+        symbol_file: symbols/sources/shop/convenience.svg
       chocolate:
         template: shop
-        symbol_file: symbols/shop/confectionery.svg
+        symbol_file: symbols/sources/shop/confectionery.svg
       confectionery:
         template: shop
-        symbol_file: symbols/shop/confectionery.svg
+        symbol_file: symbols/sources/shop/confectionery.svg
       pastry:
         template: shop
-        symbol_file: symbols/shop/confectionery.svg
+        symbol_file: symbols/sources/shop/confectionery.svg
       copyshop:
         template: shop
-        symbol_file: symbols/shop/copyshop.svg
+        symbol_file: symbols/sources/shop/copyshop.svg
       cosmetics:
         template: shop
-        symbol_file: symbols/shop/perfumery.svg
+        symbol_file: symbols/sources/shop/perfumery.svg
       perfumery:
         template: shop
-        symbol_file: symbols/shop/perfumery.svg
+        symbol_file: symbols/sources/shop/perfumery.svg
       dairy:
         template: shop
-        symbol_file: symbols/shop/dairy.svg
+        symbol_file: symbols/sources/shop/dairy.svg
       deli:
         template: shop
-        symbol_file: symbols/shop/deli.svg
+        symbol_file: symbols/sources/shop/deli.svg
       doityourself:
         template: shop
-        symbol_file: symbols/shop/diy.svg
+        symbol_file: symbols/sources/shop/diy.svg
       hardware:
         template: shop
-        symbol_file: symbols/shop/diy.svg
+        symbol_file: symbols/sources/shop/diy.svg
       dry_cleaning:
         template: shop
-        symbol_file: symbols/shop/laundry.svg
+        symbol_file: symbols/sources/shop/laundry.svg
       laundry:
         template: shop
-        symbol_file: symbols/shop/laundry.svg
+        symbol_file: symbols/sources/shop/laundry.svg
       electronics:
         template: shop
-        symbol_file: symbols/shop/electronics.svg
+        symbol_file: symbols/sources/shop/electronics.svg
       fabric:
         template: shop
-        symbol_file: symbols/shop/fabric.svg
+        symbol_file: symbols/sources/shop/fabric.svg
       fishmonger:
         template: shop
-        symbol_file: symbols/shop/seafood.svg
+        symbol_file: symbols/sources/shop/seafood.svg
         text_dy: 9
       seafood:
         template: shop
-        symbol_file: symbols/shop/seafood.svg
+        symbol_file: symbols/sources/shop/seafood.svg
         text_dy: 9
       florist:
         template: shop
-        symbol_file: symbols/shop/florist.svg
+        symbol_file: symbols/sources/shop/florist.svg
       furniture:
         template: shop
-        symbol_file: symbols/shop/furniture.svg
+        symbol_file: symbols/sources/shop/furniture.svg
         text_dy: 10
       garden_centre:
         template: shop
-        symbol_file: symbols/shop/garden_centre.svg
+        symbol_file: symbols/sources/shop/garden_centre.svg
       gift:
         template: shop
-        symbol_file: symbols/shop/gift.svg
+        symbol_file: symbols/sources/shop/gift.svg
       greengrocer:
         template: shop
-        symbol_file: symbols/shop/greengrocer.svg
+        symbol_file: symbols/sources/shop/greengrocer.svg
       farm:
         template: shop
-        symbol_file: symbols/shop/greengrocer.svg
+        symbol_file: symbols/sources/shop/greengrocer.svg
       hairdresser:
         template: shop
-        symbol_file: symbols/shop/hairdresser.svg
+        symbol_file: symbols/sources/shop/hairdresser.svg
       hifi:
         template: shop
-        symbol_file: symbols/shop/hifi.svg
+        symbol_file: symbols/sources/shop/hifi.svg
       houseware:
         template: shop
-        symbol_file: symbols/shop/houseware.svg
+        symbol_file: symbols/sources/shop/houseware.svg
       interior_decoration:
         template: shop
-        symbol_file: symbols/shop/interior_decoration.svg
+        symbol_file: symbols/sources/shop/interior_decoration.svg
       jewelry:
         template: shop
-        symbol_file: symbols/shop/jewelry.svg
+        symbol_file: symbols/sources/shop/jewelry.svg
       jewellry:
         template: shop
-        symbol_file: symbols/shop/jewelry.svg
+        symbol_file: symbols/sources/shop/jewelry.svg
       medical_supply:
         template: shop
-        symbol_file: symbols/shop/medical_supply.svg
+        symbol_file: symbols/sources/shop/medical_supply.svg
       mobile_phone:
         template: shop
-        symbol_file: symbols/shop/mobile_phone.svg
+        symbol_file: symbols/sources/shop/mobile_phone.svg
       motorcycle:
         template: shop
-        symbol_file: symbols/shop/motorcycle.svg
+        symbol_file: symbols/sources/shop/motorcycle.svg
       music:
         template: shop
-        symbol_file: symbols/shop/music.svg
+        symbol_file: symbols/sources/shop/music.svg
       musical_instrument:
         template: shop
-        symbol_file: symbols/shop/musical_instrument.svg
+        symbol_file: symbols/sources/shop/musical_instrument.svg
       kiosk:
         template: shop
-        symbol_file: symbols/shop/newsagent.svg
+        symbol_file: symbols/sources/shop/newsagent.svg
       newsagent:
         template: shop
-        symbol_file: symbols/shop/newsagent.svg
+        symbol_file: symbols/sources/shop/newsagent.svg
       optician:
         template: shop
-        symbol_file: symbols/shop/optician.svg
+        symbol_file: symbols/sources/shop/optician.svg
       outdoor:
         template: shop
-        symbol_file: symbols/shop/outdoor.svg
+        symbol_file: symbols/sources/shop/outdoor.svg
       pet:
         template: shop
-        symbol_file: symbols/shop/pet.svg
+        symbol_file: symbols/sources/shop/pet.svg
       photo:
         template: shop
-        symbol_file: symbols/shop/photo.svg
+        symbol_file: symbols/sources/shop/photo.svg
       photo_studio:
         template: shop
-        symbol_file: symbols/shop/photo.svg
+        symbol_file: symbols/sources/shop/photo.svg
       photography:
         template: shop
-        symbol_file: symbols/shop/photo.svg
+        symbol_file: symbols/sources/shop/photo.svg
       paint:
         template: shop
-        symbol_file: symbols/shop/paint.svg
+        symbol_file: symbols/sources/shop/paint.svg
       shoes:
         template: shop
-        symbol_file: symbols/shop/shoes.svg
+        symbol_file: symbols/sources/shop/shoes.svg
       second_hand:
         template: shop
-        symbol_file: symbols/shop/second_hand.svg
+        symbol_file: symbols/sources/shop/second_hand.svg
       sports:
         template: shop
-        symbol_file: symbols/shop/sports.svg
+        symbol_file: symbols/sources/shop/sports.svg
       stationery:
         template: shop
-        symbol_file: symbols/shop/stationery.svg
+        symbol_file: symbols/sources/shop/stationery.svg
       tobacco:
         template: shop
-        symbol_file: symbols/shop/tobacco.svg
+        symbol_file: symbols/sources/shop/tobacco.svg
       tea:
         template: shop
-        symbol_file: symbols/shop/tea.svg
+        symbol_file: symbols/sources/shop/tea.svg
       ticket:
         template: shop
-        symbol_file: symbols/shop/ticket.svg
+        symbol_file: symbols/sources/shop/ticket.svg
         text_dy: 9
       toys:
         template: shop
-        symbol_file: symbols/shop/toys.svg
+        symbol_file: symbols/sources/shop/toys.svg
       trade:
         template: shop
-        symbol_file: symbols/shop/trade.svg
+        symbol_file: symbols/sources/shop/trade.svg
       wholesale:
         template: shop
-        symbol_file: symbols/shop/trade.svg
+        symbol_file: symbols/sources/shop/trade.svg
       travel_agency:
         template: shop
-        symbol_file: symbols/shop/travel_agency.svg
+        symbol_file: symbols/sources/shop/travel_agency.svg
       tyres:
         template: shop
-        symbol_file: symbols/shop/tyres.svg
+        symbol_file: symbols/sources/shop/tyres.svg
       variety_store:
         template: shop
-        symbol_file: symbols/shop/variety_store.svg
+        symbol_file: symbols/sources/shop/variety_store.svg
       video:
         template: shop
-        symbol_file: symbols/shop/video.svg
+        symbol_file: symbols/sources/shop/video.svg
       video_games:
         template: shop
-        symbol_file: symbols/shop/video_games.svg
+        symbol_file: symbols/sources/shop/video_games.svg
     variants:
       early:
         condition: shop IN ('supermarket', 'department_store')
@@ -2727,12 +2732,12 @@ features:
       - shop
 
   advertising=column:
-    symbol_file: symbols/advertising/column.svg
+    symbol_file: symbols/sources/advertising/column.svg
     symbol_color: advertising-grey
     start_symbol: 19
 
   office:
-    symbol_file: symbols/circle.6.svg
+    symbol_file: symbols/sources/circle.6.svg
     symbol_color: office-icon
     label_color: office-text
     start_symbol: 18
@@ -2743,12 +2748,12 @@ features:
       embassy:
         attribute: diplomatic
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/office/embassy.svg
+        symbol_file: symbols/sources/office/embassy.svg
         text_dy: 11
       consulate:
         attribute: diplomatic
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/office/consulate.svg
+        symbol_file: symbols/sources/office/consulate.svg
         text_dy: 11
     variants:
       diplomatic:
@@ -2763,7 +2768,7 @@ features:
       - diplomatic
 
   leisure=water_park:
-    symbol_file: symbols/leisure/water_park.svg
+    symbol_file: symbols/sources/leisure/water_park.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 14
@@ -2772,7 +2777,7 @@ features:
     way_pixels_start_all: 17
     text_dy: 12
   leisure=fitness_centre:
-    symbol_file: symbols/leisure/fitness.svg
+    symbol_file: symbols/sources/leisure/fitness.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 14
@@ -2781,7 +2786,7 @@ features:
     way_pixels_start_all: 17
   leisure=fitness_station:
     style: access-light
-    symbol_file: symbols/leisure/fitness.svg
+    symbol_file: symbols/sources/leisure/fitness.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 17
@@ -2790,7 +2795,7 @@ features:
       - int_access
   leisure=playground:
     style: access-light
-    symbol_file: symbols/leisure/playground.svg
+    symbol_file: symbols/sources/leisure/playground.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 17
@@ -2799,46 +2804,46 @@ features:
     attributes:
       - int_access
   leisure=miniature_golf:
-    symbol_file: symbols/leisure/miniature_golf.svg
+    symbol_file: symbols/sources/leisure/miniature_golf.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 17
     start_label: 17
     text_dy: 13
   leisure=golf_course:
-    symbol_file: symbols/leisure/golf.svg
+    symbol_file: symbols/sources/leisure/golf.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 15
     start_label: 15
     text_dy: 13
   tourism=picnic_site:
-    symbol_file: symbols/leisure/picnic.svg
+    symbol_file: symbols/sources/leisure/picnic.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 16
     start_label: 17
   leisure=picnic_table:
-    symbol_file: symbols/leisure/picnic.svg
+    symbol_file: symbols/sources/leisure/picnic.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
   leisure=firepit:
-    symbol_file: symbols/leisure/firepit.svg
+    symbol_file: symbols/sources/leisure/firepit.svg
     symbol_color: amenity-icon
     label_color: amenity-text
     start_symbol: 17
     start_label: 17
   leisure=sauna:
-    symbol_file: symbols/leisure/sauna.svg
+    symbol_file: symbols/sources/leisure/sauna.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 17
     start_label: 17
   leisure=beach_resort:
-    symbol_file: symbols/leisure/beach_resort.svg
+    symbol_file: symbols/sources/leisure/beach_resort.svg
     symbol_color: leisure-icon
     label_color: leisure-text
     start_symbol: 16
@@ -2846,7 +2851,7 @@ features:
     text_dy: 10
 
   leisure=slipway:
-    symbol_file: symbols/transport/slipway.svg
+    symbol_file: symbols/sources/transport/slipway.svg
     symbol_color: transportation-icon
     label_color: transportation-text
     start_symbol: 17

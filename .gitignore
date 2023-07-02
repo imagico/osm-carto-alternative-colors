@@ -1,8 +1,10 @@
 .thumb.png
 symbols/patterns/previews/
 symbols/patterns/processed/
+symbols/line_patterns/previews/
 symbols/pdf/
 symbols/colored/
+symbols/previews/
 data/
 fonts/
 tmp/
