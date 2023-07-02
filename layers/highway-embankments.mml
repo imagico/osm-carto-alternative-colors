@@ -40,10 +40,11 @@
     <<: *extents
     Datasource:
       <<: *osm2pgsql
+      geometry_table: planet_osm_line
       table: |-
         (SELECT
             ST_Difference(
-              ST_Boundary(way),
+              l.oline,
               -- this clips the embankment/cutting outlines with the adjacent lines that are not embankment/cutting
               (SELECT
                   COALESCE(
@@ -57,7 +58,7 @@
                         ELSE
                           GREATEST(
                             carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
-                            carto_highway_line_width_mapped(o.highway, o.tags->'width', o.tags->'lanes', !bbox!, !scale_denominator!)
+                            carto_highway_line_width_mapped(o.highway, CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END, o.tags->'lanes', !bbox!, !scale_denominator!)
                           ) +
                           (CASE WHEN
                             z(!scale_denominator!) >= 18 AND
@@ -73,36 +74,50 @@
                              (o.tags->'handrail:left') IN ('yes') OR
                              (o.tags->'handrail:right') IN ('yes')) THEN 4.0
                            ELSE 0.0 END)
-                        END + 5.0
+                        END + 2.5
                       )*NULLIF(!scale_denominator!*0.001*0.28,0))),
                       ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                   )
                 FROM planet_osm_line o
                 WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.barrier = 'hedge' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
                   carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)) > 0.0 AND
-                  ST_DWithin(l.line, o.way, 0.1) AND
+                  ST_DWithin(l.cline, o.way, 0.1) AND
                   o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
                   (
                     (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
                     (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
                     (l.type = 'hedge_bank' AND NOT(o.tags @> 'hedge=>hedge_bank')) OR
-                    (l.type = 'dyke' AND (o.man_made IS NULL OR o.man_made NOT IN ('dyke')))
+                    ((l.type = 'dyke_left' OR l.type = 'dyke_right') AND 
+                     (
+                       (o.man_made IS NULL OR o.man_made NOT IN ('dyke')) OR
+                       (l.embankment_width != (CASE WHEN o.man_made = 'dyke' THEN carto_dyke_side_width_mapped (o.tags->'width', !bbox!, !scale_denominator!) ELSE NULL END))
+                     )
+                    )
                   )
               )
             ) AS way,
-            type
+            "type",
+            (CASE 
+              WHEN "type" = 'dyke_left' THEN ROUND(2.0*embankment_width-0.5*width_px-1.0 - GREATEST(1.0, embankment_width*0.16))
+              WHEN "type" = 'dyke_right' THEN ROUND(2.0*embankment_width-0.5*width_px-1.0 + GREATEST(1.0, embankment_width*0.16))
+              ELSE NULL 
+            END) AS width
           FROM
             -- this queries the lines with embankment/cutting and buffers + aggregates them separately for embankment and cutting
+            (WITH embankments AS
             (SELECT
-                ST_Union(ST_Buffer(way, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))) AS way,
-                ST_Collect(way) AS line,
-                type
-              FROM
+                way AS cline,
+                ST_Buffer(way, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                width_px,
+                "type",
+                width_tagged
+              FROM 
                 (SELECT
                     way,
                     GREATEST(
                       carto_highway_line_width(COALESCE(highway, railway, waterway, man_made, barrier), service, z(!scale_denominator!)),
-                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!)) + 
+                      -- dykes have a width dependent pattern so the tagged width goes in there and not here
+                      carto_highway_line_width_mapped(highway, CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END, tags->'lanes', !bbox!, !scale_denominator!)) + 
                     (CASE WHEN
                       z(!scale_denominator!) >= 18 AND
                       ((tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
@@ -113,24 +128,62 @@
                        (tags->'cycleway:right') IN ('track')) THEN 7.5
                       WHEN
                        z(!scale_denominator!) >= 18 AND
-                       ((tags->'handrail') IN ('yes') OR
-                        (tags->'handrail:left') IN ('yes') OR
-                        (tags->'handrail:right') IN ('yes')) THEN 4.0
+                      ((tags->'handrail') IN ('yes') OR
+                       (tags->'handrail:left') IN ('yes') OR
+                       (tags->'handrail:right') IN ('yes')) THEN 4.0
                       ELSE 0.0 END) AS width_px,
                     (CASE
                        WHEN (tags @> 'cutting=>yes') THEN 'cutting'
                        WHEN (man_made = 'dyke') THEN 'dyke'
                        WHEN (barrier = 'hedge') THEN 'hedge_bank'
                        ELSE 'embankment'
-                    END) AS type
+                    END) AS "type",
+                    tags->'width' AS width_tagged
                   FROM planet_osm_line
                   WHERE ((man_made = 'dyke') OR (barrier = 'hedge' AND (tags @> 'hedge=>hedge_bank')) OR
                     ((highway IS NOT NULL OR railway IS NOT NULL OR (man_made = 'dyke') OR waterway IN ('river', 'canal', 'stream', 'ditch', 'drain'))
                     AND ((tags @> 'embankment=>yes') OR (tags @> 'cutting=>yes'))))
                     AND way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0))
-                ) AS embankments
-              WHERE width_px > 0.0
-              GROUP BY type
+                ) AS _
+            )
+            SELECT -- the normal implicit embankments/cuttings
+                way,
+                ST_Boundary(way) AS oline,
+                cline,
+                "type",
+                NULL AS width_px,
+                NULL AS embankment_width
+              FROM
+                (SELECT
+                    ST_Union(way) AS way,
+                    ST_Collect(cline) AS cline,
+                    "type"
+                  FROM embankments
+                  WHERE "type" != 'dyke' AND width_px > 0.0
+                  GROUP BY "type"
+                ) AS _
+            UNION ALL
+            SELECT -- dykes left side
+                ST_Union(way) AS way,
+                ST_Collect(ST_OffsetCurve(cline, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))) AS oline,
+                ST_Collect(cline) AS cline,
+                'dyke_left' AS "type",
+                width_px,
+                carto_dyke_side_width_mapped (width_tagged, !bbox!, !scale_denominator!) AS embankment_width
+              FROM embankments
+              WHERE "type" = 'dyke' AND width_px > 0.0
+              GROUP BY "type", embankment_width, width_px
+            UNION ALL
+            SELECT -- dykes right side
+                ST_Union(way) AS way,
+                ST_Collect(ST_Reverse(ST_OffsetCurve(cline, -(0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)))) AS oline,
+                ST_Collect(cline) AS cline,
+                'dyke_right' AS "type",
+                width_px,
+                carto_dyke_side_width_mapped (width_tagged, !bbox!, !scale_denominator!) AS embankment_width
+              FROM embankments
+              WHERE "type" = 'dyke' AND width_px > 0.0
+              GROUP BY "type", embankment_width, width_px
             ) AS l
         ) AS highway_embankments
     properties:

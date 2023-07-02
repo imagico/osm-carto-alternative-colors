@@ -46,9 +46,17 @@
             COALESCE(int_natural, man_made) AS feature
           FROM
             (SELECT
-                way,
+                CASE
+                  WHEN "natural" IN ('cliff') THEN
+                    ST_OffsetCurve(
+                      ST_OffsetCurve(way, 1.0*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                      -2.0*NULLIF(!scale_denominator!*0.001*0.28,0)
+                    )
+                  ELSE
+                    way
+                END AS way,
                 ('natural_' || 
-                  (CASE WHEN "natural" IN ('cliff', 'earth_bank', 'gully') THEN
+                  (CASE WHEN "natural" IN ('cliff', 'earth_bank') THEN
                     (CASE
                       WHEN "natural" IN ('cliff') THEN (CASE WHEN surface = 'ice' THEN 'icecliff' ELSE 'cliff' END)
                       WHEN "natural" IN ('earth_bank') THEN (CASE WHEN tags @> 'earth_bank=>grassy_steep_slope' THEN 'earth_bank_grass' ELSE 'earth_bank' END)
@@ -58,12 +66,78 @@
                 ) AS int_natural,
                 ('man_made_' || (CASE WHEN man_made IN ('embankment') THEN man_made ELSE NULL END)) AS man_made
               FROM planet_osm_line
-              WHERE ("natural" IN ('cliff', 'crevasse', 'earth_bank', 'gully') OR man_made = 'embankment')
+              WHERE ("natural" IN ('cliff', 'crevasse', 'earth_bank') OR man_made = 'embankment')
                 AND way && !bbox!
              UNION ALL
              SELECT
-                ST_Difference(
+                ST_OffsetCurve(
+                  ST_Difference(
+                    ST_OffsetCurve(way, 0.5*(width_px-0.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                    COALESCE(
+                      (SELECT ST_Union(ST_Buffer(way, 0.5*(width_px-0.49)*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                         FROM planet_osm_line l2
+                         WHERE "natural" IN ('gully')
+                           AND ST_DWithin(l1.way, l2.way, 0.1)
+                           AND l1.osm_id != l2.osm_id
+                      ),
+                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                    )
+                  ),
+                  -(0.5*(width_px-0.5)-2.0)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                ) AS way,
+                'natural_gully_left' AS int_natural,
+                NULL AS man_made
+              FROM
+                (SELECT
                   way,
+                  carto_barrier_line_width("natural", z(!scale_denominator!)) AS width_px,
+                  osm_id
+                  FROM planet_osm_line
+                  WHERE "natural" IN ('gully')
+                    AND way && !bbox!
+                ) AS l1
+             UNION ALL
+             SELECT
+                ST_OffsetCurve(
+                  ST_Difference(
+                    ST_OffsetCurve(way, -0.5*(width_px-0.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                    COALESCE(
+                      (SELECT ST_Union(ST_Buffer(way, 0.5*(width_px-0.49)*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                         FROM planet_osm_line l2
+                         WHERE "natural" IN ('gully')
+                           AND ST_DWithin(l1.way, l2.way, 0.1)
+                           AND l1.osm_id != l2.osm_id
+                      ),
+                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                    )
+                  ),
+                  (0.5*(width_px-0.5)-2.0)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                ) AS way,
+                'natural_gully_right' AS int_natural,
+                NULL AS man_made
+              FROM
+                (SELECT
+                  way,
+                  carto_barrier_line_width("natural", z(!scale_denominator!)) AS width_px,
+                  osm_id
+                  FROM planet_osm_line
+                  WHERE "natural" IN ('gully')
+                    AND way && !bbox!
+                ) AS l1
+             UNION ALL
+             SELECT
+                ST_Difference(
+                  CASE WHEN "natural" IN ('arete') THEN
+                    ST_OffsetCurve(
+                      ST_OffsetCurve(
+                        ST_OffsetCurve(way, 2.0*NULLIF(!scale_denominator!*0.001*0.28,0), 'quad_segs=16 join=round'),
+                        -4.0*NULLIF(!scale_denominator!*0.001*0.28,0), 'quad_segs=16 join=round'
+                      ),
+                      2.0*NULLIF(!scale_denominator!*0.001*0.28,0), 'quad_segs=16 join=round'
+                    )
+                  ELSE
+                    way
+                  END,
                   COALESCE(
                     (SELECT ST_Union(ST_Buffer(way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
                        FROM planet_osm_point p
@@ -80,5 +154,51 @@
                 AND l.way && !bbox!
             ) AS _
         ) AS cliffs
+    properties:
+      minzoom: 13
+  - id: natural-linecaps
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            ST_StartPoint(way) AS way,
+            DEGREES(ST_Azimuth(ST_PointN(way, 2), ST_StartPoint(way)))+90.0 AS angle,
+            'natural_gully_start' AS feature
+          FROM planet_osm_line l1
+          WHERE "natural" IN ('gully')
+            AND l1.way && !bbox!
+            AND ST_StartPoint(l1.way) && !bbox!
+            AND NOT EXISTS (SELECT 1 FROM planet_osm_line l2 WHERE "natural" IN ('gully') AND ST_DWithin(l2.way, ST_StartPoint(l1.way), 0.1) AND l1.osm_id != l2.osm_id)
+        UNION ALL
+        SELECT
+            ST_StartPoint(way) AS way,
+            DEGREES(ST_Azimuth(ST_PointN(way, 2), ST_StartPoint(way)))+90.0 AS angle,
+            'natural_ridge_start' AS feature
+          FROM planet_osm_line l1
+          WHERE "natural" IN ('ridge')
+            AND l1.way && !bbox!
+            AND ST_StartPoint(l1.way) && !bbox!
+            AND NOT EXISTS (SELECT 1 FROM planet_osm_line l2 WHERE "natural" IN ('ridge', 'arete') AND ST_DWithin(l2.way, ST_StartPoint(l1.way), 0.1) AND l1.osm_id != l2.osm_id)
+            AND NOT EXISTS
+              (SELECT 1 FROM planet_osm_point p
+                WHERE ("natural" IN ('peak', 'volcano', 'saddle') OR (tags @> 'mountain_pass=>yes'))
+                  AND ST_DWithin(ST_StartPoint(l1.way), p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+        UNION ALL
+        SELECT
+            ST_EndPoint(way) AS way,
+            DEGREES(ST_Azimuth(ST_PointN(way, -2), ST_EndPoint(way)))-90.0 AS angle,
+            'natural_ridge_end' AS feature
+          FROM planet_osm_line l1
+          WHERE "natural" IN ('ridge')
+            AND l1.way && !bbox!
+            AND ST_EndPoint(l1.way) && !bbox!
+            AND NOT EXISTS (SELECT 1 FROM planet_osm_line l2 WHERE "natural" IN ('ridge', 'arete') AND ST_DWithin(l2.way, ST_EndPoint(l1.way), 0.1) AND l1.osm_id != l2.osm_id)
+            AND NOT EXISTS
+              (SELECT 1 FROM planet_osm_point p
+                WHERE (p."natural" IN ('peak', 'volcano', 'saddle') OR (p.tags @> 'mountain_pass=>yes'))
+                  AND ST_DWithin(ST_EndPoint(l1.way), p.way, 6*NULLIF(!scale_denominator!*0.001*0.28,0)))
+        ) AS natural_linecaps
     properties:
       minzoom: 13

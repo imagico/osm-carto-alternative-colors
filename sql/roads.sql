@@ -421,7 +421,20 @@ SELECT (CASE
 END)
 $func$;
 
-/* tagged width or width estimated from length */
+/* half tagged width or minimum assumed width of dyke */
+/* parameters: width tag, way, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_dyke_side_width_mapped (text, geometry, numeric)
+  returns numeric
+  language sql
+  immutable
+AS $func$
+SELECT (CASE
+  WHEN $1 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($1::NUMERIC, 50) * 0.5 / NULLIF(scale_factor($2)*$3*0.001*0.28,0)
+  ELSE 3.0 / NULLIF(scale_factor($2)*$3*0.001*0.28,0)
+END)
+$func$;
+
+/* tagged width or width estimated from barrier type */
 /* parameters: barrier tag, width tag, way, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_barrier_line_width_mapped (text, text, geometry, numeric)
   returns numeric
@@ -429,7 +442,7 @@ CREATE OR REPLACE FUNCTION carto_barrier_line_width_mapped (text, text, geometry
   immutable
 AS $func$
 SELECT (CASE
-  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 10) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 20) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
   WHEN $1 = 'wall' THEN
     /* this is the minimum assumed ground unit wall width */
     0.5 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
@@ -437,4 +450,41 @@ SELECT (CASE
     1.0 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
   ELSE 0.0
 END)
+$func$;
+
+
+/* tagged width or width estimated from length and nominal width progression */
+/* parameters: width tag, way, length, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_crevasse_drawing_width (text, geometry, numeric, numeric)
+  returns numeric
+  language sql
+  immutable
+AS $func$
+SELECT
+    (CASE
+      WHEN width_tagged <= 0.0 THEN width_calc -- use nominal width when there is no real width tagged
+      WHEN width_tagged < 2.0 THEN 0.0 -- very narrow tagged width drawn as simple line - independent of nominal drawing width
+      WHEN width_calc <= width_tagged THEN width_tagged -- wide tagged width drawn in tagged width
+      WHEN width_calc > 1.5*width_tagged THEN 1.5*width_tagged -- the rest we make sure not to draw wider than 1.5 times tagged width
+      ELSE width_calc -- use nominal width otherwise
+    END)
+  FROM
+    (SELECT
+        width_tagged,
+        CASE -- nominal drawing width set based on length
+          WHEN (way_length < 56.0) OR (width_nominal <= 0) THEN 0.0
+          WHEN (way_length < 80.0) THEN LEAST(width_nominal, 3.0)
+          WHEN (way_length < 24.0*width_nominal) THEN LEAST(width_nominal, 3.0) + ((way_length-80.0)/(24.0*width_nominal-80.0))*(width_nominal-LEAST(width_nominal, 3.0))
+          ELSE width_nominal
+        END AS width_calc
+      FROM
+        (SELECT
+            $3 AS way_length,
+            carto_barrier_line_width ('crevasse', z($4)) AS width_nominal,
+            (CASE
+              WHEN $1 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($1::NUMERIC, 100) / NULLIF(scale_factor($2)*$4*0.001*0.28,0)
+              ELSE 0.0
+            END) AS width_tagged
+        ) AS w_nominal
+    ) AS w_calc
 $func$;

@@ -35,7 +35,7 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-  - id: crevasse-area
+  - id: crevasse-area-lz
     geometry: polygon
     <<: *extents
     Datasource:
@@ -45,10 +45,25 @@
             way
           FROM planet_osm_polygon
           WHERE "natural" IN ('crevasse')
-        ) AS crevasse_area
+        ) AS crevasse_area_lz
     properties:
       minzoom: 11
-  - id: crevasse-line
+      maxzoom: 12
+  - id: crevasse-line-lz
+    geometry: linestring
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM planet_osm_line
+          WHERE "natural" IN ('crevasse')
+        ) AS crevasse_line_lz
+    properties:
+      minzoom: 11
+      maxzoom: 12
+  - id: crevasse
     geometry: polygon
     <<: *extents
     Datasource:
@@ -65,31 +80,43 @@
                 way,
                 osm_id,
                 CASE
-                  WHEN (len < 8.0*width_orig) OR (width_orig <= 0) THEN 'tiny' 
-                  WHEN len < 12.0*width_orig THEN 'small' 
-                  WHEN len < 18.0*width_orig THEN 'medium' 
+                  WHEN (width_px < 3.5) THEN 'tiny' 
+                  WHEN (width_px < 5.0) THEN 'small' 
+                  WHEN (width_px < 7.0) THEN 'medium' 
                   ELSE 'large' 
                 END AS crevasse_class,
-                CASE WHEN len < 12.0*width_orig THEN LEAST(width_orig, 3.5*NULLIF(!scale_denominator!*0.001*0.28,0)) ELSE width_orig END AS width,
-                width_orig
+                CASE
+                  WHEN ST_Distance(ST_StartPoint(way), ST_EndPoint(way))/ST_Length(way) < 0.666 THEN 3.0
+                  WHEN (width_px > 7.0) THEN 5.0
+                  ELSE 10.0
+                END AS seg_len,
+                width_px,
+                width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width,
+                len
               FROM
                 (SELECT
                     way,
                     osm_id,
-                    ST_Length(way) AS len,
-                    carto_barrier_line_width('crevasse', z(!scale_denominator!))*NULLIF(!scale_denominator!*0.001*0.28,0) AS width_orig
-                  FROM planet_osm_line
-                  WHERE "natural" IN ('crevasse')
-                  AND (way && !bbox!)
+                    carto_crevasse_drawing_width (width_tagged, !bbox!, len, !scale_denominator!) AS width_px,
+                    len
+                  FROM
+                    (SELECT
+                        way,
+                        osm_id,
+                        ST_Length(way)::numeric AS len,
+                        tags->'width' AS width_tagged
+                      FROM planet_osm_line
+                      WHERE "natural" IN ('crevasse') AND (way && !bbox!)
+                    ) AS _
                 ) AS _
             ), -- line_raw
             points_offset AS
-            (SELECT
+            (SELECT -- the outlines of the constructed polygons
                 osm_id,
                 MAX(crevasse_class) AS crevasse_class,
                 ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, SQRT(CASE WHEN f <= 0.5 THEN f*2.0 ELSE (1.0-f)*2.0 END)*width*0.5), f)) AS line1,
                 ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, -SQRT(CASE WHEN f <= 0.5 THEN f*2.0 ELSE (1.0-f)*2.0 END)*width*0.5), f)) AS line2
-              FROM              
+              FROM
                 (SELECT
                     way,
                     osm_id,
@@ -105,7 +132,7 @@
                         width
                       FROM
                         (SELECT
-                            ST_Segmentize(way, width_orig*2.5) AS way,
+                            ST_Segmentize(way, seg_len*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
                             osm_id,
                             crevasse_class,
                             width
@@ -116,31 +143,55 @@
                     ORDER BY osm_id, f
                 ) AS line_points
               GROUP BY osm_id
-            ) -- end points_offset
-            SELECT -- the constructed polygons
+            ), -- end points_offset
+            crevasse_polygons_raw AS
+            (SELECT -- the constructed polygons
                 ST_BuildArea(ST_Collect(line1, line2)) AS way,
+                osm_id,
                 crevasse_class
               FROM points_offset
+            UNION ALL
+            SELECT -- the mapped polygons
+                way,
+                osm_id,
+                CASE
+                  WHEN (len_ref < 18.0) THEN 'polygon_medium' 
+                  ELSE 'polygon_large' 
+                END AS crevasse_class
+              FROM
+                (SELECT
+                    way,
+                    osm_id,
+                    ST_Length(ST_Boundary(way)) / NULLIF(!scale_denominator!*0.001*0.28,0) AS len_ref
+                  FROM planet_osm_polygon
+                  WHERE "natural" IN ('crevasse') AND (way && !bbox!)
+                ) AS _
+            ), -- crevasse_polygons_raw
+            crevasse_polygons_oriented AS
+            (SELECT 
+                ST_ForcePolygonCCW(way) AS way,
+                osm_id,
+                crevasse_class
+              FROM crevasse_polygons_raw
+            ) -- crevasse_polygons_oriented
+            SELECT --  the non-isolated crevasse polygon outlines - clipped with the others
+                ST_Difference(
+                  ST_Boundary(way),
+                  (SELECT
+                      COALESCE(
+                        ST_Union(way),
+                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                      )
+                    FROM crevasse_polygons_oriented c2 WHERE c2.osm_id != c1.osm_id AND ST_Intersects(c2.way, c1.way))
+                ) AS way,
+                crevasse_class
+              FROM crevasse_polygons_oriented c1
             UNION ALL
             SELECT -- the centerlines
                 way,
                 'center_' || crevasse_class AS crevasse_class
               FROM lines_raw
           ) AS _
-        ) AS crevasse_line
+        ) AS crevasse
     properties:
       minzoom: 13
-  - id: crevasse-line-lz
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way
-          FROM planet_osm_line
-          WHERE "natural" IN ('crevasse')
-        ) AS crevasse_line_lz
-    properties:
-      minzoom: 11
-      maxzoom: 12

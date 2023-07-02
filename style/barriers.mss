@@ -1,99 +1,112 @@
 
 #cliffs {
   [feature = 'natural_cliff'][zoom >= 13] {
-    line-pattern-file: url('symbols/line_patterns/cliff.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/cliff.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/line_patterns/cliff2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/cliff2.svg');
     }
   }
   [feature = 'natural_icecliff'][zoom >= 13] {
-    line-pattern-file: url('symbols/line_patterns/icecliff.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/icecliff.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/line_patterns/icecliff2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/icecliff2.svg');
     }
   }
   [feature = 'natural_earth_bank'][zoom >= 13] {
-    line-pattern-file: url('symbols/line_patterns/earth_bank.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/earth_bank.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/line_patterns/earth_bank2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/earth_bank2.svg');
       [zoom >= 17] {
-        line-pattern-file: url('symbols/line_patterns/earth_bank3.svg');
+        line-pattern-file: url('symbols/line_patterns/colored/earth_bank3.svg');
       }
     }
   }
   [feature = 'natural_earth_bank_grass'][zoom >= 13] {
-    line-pattern-file: url('symbols/line_patterns/earth_bank_grass.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/earth_bank_grass.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/line_patterns/earth_bank_grass2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/earth_bank_grass2.svg');
       [zoom >= 17] {
-        line-pattern-file: url('symbols/line_patterns/earth_bank_grass3.svg');
+        line-pattern-file: url('symbols/line_patterns/colored/earth_bank_grass3.svg');
       }
     }
   }
   [feature = 'natural_ridge'][zoom >= 13] {
-    line-pattern-file: url('symbols/line_patterns/ridge.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/ridge.svg');
   }
   [feature = 'natural_arete'][zoom >= 13] {
-    line-pattern-file: url('symbols/line_patterns/arete.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/arete.svg');
     [zoom >= 15] {
-      line-pattern-file: url('symbols/line_patterns/arete2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/arete2.svg');
+      [zoom >= 17] {
+        line-pattern-file: url('symbols/line_patterns/colored/arete3.svg');
+      }
     }
   }
   [feature = 'man_made_embankment'][zoom >= 15] {
-    line-pattern-file: url('symbols/line_patterns/embankment.svg');
+    line-pattern-file: url('symbols/line_patterns/colored/embankment.svg');
     [zoom >= 18] {
-      line-pattern-file: url('symbols/line_patterns/embankment2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/embankment2.svg');
     }
   }
-  [feature = 'natural_gully'][zoom >= 16] {
-    line-pattern-file: url('symbols/line_patterns/gully.svg');
+  [feature = 'natural_gully_left'][zoom >= 16] {
+    line-pattern-file: url('symbols/line_patterns/colored/gully_left.svg');
     [zoom >= 18] {
-      line-pattern-file: url('symbols/line_patterns/gully2.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/gully2_left.svg');
     }
+
+  }
+  [feature = 'natural_gully_right'][zoom >= 16] {
+    line-pattern-file: url('symbols/line_patterns/colored/gully_right.svg');
+    [zoom >= 18] {
+      line-pattern-file: url('symbols/line_patterns/colored/gully2_right.svg');
+    }
+
   }
 }
 
-#crevasse-area {
-  line-width: 0.75;
-  line-color: @glacier-line;
-  [zoom >= 16] {
-    line-width: 0.5;
-    line-pattern-file: url('symbols/line_patterns/crevasse_outline3.svg');
+#natural-linecaps {
+  [feature = 'natural_gully_start'][zoom >= 16] {
+    point-file: url('symbols/line_patterns/colored/gully_start.svg');
     [zoom >= 18] {
-      line-pattern-file: url('symbols/line_patterns/crevasse_outline4.svg');
+      point-file: url('symbols/line_patterns/colored/gully2_start.svg');
     }
+    point-ignore-placement: true;
+    point-transform: "rotate([angle])";
+  }
+  [feature = 'natural_ridge_start'][zoom >= 13] {
+    point-file: url('symbols/line_patterns/colored/ridge_start.svg');
+    point-ignore-placement: true;
+    point-transform: "rotate([angle])";
+  }
+  [feature = 'natural_ridge_end'][zoom >= 13] {
+    point-file: url('symbols/line_patterns/colored/ridge_end.svg');
+    point-ignore-placement: true;
+    point-transform: "rotate([angle])";
   }
 }
 
-#crevasse-line {
+#crevasse {
   [crevasse_class = 'small'] {
     line-width: 0.5;
     line-color: @glacier-line;
   }
-  [crevasse_class = 'medium']{
+  [crevasse_class = 'polygon_medium'],
+  [crevasse_class = 'medium'] {
     line-width: 0.5;
     line-color: @glacier-line;
-    [zoom >= 18] {
-      line-pattern-file: url('symbols/line_patterns/crevasse_outline.svg');
-      [zoom >= 19] {
-        line-pattern-file: url('symbols/line_patterns/crevasse_outline2.svg');
-        [zoom >= 20] {
-          line-pattern-file: url('symbols/line_patterns/crevasse_outline3.svg');
-        }
-      }
-    }
   }
+  [crevasse_class = 'polygon_large'],
   [crevasse_class = 'large'] {
     line-width: 0.5;
     line-color: @glacier-line;
     [zoom >= 16] {
-      line-pattern-file: url('symbols/line_patterns/crevasse_outline.svg');
+      line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline.svg');
       [zoom >= 18] {
-        line-pattern-file: url('symbols/line_patterns/crevasse_outline2.svg');
+        line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline2.svg');
         [zoom >= 19] {
-          line-pattern-file: url('symbols/line_patterns/crevasse_outline3.svg');
+          line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline3.svg');
           [zoom >= 20] {
-            line-pattern-file: url('symbols/line_patterns/crevasse_outline4.svg');
+            line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline4.svg');
           }
         }
       }
@@ -113,9 +126,13 @@
   }
 }
 
+#crevasse-area-lz,
 #crevasse-line-lz {
-  line-width: 0.5;
+  line-width: 0.35;
   line-color: @glacier-line;
+  [zoom >= 12] {
+    line-width: 0.5;
+  }
 }
 
 
@@ -125,8 +142,14 @@
     line-color: #444;
   }
   [feature = 'barrier_ditch'][zoom >= 18] {
-    line-pattern-file: url('symbols/line_patterns/ditch.svg');
     line-width: 0;
+    line-pattern-file: url('symbols/line_patterns/colored/ditch_9.svg');
+    [width >= 10][width < 25] {
+      line-pattern-file: url("symbols/line_patterns/colored/ditch_[width].svg");
+    }
+    [width >= 25] {
+      line-pattern-file: url('symbols/line_patterns/colored/ditch_25.svg');
+    }
   }
   [feature = 'barrier_fence'][zoom >= 18] {
     b/line-color: #444;
@@ -135,10 +158,14 @@
   }
   [feature = 'barrier_guard_rail'][zoom >= 18] {
     line-offset: 0.5;
-    b/line-width: 1.2;
-    b/line-color: #444;
-    b/line-offset: -1;
-    b/line-dasharray: 1.2,6.8;
+    mount/line-width: 1.2;
+    mount/line-color: #444;
+    mount/line-offset: -1;
+    mount/line-dasharray: 1.2,6.8;
+    con/line-width: 1.2;
+    con/line-color: #444;
+    con/line-offset: -0.2;
+    con/line-dasharray: 0.0,0.3,0.6,7.1;
   }
   [feature = 'barrier_wall'][zoom >= 18][width >= 2] {
     line-width: [width];
@@ -206,19 +233,13 @@
   [feature = 'historic_citywalls'],
   [feature = 'barrier_city_wall'] {
     [path_type = 'outer'] {
-      [width >= 3.2] { line-pattern-file: url('symbols/line_patterns/citywall_outer.svg'); }
+      [width >= 3.2] { line-pattern-file: url('symbols/line_patterns/colored/citywall_outer.svg'); }
       [width < 3.2] {
-        //b/line-width: [width];
-        //b/line-color: #b2b2b2;
-        //b/line-offset: [width]*0.5;
         line-color: #444;
         line-width: 0.5;
       }
     }
     [path_type = 'inner'] {
-      //b/line-width: [width]-2;
-      //b/line-color: #b2b2b2;
-      //b/line-offset: -[width]*0.5+1;
       line-color: #444;
       line-width: 0.5;
     }
@@ -261,4 +282,25 @@
     text-vertical-alignment: middle;
     text-spacing: 400;
   }
+}
+
+#highway-embankments {
+  [type = 'dyke_right'],
+  [type = 'dyke_left'] {
+    line-pattern-file: url('symbols/line_patterns/colored/embankment_a2.svg');
+    [width >= 3][width < 95] {
+      line-pattern-file: url("symbols/line_patterns/colored/dyke_[width].svg");
+    }
+    [width >= 95] {
+      line-pattern-file: url('symbols/line_patterns/colored/dyke_95.svg');
+    }
+  }
+  [type = 'hedge_bank'][zoom >= 18] {
+    line-width: 0.75;
+    line-color: #bb8e81;
+    line-offset: 1;
+    [zoom >= 20] { line-width: 0; line-pattern-file: url('symbols/line_patterns/colored/hedge_bank.svg'); }
+  }
+  [type = 'cutting'] { line-pattern-file: url('symbols/line_patterns/colored/embankment_a1.svg'); }
+  [type = 'embankment'] { line-pattern-file: url('symbols/line_patterns/colored/embankment_a2.svg'); }
 }

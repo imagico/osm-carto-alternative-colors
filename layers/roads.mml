@@ -1140,7 +1140,7 @@
                                 ORDER BY carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)) DESC LIMIT 1
                               ),
                               carto_highway_line_width('footway', z(!scale_denominator!))
-                            ) + 2.5 + l.width)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                            ) + 2.5 + l.width_nominal)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
                           FROM planet_osm_point e
                           WHERE ST_Intersects(l.way, e.way)
                             AND e.barrier IN ('entrance')
@@ -1154,7 +1154,7 @@
                   )
                 ) AS way,
                 COALESCE(barrier, historic) AS feature,
-                width,
+                CASE WHEN barrier = 'barrier_ditch' THEN ROUND(width) ELSE width END AS width,
                 height,
                 layer,
                 osm_id,
@@ -1176,6 +1176,7 @@
                         !bbox!, !scale_denominator!
                       )
                     ) AS width,
+                    carto_barrier_line_width(CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END, z(!scale_denominator!)) AS width_nominal,
                     CASE WHEN (tags->'height') ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'height')::NUMERIC ELSE 1.0 END AS height,
                     layer,
                     osm_id,

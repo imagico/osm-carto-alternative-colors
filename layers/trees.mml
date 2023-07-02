@@ -175,7 +175,7 @@
             tree_rows AS
               (SELECT
                 -- this cuts out barrier=entrance nodes - in a width reflecting whatever highway=* intersects
-                ST_Difference(
+                (ST_Dump(ST_CollectionExtract(ST_Difference(
                   way,
                   COALESCE(
                     (SELECT
@@ -209,7 +209,7 @@
                     ),
                     ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                   )
-                ) AS way,
+                ), 2))).geom AS way,
                 feature,
                 length,
                 height,

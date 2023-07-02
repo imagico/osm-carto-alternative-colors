@@ -96,6 +96,7 @@ sql:
     - tree
     - shrub
     - tree_row
+    - gully
     - crevasse
 
 tags:
@@ -400,6 +401,10 @@ classes:
     18: 9
     19: 14
     20: 19
+  gully:
+    16: 10
+    17: 10
+    18: 14
   crevasse:
     13: 2.5
     14: 3

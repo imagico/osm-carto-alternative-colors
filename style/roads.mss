@@ -4165,20 +4165,3 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
   }
 }
-
-#highway-embankments {
-  [type = 'dyke'] {
-    line-pattern-file: url('symbols/line_patterns/embankment_a2.svg');
-    [zoom >= 17] { line-pattern-file: url('symbols/line_patterns/dyke.svg'); }
-    [zoom >= 18] { line-pattern-file: url('symbols/line_patterns/dyke2.svg'); }
-    [zoom >= 19] { line-pattern-file: url('symbols/line_patterns/dyke3.svg'); }
-  }
-  [type = 'hedge_bank'][zoom >= 18] {
-    line-width: 0.75;
-    line-color: #bb8e81;
-    line-offset: 1;
-    [zoom >= 20] { line-width: 0; line-pattern-file: url('symbols/line_patterns/hedge_bank.svg'); }
-  }
-  [type = 'cutting'] { line-pattern-file: url('symbols/line_patterns/embankment_a1.svg'); }
-  [type = 'embankment'] { line-pattern-file: url('symbols/line_patterns/embankment_a2.svg'); }
-}
