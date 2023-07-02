@@ -34,7 +34,6 @@ at mid zoom levels.
 * rendering of implicit embankments and cuttings (`embankment=yes`/`cutting=yes`) in highways, railways and waterways
 * rendering of archipelagos based on convex hull
 * rendering of various farmland and orchard types with special patterns
-* rendering of `natural=earth_bank`
 * rendering of `landuse=salt_pond`
 * rendering of `natural=ridge` and `natural=arete` with a linear structure pattern
 * golf course rendering derived from the French style
@@ -59,6 +58,12 @@ with a large number of POI types.
 conventions (using preprocessed administrative area polygons for lookup).
 * rendering of compound name labels in multilingual regions based on matching `name:<lang>` tags with
 parts of the `name` tag and interpreting `default_language` tags.
+* rendering of `natural=earth_bank`, `natural=gully` and `natural=crevasse`
+* differentiated rendering of `natural=earth_bank` with `earth_bank=grassy_steep_slope` and `natural=cliff` with `surface=ice`
+* rendering of `man_made=dyke` with line signature parametrized according to `width` tagging
+* differentiated rendering of `barrier=fence`, `barrier=guard_rail`, `barrier=wall`, `barrier=retaining_wall` and `barrier=ditch`.
+* rendering of `barrier=wall`, `barrier=retaining_wall` and `barrier=ditch` and `barrier=city_wall`/`historic=citywalls` parametrized according to `width` tagging
+* distinct rendering of `barrier=wall` and `barrier=retaining_wall` for `height<=0.5`
 
 # Samples
 
