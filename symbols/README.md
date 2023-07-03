@@ -13,7 +13,7 @@ symbols processed which can be found below.
 
 ![contact sheet point symbols](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_symbols.png)
 
-The point symbols are processed with a script ([/scripts/generate_symbols_labels.py])(../scripts/generate_symbols_labels.py))
+The point symbols are processed with a script ([/scripts/generate_symbols_labels.py](../scripts/generate_symbols_labels.py))
 that colorizes the symbols and generates the SQL/MSS code for the POI layer.  The whole process is 
 described [in this blog post](https://imagico.de/blog/en/competing-priorities-symbols-and-labels-in-rule-based-map-rendering/).
 
@@ -26,13 +26,13 @@ of colors and rendering parameters in [symbols-labels.yaml](../symbols-labels.ya
 
 ![contact sheet parametric line patterns](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_line_patterns2.png)
 
-The line pattern SVGs are processed with ([/scripts/generate_line_patterns.py])(../scripts/generate_line_patterns.py)) based
+The line pattern SVGs are processed with ([/scripts/generate_line_patterns.py](../scripts/generate_line_patterns.py)) based
 on parameters in [line_patterns.yaml](../line_patterns.yaml)
 
 ## Polygon fill patterns
 
 ![contact sheet patterns](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_patterns.png)
 
-The polygon pattern SVGs are processed with ([/scripts/generate_patterns.py])(../scripts/generate_patterns.py)) based
+The polygon pattern SVGs are processed with ([/scripts/generate_patterns.py](../scripts/generate_patterns.py)) based
 on parameters in [patterns.yaml](../patterns.yaml)
 
