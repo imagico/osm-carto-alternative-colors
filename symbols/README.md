@@ -6,7 +6,7 @@ specific designs made for the AC-Style.
 
 Most of the symbols are processed by python scripts into the version actually used for rendering.
 
-Details on this can be seen below.  The scripts also prodice a contact sheet with previous of the
+Details on this can be seen below.  The scripts also produces a contact sheet with previous of the
 symbols processed which can be found below.
 
 ## Point symbols
