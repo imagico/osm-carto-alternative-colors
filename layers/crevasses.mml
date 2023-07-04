@@ -80,18 +80,19 @@
                 way,
                 osm_id,
                 CASE
-                  WHEN (width_px < 3.5) THEN 'tiny' 
-                  WHEN (width_px < 5.0) THEN 'small' 
-                  WHEN (width_px < 7.0) THEN 'medium' 
-                  ELSE 'large' 
+                  WHEN (width_px < 3.5) THEN 'tiny'
+                  WHEN (width_px < 5.0) THEN 'small'
+                  WHEN (width_px < 7.0) THEN 'medium'
+                  WHEN (width_px < 12.0) THEN 'large'
+                  ELSE 'huge'
                 END AS crevasse_class,
                 CASE
-                  WHEN ST_Distance(ST_StartPoint(way), ST_EndPoint(way))/ST_Length(way) < 0.666 THEN 3.0
+                  WHEN ST_Distance(ST_StartPoint(way), ST_EndPoint(way))/len < 0.666 THEN 3.0
                   WHEN (width_px > 7.0) THEN 5.0
                   ELSE 10.0
                 END AS seg_len,
                 width_px,
-                width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width,
+                (CASE WHEN (width_px < 7.0) THEN width_px ELSE (width_px-1.5) END)*NULLIF(!scale_denominator!*0.001*0.28,0) AS width,
                 len
               FROM
                 (SELECT
@@ -114,8 +115,8 @@
             (SELECT -- the outlines of the constructed polygons
                 osm_id,
                 MAX(crevasse_class) AS crevasse_class,
-                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, SQRT(CASE WHEN f <= 0.5 THEN f*2.0 ELSE (1.0-f)*2.0 END)*width*0.5), f)) AS line1,
-                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, -SQRT(CASE WHEN f <= 0.5 THEN f*2.0 ELSE (1.0-f)*2.0 END)*width*0.5), f)) AS line2
+                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), f)) AS line1,
+                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, -carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), f)) AS line2
               FROM
                 (SELECT
                     way,
@@ -146,7 +147,11 @@
             ), -- end points_offset
             crevasse_polygons_raw AS
             (SELECT -- the constructed polygons
-                ST_BuildArea(ST_Collect(line1, line2)) AS way,
+                CASE WHEN crevasse_class IN ('large', 'huge') THEN
+                  ST_Buffer(ST_BuildArea(ST_Collect(line1, line2)), 0.75*NULLIF(!scale_denominator!*0.001*0.28,0))
+                ELSE
+                  ST_BuildArea(ST_Collect(line1, line2))
+                END AS way,
                 osm_id,
                 crevasse_class
               FROM points_offset
@@ -155,8 +160,9 @@
                 way,
                 osm_id,
                 CASE
-                  WHEN (len_ref < 18.0) THEN 'polygon_medium' 
-                  ELSE 'polygon_large' 
+                  WHEN (len_ref < 18.0) THEN 'polygon_medium'
+                  WHEN (len_ref < 36.0) THEN 'polygon_large'
+                  ELSE 'polygon_huge'
                 END AS crevasse_class
               FROM
                 (SELECT
@@ -175,17 +181,25 @@
               FROM crevasse_polygons_raw
             ) -- crevasse_polygons_oriented
             SELECT --  the non-isolated crevasse polygon outlines - clipped with the others
-                ST_Difference(
-                  ST_Boundary(way),
-                  (SELECT
-                      COALESCE(
-                        ST_Union(way),
-                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                      )
-                    FROM crevasse_polygons_oriented c2 WHERE c2.osm_id != c1.osm_id AND ST_Intersects(c2.way, c1.way))
-                ) AS way,
+                CASE -- this distinction is done to keep the isolated crevasses as polygons (so the outline has no end artefact where it closes as it would as a linear way)
+                  WHEN way_others IS NULL THEN
+                    way
+                  ELSE
+                    ST_Difference(
+                      ST_LineMerge(ST_Boundary(way)),
+                      way_others
+                    )
+                END AS way,
                 crevasse_class
-              FROM crevasse_polygons_oriented c1
+              FROM
+                (SELECT
+                    way,
+                    (SELECT
+                        ST_Union(way)
+                      FROM crevasse_polygons_oriented c2 WHERE c2.osm_id != c1.osm_id AND ST_Intersects(c2.way, c1.way)
+                    ) AS way_others,
+                    crevasse_class
+                  FROM crevasse_polygons_oriented c1) AS _
             UNION ALL
             SELECT -- the centerlines
                 way,

@@ -96,7 +96,9 @@
     line-color: @glacier-line;
   }
   [crevasse_class = 'polygon_large'],
-  [crevasse_class = 'large'] {
+  [crevasse_class = 'large'],
+  [crevasse_class = 'polygon_huge'],
+  [crevasse_class = 'huge'] {
     line-width: 0.5;
     line-color: @glacier-line;
     [zoom >= 16] {
@@ -106,7 +108,10 @@
         [zoom >= 19] {
           line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline3.svg');
           [zoom >= 20] {
-            line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline4.svg');
+            [crevasse_class = 'polygon_huge'],
+            [crevasse_class = 'huge'] {
+              line-pattern-file: url('symbols/line_patterns/colored/crevasse_outline4.svg');
+            }
           }
         }
       }
@@ -120,7 +125,8 @@
     }
   }
   [crevasse_class = 'center_medium'][zoom >= 16],
-  [crevasse_class = 'center_large'][zoom >= 16] {
+  [crevasse_class = 'center_large'][zoom >= 16],
+  [crevasse_class = 'center_huge'][zoom >= 16] {
     line-width: 0.5;
     line-color: @glacier-line;
   }

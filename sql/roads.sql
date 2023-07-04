@@ -453,6 +453,19 @@ END)
 $func$;
 
 
+/* crevasse profile curve: half width as a function of normalized distance from center [0..1] */
+CREATE OR REPLACE FUNCTION carto_crevasse_profile_curve (numeric)
+  returns numeric
+  language sql
+  immutable
+AS $func$
+SELECT
+    (CASE
+      WHEN $1 < 0.2 THEN 1.0
+      ELSE SQRT(1.0-($1-0.2)/0.8)
+    END)
+$func$;
+
 /* tagged width or width estimated from length and nominal width progression */
 /* parameters: width tag, way, length, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_crevasse_drawing_width (text, geometry, numeric, numeric)
@@ -472,14 +485,16 @@ SELECT
     (SELECT
         width_tagged,
         CASE -- nominal drawing width set based on length
-          WHEN (way_length < 56.0) OR (width_nominal <= 0) THEN 0.0
-          WHEN (way_length < 80.0) THEN LEAST(width_nominal, 3.0)
-          WHEN (way_length < 24.0*width_nominal) THEN LEAST(width_nominal, 3.0) + ((way_length-80.0)/(24.0*width_nominal-80.0))*(width_nominal-LEAST(width_nominal, 3.0))
+          WHEN (way_length < 120.0) OR (width_nominal <= 0) THEN 0.0
+          WHEN (way_length < 240.0) THEN LEAST(width_nominal, 4.0)
+        --   WHEN (way_length < 24.0*width_nominal) THEN LEAST(width_nominal, 3.0) + ((way_length-80.0)/(24.0*width_nominal-80.0))*(width_nominal-LEAST(width_nominal, 3.0))
+           WHEN (way_length < 24.0*width_nominal) THEN LEAST(width_nominal, 4.0) + ((way_length-240.0)/(24.0*width_nominal-240.0))*(width_nominal-LEAST(width_nominal, 4.0))
           ELSE width_nominal
         END AS width_calc
+        -- width_nominal AS width_calc
       FROM
         (SELECT
-            $3 AS way_length,
+            $3 / NULLIF(scale_factor($2)*$4*0.001*0.28,0) AS way_length,
             carto_barrier_line_width ('crevasse', z($4)) AS width_nominal,
             (CASE
               WHEN $1 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($1::NUMERIC, 100) / NULLIF(scale_factor($2)*$4*0.001*0.28,0)
