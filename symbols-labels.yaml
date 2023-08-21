@@ -2053,6 +2053,7 @@ features:
     text_dy: 7
     attributes:
       - int_elevation
+
   natural=cave_entrance:
     symbol_file: symbols/sources/natural/cave.svg
     symbol_color: cave-icon
@@ -2060,20 +2061,23 @@ features:
     start_symbol: 15
     start_label: 15
 
-  power=generator:
+  power=generator/wind:
     symbol_file: symbols/sources/man_made/generator_wind.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 15
     start_label: 17
-    condition: tags->'generator:source' = 'wind'
+    text_dy: 10
+    condition: (tags->'generator:source' = 'wind')
     variants:
       roof:
-        condition: location IN ('roof', 'rooftop')
+        condition: >-
+          "location" IN ('roof', 'rooftop')
         start_symbol: 19
         start_label: 19
     attributes:
       - location
+
   military=bunker:
     symbol_file: symbols/sources/man_made/bunker.svg
     symbol_color: man-made-icon

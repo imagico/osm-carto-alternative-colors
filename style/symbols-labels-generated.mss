@@ -7095,30 +7095,83 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
-  [feature = 'power_generator'] {
-    text-placement: interior;
-    text-name: '[name]';
-    text-size: @landcover-font-size;
-    text-wrap-width: @landcover-wrap-width-size;
-    text-line-spacing: @landcover-line-spacing-size;
-    text-fill: darken(@power, 40%);
-    text-face-name: @oblique-fonts;
-    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
-    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
-    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
-    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
-    [font = 'bg'] { text-face-name: @oblique-fonts-bg; }
-    text-halo-radius: @standard-halo-radius * 1.0;
-    text-halo-fill: @standard-halo-fill;
-    [way_pixels > 12000] {
-      text-size: @landcover-font-size-big;
-      text-wrap-width: @landcover-wrap-width-size-big;
-      text-line-spacing: @landcover-line-spacing-size-big;
+  [feature = 'power_generator/wind'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/power_generator_wind.svg');
     }
-    [way_pixels > 48000] {
-      text-size: @landcover-font-size-bigger;
-      text-wrap-width: @landcover-wrap-width-size-bigger;
-      text-line-spacing: @landcover-line-spacing-size-bigger;
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 10;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/power_generator_wind.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/power_generator_wind.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 10;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
     }
   }
   [feature = 'military_bunker'] {
@@ -13784,6 +13837,32 @@
     }
   }
   [feature = 'power_plant'] {
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: @landcover-font-size;
+    text-wrap-width: @landcover-wrap-width-size;
+    text-line-spacing: @landcover-line-spacing-size;
+    text-fill: darken(@power, 40%);
+    text-face-name: @oblique-fonts;
+    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
+    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
+    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
+    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
+    [font = 'bg'] { text-face-name: @oblique-fonts-bg; }
+    text-halo-radius: @standard-halo-radius * 1.0;
+    text-halo-fill: @standard-halo-fill;
+    [way_pixels > 12000] {
+      text-size: @landcover-font-size-big;
+      text-wrap-width: @landcover-wrap-width-size-big;
+      text-line-spacing: @landcover-line-spacing-size-big;
+    }
+    [way_pixels > 48000] {
+      text-size: @landcover-font-size-bigger;
+      text-wrap-width: @landcover-wrap-width-size-bigger;
+      text-line-spacing: @landcover-line-spacing-size-bigger;
+    }
+  }
+  [feature = 'power_generator'] {
     text-placement: interior;
     text-name: '[name]';
     text-size: @landcover-font-size;

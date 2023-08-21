@@ -318,16 +318,21 @@ def main():
             variant = variant.replace("=", "_")
             (fkey, fval) = kv.split('=')
             fn = fkey+"_"+fval+"_"+variant
+            fvaln = fval.replace("/", "_")
         elif fn.find("=") >= 0:
             kv = fn
             variant = None
             (fkey, fval) = kv.split('=')
             fn = fkey+"_"+fval
+            fvaln = fval.replace("/", "_")
         else:
             kv = fn
             variant = None
             fkey = fn
             fval = None
+            fvaln = None
+
+        fnn = fn.replace("/", "_")
 
         if fkey == 'way':
             continue
@@ -518,25 +523,25 @@ def main():
             if 'start_symbol' in params:
                 zooms[fn][None]['start_symbol'] = params['start_symbol']
                 if symbol_file is None:
-                    if os.path.exists(basedir+"/sources/"+fn+".svg"):
-                        symbol_file = basedir+"/sources/"+fn+".svg"
+                    if os.path.exists(basedir+"/sources/"+fnn+".svg"):
+                        symbol_file = basedir+"/sources/"+fnn+".svg"
                     elif fval is not None:
-                        if os.path.exists(basedir+"/sources/"+fkey+"/"+fval+".svg"):
-                            symbol_file = basedir+"/sources/"+fkey+"/"+fval+".svg"
-                        elif os.path.exists(basedir+"/sources/"+fkey+"_"+fval+".svg"):
-                            symbol_file = basedir+"/sources/"+fkey+"_"+fval+".svg"
-                        elif os.path.exists(basedir+"/sources/"+fval+".svg"):
-                            symbol_file = basedir+"/sources/"+fval+".svg"
+                        if os.path.exists(basedir+"/sources/"+fkey+"/"+fvaln+".svg"):
+                            symbol_file = basedir+"/sources/"+fkey+"/"+fvaln+".svg"
+                        elif os.path.exists(basedir+"/sources/"+fkey+"_"+fvaln+".svg"):
+                            symbol_file = basedir+"/sources/"+fkey+"_"+fvaln+".svg"
+                        elif os.path.exists(basedir+"/sources/"+fvaln+".svg"):
+                            symbol_file = basedir+"/sources/"+fvaln+".svg"
                 if symbol_file is None:
-                    if os.path.exists(basedir+"/"+fn+".svg"):
-                        symbol_file = basedir+"/"+fn+".svg"
+                    if os.path.exists(basedir+"/"+fnn+".svg"):
+                        symbol_file = basedir+"/"+fnn+".svg"
                     elif fval is not None:
-                        if os.path.exists(basedir+"/"+fkey+"/"+fval+".svg"):
-                            symbol_file = basedir+"/"+fkey+"/"+fval+".svg"
-                        elif os.path.exists(basedir+"/"+fkey+"_"+fval+".svg"):
-                            symbol_file = basedir+"/"+fkey+"_"+fval+".svg"
-                        elif os.path.exists(basedir+"/"+fval+".svg"):
-                            symbol_file = basedir+"/"+fval+".svg"
+                        if os.path.exists(basedir+"/"+fkey+"/"+fvaln+".svg"):
+                            symbol_file = basedir+"/"+fkey+"/"+fvaln+".svg"
+                        elif os.path.exists(basedir+"/"+fkey+"_"+fvaln+".svg"):
+                            symbol_file = basedir+"/"+fkey+"_"+fvaln+".svg"
+                        elif os.path.exists(basedir+"/"+fvaln+".svg"):
+                            symbol_file = basedir+"/"+fvaln+".svg"
             else:
                 zooms[fn][None]['start_symbol'] = 'NULL'
             if 'start_label' in params:
@@ -559,15 +564,15 @@ def main():
 
             if symbol_file is not None:
                 if 'symbol_color' in params:
-                    colorize_svg(symbol_file, basedir, fn, symbol_color)
+                    colorize_svg(symbol_file, basedir, fnn, symbol_color)
                 else:
                     logging.info("Copying symbol for {}...".format(fn))
-                    copyfile(symbol_file, basedir+"/colored/"+fn+".svg")
-                zooms[fn][None]['symbol_file'] = basedir+"/colored/"+fn+".svg"
+                    copyfile(symbol_file, basedir+"/colored/"+fnn+".svg")
+                zooms[fn][None]['symbol_file'] = basedir+"/colored/"+fnn+".svg"
 
                 if not(opts.nopreviews):
-                    svg_convert(basedir+"/colored/"+fn+".svg", basedir+"/previews/"+fn+'.png', opts.inkscape, opts.dpi)
-                    contactsheet_files.append(basedir+"/previews/"+fn+".png")
+                    svg_convert(basedir+"/colored/"+fnn+".svg", basedir+"/previews/"+fnn+'.png', opts.inkscape, opts.dpi)
+                    contactsheet_files.append(basedir+"/previews/"+fnn+".png")
 
             zooms[fn][None]['symbol_color'] = symbol_color
             zooms[fn][None]['label_color'] = label_color
@@ -639,19 +644,19 @@ def main():
                             # only colorize own symbol for variant if a different symbol file or color is set
                             if ('symbol_file' in params_m) or ('symbol_color' in params_m):
                                 if symbol_color_mod is not None:
-                                    colorize_svg(symbol_file_mod, basedir, fn+"_"+modification, symbol_color_mod)
+                                    colorize_svg(symbol_file_mod, basedir, fnn+"_"+modification, symbol_color_mod)
                                 else:
                                     logging.info("Copying symbol for {}...".format(fn+"_"+modification))
-                                    copyfile(symbol_file_mod, basedir+"/colored/"+fn+"_"+modification+".svg")
+                                    copyfile(symbol_file_mod, basedir+"/colored/"+fnn+"_"+modification+".svg")
 
-                                modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fn+"_"+modification+".svg"
+                                modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fnn+"_"+modification+".svg"
 
                                 if not(opts.nopreviews):
-                                    svg_convert(basedir+"/colored/"+fn+"_"+modification+".svg", basedir+"/previews/"+fn+"_"+modification+'.png', opts.inkscape, opts.dpi)
-                                    contactsheet_files.append(basedir+"/previews/"+fn+"_"+modification+".png")
+                                    svg_convert(basedir+"/colored/"+fnn+"_"+modification+".svg", basedir+"/previews/"+fnn+"_"+modification+'.png', opts.inkscape, opts.dpi)
+                                    contactsheet_files.append(basedir+"/previews/"+fnn+"_"+modification+".png")
 
                             else:
-                                modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fn+".svg"
+                                modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fnn+".svg"
 
                         modifications[fn][modification]['symbol_color'] = symbol_color_mod
                         modifications[fn][modification]['label_color'] = label_color_mod
@@ -746,19 +751,19 @@ def main():
                         # only colorize own symbol for variant if a different symbol file or color is set
                         if ('symbol_file' in params_v) or ('symbol_color' in params_v):
                             if symbol_color_variant is not None:
-                                colorize_svg(symbol_file_variant, basedir, fn+"_"+variant, symbol_color_variant)
+                                colorize_svg(symbol_file_variant, basedir, fnn+"_"+variant, symbol_color_variant)
                             else:
-                                logging.info("Copying symbol for {}...".format(fn+"_"+variant))
-                                copyfile(symbol_file_variant, basedir+"/colored/"+fn+"_"+variant+".svg")
+                                logging.info("Copying symbol for {}...".format(fnn+"_"+variant))
+                                copyfile(symbol_file_variant, basedir+"/colored/"+fnn+"_"+variant+".svg")
 
-                            zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fn+"_"+variant+".svg"
+                            zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fnn+"_"+variant+".svg"
 
                             if not(opts.nopreviews):
-                                svg_convert(basedir+"/colored/"+fn+"_"+variant+".svg", basedir+"/previews/"+fn+"_"+variant+'.png', opts.inkscape, opts.dpi)
-                                contactsheet_files.append(basedir+"/previews/"+fn+"_"+variant+".png")
+                                svg_convert(basedir+"/colored/"+fnn+"_"+variant+".svg", basedir+"/previews/"+fnn+"_"+variant+'.png', opts.inkscape, opts.dpi)
+                                contactsheet_files.append(basedir+"/previews/"+fnn+"_"+variant+".png")
 
                         else:
-                            zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fn+".svg"
+                            zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fnn+".svg"
 
                     zooms[fn][variant]['symbol_color'] = symbol_color_variant
                     zooms[fn][variant]['label_color'] = label_color_variant
@@ -1160,22 +1165,49 @@ def main():
         for cond, fvals in conds.items():
             vals_plain = set()
             for fval, fvariants in fvals.items():
+
+                if fval is not None:
+                    if fval.find("/") >= 0:
+                        (fval_real, fval_mod) = fval.split('/')
+                    else:
+                        fval_real = fval
+                        fval_mod = None
+
                 for variant in fvariants:
                     if variant is None:
-                        if fval is not None:
-                            vals_plain.add(fval)
-                        else: # key only feature
-                            line = indent_base+"              \'"+fkey+"\' || CASE WHEN "+cond+" THEN \'\' END"
+                        if fval_mod is None:
+                            if fval is not None:
+                                vals_plain.add(fval_real)
+                            else: # key only feature
+                                line = indent_base+"              \'"+fkey+"\' || CASE WHEN "+cond+" THEN \'\' END"
+                                feature_lines.append(line)
+                                # variants have priority
+                                for fn2, variant2 in variants.items():
+                                    if fn2 == fkey:
+                                        for vn in variant2:
+                                            feature_priorities.append(fkey+"+"+vn)
+                                feature_priorities.append(fkey)
+                        elif fval is not None:
+                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"\' END"
+                            feature_lines.append(line)
+                            # variants have priority
+                            for fn2, variant2 in variants.items():
+                                if fn2 == fkey+"_"+fval:
+                                    for vn in variant2:
+                                        feature_priorities.append(fkey+"_"+fval+"+"+vn)
+                            feature_priorities.append(fkey+"_"+fval)
+                        else:
+                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'/"+fval_mod+"\' END"
                             feature_lines.append(line)
                             # variants have priority
                             for fn2, variant2 in variants.items():
                                 if fn2 == fkey:
                                     for vn in variant2:
-                                        feature_priorities.append(fkey+"+"+vn)
+                                        feature_priorities.append(fkey+"/"+fval_mod+"+"+vn)
                             feature_priorities.append(fkey)
                     else:
                         if fval is not None:
-                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval+"\') AND "+cond+" THEN \'"+fval+"_"+variant+"\' END"
+                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"_"+variant+"\' END"
                             feature_lines.append(line)
                             # variants have priority
                             for fn2, variant2 in variants.items():
