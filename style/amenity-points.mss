@@ -69,6 +69,7 @@
   }
 
   [feature = 'landuse_military'],
+  [feature = 'military_danger_area'],
   [feature = 'natural_wood'],
   [feature = 'landuse_forest'] {
     [zoom >= 8][way_pixels > 3000][is_building = 'no'] {
@@ -90,8 +91,9 @@
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       text-placement: interior;
-      [feature = 'landuse_military'] {
-        text-fill: darken(@military, 40%);
+      [feature = 'landuse_military'],
+      [feature = 'military_danger_area'] {
+        text-fill: darken(@military, 20%);
       }
       [feature = 'natural_wood'],
       [feature = 'landuse_forest'] {
@@ -182,6 +184,53 @@
     [type = 'tree_plain'] {
       polygon-fill: @tree-icon;
       polygon-opacity: 0.5;
+    }
+  }
+}
+
+#trees-simple [zoom >= 16] {
+  ::canopy {
+    opacity: 0.4;
+    marker-fill: @tree-icon;
+    marker-allow-overlap: true;
+    marker-line-width: 0;
+    marker-ignore-placement: true;
+    marker-width: 2.5;
+    marker-height: 2.5;
+    [zoom >= 17] {
+      marker-width: 5;
+      marker-height: 5;
+    }
+    [zoom >= 18] {
+      marker-width: 10;
+      marker-height: 10;
+    }
+    [zoom >= 19] {
+      marker-width: 15;
+      marker-height: 15;
+      }
+    [zoom >= 20] {
+      marker-width: 30;
+      marker-height: 30;
+    }
+  }
+  ::trunk {
+    [zoom >= 18] {
+      trunk/opacity: 0.6;
+      trunk/marker-fill: @tree-icon;
+      trunk/marker-allow-overlap: true;
+      trunk/marker-line-width: 0;
+      trunk/marker-width: 2;
+      trunk/marker-height: 2;
+      trunk/marker-ignore-placement: true;
+    }
+    [zoom >= 19] {
+      trunk/marker-width: 3;
+      trunk/marker-height: 3;
+    }
+    [zoom >= 20] {
+      trunk/marker-width: 6;
+      trunk/marker-height: 6;
     }
   }
 }

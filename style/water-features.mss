@@ -9,7 +9,6 @@
 @water-hot: #ff4020;  // when changed here should be changed in SVGs too
 @whitewater-line: lighten(@water-color, 5%);
 
-#water-barriers-line-simple,
 #water-barriers-line {
 
   ::wwline {

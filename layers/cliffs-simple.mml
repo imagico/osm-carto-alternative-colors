@@ -1,7 +1,8 @@
 # ---------------------------------------------------------------------------
-#  builtup.mml
+#  cliffs-simple.mml
 #
-#  builtup areas layer
+#  topography line features (cliffs, ridges etc.) 
+#  simple version (without line caps and cutting away, misses natural=gully)
 #
 #  to be processed with assemble_project.py
 #
@@ -35,13 +36,31 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-    geometry: polygon
-    extent: *world
-    srs-name: mercator
-    srs: "+proj=merc +datum=WGS84 +over"
+  - id: cliffs
+    geometry: linestring
+    <<: *extents
     Datasource:
-      file: data/world_boundaries/builtup_area.shp
-      type: shape
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            COALESCE(int_natural, man_made) AS feature
+          FROM
+            (SELECT
+                way,
+                ('natural_' || 
+                  (CASE WHEN "natural" IN ('cliff', 'ridge', 'arete', 'earth_bank') THEN
+                    (CASE
+                      WHEN "natural" IN ('cliff') THEN (CASE WHEN surface = 'ice' THEN 'icecliff' ELSE 'cliff' END)
+                      WHEN "natural" IN ('earth_bank') THEN (CASE WHEN tags @> 'earth_bank=>grassy_steep_slope' THEN 'earth_bank_grass' ELSE 'earth_bank' END)
+                      ELSE "natural" END
+                    )
+                  ELSE NULL END)
+                ) AS int_natural,
+                ('man_made_' || (CASE WHEN man_made IN ('embankment') THEN man_made ELSE NULL END)) AS man_made
+              FROM planet_osm_line
+              WHERE ("natural" IN ('cliff', 'ridge', 'arete', 'crevasse', 'earth_bank') OR man_made = 'embankment')
+            ) AS _
+        ) AS cliffs
     properties:
-      minzoom: 8
-      maxzoom: 9
+      minzoom: 13

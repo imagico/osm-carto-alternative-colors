@@ -42,7 +42,6 @@
       table: |-
         (SELECT
             way,
-            name,
             religion,
             crop,
             surface,
@@ -50,8 +49,8 @@
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             feature
           FROM (SELECT
-              way, COALESCE(name_label[1], '') AS name, religion, crop, surface, sport, way_area, layer,
-              COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, military, "natural", tourism, highway, railway) AS feature
+              way, religion, crop, surface, sport, way_area, layer,
+              COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, "natural", tourism, highway, railway) AS feature
             FROM (SELECT
                 way, carto_label_name(way, name, tags, E'\n') AS name_label,
                 ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
@@ -66,7 +65,6 @@
                 ('leisure_' || (CASE WHEN leisure IN ('swimming_pool', 'playground', 'park', 'recreation_ground', 'common', 'garden',
                                                       'golf_course', 'miniature_golf', 'picnic_table', 'fitness_centre', 'sports_centre', 'stadium', 'pitch',
                                                       'track', 'dog_park') THEN leisure ELSE NULL END)) AS leisure,
-                ('military_' || (CASE WHEN military IN ('danger_area') THEN military ELSE NULL END)) AS military,
                 ('natural_' || (CASE WHEN "natural" IN ('beach', 'shoal', 'heath', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub') THEN "natural" ELSE NULL END)) AS "natural",
                 ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
                 ('power_' || (CASE WHEN power IN ('station', 'sub_station', 'substation', 'generator') THEN power ELSE NULL END)) AS power,
@@ -85,7 +83,6 @@
                 OR aeroway IN ('apron', 'aerodrome')
                 OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'university', 'college', 'school', 'hospital', 'kindergarten',
                                'grave_yard', 'place_of_worship', 'prison', 'clinic')
-                OR military IN ('danger_area')
                 OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
                 OR power IN ('station', 'sub_station', 'substation', 'generator')
                 OR tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site')

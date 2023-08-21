@@ -23,6 +23,7 @@
 @stream-width-z17:             3.5;
 @stream-width-z18:             4;
 
+#water-areas-low-zoom,
 #water-areas {
   [natural = 'glacier'] {
     line-width: 0.75;

@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 #  ocean-low-zoom.mml
 #
-#  low zoom ocean polygon layers
+#  ocean polygon layer for low zoom non-preprocessed rendering
 #
 #  to be processed with assemble_project.py
 #
@@ -35,79 +35,17 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-  - id: ocean-z0
+  - id: ocean-low-zoom
     class: "ocean"
-    geometry: "polygon"
+    geometry: polygon
     <<: *extents
     Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z0.shp"
-      type: "shape"
-    properties:
-      maxzoom: 0
-    advanced: {}
-  - id: ocean-z1
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z1.shp"
-      type: "shape"
-    properties:
-      minzoom: 1
-      maxzoom: 1
-    advanced: {}
-  - id: ocean-z2
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z2.shp"
-      type: "shape"
-    properties:
-      minzoom: 2
-      maxzoom: 2
-    advanced: {}
-  - id: ocean-z3
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z3.shp"
-      type: "shape"
-    properties:
-      minzoom: 3
-      maxzoom: 3
-    advanced: {}
-  - id: ocean-z4
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z4.shp"
-      type: "shape"
-    properties:
-      minzoom: 4
-      maxzoom: 4
-    advanced: {}
-  - id: ocean-z5
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z5.shp"
-      type: "shape"
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM simplified_water_polygons
+        ) AS ocean_low_zoom
     properties:
       minzoom: 5
-      maxzoom: 5
-    advanced: {}
-  - id: ocean-z6
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z6.shp"
-      type: "shape"
-    properties:
-      minzoom: 6
       maxzoom: 6
-    advanced: {}

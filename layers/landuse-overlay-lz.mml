@@ -43,12 +43,15 @@
       table: |-
         (SELECT
             way,
-            ('landuse_' || landuse) AS feature,
+            COALESCE(
+              ('landuse_' || landuse),
+              ('military_' || military)
+            ) AS feature,
             -- we use width for way_pixels here so it is identical to the column name 
             -- used in the roads layer where the higher zoom levels are rendered
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS width
           FROM planet_osm_polygon
-          WHERE landuse = 'military'
+          WHERE (landuse = 'military' OR military = 'danger_area')
             AND building IS NULL
         ) AS landuse_overlay
     properties:

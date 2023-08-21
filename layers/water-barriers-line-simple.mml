@@ -35,7 +35,7 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-  - id: water-barriers-line-simple
+  - id: water-barriers-line
     geometry: linestring
     <<: *extents
     Datasource:

@@ -2911,6 +2911,9 @@ features:
     way_pixels_min: 3000
     way_pixels_start_all: 17
 
+  landuse=military:
+    template: label-variable-size-nobuilding
+    label_color: darken(@military, 20%)
   military=danger_area:
     template: label-variable-size-nobuilding
     label_color: darken(@military, 20%)

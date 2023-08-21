@@ -72,17 +72,18 @@ Layer:
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, COALESCE(name_label[1], '') AS name, way_pixels, religion,
+            way, way_pixels,
             COALESCE(wetland, landuse, "natural") AS feature
           FROM (SELECT
-              way, carto_label_name(way, name, tags, E'\n') AS name_label, religion,
-              ('landuse_' || (CASE WHEN landuse IN ('forest', 'military') THEN landuse ELSE NULL END)) AS landuse,
-              ('natural_' || (CASE WHEN "natural" IN ('wood', 'sand', 'scree', 'shingle', 'bare_rock', 'beach') THEN "natural" ELSE NULL END)) AS "natural",
+              way,                                                  
+              ('landuse_' || (CASE WHEN landuse IN ('forest', 'farmland', 'residential', 'commercial', 'retail', 'industrial',
+                                                    'meadow', 'grass', 'village_green', 'vineyard', 'orchard', 'plant_nursery', 'allotments', 'railway', 'quarry') THEN landuse END)) AS landuse,
+              ('natural_' || (CASE WHEN "natural" IN ('wood', 'sand', 'scree', 'shingle', 'bare_rock', 'beach', 'heath', 'grassland', 'scrub') THEN "natural" ELSE NULL END)) AS "natural",
               ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
               way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
             FROM planet_osm_polygon
-            WHERE (landuse IN ('forest', 'military')
-              OR "natural" IN ('wood', 'wetland', 'mud', 'sand', 'scree', 'shingle', 'bare_rock', 'beach'))
+            WHERE (landuse IN ('forest', 'farmland', 'residential', 'commercial', 'retail', 'industrial', 'meadow', 'grass', 'village_green', 'vineyard', 'orchard', 'plant_nursery', 'allotments', 'railway', 'quarry')
+              OR "natural" IN ('wood', 'wetland', 'mud', 'sand', 'scree', 'shingle', 'bare_rock', 'beach', 'heath', 'grassland', 'scrub'))
               AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
               AND building IS NULL
             ORDER BY COALESCE(layer,0), way_area DESC
@@ -90,7 +91,7 @@ Layer:
         ) AS landcover_low_zoom
     properties:
       cache-features: true
-      minzoom: 7
+      minzoom: 5
       maxzoom: 9
   - id: landcover
     geometry: polygon
@@ -100,7 +101,6 @@ Layer:
       table: |-
         (SELECT
             way,
-            name,
             religion,
             crop,
             surface,
@@ -108,8 +108,8 @@ Layer:
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             feature
           FROM (SELECT
-              way, COALESCE(name_label[1], '') AS name, religion, crop, surface, sport, way_area, layer,
-              COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, military, "natural", tourism, highway, railway) AS feature
+              way, religion, crop, surface, sport, way_area, layer,
+              COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, "natural", tourism, highway, railway) AS feature
             FROM (SELECT
                 way, carto_label_name(way, name, tags, E'\n') AS name_label,
                 ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
@@ -124,7 +124,6 @@ Layer:
                 ('leisure_' || (CASE WHEN leisure IN ('swimming_pool', 'playground', 'park', 'recreation_ground', 'common', 'garden',
                                                       'golf_course', 'miniature_golf', 'picnic_table', 'fitness_centre', 'sports_centre', 'stadium', 'pitch',
                                                       'track', 'dog_park') THEN leisure ELSE NULL END)) AS leisure,
-                ('military_' || (CASE WHEN military IN ('danger_area') THEN military ELSE NULL END)) AS military,
                 ('natural_' || (CASE WHEN "natural" IN ('beach', 'shoal', 'heath', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub') THEN "natural" ELSE NULL END)) AS "natural",
                 ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
                 ('power_' || (CASE WHEN power IN ('station', 'sub_station', 'substation', 'generator') THEN power ELSE NULL END)) AS power,
@@ -143,7 +142,6 @@ Layer:
                 OR aeroway IN ('apron', 'aerodrome')
                 OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'university', 'college', 'school', 'hospital', 'kindergarten',
                                'grave_yard', 'place_of_worship', 'prison', 'clinic')
-                OR military IN ('danger_area')
                 OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
                 OR power IN ('station', 'sub_station', 'substation', 'generator')
                 OR tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site')
@@ -157,17 +155,6 @@ Layer:
     properties:
       cache-features: true
       minzoom: 10
-  - id: builtup
-    geometry: polygon
-    extent: *world
-    srs-name: mercator
-    srs: "+proj=merc +datum=WGS84 +over"
-    Datasource:
-      file: data/world_boundaries/builtup_area.shp
-      type: shape
-    properties:
-      minzoom: 8
-      maxzoom: 9
   - id: landcover-line
     geometry: linestring
     <<: *extents
@@ -210,158 +197,36 @@ Layer:
         ) AS water_lines_casing
     properties:
       minzoom: 12
-  - id: rivers-z0
-    class: "rivers"
-    geometry: "polygon"
+  - id: water-areas-low-zoom
+    geometry: polygon
     <<: *extents
     Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z0.shp"
-      type: "shape"
-    properties:
-      maxzoom: 0
-    advanced: {}
-  - id: rivers-z1
-    class: "rivers"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z1.shp"
-      type: "shape"
-    properties:
-      minzoom: 1
-      maxzoom: 1
-    advanced: {}
-  - id: rivers-z2
-    class: "rivers"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z2.shp"
-      type: "shape"
-    properties:
-      minzoom: 2
-      maxzoom: 2
-    advanced: {}
-  - id: rivers-z3
-    class: "rivers"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z3.shp"
-      type: "shape"
-    properties:
-      minzoom: 3
-      maxzoom: 3
-    advanced: {}
-  - id: rivers-z4
-    class: "rivers"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z4.shp"
-      type: "shape"
-    properties:
-      minzoom: 4
-      maxzoom: 4
-    advanced: {}
-  - id: rivers-z5
-    class: "rivers"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z5.shp"
-      type: "shape"
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            "natural",
+            waterway,
+            water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            tags->'salt' as salt,
+            tags->'glacier:type' as glacier_type,
+            landuse,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE
+            (waterway IN ('dock', 'riverbank')
+              OR landuse IN ('reservoir', 'basin')
+              OR "natural" IN ('water', 'glacier'))
+            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS water_areas_low_zoom
     properties:
       minzoom: 5
-      maxzoom: 5
-    advanced: {}
-  - id: rivers-z6
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/river-polygons-reduced-3857/river_reduced_z6.shp"
-      type: "shape"
-    properties:
-      minzoom: 6
       maxzoom: 6
-    advanced: {}
-  - id: lakes-z0
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z0.shp"
-      type: "shape"
-    properties:
-      maxzoom: 0
-    advanced: {}
-  - id: lakes-z1
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z1.shp"
-      type: "shape"
-    properties:
-      minzoom: 1
-      maxzoom: 1
-    advanced: {}
-  - id: lakes-z2
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z2.shp"
-      type: "shape"
-    properties:
-      minzoom: 2
-      maxzoom: 2
-    advanced: {}
-  - id: lakes-z3
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z3.shp"
-      type: "shape"
-    properties:
-      minzoom: 3
-      maxzoom: 3
-    advanced: {}
-  - id: lakes-z4
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z4.shp"
-      type: "shape"
-    properties:
-      minzoom: 4
-      maxzoom: 4
-    advanced: {}
-  - id: lakes-z5
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z5.shp"
-      type: "shape"
-    properties:
-      minzoom: 5
-      maxzoom: 5
-    advanced: {}
-  - id: lakes-z6
-    class: "lakes"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/lakes-polygons-reduced-3857/lakes_reduced_z6.shp"
-      type: "shape"
-    properties:
-      minzoom: 6
-      maxzoom: 6
-    advanced: {}
   - id: water-areas
     geometry: polygon
     <<: *extents
@@ -391,82 +256,20 @@ Layer:
         ) AS water_areas
     properties:
       minzoom: 7
-  - id: ocean-z0
+  - id: ocean-low-zoom
     class: "ocean"
-    geometry: "polygon"
+    geometry: polygon
     <<: *extents
     Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z0.shp"
-      type: "shape"
-    properties:
-      maxzoom: 0
-    advanced: {}
-  - id: ocean-z1
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z1.shp"
-      type: "shape"
-    properties:
-      minzoom: 1
-      maxzoom: 1
-    advanced: {}
-  - id: ocean-z2
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z2.shp"
-      type: "shape"
-    properties:
-      minzoom: 2
-      maxzoom: 2
-    advanced: {}
-  - id: ocean-z3
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z3.shp"
-      type: "shape"
-    properties:
-      minzoom: 3
-      maxzoom: 3
-    advanced: {}
-  - id: ocean-z4
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z4.shp"
-      type: "shape"
-    properties:
-      minzoom: 4
-      maxzoom: 4
-    advanced: {}
-  - id: ocean-z5
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z5.shp"
-      type: "shape"
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM simplified_water_polygons
+        ) AS ocean_low_zoom
     properties:
       minzoom: 5
-      maxzoom: 5
-    advanced: {}
-  - id: ocean-z6
-    class: "ocean"
-    geometry: "polygon"
-    <<: *extents
-    Datasource:
-      file: "data/ocean-polygons-reduced-3857/ocean_reduced_z6.shp"
-      type: "shape"
-    properties:
-      minzoom: 6
       maxzoom: 6
-    advanced: {}
   - id: ocean-lz
     class: "ocean"
     geometry: polygon
@@ -1207,86 +1010,6 @@ Layer:
         ) AS marinas_area
     properties:
       minzoom: 14
-  - id: water-barriers-line-simple
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (-- All of this assumes a metric coordinate system, won't work with geographic coordinates
-         -- This is the simplified version of the water-barrier rendering:
-         --  * always rendering lines and polygon directly
-         --  * construct lines from nodes but not take riverbank polygons into account there
-         -- First query: barriers mapped using ways
-         SELECT
-            way,
-            waterway,
-            'line' AS wtype
-          FROM planet_osm_line b
-          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
-         UNION ALL
-         -- Second query: barriers mapped using polygons
-         SELECT
-            way,
-            waterway,
-            'polygon' AS wtype
-          FROM planet_osm_polygon b
-          WHERE waterway IN ('dam', 'weir', 'lock_gate') AND (b.way && !bbox!)
-         UNION ALL
-         -- Fifth query: barriers mapped using nodes on a waterway
-         SELECT
-             ST_MakeLine(ARRAY[
-               ST_Rotate(
-                 ST_SetSRID(ST_MakePoint(
-                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
-                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
-               ), 3857), -angle, point),
-               point,
-               ST_Rotate(
-                 ST_SetSRID(ST_MakePoint(
-                 ST_X(point)+(ST_X(ST_EndPoint(line))-ST_X(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line),
-                 ST_Y(point)+(ST_Y(ST_EndPoint(line))-ST_Y(ST_StartPoint(line)))*contructed_width*0.5/ST_Length(line)
-               ), 3857), angle, point)
-             ]) AS way,
-             waterway,
-             wtype
-           FROM
-             -- outer query: points with nominal contructed waterway width
-             -- in this simplified version we do not do the riverbank polygon analysis
-             (SELECT
-                 point,
-                 line,
-                 waterway,
-                 wtype,
-                 contructed_width,
-                 angle
-               FROM
-                 -- inner query: points with nominal contructed waterway width
-                 (SELECT DISTINCT ON (p.osm_id)
-                     p.way AS point,
-                     ST_LineSubstring(
-                       l.way,
-                       GREATEST(0.0, ST_LineLocatePoint(l.way, p.way)-1.0/ST_Length(l.way)),
-                       LEAST(1.0, ST_LineLocatePoint(l.way, p.way)+1.0/ST_Length(l.way))) AS line,
-                     p.waterway AS waterway,
-                     l.waterway AS wtype,
-                     (carto_waterway_line_width(l.waterway, z(!scale_denominator!)) +
-                       (CASE WHEN p.waterway =  'waterfall' THEN 2 ELSE 0 END) +
-                       (CASE WHEN l.waterway IN ('river', 'canal') THEN 0 ELSE 0.5 END)) *
-                         NULLIF(!scale_denominator!*0.001*0.28,0) AS contructed_width,
-                     (CASE WHEN p.waterway =  'lock_gate' THEN pi()/2.3 ELSE pi()/2 END) AS angle
-                   FROM planet_osm_point p
-                   JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1)
-                   WHERE p.waterway IN ('dam', 'weir', 'lock_gate', 'waterfall') AND (p.way && !bbox!)
-                     AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
-                   ORDER BY p.osm_id, contructed_width DESC,
-                     ST_LineLocatePoint(l.way, p.way) ASC -- this gives downstream waterways priority
-                 ) AS plines
-             ) AS plines2
-          WHERE line IS NOT NULL
-        ) AS water_barriers_line
-    properties:
-      minzoom: 11
   - id: water-barriers-line
     geometry: linestring
     <<: *extents
@@ -1672,12 +1395,15 @@ Layer:
       table: |-
         (SELECT
             way,
-            ('landuse_' || landuse) AS feature,
+            COALESCE(
+              ('landuse_' || landuse),
+              ('military_' || military)
+            ) AS feature,
             -- we use width for way_pixels here so it is identical to the column name 
             -- used in the roads layer where the higher zoom levels are rendered
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS width
           FROM planet_osm_polygon
-          WHERE landuse = 'military'
+          WHERE (landuse = 'military' OR military = 'danger_area')
             AND building IS NULL
         ) AS landuse_overlay
     properties:
@@ -1836,89 +1562,90 @@ Layer:
                 WITH highways_raw AS
                 -- this queries all roads from the database together with the corresponding width values
                 -- to be used both directly and for the sidewalk geometries
-                (SELECT
-                    way,
-                    ('highway_' || highway) AS feature, -- only motorway to tertiary links are accepted later on
-                    highway,
-                    carto_path_type(foot, bicycle, horse) AS path_type,
-                    CASE
-                      WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
-                                       'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
-                      WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
-                                       'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
-                      ELSE NULL
-                    END AS int_surface,
-                    CASE
-                      WHEN (tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
-                      WHEN (covered = 'yes') THEN 'yes'::text
-                      ELSE 'no'::text
-                    END AS int_tunnel,
-                    CASE
-                      WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
-                      WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
-                      ELSE 'no'::text
-                    END AS int_bridge,
-                    CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:right') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_right,
-                    CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:left') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_left,
-                    CASE
-                      WHEN highway IN ('steps') THEN
-                        CASE
-                          WHEN (tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
-                          WHEN (tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
-                          WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
-                          WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
-                        ELSE ''::text END
-                      WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
-                      ELSE
-                        CASE
-                          WHEN highway IN ('motorway', 'trunk') THEN '2'::text
-                          WHEN (oneway IS NULL OR NOT (oneway IN ('no', 'reversible'))) THEN '1'::text
-                          WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
-                          ELSE '1'::text
-                        END
-                    END ||
-                    CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS int_lanes,
-                    CASE
-                      WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN 
-                        CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'both'::text ELSE 'foot'::text END
-                      ELSE
-                        CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'cycle'::text
+                (
+                  SELECT
+                      way,
+                      ('highway_' || highway) AS feature, -- only motorway to tertiary links are accepted later on
+                      highway,
+                      carto_path_type(foot, bicycle, horse) AS path_type,
+                      CASE
+                        WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                                         'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
+                        WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                                         'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
+                        ELSE NULL
+                      END AS int_surface,
+                      CASE
+                        WHEN (tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
+                        WHEN (covered = 'yes') THEN 'yes'::text
+                        ELSE 'no'::text
+                      END AS int_tunnel,
+                      CASE
+                        WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
+                        WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
+                        ELSE 'no'::text
+                      END AS int_bridge,
+                      CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:right') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_right,
+                      CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:left') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_left,
+                      CASE
+                        WHEN highway IN ('steps') THEN
+                          CASE
+                            WHEN (tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
+                            WHEN (tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
+                            WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
+                            WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
+                          ELSE ''::text END
+                        WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
                         ELSE
-                          CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
-                          ELSE
-                            NULL
+                          CASE
+                            WHEN highway IN ('motorway', 'trunk') THEN '2'::text
+                            WHEN (oneway IS NULL OR NOT (oneway IN ('no', 'reversible'))) THEN '1'::text
+                            WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
+                            ELSE '1'::text
                           END
-                        END
-                    END AS int_side_right,
-                    CASE
-                      WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN 
-                        CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'both'::text ELSE 'foot'::text END
-                      ELSE
-                        CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'cycle'::text
+                      END ||
+                      CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS int_lanes,
+                      CASE
+                        WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN 
+                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'both'::text ELSE 'foot'::text END
                         ELSE
-                          CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
+                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'cycle'::text
                           ELSE
-                            NULL
+                            CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
+                            ELSE
+                              NULL
+                            END
                           END
-                        END
-                    END AS int_side_left,
-                    carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
-                    construction,
-                    CASE
-                      WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
-                      ELSE 'INT-normal'::text
-                    END AS service,
-                    CASE
-                      WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
-                      ELSE 'no'
-                    END AS link,
-                    carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
-                    carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!) AS width_tagged,
-                    COALESCE(layer,0) AS layernotnull,
-                    osm_id,
-                    z_order
-                  FROM planet_osm_line
-                  WHERE highway IS NOT NULL AND way && !bbox!
+                      END AS int_side_right,
+                      CASE
+                        WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN 
+                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'both'::text ELSE 'foot'::text END
+                        ELSE
+                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'cycle'::text
+                          ELSE
+                            CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
+                            ELSE
+                              NULL
+                            END
+                          END
+                      END AS int_side_left,
+                      carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
+                      construction,
+                      CASE
+                        WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
+                        ELSE 'INT-normal'::text
+                      END AS service,
+                      CASE
+                        WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
+                        ELSE 'no'
+                      END AS link,
+                      carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!) AS width_tagged,
+                      COALESCE(layer,0) AS layernotnull,
+                      osm_id,
+                      z_order
+                    FROM planet_osm_line
+                    WHERE highway IS NOT NULL AND way && !bbox!
                 ), -- end highways_raw CTE
                 junctions AS
                 (SELECT
@@ -2640,306 +2367,309 @@ Layer:
               ) AS roads_features
             ), -- end of roads_all CTE
             road_areas_all AS
-            (SELECT
-                way,
-                COALESCE(
-                  ('highway_' || (CASE WHEN highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'cycleway', 'living_street', 
-                                                    'track', 'path', 'platform', 'services') THEN highway ELSE NULL END)),
-                  ('railway_' || (CASE WHEN railway IN ('platform') THEN railway ELSE NULL END)),
-                  ('aeroway_' || (CASE WHEN aeroway IN ('runway', 'taxiway', 'helipad') THEN aeroway ELSE NULL END))
-                ) AS feature,
-                carto_path_type(foot, bicycle, horse) AS path_type,
-                CASE
-                  WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
-                                   'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
-                  WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
-                                   'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
-                  ELSE NULL
-                END AS int_surface,
-                CASE
-                  WHEN (tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
-                  WHEN (covered = 'yes') THEN 'yes'::text
-                  ELSE 'no'::text
-                END AS int_tunnel,
-                CASE
-                  WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
-                  WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
-                  ELSE 'no'::text
-                END AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
-                NULL AS int_lanes,
-                carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
-                construction,
-                CASE
-                  WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
-                  ELSE 'INT-normal'::text
-                END AS service,
-                'no' AS link,
-                0 AS width_nominal,
-                0 AS width_max,
-                0 AS width,
-                carto_casing_line_width(
-                  highway,
+            (
+              SELECT
+                  way,
+                  COALESCE(
+                    ('highway_' || (CASE WHEN highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'cycleway', 'living_street', 
+                                                      'track', 'path', 'platform', 'services') THEN highway ELSE NULL END)),
+                    ('railway_' || (CASE WHEN railway IN ('platform') THEN railway ELSE NULL END)),
+                    ('aeroway_' || (CASE WHEN aeroway IN ('runway', 'taxiway', 'helipad') THEN aeroway ELSE NULL END))
+                  ) AS feature,
+                  carto_path_type(foot, bicycle, horse) AS path_type,
+                  CASE
+                    WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                                     'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
+                    WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                                     'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
+                    ELSE NULL
+                  END AS int_surface,
+                  CASE
+                    WHEN (tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
+                    WHEN (covered = 'yes') THEN 'yes'::text
+                    ELSE 'no'::text
+                  END AS int_tunnel,
                   CASE
                     WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
                     WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
                     ELSE 'no'::text
-                  END,
-                  z(!scale_denominator!)) AS casing_width,
-                COALESCE(layer,0) AS layernotnull,
-                osm_id,
-                z_order
-              FROM planet_osm_polygon
-              WHERE (highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'track', 'path', 'platform')
-                OR railway IN ('platform')
-                OR aeroway IN ('runway', 'taxiway', 'helipad'))
-                AND way && !bbox!
-                AND z(!scale_denominator!) >= 14
+                  END AS int_bridge,
+                  'null' AS int_lane_right,
+                  'null' AS int_lane_left,
+                  NULL AS int_lanes,
+                  carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
+                  construction,
+                  CASE
+                    WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
+                    ELSE 'INT-normal'::text
+                  END AS service,
+                  'no' AS link,
+                  0 AS width_nominal,
+                  0 AS width_max,
+                  0 AS width,
+                  carto_casing_line_width(
+                    highway,
+                    CASE
+                      WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
+                      WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
+                      ELSE 'no'::text
+                    END,
+                    z(!scale_denominator!)) AS casing_width,
+                  COALESCE(layer,0) AS layernotnull,
+                  osm_id,
+                  z_order
+                FROM planet_osm_polygon
+                WHERE (highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'track', 'path', 'platform')
+                  OR railway IN ('platform')
+                  OR aeroway IN ('runway', 'taxiway', 'helipad'))
+                  AND way && !bbox!
+                  AND z(!scale_denominator!) >= 14
             ), -- end of road_areas_all CTE
             tc_all AS
-            (SELECT
-                way,
-                (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
-                path_type,
-                int_surface,
-                int_tunnel,
-                int_bridge,
-                int_lane_right,
-                int_lane_left,
-                int_lanes,
-                int_access,
-                construction,
-                service,
-                link,
-                tc_type,
-                width,
-                carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
-                layernotnull,
-                osm_id,
-                z_order
-              FROM
-                (WITH tc_combos AS
-                  (SELECT DISTINCT ON (p.way)
-                      p.way AS way,
-                      p.highway AS tc_type,
-                      l.way AS lway,
-                      ('highway_' || l.highway) AS feature,
-                      l.highway AS highway,
-                      carto_path_type(l.foot, l.bicycle, l.horse) AS path_type,
-                      CASE
-                        WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
-                                         'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
-                        WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
-                                         'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
-                        ELSE NULL
-                      END AS int_surface,
-                      CASE
-                        WHEN (l.tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
-                        WHEN (l.covered = 'yes') THEN 'yes'::text
-                        ELSE 'no'::text
-                      END AS int_tunnel,
-                      CASE
-                        WHEN (l.bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
-                        WHEN (l.tags @> 'ford=>yes' OR l.tags @> 'ford=>stepping_stones') THEN 'ford'::text
-                        ELSE 'no'::text
-                      END AS int_bridge,
-                      'null' AS int_lane_right,
-                      'null' AS int_lane_left,
-                      NULL AS int_lanes,
-                      carto_road_access(l.highway, l.access, l.tags->'vehicle', l.tags->'motor_vehicle', l.tags->'motorcar', l.bicycle, l.horse, l.foot, l.tags->'bus', l.tags->'psv') AS int_access,
-                      l.construction AS construction,
-                      CASE WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway')
-                        THEN 'INT-minor'::text
-                        ELSE 'INT-normal'::text
-                      END AS service,
-                      CASE
-                        WHEN substr(l.highway, length(l.highway)-4, 5) = '_link' THEN 'yes'
-                        ELSE 'no'
-                      END AS link,
-                      GREATEST(
+            (
+              SELECT
+                  way,
+                  (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
+                  path_type,
+                  int_surface,
+                  int_tunnel,
+                  int_bridge,
+                  int_lane_right,
+                  int_lane_left,
+                  int_lanes,
+                  int_access,
+                  construction,
+                  service,
+                  link,
+                  tc_type,
+                  width,
+                  carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
+                  layernotnull,
+                  osm_id,
+                  z_order
+                FROM
+                  (WITH tc_combos AS
+                    (SELECT DISTINCT ON (p.way)
+                        p.way AS way,
+                        p.highway AS tc_type,
+                        l.way AS lway,
+                        ('highway_' || l.highway) AS feature,
+                        l.highway AS highway,
+                        carto_path_type(l.foot, l.bicycle, l.horse) AS path_type,
+                        CASE
+                          WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                                           'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
+                          WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                                           'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
+                          ELSE NULL
+                        END AS int_surface,
+                        CASE
+                          WHEN (l.tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
+                          WHEN (l.covered = 'yes') THEN 'yes'::text
+                          ELSE 'no'::text
+                        END AS int_tunnel,
+                        CASE
+                          WHEN (l.bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
+                          WHEN (l.tags @> 'ford=>yes' OR l.tags @> 'ford=>stepping_stones') THEN 'ford'::text
+                          ELSE 'no'::text
+                        END AS int_bridge,
+                        'null' AS int_lane_right,
+                        'null' AS int_lane_left,
+                        NULL AS int_lanes,
+                        carto_road_access(l.highway, l.access, l.tags->'vehicle', l.tags->'motor_vehicle', l.tags->'motorcar', l.bicycle, l.horse, l.foot, l.tags->'bus', l.tags->'psv') AS int_access,
+                        l.construction AS construction,
+                        CASE WHEN l.service IN ('parking_aisle', 'drive-through', 'driveway')
+                          THEN 'INT-minor'::text
+                          ELSE 'INT-normal'::text
+                        END AS service,
+                        CASE
+                          WHEN substr(l.highway, length(l.highway)-4, 5) = '_link' THEN 'yes'
+                          ELSE 'no'
+                        END AS link,
                         GREATEST(
-                          CASE
-                            WHEN l.highway = 'track' THEN
-                              CASE z(!scale_denominator!)
-                                WHEN 15 THEN 5.75
-                                WHEN 16 THEN 6.75
-                                WHEN 17 THEN 7.75
-                                ELSE 8.75
-                              END
-                            ELSE carto_highway_line_width(l.highway, l.service, z(!scale_denominator!))*1.7
-                          END,
-                          carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', !bbox!, !scale_denominator!)*1.375
-                        ),
-                        CASE WHEN p.tags->'diameter' ~ '^-?\d{1,4}(\.\d+)?$' THEN (p.tags->'diameter')::NUMERIC / NULLIF(scale_factor(p.way)*!scale_denominator!*0.001*0.28,0) ELSE 0.0 END
-                      ) AS width,
-                      COALESCE(l.layer,0) AS layernotnull,
-                      l.osm_id AS osm_id,
-                      l.z_order AS z_order
-                    FROM planet_osm_point p
-                      JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1) -- Assumes Mercator
-                    WHERE p.highway IN ('turning_circle', 'turning_loop', 'mini_roundabout', 'passing_place')
-                      AND l.highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link',
-                                        'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
-                                        'living_street', 'track', 'busway', 'bus_guideway')
-                      AND p.way && !bbox!
-                      AND z(!scale_denominator!) >= 15
-                  )
-                SELECT
-                    ST_MakeLine(way, ST_Translate(way, 0, 0.01)) AS way,
-                    feature,
-                    highway,
-                    path_type,
-                    int_surface,
-                    int_tunnel,
-                    int_bridge,
-                    int_lane_right,
-                    int_lane_left,
-                    int_lanes,
-                    int_access,
-                    construction,
-                    service,
-                    link,
-                    tc_type,
-                    width,
-                    layernotnull,
-                    osm_id,
-                    z_order
-                  FROM tc_combos
-                  WHERE tc_type IN ('turning_circle', 'turning_loop', 'mini_roundabout')
-                UNION ALL
-                SELECT
-                    ST_LineSubstring(way, GREATEST(0, position-length*0.25*width), LEAST(1, position+length*0.25*width)) AS way,
-                    feature,
-                    highway,
-                    path_type,
-                    int_surface,
-                    int_tunnel,
-                    int_bridge,
-                    int_lane_right,
-                    int_lane_left,
-                    int_lanes,
-                    int_access,
-                    construction,
-                    service,
-                    link,
-                    tc_type,
-                    width,
-                    layernotnull,
-                    osm_id,
-                    z_order
-                  FROM
-                    (SELECT
-                        lway AS way, -- this is the highway intersecting the passing_place node
-                        ST_LineLocatePoint(lway, way) AS position, -- this is the position along the way
-                        NULLIF(!scale_denominator!*0.001*0.28,0)/ST_Length(lway) AS length, -- this is the pixel size as a fraction of the way length
-                        feature,
-                        highway,
-                        path_type,
-                        int_surface,
-                        int_tunnel,
-                        int_bridge,
-                        int_lane_right,
-                        int_lane_left,
-                        int_lanes,
-                        int_access,
-                        construction,
-                        service,
-                        link,
-                        tc_type,
-                        width,
-                        layernotnull,
-                        osm_id,
-                        z_order
-                      FROM tc_combos
-                      WHERE tc_type IN ('passing_place')) AS pp_combos
-                ) AS turning_circle_features
+                          GREATEST(
+                            CASE
+                              WHEN l.highway = 'track' THEN
+                                CASE z(!scale_denominator!)
+                                  WHEN 15 THEN 5.75
+                                  WHEN 16 THEN 6.75
+                                  WHEN 17 THEN 7.75
+                                  ELSE 8.75
+                                END
+                              ELSE carto_highway_line_width(l.highway, l.service, z(!scale_denominator!))*1.7
+                            END,
+                            carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', !bbox!, !scale_denominator!)*1.375
+                          ),
+                          CASE WHEN p.tags->'diameter' ~ '^-?\d{1,4}(\.\d+)?$' THEN (p.tags->'diameter')::NUMERIC / NULLIF(scale_factor(p.way)*!scale_denominator!*0.001*0.28,0) ELSE 0.0 END
+                        ) AS width,
+                        COALESCE(l.layer,0) AS layernotnull,
+                        l.osm_id AS osm_id,
+                        l.z_order AS z_order
+                      FROM planet_osm_point p
+                        JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1) -- Assumes Mercator
+                      WHERE p.highway IN ('turning_circle', 'turning_loop', 'mini_roundabout', 'passing_place')
+                        AND l.highway IN ('trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link',
+                                          'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                                          'living_street', 'track', 'busway', 'bus_guideway')
+                        AND p.way && !bbox!
+                        AND z(!scale_denominator!) >= 15
+                    )
+                  SELECT
+                      ST_MakeLine(way, ST_Translate(way, 0, 0.01)) AS way,
+                      feature,
+                      highway,
+                      path_type,
+                      int_surface,
+                      int_tunnel,
+                      int_bridge,
+                      int_lane_right,
+                      int_lane_left,
+                      int_lanes,
+                      int_access,
+                      construction,
+                      service,
+                      link,
+                      tc_type,
+                      width,
+                      layernotnull,
+                      osm_id,
+                      z_order
+                    FROM tc_combos
+                    WHERE tc_type IN ('turning_circle', 'turning_loop', 'mini_roundabout')
+                  UNION ALL
+                  SELECT
+                      ST_LineSubstring(way, GREATEST(0, position-length*0.25*width), LEAST(1, position+length*0.25*width)) AS way,
+                      feature,
+                      highway,
+                      path_type,
+                      int_surface,
+                      int_tunnel,
+                      int_bridge,
+                      int_lane_right,
+                      int_lane_left,
+                      int_lanes,
+                      int_access,
+                      construction,
+                      service,
+                      link,
+                      tc_type,
+                      width,
+                      layernotnull,
+                      osm_id,
+                      z_order
+                    FROM
+                      (SELECT
+                          lway AS way, -- this is the highway intersecting the passing_place node
+                          ST_LineLocatePoint(lway, way) AS position, -- this is the position along the way
+                          NULLIF(!scale_denominator!*0.001*0.28,0)/ST_Length(lway) AS length, -- this is the pixel size as a fraction of the way length
+                          feature,
+                          highway,
+                          path_type,
+                          int_surface,
+                          int_tunnel,
+                          int_bridge,
+                          int_lane_right,
+                          int_lane_left,
+                          int_lanes,
+                          int_access,
+                          construction,
+                          service,
+                          link,
+                          tc_type,
+                          width,
+                          layernotnull,
+                          osm_id,
+                          z_order
+                        FROM tc_combos
+                        WHERE tc_type IN ('passing_place')) AS pp_combos
+                  ) AS turning_circle_features
             ), -- end of tc_all CTE
             line_barriers_all AS
-            (SELECT
-                -- this cuts out barrier=entrance nodes - in a width reflecting whatever highway=* intersects
-                ST_Difference(
-                  way,
-                  COALESCE(
-                    (SELECT
-                        ST_Union(ST_Buffer(way, width))
-                      FROM
-                        (SELECT
-                            e.way AS way,
-                            (COALESCE(
-                              (SELECT
-                                  GREATEST(
-                                    carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
-                                    carto_highway_line_width_mapped(h.highway, h.tags->'width', h.tags->'lanes', !bbox!, !scale_denominator!))
-                                FROM planet_osm_line h
-                                WHERE ST_Intersects(h.way, e.way) AND h.highway IN
-                                  ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
-                                   'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
-                                   'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
-                                   'busway', 'bus_guideway')
-                                ORDER BY carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)) DESC LIMIT 1
-                              ),
-                              carto_highway_line_width('footway', z(!scale_denominator!))
-                            ) + 2.5 + l.width_nominal)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
-                          FROM planet_osm_point e
-                          WHERE ST_Intersects(l.way, e.way)
-                            AND e.barrier IN ('entrance')
-                        ) AS entrances
-                      WHERE (way && ST_Expand(!bbox!, (0.5*
-                              (carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 + l.width)*
-                              NULLIF(!scale_denominator!*0.001*0.28,0)))
-                            )
-                    ),
-                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                  )
-                ) AS way,
-                COALESCE(barrier, historic) AS feature,
-                CASE WHEN barrier = 'barrier_ditch' THEN ROUND(width) ELSE width END AS width,
-                height,
-                layer,
-                osm_id,
-                z_order
-              FROM
-                (SELECT
-                    way,                    
-                    ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                     'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
-                    ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic,
-                    GREATEST(
-                      carto_barrier_line_width(
-                        CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
-                        z(!scale_denominator!)
+            (
+              SELECT
+                  -- this cuts out barrier=entrance nodes - in a width reflecting whatever highway=* intersects
+                  ST_Difference(
+                    way,
+                    COALESCE(
+                      (SELECT
+                          ST_Union(ST_Buffer(way, width))
+                        FROM
+                          (SELECT
+                              e.way AS way,
+                              (COALESCE(
+                                (SELECT
+                                    GREATEST(
+                                      carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
+                                      carto_highway_line_width_mapped(h.highway, h.tags->'width', h.tags->'lanes', !bbox!, !scale_denominator!))
+                                  FROM planet_osm_line h
+                                  WHERE ST_Intersects(h.way, e.way) AND h.highway IN
+                                    ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                                     'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                                     'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
+                                     'busway', 'bus_guideway')
+                                  ORDER BY carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)) DESC LIMIT 1
+                                ),
+                                carto_highway_line_width('footway', z(!scale_denominator!))
+                              ) + 2.5 + l.width_nominal)*0.5*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+                            FROM planet_osm_point e
+                            WHERE ST_Intersects(l.way, e.way)
+                              AND e.barrier IN ('entrance')
+                          ) AS entrances
+                        WHERE (way && ST_Expand(!bbox!, (0.5*
+                                (carto_highway_line_width('motorway', z(!scale_denominator!)) + 2.0 + l.width)*
+                                NULLIF(!scale_denominator!*0.001*0.28,0)))
+                              )
                       ),
-                      carto_barrier_line_width_mapped(
-                        CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
-                        tags->'width',
-                        !bbox!, !scale_denominator!
-                      )
-                    ) AS width,
-                    carto_barrier_line_width(CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END, z(!scale_denominator!)) AS width_nominal,
-                    CASE WHEN (tags->'height') ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'height')::NUMERIC ELSE 1.0 END AS height,
-                    layer,
-                    osm_id,
-                    CASE (CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END)
-                      WHEN 'ditch' THEN -2
-                      WHEN 'retaining_wall' THEN -1
-                      WHEN 'city_wall' THEN 1
-                      WHEN 'citywalls' THEN 1
-                      WHEN 'wall' THEN 2
-                      WHEN 'guard_rail' THEN 3
-                      WHEN 'handrail' THEN 4
-                      WHEN 'fence' THEN 5
-                      WHEN 'chain' THEN 6
-                      ELSE 0
-                    END AS z_order
-                  FROM planet_osm_line
-                  WHERE (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
-                        'handrail', 'retaining_wall', 'wall')
-                    OR historic = 'citywalls')
-                    AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)
-                    AND (way && !bbox!)
-                    AND z(!scale_denominator!) >= 15
-                ) AS l
+                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                    )
+                  ) AS way,
+                  COALESCE(barrier, historic) AS feature,
+                  CASE WHEN barrier = 'barrier_ditch' THEN ROUND(width) ELSE width END AS width,
+                  height,
+                  layer,
+                  osm_id,
+                  z_order
+                FROM
+                  (SELECT
+                      way,                    
+                      ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                       'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
+                      ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic,
+                      GREATEST(
+                        carto_barrier_line_width(
+                          CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
+                          z(!scale_denominator!)
+                        ),
+                        carto_barrier_line_width_mapped(
+                          CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END,
+                          tags->'width',
+                          !bbox!, !scale_denominator!
+                        )
+                      ) AS width,
+                      carto_barrier_line_width(CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END, z(!scale_denominator!)) AS width_nominal,
+                      CASE WHEN (tags->'height') ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'height')::NUMERIC ELSE 1.0 END AS height,
+                      layer,
+                      osm_id,
+                      CASE (CASE WHEN historic = 'citywalls' THEN historic ELSE barrier END)
+                        WHEN 'ditch' THEN -2
+                        WHEN 'retaining_wall' THEN -1
+                        WHEN 'city_wall' THEN 1
+                        WHEN 'citywalls' THEN 1
+                        WHEN 'wall' THEN 2
+                        WHEN 'guard_rail' THEN 3
+                        WHEN 'handrail' THEN 4
+                        WHEN 'fence' THEN 5
+                        WHEN 'chain' THEN 6
+                        ELSE 0
+                      END AS z_order
+                    FROM planet_osm_line
+                    WHERE (barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                          'handrail', 'retaining_wall', 'wall')
+                      OR historic = 'citywalls')
+                      AND (waterway IS NULL OR waterway NOT IN ('river', 'canal', 'derelict_canal', 'stream', 'drain', 'ditch', 'wadi') OR z(!scale_denominator!) >= 18)
+                      AND (way && !bbox!)
+                      AND z(!scale_denominator!) >= 15
+                  ) AS l
             ) -- end of line_barriers_all CTE
             SELECT -- casing
                 way,
@@ -3593,7 +3323,10 @@ Layer:
             SELECT -- landuse_overlay
                 way,
                 'landuse_overlay' AS road_layer,
-                ('landuse_' || landuse) AS feature,
+                COALESCE(
+                  ('landuse_' || landuse),
+                  ('military_' || military)
+                ) AS feature,
                 'null' AS path_type,
                 'null' AS intermittent,
                 'null' AS seasonal,
@@ -3616,7 +3349,7 @@ Layer:
                 osm_id,
                 z_order
               FROM planet_osm_polygon
-              WHERE landuse = 'military'
+              WHERE (landuse = 'military' OR military = 'danger_area')
                 AND building IS NULL
                 AND way && !bbox!
             ) AS roads_sublayers
@@ -3627,7 +3360,7 @@ Layer:
               WHEN int_tunnel NOT IN ('no') THEN layernotnull - 100
               ELSE 0
             END,
-            -- this defines the orering of layers as far as it has priority over the
+            -- this defines the ordering of layers as far as it has priority over the
             -- layer and z_oder of normal non-bridge and non-tunnel features, that is:
             --  * the non-roads layers
             --  * the casing-background-fill progression
@@ -4749,7 +4482,7 @@ Layer:
                   WHEN combined.feature IN ('amenity_arts_centre', 'amenity_atm', 'amenity_bank', 'amenity_bar', 'amenity_bbq', 'amenity_bicycle_rental', 'amenity_biergarten', 'amenity_bus_station', 'amenity_cafe', 'amenity_car_rental', 'amenity_car_wash', 'amenity_charging_station', 'amenity_cinema', 'amenity_clinic', 'amenity_community_centre', 'amenity_courthouse', 'amenity_dentist', 'amenity_doctors', 'amenity_drinking_water', 'amenity_fast_food', 'amenity_fire_station', 'amenity_food_court', 'amenity_fountain', 'amenity_fuel', 'amenity_hunting_stand', 'amenity_ice_cream', 'amenity_library', 'amenity_nightclub', 'amenity_pharmacy', 'amenity_place_of_worship', 'amenity_police', 'amenity_post_office', 'amenity_prison', 'amenity_pub', 'amenity_public_bath', 'amenity_restaurant', 'amenity_shelter', 'amenity_social_facility', 'amenity_taxi', 'amenity_theatre', 'amenity_townhall', 'amenity_veterinary', 'amenity_water_point', 'barrier_toll_booth', 'highway_bus_stop', 'historic_archaeological_site', 'historic_city_gate', 'historic_wayside_cross', 'historic_wayside_shrine', 'leisure_beach_resort', 'leisure_firepit', 'leisure_miniature_golf', 'leisure_picnic_table', 'leisure_playground', 'leisure_sauna', 'leisure_slipway', 'man_made_communications_tower', 'man_made_cross', 'man_made_obelisk', 'man_made_water_tap', 'man_made_water_tower', 'man_made_windmill', 'military_bunker', 'natural_tree', 'shop_massage', 'tourism_artwork', 'tourism_camp_site', 'tourism_caravan_site', 'tourism_charlet', 'tourism_guest_house', 'tourism_hostel', 'tourism_hotel', 'tourism_motel', 'tourism_museum', 'tourism_picnic_site') THEN 17
                   WHEN combined.feature IN ('aerialway_station', 'natural_bay', 'railway_station', 'tourism_alpine_hut', 'tourism_wilderness_hut') THEN 14
                   WHEN combined.feature IN ('amenity_driving_school', 'amenity_shower', 'man_made_mast', 'shop', 'tourism_apartment') THEN 18
-                  WHEN combined.feature IN ('aeroway_apron', 'amenity_bicycle_parking', 'amenity_college', 'amenity_grave_yard', 'amenity_kindergarten', 'amenity_motorcycle_parking', 'amenity_parking', 'amenity_school', 'amenity_university', 'landuse_allotments', 'landuse_basin', 'landuse_brownfield', 'landuse_cemetery', 'landuse_commercial', 'landuse_construction', 'landuse_farmland', 'landuse_farmyard', 'landuse_forest', 'landuse_grass', 'landuse_greenhouse_horticulture', 'landuse_landfill', 'landuse_meadow', 'landuse_quarry', 'landuse_recreation_ground', 'landuse_reservoir', 'landuse_village_green', 'leisure_common', 'leisure_dog_park', 'leisure_fitness_centre', 'leisure_fitness_station', 'leisure_garden', 'leisure_park', 'leisure_sport_centre', 'leisure_stadium', 'military_danger_area', 'natural_bare_rock', 'natural_beach', 'natural_glacier', 'natural_grassland', 'natural_heath', 'natural_mud', 'natural_reef', 'natural_sand', 'natural_scree', 'natural_scrub', 'natural_shingle', 'natural_shoal', 'natural_water', 'natural_wetland', 'natural_wood', 'place_archipelago', 'place_island', 'power_generator', 'power_plant', 'shop_mall', 'tourism_theme_park', 'tourism_zoo') THEN GREATEST(10, zoom_threshold)
+                  WHEN combined.feature IN ('aeroway_apron', 'amenity_bicycle_parking', 'amenity_college', 'amenity_grave_yard', 'amenity_kindergarten', 'amenity_motorcycle_parking', 'amenity_parking', 'amenity_school', 'amenity_university', 'landuse_allotments', 'landuse_basin', 'landuse_brownfield', 'landuse_cemetery', 'landuse_commercial', 'landuse_construction', 'landuse_farmland', 'landuse_farmyard', 'landuse_forest', 'landuse_grass', 'landuse_greenhouse_horticulture', 'landuse_landfill', 'landuse_meadow', 'landuse_military', 'landuse_quarry', 'landuse_recreation_ground', 'landuse_reservoir', 'landuse_village_green', 'leisure_common', 'leisure_dog_park', 'leisure_fitness_centre', 'leisure_fitness_station', 'leisure_garden', 'leisure_park', 'leisure_sport_centre', 'leisure_stadium', 'military_danger_area', 'natural_bare_rock', 'natural_beach', 'natural_glacier', 'natural_grassland', 'natural_heath', 'natural_mud', 'natural_reef', 'natural_sand', 'natural_scree', 'natural_scrub', 'natural_shingle', 'natural_shoal', 'natural_water', 'natural_wetland', 'natural_wood', 'place_archipelago', 'place_island', 'power_generator', 'power_plant', 'shop_mall', 'tourism_theme_park', 'tourism_zoo') THEN GREATEST(10, zoom_threshold)
                   WHEN combined.feature IN ('aeroway_helipad', 'amenity_hospital', 'historic_castle', 'historic_fort', 'historic_manor', 'historic_monument', 'man_made_water_well', 'natural_geyser', 'natural_hot_spring', 'natural_spring', 'railway_tram_stop', 'tourism_viewpoint') THEN 16
                   WHEN combined.feature IN ('railway_subway_entrance') THEN 19
                   WHEN combined.feature IN ('leisure_golf_course', 'man_made_lighthouse', 'natural_cave_entrance', 'natural_saddle', 'natural_volcano', 'railway_halt') THEN 15
@@ -4861,7 +4594,7 @@ Layer:
                   END AS variant,
                   CASE
                     WHEN feature IN ('amenity_bicycle_parking', 'amenity_motorcycle_parking', 'amenity_parking') THEN LEAST(zoom_from_pixelsize(SQRT(way_area/900)::numeric), 17)
-                    WHEN feature IN ('aeroway_apron', 'amenity_college', 'amenity_grave_yard', 'amenity_kindergarten', 'amenity_marketplace', 'amenity_school', 'amenity_university', 'highway_rest_area', 'highway_services', 'landuse_allotments', 'landuse_basin', 'landuse_brownfield', 'landuse_cemetery', 'landuse_commercial', 'landuse_construction', 'landuse_farmland', 'landuse_farmyard', 'landuse_forest', 'landuse_garages', 'landuse_grass', 'landuse_greenhouse_horticulture', 'landuse_industrial', 'landuse_landfill', 'landuse_meadow', 'landuse_quarry', 'landuse_railway', 'landuse_recreation_ground', 'landuse_reservoir', 'landuse_residential', 'landuse_retail', 'landuse_village_green', 'leisure_common', 'leisure_dog_park', 'leisure_fitness_centre', 'leisure_fitness_station', 'leisure_garden', 'leisure_marina', 'leisure_park', 'leisure_sport_centre', 'leisure_stadium', 'leisure_swimming_pool', 'leisure_water_park', 'man_made_works', 'military_danger_area', 'natural_bare_rock', 'natural_beach', 'natural_grassland', 'natural_heath', 'natural_mud', 'natural_reef', 'natural_sand', 'natural_scree', 'natural_scrub', 'natural_shingle', 'natural_shoal', 'natural_water', 'natural_wetland', 'natural_wood', 'place_islet', 'power_generator', 'power_plant', 'power_substation', 'shop_mall', 'tourism_theme_park', 'tourism_zoo') THEN LEAST(zoom_from_pixelsize(SQRT(way_area/3000)::numeric), 17)
+                    WHEN feature IN ('aeroway_apron', 'amenity_college', 'amenity_grave_yard', 'amenity_kindergarten', 'amenity_marketplace', 'amenity_school', 'amenity_university', 'highway_rest_area', 'highway_services', 'landuse_allotments', 'landuse_basin', 'landuse_brownfield', 'landuse_cemetery', 'landuse_commercial', 'landuse_construction', 'landuse_farmland', 'landuse_farmyard', 'landuse_forest', 'landuse_garages', 'landuse_grass', 'landuse_greenhouse_horticulture', 'landuse_industrial', 'landuse_landfill', 'landuse_meadow', 'landuse_military', 'landuse_quarry', 'landuse_railway', 'landuse_recreation_ground', 'landuse_reservoir', 'landuse_residential', 'landuse_retail', 'landuse_village_green', 'leisure_common', 'leisure_dog_park', 'leisure_fitness_centre', 'leisure_fitness_station', 'leisure_garden', 'leisure_marina', 'leisure_park', 'leisure_sport_centre', 'leisure_stadium', 'leisure_swimming_pool', 'leisure_water_park', 'man_made_works', 'military_danger_area', 'natural_bare_rock', 'natural_beach', 'natural_grassland', 'natural_heath', 'natural_mud', 'natural_reef', 'natural_sand', 'natural_scree', 'natural_scrub', 'natural_shingle', 'natural_shoal', 'natural_water', 'natural_wetland', 'natural_wood', 'place_islet', 'power_generator', 'power_plant', 'power_substation', 'shop_mall', 'tourism_theme_park', 'tourism_zoo') THEN LEAST(zoom_from_pixelsize(SQRT(way_area/3000)::numeric), 17)
                     WHEN feature IN ('man_made_bridge') THEN zoom_from_pixelsize(SQRT(way_area/62.5)::numeric)
                     WHEN feature IN ('place_archipelago', 'place_island') THEN LEAST(zoom_from_pixelsize(SQRT(way_area/3000)::numeric), 16)
                     WHEN feature IN ('natural_glacier') THEN LEAST(zoom_from_pixelsize(SQRT(way_area/750)::numeric), 17)
@@ -4916,7 +4649,7 @@ Layer:
                       'power_' || CASE WHEN "power" IN ('plant', 'substation') AND (way_length IS NULL) AND (building IS NULL OR building = 'no') THEN "power" END,
                       'man_made_' || CASE WHEN "man_made" IN ('bridge', 'communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'water_tower', 'water_well', 'windmill') AND (way_length IS NULL) THEN "man_made" END,
                       'man_made_' || CASE WHEN "man_made" IN ('works') AND (way_length IS NULL) AND (building IS NULL OR building = 'no') THEN "man_made" END,
-                      'landuse_' || CASE WHEN "landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green') AND (way_length IS NULL) AND (building IS NULL OR building = 'no') THEN "landuse" END,
+                      'landuse_' || CASE WHEN "landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green') AND (way_length IS NULL) AND (building IS NULL OR building = 'no') THEN "landuse" END,
                       'natural_' || CASE WHEN "natural" IN ('bay', 'cave_entrance', 'geyser', 'hot_spring', 'peak', 'saddle', 'spring', 'tree', 'volcano') AND (way_length IS NULL) THEN "natural" END,
                       'natural_' || CASE WHEN "natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'water', 'wetland', 'wood') AND (way_length IS NULL) AND (building IS NULL OR building = 'no') THEN "natural" END,
                       'waterway_' || CASE WHEN "waterway" IN ('waterfall') AND (way_length IS NULL) THEN "waterway" END,
@@ -5326,91 +5059,92 @@ Layer:
                   ('man_made_cross', 142),
                   ('man_made_bridge', 143),
                   ('man_made_works', 144),
-                  ('landuse_garages', 145),
-                  ('landuse_retail', 146),
-                  ('landuse_residential', 147),
-                  ('landuse_industrial', 148),
-                  ('landuse_railway', 149),
-                  ('landuse_cemetery', 150),
-                  ('landuse_commercial', 151),
-                  ('landuse_quarry', 152),
-                  ('landuse_brownfield', 153),
-                  ('landuse_landfill', 154),
-                  ('landuse_construction', 155),
-                  ('landuse_village_green', 156),
-                  ('landuse_meadow', 157),
-                  ('landuse_grass', 158),
-                  ('landuse_allotments', 159),
-                  ('landuse_farmyard', 160),
-                  ('landuse_farmland', 161),
-                  ('landuse_greenhouse_horticulture', 162),
-                  ('landuse_forest', 163),
-                  ('landuse_reservoir', 164),
-                  ('landuse_basin', 165),
-                  ('landuse_recreation_ground', 166),
-                  ('natural_spring+connected', 167),
-                  ('natural_spring', 168),
-                  ('natural_hot_spring+connected', 169),
-                  ('natural_hot_spring', 170),
-                  ('natural_geyser', 171),
-                  ('natural_bay', 172),
-                  ('natural_tree', 173),
-                  ('natural_peak', 174),
-                  ('natural_volcano', 175),
-                  ('natural_saddle', 176),
-                  ('natural_cave_entrance', 177),
-                  ('natural_grassland', 178),
-                  ('natural_wood', 179),
-                  ('natural_wetland', 180),
-                  ('natural_reef', 181),
-                  ('natural_mud', 182),
-                  ('natural_heath', 183),
-                  ('natural_scrub', 184),
-                  ('natural_beach', 185),
-                  ('natural_shoal', 186),
-                  ('natural_sand', 187),
-                  ('natural_scree', 188),
-                  ('natural_shingle', 189),
-                  ('natural_bare_rock', 190),
-                  ('natural_glacier', 191),
-                  ('natural_water', 192),
-                  ('waterway_waterfall', 193),
-                  ('place_archipelago', 194),
-                  ('place_island', 195),
-                  ('place_islet', 196),
-                  ('historic_city_gate', 197),
-                  ('historic_memorial+medium', 198),
-                  ('historic_memorial+small', 199),
-                  ('historic_memorial', 200),
-                  ('historic_monument', 201),
-                  ('historic_fort', 202),
-                  ('historic_castle+minor_types', 203),
-                  ('historic_castle', 204),
-                  ('historic_manor', 205),
-                  ('historic_archaeological_site', 206),
-                  ('historic_wayside_cross', 207),
-                  ('historic_wayside_shrine', 208),
-                  ('military_bunker', 209),
-                  ('military_danger_area', 210),
-                  ('highway_bus_stop', 211),
-                  ('highway_traffic_signals', 212),
-                  ('highway_elevator', 213),
-                  ('highway_services', 214),
-                  ('highway_rest_area', 215),
-                  ('barrier_gate', 216),
-                  ('barrier_lift_gate', 217),
-                  ('barrier_swing_gate', 218),
-                  ('barrier_bollard', 219),
-                  ('barrier_block', 220),
-                  ('barrier_log', 221),
-                  ('barrier_toll_booth', 222),
-                  ('railway_crossing', 223),
-                  ('railway_level_crossing', 224),
-                  ('railway_subway_entrance', 225),
-                  ('railway_station', 226),
-                  ('railway_halt', 227),
-                  ('railway_tram_stop', 228),
-                  ('aerialway_station', 229)
+                  ('landuse_military', 145),
+                  ('landuse_garages', 146),
+                  ('landuse_retail', 147),
+                  ('landuse_residential', 148),
+                  ('landuse_industrial', 149),
+                  ('landuse_railway', 150),
+                  ('landuse_cemetery', 151),
+                  ('landuse_commercial', 152),
+                  ('landuse_quarry', 153),
+                  ('landuse_brownfield', 154),
+                  ('landuse_landfill', 155),
+                  ('landuse_construction', 156),
+                  ('landuse_village_green', 157),
+                  ('landuse_meadow', 158),
+                  ('landuse_grass', 159),
+                  ('landuse_allotments', 160),
+                  ('landuse_farmyard', 161),
+                  ('landuse_farmland', 162),
+                  ('landuse_greenhouse_horticulture', 163),
+                  ('landuse_forest', 164),
+                  ('landuse_reservoir', 165),
+                  ('landuse_basin', 166),
+                  ('landuse_recreation_ground', 167),
+                  ('natural_spring+connected', 168),
+                  ('natural_spring', 169),
+                  ('natural_hot_spring+connected', 170),
+                  ('natural_hot_spring', 171),
+                  ('natural_geyser', 172),
+                  ('natural_bay', 173),
+                  ('natural_tree', 174),
+                  ('natural_peak', 175),
+                  ('natural_volcano', 176),
+                  ('natural_saddle', 177),
+                  ('natural_cave_entrance', 178),
+                  ('natural_grassland', 179),
+                  ('natural_wood', 180),
+                  ('natural_wetland', 181),
+                  ('natural_reef', 182),
+                  ('natural_mud', 183),
+                  ('natural_heath', 184),
+                  ('natural_scrub', 185),
+                  ('natural_beach', 186),
+                  ('natural_shoal', 187),
+                  ('natural_sand', 188),
+                  ('natural_scree', 189),
+                  ('natural_shingle', 190),
+                  ('natural_bare_rock', 191),
+                  ('natural_glacier', 192),
+                  ('natural_water', 193),
+                  ('waterway_waterfall', 194),
+                  ('place_archipelago', 195),
+                  ('place_island', 196),
+                  ('place_islet', 197),
+                  ('historic_city_gate', 198),
+                  ('historic_memorial+medium', 199),
+                  ('historic_memorial+small', 200),
+                  ('historic_memorial', 201),
+                  ('historic_monument', 202),
+                  ('historic_fort', 203),
+                  ('historic_castle+minor_types', 204),
+                  ('historic_castle', 205),
+                  ('historic_manor', 206),
+                  ('historic_archaeological_site', 207),
+                  ('historic_wayside_cross', 208),
+                  ('historic_wayside_shrine', 209),
+                  ('military_bunker', 210),
+                  ('military_danger_area', 211),
+                  ('highway_bus_stop', 212),
+                  ('highway_traffic_signals', 213),
+                  ('highway_elevator', 214),
+                  ('highway_services', 215),
+                  ('highway_rest_area', 216),
+                  ('barrier_gate', 217),
+                  ('barrier_lift_gate', 218),
+                  ('barrier_swing_gate', 219),
+                  ('barrier_bollard', 220),
+                  ('barrier_block', 221),
+                  ('barrier_log', 222),
+                  ('barrier_toll_booth', 223),
+                  ('railway_crossing', 224),
+                  ('railway_level_crossing', 225),
+                  ('railway_subway_entrance', 226),
+                  ('railway_station', 227),
+                  ('railway_halt', 228),
+                  ('railway_tram_stop', 229),
+                  ('aerialway_station', 230)
                 ) AS f (feature, prio)
                 ON f.feature = CONCAT(combined.feature, '+'||combined.variant)
             ) -- end of zoom_thresholds CTE

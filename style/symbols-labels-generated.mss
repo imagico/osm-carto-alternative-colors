@@ -12338,6 +12338,32 @@
       text-line-spacing: @landcover-line-spacing-size-bigger;
     }
   }
+  [feature = 'landuse_military'] {
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: @landcover-font-size;
+    text-wrap-width: @landcover-wrap-width-size;
+    text-line-spacing: @landcover-line-spacing-size;
+    text-fill: darken(@military, 20%);
+    text-face-name: @oblique-fonts;
+    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
+    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
+    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
+    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
+    [font = 'bg'] { text-face-name: @oblique-fonts-bg; }
+    text-halo-radius: @standard-halo-radius * 1.0;
+    text-halo-fill: @standard-halo-fill;
+    [way_pixels > 12000] {
+      text-size: @landcover-font-size-big;
+      text-wrap-width: @landcover-wrap-width-size-big;
+      text-line-spacing: @landcover-line-spacing-size-big;
+    }
+    [way_pixels > 48000] {
+      text-size: @landcover-font-size-bigger;
+      text-wrap-width: @landcover-wrap-width-size-bigger;
+      text-line-spacing: @landcover-line-spacing-size-bigger;
+    }
+  }
   [feature = 'military_danger_area'] {
     text-placement: interior;
     text-name: '[name]';

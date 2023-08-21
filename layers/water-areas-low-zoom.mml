@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
-#  landcover.mml
+#  water-areas-low-zoom.mml
 #
-#  low zoom landcover layer
+#  water polygon layer for low zoom non-preprocessed rendering
 #
 #  to be processed with assemble_project.py
 #
@@ -41,24 +41,26 @@
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, way_pixels,
-            COALESCE(wetland, landuse, "natural") AS feature
-          FROM (SELECT
-              way,                                                  
-              ('landuse_' || (CASE WHEN landuse IN ('forest', 'farmland', 'residential', 'commercial', 'retail', 'industrial',
-                                                    'meadow', 'grass', 'village_green', 'vineyard', 'orchard', 'plant_nursery', 'allotments', 'railway', 'quarry') THEN landuse END)) AS landuse,
-              ('natural_' || (CASE WHEN "natural" IN ('wood', 'sand', 'scree', 'shingle', 'bare_rock', 'beach', 'heath', 'grassland', 'scrub') THEN "natural" ELSE NULL END)) AS "natural",
-              ('wetland_' || (CASE WHEN "natural" IN ('wetland', 'mud') THEN (CASE WHEN "natural" IN ('mud') THEN "natural" ELSE tags->'wetland' END) ELSE NULL END)) AS wetland,
-              way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
-            FROM planet_osm_polygon
-            WHERE (landuse IN ('forest', 'farmland', 'residential', 'commercial', 'retail', 'industrial', 'meadow', 'grass', 'village_green', 'vineyard', 'orchard', 'plant_nursery', 'allotments', 'railway', 'quarry')
-              OR "natural" IN ('wood', 'wetland', 'mud', 'sand', 'scree', 'shingle', 'bare_rock', 'beach', 'heath', 'grassland', 'scrub'))
-              AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
-              AND building IS NULL
-            ORDER BY COALESCE(layer,0), way_area DESC
-          ) AS features
-        ) AS landcover_low_zoom
+            way,
+            "natural",
+            waterway,
+            water,
+            tags->'intermittent' as intermittent,
+            tags->'seasonal' as seasonal,
+            tags->'salt' as salt,
+            tags->'glacier:type' as glacier_type,
+            landuse,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
+          FROM planet_osm_polygon
+          WHERE
+            (waterway IN ('dock', 'riverbank')
+              OR landuse IN ('reservoir', 'basin')
+              OR "natural" IN ('water', 'glacier'))
+            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
+            AND building IS NULL
+            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
+          ORDER BY COALESCE(layer,0), way_area DESC
+        ) AS water_areas_low_zoom
     properties:
-      cache-features: true
       minzoom: 5
-      maxzoom: 9
+      maxzoom: 6
