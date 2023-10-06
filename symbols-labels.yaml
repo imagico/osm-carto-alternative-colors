@@ -57,8 +57,8 @@ settings:
   table_points: planet_osm_point
   table_lines: planet_osm_line
   table_polygons: planet_osm_polygon
-  #labels_symbols: separate
-  labels_symbols: combined
+  labels_symbols: separate
+  #labels_symbols: combined
 
 # For tag interpretation priorities for geometries with tags
 # matching different feature types:
@@ -68,6 +68,9 @@ settings:
 
 keys:
   - aeroway
+  - railway
+  - highway
+  - aerialway
   - tourism
   - amenity
   - office
@@ -83,7 +86,6 @@ keys:
   - place
   - historic
   - military
-  - highway
   - ford
   - boundary
   - barrier
@@ -156,6 +158,7 @@ styles:
   standard: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
       marker-file: url('[[symbol_file]]');
@@ -199,6 +202,7 @@ styles:
       textonly/text-avoid-edges: true;
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[name]';
       text-size: [[label_size]];
@@ -214,6 +218,22 @@ styles:
       [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
       text-halo-radius: @standard-halo-radius * [[halo_radius]];
       text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
     }
     [vis_type = 'label-only'] {
       text-placement: interior;
@@ -236,6 +256,7 @@ styles:
     [zoom >= [[start_symbol]]] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
         marker-file: url('[[symbol_file]]');
       }
       [vis_type = 'symbol-label'] {
@@ -246,8 +267,11 @@ styles:
         textonly/text-size: [[label_size]];
       }
       [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
         text-dy: [[text_dy]];
         text-size: [[label_size]];
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-size: [[label_size]];
       }
       [vis_type = 'label-only'] { text-size: [[label_size]]; }
     }
@@ -256,6 +280,7 @@ styles:
     [[attribute_selector]] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
         marker-file: url('[[symbol_file]]');
       }
       [vis_type = 'symbol-label'] {
@@ -266,8 +291,11 @@ styles:
         textonly/text-size: [[label_size]];
       }
       [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
         text-dy: [[text_dy]];
         text-size: [[label_size]];
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-size: [[label_size]];
       }
       [vis_type = 'label-only'] { text-size: [[label_size]]; }
     }
@@ -276,6 +304,7 @@ styles:
     [[attribute_selector]][zoom >= [[start_symbol]]] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
         marker-file: url('[[symbol_file]]');
       }
       [vis_type = 'symbol-label'] {
@@ -286,8 +315,11 @@ styles:
         textonly/text-size: [[label_size]];
       }
       [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
         text-dy: [[text_dy]];
         text-size: [[label_size]];
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-size: [[label_size]];
       }
       [vis_type = 'label-only'] { text-size: [[label_size]]; }
     }
@@ -296,6 +328,7 @@ styles:
     [zoom < [[zoom_limit]]] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
         marker-placement: interior;
         marker-clip: false;
         marker-file: url('[[symbol_file]]');
@@ -339,6 +372,7 @@ styles:
         textonly/text-avoid-edges: true;
       }
       [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
         text-placement: interior;
         text-name: '[name]';
         text-size: [[label_size]];
@@ -354,6 +388,22 @@ styles:
         [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
         text-halo-radius: @standard-halo-radius * [[halo_radius]];
         text-halo-fill: @standard-halo-fill;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: [[label_size]];
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: [[label_color]];
+        textonly/text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
       }
       [vis_type = 'label-only'] {
         text-placement: interior;
@@ -376,6 +426,7 @@ styles:
   access-light: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
       marker-file: url('[[symbol_file]]');
@@ -430,6 +481,7 @@ styles:
       }
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[name]';
       text-size: [[label_size]];
@@ -445,9 +497,27 @@ styles:
       [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
       text-halo-radius: @standard-halo-radius * [[halo_radius]];
       text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
       [int_access = 'restricted'] {
         text-opacity: @private-opacity;
         text-halo-radius: 0;
+        textonly/text-opacity: @private-opacity;
+        textonly/text-halo-radius: 0;
       }
     }
     [vis_type = 'label-only'] {
@@ -474,6 +544,7 @@ styles:
   ref: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
       marker-file: url('[[symbol_file]]');
@@ -502,6 +573,7 @@ styles:
       symbolonly/marker-file: url('[[symbol_file]]');
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[ref]';
       text-size: [[label_size]];
@@ -526,6 +598,7 @@ styles:
   operator: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
       marker-file: url('[[symbol_file]]');
@@ -554,6 +627,7 @@ styles:
       symbolonly/marker-file: url('[[symbol_file]]');
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[operator]';
       text-size: [[label_size]];
@@ -578,6 +652,7 @@ styles:
   with-elevation: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
       marker-file: url('[[symbol_file]]');
@@ -655,6 +730,7 @@ styles:
       nameonly/text-avoid-edges: true;
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
       text-size: [[label_size]];
@@ -670,6 +746,55 @@ styles:
       [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
+      symbolnameonly/text-anchor-cond: '[osm_id]';
+      symbolnameonly/text-placement: interior;
+      symbolnameonly/text-name: '[name]';
+      symbolnameonly/text-size: [[label_size]];
+      symbolnameonly/text-wrap-width: @standard-wrap-width;
+      symbolnameonly/text-line-spacing: @standard-line-spacing-size;
+      symbolnameonly/text-fill: [[label_color]];
+      symbolnameonly/text-dy: [[text_dy]];
+      symbolnameonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-bg; }
+      symbolnameonly/text-halo-radius: @standard-halo-radius;
+      symbolnameonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      textonly/text-size: [[label_size]];
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: [[label_color]];
+      textonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-vertical-alignment: bottom;
+      textonly/text-avoid-edges: true;
+      nameonly/text-anchor-cond: "'!'+[osm_id]";
+      nameonly/text-placement: interior;
+      nameonly/text-name: '[name]';
+      nameonly/text-size: [[label_size]];
+      nameonly/text-wrap-width: @standard-wrap-width;
+      nameonly/text-line-spacing: @standard-line-spacing-size;
+      nameonly/text-fill: [[label_color]];
+      nameonly/text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { nameonly/text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { nameonly/text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { nameonly/text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { nameonly/text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { nameonly/text-face-name: @[[font_type]]-fonts-bg; }
+      nameonly/text-halo-radius: @standard-halo-radius;
+      nameonly/text-halo-fill: @standard-halo-fill;
+      nameonly/text-avoid-edges: true;
     }
 
   symbol-only: |
@@ -704,6 +829,7 @@ styles:
   spring: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
       marker-file: url('symbols/water/[[feature]]_small.svg');
@@ -712,15 +838,9 @@ styles:
         marker-file: url('symbols/water/[[feature]]_small_intermittent.svg');
         [zoom >= 16] { marker-file: url('symbols/water/[[feature]]_intermittent.svg'); }
       }
-      [drinking_water = 'yes'][zoom >= 17] {
-        supplement/marker-file: url('symbols/water/drinking.svg');
-        supplement/marker-fill: @water-icon;
-        supplement/marker-transform: 'translate(-9,-5)';
-        supplement/marker-placement: interior;
-        supplement/marker-clip: false;
-      }
     }
     [vis_type = 'symbol-label'] {
+      shield-anchor-set: '[osm_id]';
       shield-placement: interior;
       shield-clip: false;
       shield-name: '[name]';
@@ -739,6 +859,7 @@ styles:
       shield-text-dy: [[text_dy]];
       shield-unlock-image: true;
       shield-file: url('symbols/water/[[feature]]_small.svg');
+      symbolonly/marker-anchor-set: '[osm_id]';
       symbolonly/marker-placement: interior;
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/water/[[feature]]_small.svg');
@@ -769,15 +890,9 @@ styles:
           symbolonly/marker-file: url('symbols/water/[[feature]]_intermittent.svg');
         }
       }
-      [drinking_water = 'yes'][zoom >= 17] {
-        supplement/marker-file: url('symbols/water/drinking.svg');
-        supplement/marker-fill: @water-icon;
-        supplement/marker-transform: 'translate(-9,-5)';
-        supplement/marker-placement: interior;
-        supplement/marker-clip: false;
-      }
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[name]';
       text-size: [[label_size]];
@@ -815,6 +930,7 @@ styles:
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'],
     [vis_type = 'symbol-label'] {
+      marker-anchor-set: '[osm_id]';
       marker-fill: [[symbol_color]];
       marker-allow-overlap: true;
       marker-line-width: 0;
@@ -825,13 +941,6 @@ styles:
         marker-height: 2.5;
       }
       marker-ignore-placement: true;
-      [drinking_water = 'yes'][zoom >= 17] {
-        supplement/marker-file: url('symbols/water/drinking.svg');
-        supplement/marker-fill: @water-icon;
-        supplement/marker-transform: 'translate(-9,-5)';
-        supplement/marker-placement: interior;
-        supplement/marker-clip: false;
-      }
     }
     [vis_type = 'symbol-label'] {
       text-placement: interior;
@@ -849,15 +958,9 @@ styles:
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       text-dy: 7;
-      [drinking_water = 'yes'][zoom >= 17] {
-        supplement/marker-file: url('symbols/water/drinking.svg');
-        supplement/marker-fill: @water-icon;
-        supplement/marker-transform: 'translate(-9,-5)';
-        supplement/marker-placement: interior;
-        supplement/marker-clip: false;
-      }
     }
     [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
       text-placement: interior;
       text-name: '[name]';
       text-size: [[label_size]];
@@ -875,34 +978,23 @@ styles:
       text-halo-fill: @standard-halo-fill;
     }
 
-  water-symbol-variant: |
+  large-symbol-variant: |
     [zoom >= [[start_symbol]]] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
         marker-file: url('[[symbol_file]]');
-        [drinking_water = 'yes'] {
-          supplement/marker-file: url('symbols/water/drinking.svg');
-          supplement/marker-fill: @water-icon;
-          supplement/marker-transform: 'translate(-9,-5)';
-          supplement/marker-placement: interior;
-          supplement/marker-clip: false;
-        }
       }
       [vis_type = 'symbol-label'] {
+        shield-anchor-set: '[osm_id]';
         shield-file: url('[[symbol_file]]');
         shield-size: [[label_size]];
         shield-text-dy: [[text_dy]];
         symbolonly/marker-file: url('[[symbol_file]]');
         textonly/text-size: [[label_size]];
-        [drinking_water = 'yes'] {
-          supplement/marker-file: url('symbols/water/drinking.svg');
-          supplement/marker-fill: @water-icon;
-          supplement/marker-transform: 'translate(-9,-5)';
-          supplement/marker-placement: interior;
-          supplement/marker-clip: false;
-        }
       }
       [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
         text-dy: [[text_dy]];
         text-size: [[label_size]];
       }
@@ -1109,6 +1201,8 @@ attributes:
     always: true
   brand:
     always: true
+  osm_id:
+    always: true
   int_access:
     sql: CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
     attributes:
@@ -1240,8 +1334,15 @@ features:
     label_color: amenity-text
     start_symbol: 16
     start_label: 17
+    modifications:
+      public_transport:
+        attribute: "shelter_type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/shelter/public_transport.svg
+        text_dy: 9
     attributes:
-      - int_elevation
+      int_elevation: (tags->'shelter_type' NOT IN ('public_transport') OR (tags->'shelter_type') IS NULL)
+      shelter_type:
   tourism=alpine_hut:
     style: with-elevation
     symbol_file: symbols/sources/shelter/alpine_hut.svg
@@ -1297,7 +1398,6 @@ features:
     label_color: accommodation-text
     start_symbol: 18
     start_label: 18
-
 
   tourism=information:
     symbol_file: symbols/sources/tourism/office.svg
@@ -1916,6 +2016,7 @@ features:
     start_symbol: 17
     start_label: 17
     text_dy: 10
+    condition: (("natural" IS NULL OR "natural" NOT IN ('spring', 'hot_spring')) AND (man_made IS NULL OR man_made NOT IN ('water_well')))
   amenity=water_point:
     symbol_file: symbols/sources/water/water_tap.svg
     symbol_color: water-icon
@@ -1923,6 +2024,12 @@ features:
     start_symbol: 17
     start_label: 17
     text_dy: 10
+    variants:
+      drinking_water:
+        condition: drinking_water = 'yes'
+        symbol_file: symbols/sources/water/drinking_water.svg
+    attributes:
+      - drinking_water
   man_made=water_tap:
     symbol_file: symbols/sources/water/water_tap.svg
     symbol_color: water-icon
@@ -1967,7 +2074,7 @@ features:
     text_dy: 6
     modifications:
       large:
-        style: water-symbol-variant
+        style: standard-symbol-zoom-variant
         start_symbol: 17
         symbol_file: symbols/sources/water/well.svg
     attributes:
@@ -1981,7 +2088,7 @@ features:
     text_dy: 6
     modifications:
       large:
-        style: water-symbol-variant
+        style: standard-symbol-zoom-variant
         start_symbol: 18
         text_dy: 9
         symbol_file: symbols/sources/water/fountain.svg
@@ -2023,7 +2130,7 @@ features:
     text_dy: 7
     modifications:
       large:
-        style: water-symbol-variant
+        style: large-symbol-variant
         start_symbol: 12
         symbol_file: symbols/sources/natural/peak.svg
     attributes:
@@ -2038,7 +2145,7 @@ features:
     text_dy: 11
     modifications:
       large:
-        style: water-symbol-variant
+        style: large-symbol-variant
         start_symbol: 14
         symbol_file: symbols/sources/natural/volcano.svg
     attributes:

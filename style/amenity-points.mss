@@ -234,3 +234,76 @@
     }
   }
 }
+
+#addon-symbols-shelter[zoom >= 16] {
+  [feature = 'shelter'] {
+    marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
+    marker-allow-overlap-anchor: '[osm_id]';
+    marker-anchor-set: '[osm_id_shelter]';
+    marker-file: url('symbols/transport/bus_stop_shelter_addon.svg');
+    marker-fill: @transportation-icon;
+    marker-transform: 'translate(0,-5)';
+    marker-placement: interior;
+    marker-clip: false;
+
+    [zoom >= 17] {
+      marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
+      marker-allow-overlap-anchor: '[osm_id]';
+      marker-anchor-set: '[osm_id_shelter]';
+      marker-file: url('symbols/transport/bus_stop_shelter_addon_left.svg');
+      marker-fill: @transportation-icon;
+      marker-transform: 'translate(-4,-7)';
+      marker-placement: interior;
+      marker-clip: false;
+
+      alt/marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
+      alt/marker-allow-overlap-anchor: '[osm_id]';
+      alt/marker-anchor-set: '[osm_id_shelter]';
+      alt/marker-file: url('symbols/transport/bus_stop_shelter_addon_right.svg');
+      alt/marker-fill: @transportation-icon;
+      alt/marker-transform: 'translate(4,-7)';
+      alt/marker-placement: interior;
+      alt/marker-clip: false;
+    }
+  }
+}
+
+#addon-symbols-water[zoom >= 17] {
+  [feature = 'drinking_water'] {
+    marker-anchor-cond: '[osm_id]';
+    marker-allow-overlap-anchor: '[osm_id]';
+    marker-anchor-set: "'dw_'+[osm_id]";
+    marker-file: url('symbols/water/drinking.svg');
+    marker-fill: @water-icon;
+    marker-transform: 'translate([xdist],[ydist])';
+    marker-placement: interior;
+    marker-clip: false;
+
+    dir2/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
+    dir2/marker-allow-overlap-anchor: '[osm_id]';
+    dir2/marker-anchor-set: "'dw_'+[osm_id]";
+    dir2/marker-file: url('symbols/water/drinking.svg');
+    dir2/marker-fill: @water-icon;
+    dir2/marker-transform: 'translate(-1*[xdist],[ydist])';
+    dir2/marker-placement: interior;
+    dir2/marker-clip: false;
+
+    dir3/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
+    dir3/marker-allow-overlap-anchor: '[osm_id]';
+    dir3/marker-anchor-set: "'dw_'+[osm_id]";
+    dir3/marker-file: url('symbols/water/drinking.svg');
+    dir3/marker-fill: @water-icon;
+    dir3/marker-transform: 'translate([xdist2],[ydist2])';
+    dir3/marker-placement: interior;
+    dir3/marker-clip: false;
+
+    dir4/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
+    dir4/marker-allow-overlap-anchor: '[osm_id]';
+    dir4/marker-anchor-set: "'dw_'+[osm_id]";
+    dir4/marker-file: url('symbols/water/drinking.svg');
+    dir4/marker-fill: @water-icon;
+    dir4/marker-transform: 'translate(-1*[xdist2],[ydist2])';
+    dir4/marker-placement: interior;
+    dir4/marker-clip: false;
+  }
+}

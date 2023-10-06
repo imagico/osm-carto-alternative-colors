@@ -1,0 +1,147 @@
+# ---------------------------------------------------------------------------
+#  addon-symbols.mml
+#
+#  addon symbols for amenity-points symbology with lower priority
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: addon-symbols-shelter
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            feature,
+            osm_id_shelter,
+            osm_id
+          FROM
+            (SELECT
+                way,
+                'shelter' AS feature,
+                COALESCE(
+                  (SELECT
+                      osm_id
+                    FROM planet_osm_polygon s
+                    WHERE ST_DWithin(p.way, s.way, 28.0*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      AND amenity = 'shelter'
+                    ORDER BY osm_id ASC LIMIT 1
+                  ),
+                  (SELECT
+                      osm_id
+                    FROM planet_osm_point s
+                    WHERE ST_DWithin(p.way, s.way, 28.0*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      AND amenity = 'shelter'
+                    ORDER BY osm_id ASC LIMIT 1
+                  ),
+                  CASE WHEN implicit_shelter = 'yes' THEN 0 ELSE NULL END
+                ) AS osm_id_shelter,
+                osm_id
+              FROM
+                (SELECT
+                    way,
+                    highway,
+                    CASE WHEN (tags->'shelter') = 'yes' THEN 'yes' ELSE 'no' END AS implicit_shelter,
+                    osm_id
+                  FROM planet_osm_point
+                  WHERE way && !bbox!
+                UNION ALL
+                SELECT
+                    ST_PointOnSurface(way) AS way,
+                    highway,
+                    CASE WHEN (tags->'shelter') = 'yes' THEN 'yes' ELSE 'no' END AS implicit_shelter,
+                    osm_id
+                  FROM planet_osm_polygon
+                  WHERE way && !bbox!) AS p
+              WHERE highway = 'bus_stop'
+            ) AS _
+          WHERE osm_id_shelter IS NOT NULL
+        ) AS addon_symbols_shelter
+    properties:
+      minzoom: 16
+  - id: addon-symbols-water
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            feature,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 8 ELSE 10 END) AS xdist,
+            (CASE WHEN az BETWEEN 60 AND 300 THEN -5 ELSE 0 END) AS ydist,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 10 ELSE 8 END) AS xdist2,
+            (CASE WHEN az BETWEEN 60 AND 300 THEN 0 ELSE -5 END) AS ydist2,
+            osm_id
+          FROM
+            (SELECT
+                way,
+                'drinking_water' AS feature,
+                COALESCE(
+                  (SELECT
+                      -- this determines the direction of a point on the waterway(s) intersecting the node with a 1 pixel circle around the node
+                      -- which approximates the direction of the waterway, hence where best not to place the addon symbol
+                      degrees(ST_Azimuth(p.way, ST_PointOnSurface(ST_Intersection(ST_Boundary(ST_Buffer(p.way, 1.0*NULLIF(!scale_denominator!*0.001*0.28,0))), ST_Collect(l.way)))))
+                    FROM planet_osm_line l
+                    WHERE ST_DWithin(p.way, l.way, 0.1) AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+                  ),
+                  120.0
+                ) AS az,
+                osm_id
+              FROM
+                (SELECT
+                    way,
+                    "natural",
+                    man_made,
+                    amenity,
+                    tags->'drinking_water' AS drinking_water,
+                    osm_id
+                  FROM planet_osm_point
+                  WHERE way && !bbox!
+                UNION ALL
+                SELECT
+                    ST_PointOnSurface(way) AS way,
+                    "natural",
+                    man_made,
+                    amenity,
+                    tags->'drinking_water' AS drinking_water,
+                    osm_id
+                  FROM planet_osm_polygon
+                  WHERE way && !bbox!) AS p
+              WHERE ("natural" IN ('spring', 'hot_spring') OR man_made IN ('water_well') OR amenity IN ('fountain'))
+                AND (amenity = 'drinking_water' OR drinking_water = 'yes')
+            ) AS _
+        ) AS addon_symbols_water
+    properties:
+      minzoom: 17

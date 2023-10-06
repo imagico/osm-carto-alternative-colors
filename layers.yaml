@@ -251,6 +251,12 @@ layers:
     source: layers/symbols-labels-generated.mml
     stylesheets:
       - style/symbols-labels-generated.mss
+  addon-symbols:
+    source: layers/addon-symbols.mml
+    stylesheets:
+      - style/amenity-points.mss
+    tags:
+      - "ac"
   power-towers:
     source: layers/power-towers.mml
     stylesheets:
