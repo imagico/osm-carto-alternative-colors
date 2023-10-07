@@ -1950,6 +1950,7 @@ features:
     start_label: 15
     font_type: bold
     halo_radius: 1.5
+    text_dy: 7
     modifications:
       size_6:
         style: standard-symbol-zoom-variant
@@ -1962,6 +1963,7 @@ features:
     start_symbol: 13
     start_label: 16
     halo_radius: 1.5
+    text_dy: 7
     modifications:
       size_6:
         style: standard-symbol-zoom-variant
@@ -1974,6 +1976,7 @@ features:
     start_symbol: 13
     start_label: 14
     halo_radius: 1.5
+    text_dy: 7
     modifications:
       size_6:
         style: standard-symbol-zoom-variant

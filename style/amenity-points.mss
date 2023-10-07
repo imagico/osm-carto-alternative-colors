@@ -236,10 +236,10 @@
 }
 
 #addon-symbols-shelter[zoom >= 16] {
-  [feature = 'shelter'] {
+  [feature = 'bus_stop_shelter'] {
     marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
     marker-allow-overlap-anchor: '[osm_id]';
-    marker-anchor-set: '[osm_id_shelter]';
+    marker-anchor-set: "[osm_id]+'_'+[osm_id_shelter]";
     marker-file: url('symbols/transport/bus_stop_shelter_addon.svg');
     marker-fill: @transportation-icon;
     marker-transform: 'translate(0,-5)';
@@ -249,22 +249,33 @@
     [zoom >= 17] {
       marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
       marker-allow-overlap-anchor: '[osm_id]';
-      marker-anchor-set: '[osm_id_shelter]';
+      marker-anchor-set: "[osm_id]+'_'+[osm_id_shelter]";
       marker-file: url('symbols/transport/bus_stop_shelter_addon_left.svg');
       marker-fill: @transportation-icon;
       marker-transform: 'translate(-4,-7)';
       marker-placement: interior;
       marker-clip: false;
 
-      alt/marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
+      alt/marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]+',!'+[osm_id]+'_'+[osm_id_shelter]";
       alt/marker-allow-overlap-anchor: '[osm_id]';
-      alt/marker-anchor-set: '[osm_id_shelter]';
+      alt/marker-anchor-set: "[osm_id]+'_'+[osm_id_shelter]";
       alt/marker-file: url('symbols/transport/bus_stop_shelter_addon_right.svg');
       alt/marker-fill: @transportation-icon;
       alt/marker-transform: 'translate(4,-7)';
       alt/marker-placement: interior;
       alt/marker-clip: false;
     }
+  }
+  [feature = 'railway_halt_shelter'],
+  [feature = 'tram_stop_shelter'] {
+    marker-anchor-cond: "[osm_id]+',!'+[osm_id_shelter]";
+    marker-allow-overlap-anchor: '[osm_id]';
+    marker-anchor-set: "[osm_id]+'_'+[osm_id_shelter]";
+    marker-file: url('symbols/transport/bus_stop_shelter_addon.svg');
+    marker-fill: @station-color;
+    marker-transform: 'translate(0,-5)';
+    marker-placement: interior;
+    marker-clip: false;
   }
 }
 

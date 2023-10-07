@@ -5314,29 +5314,34 @@ Layer:
           FROM
             (SELECT
                 way,
-                'shelter' AS feature,
+                CASE
+                  WHEN highway = 'bus_stop' THEN 'bus_stop_shelter'
+                  WHEN railway = 'halt' THEN 'railway_halt_shelter'
+                  WHEN railway = 'tram_stop' THEN 'tram_stop_shelter'
+                END AS feature,
                 COALESCE(
                   (SELECT
                       osm_id
                     FROM planet_osm_polygon s
                     WHERE ST_DWithin(p.way, s.way, 28.0*NULLIF(!scale_denominator!*0.001*0.28,0))
                       AND amenity = 'shelter'
-                    ORDER BY osm_id LIMIT 1
+                    ORDER BY ST_Distance(p.way, s.way) ASC, osm_id ASC LIMIT 1
                   ),
                   (SELECT
                       osm_id
                     FROM planet_osm_point s
                     WHERE ST_DWithin(p.way, s.way, 28.0*NULLIF(!scale_denominator!*0.001*0.28,0))
                       AND amenity = 'shelter'
-                    ORDER BY osm_id LIMIT 1
+                    ORDER BY ST_Distance(p.way, s.way) ASC, osm_id ASC LIMIT 1
                   ),
-                  CASE WHEN implicit_shelter = 'yes' THEN 0 ELSE NULL END
+                  CASE WHEN implicit_shelter = 'yes' AND highway = 'bus_stop' THEN 0 ELSE NULL END
                 ) AS osm_id_shelter,
                 osm_id
               FROM
                 (SELECT
                     way,
                     highway,
+                    railway,
                     CASE WHEN (tags->'shelter') = 'yes' THEN 'yes' ELSE 'no' END AS implicit_shelter,
                     osm_id
                   FROM planet_osm_point
@@ -5345,11 +5350,12 @@ Layer:
                 SELECT
                     ST_PointOnSurface(way) AS way,
                     highway,
+                    railway,
                     CASE WHEN (tags->'shelter') = 'yes' THEN 'yes' ELSE 'no' END AS implicit_shelter,
                     osm_id
                   FROM planet_osm_polygon
                   WHERE way && !bbox!) AS p
-              WHERE highway = 'bus_stop'
+              WHERE highway = 'bus_stop' OR railway = 'halt' OR railway = 'tram_stop'
             ) AS _
           WHERE osm_id_shelter IS NOT NULL
         ) AS addon_symbols_shelter
@@ -5364,9 +5370,9 @@ Layer:
         (SELECT
             way,
             feature,
-            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 8 ELSE 10 END) AS xdist,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 7 ELSE 9 END) AS xdist,
             (CASE WHEN az BETWEEN 60 AND 300 THEN -5 ELSE 0 END) AS ydist,
-            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 10 ELSE 8 END) AS xdist2,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 9 ELSE 7 END) AS xdist2,
             (CASE WHEN az BETWEEN 60 AND 300 THEN 0 ELSE -5 END) AS ydist2,
             osm_id
           FROM

@@ -6574,7 +6574,7 @@
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #4957ad;
-      shield-text-dy: 11;
+      shield-text-dy: 7;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/railway_halt.svg');
       symbolonly/marker-placement: interior;
@@ -6604,7 +6604,7 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #4957ad;
-      text-dy: 11;
+      text-dy: 7;
       text-face-name: @bold-fonts;
       [font = 'jp'] { text-face-name: @bold-fonts-jp; }
       [font = 'tc'] { text-face-name: @bold-fonts-tc; }
@@ -6687,7 +6687,7 @@
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #4957ad;
-      shield-text-dy: 11;
+      shield-text-dy: 7;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/railway_tram_stop.svg');
       symbolonly/marker-placement: interior;
@@ -6717,7 +6717,7 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #4957ad;
-      text-dy: 11;
+      text-dy: 7;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -6800,7 +6800,7 @@
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #4957ad;
-      shield-text-dy: 11;
+      shield-text-dy: 7;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/aerialway_station.svg');
       symbolonly/marker-placement: interior;
@@ -6830,7 +6830,7 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #4957ad;
-      text-dy: 11;
+      text-dy: 7;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
