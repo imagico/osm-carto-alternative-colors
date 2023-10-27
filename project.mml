@@ -118,7 +118,7 @@ Layer:
                                                       'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic')
                                                       THEN amenity ELSE NULL END)) AS amenity,
                 ('landuse_' || (CASE WHEN landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
-                                                      'allotments', 'forest', 'farmyard', 'farmland', 'greenhouse_horticulture',
+                                                      'allotments', 'forest', 'farmyard', 'farmland', 'flowerbed', 'greenhouse_horticulture',
                                                       'recreation_ground', 'village_green', 'retail', 'industrial', 'railway', 'commercial',
                                                       'brownfield', 'landfill', 'construction', 'plant_nursery', 'salt_pond') THEN landuse ELSE NULL END)) AS landuse,
                 ('leisure_' || (CASE WHEN leisure IN ('swimming_pool', 'playground', 'park', 'recreation_ground', 'common', 'garden',

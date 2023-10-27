@@ -64,6 +64,8 @@ patterns:
   - vineyard
   - plant_nursery
   - garden
+  - flowerbed_structure
+  - flowerbed_symbol
   - golf_rough
   - grave_yard_generic
   - grave_yard_christian
@@ -161,7 +163,9 @@ colors:
   vineyard: ["#aedea3", "#9bc991"]
   plant_nursery: ["#aedea3", "#749d6c"]
   garden: ["#d1efb4", "#95b973"]
-  golf_rough: ["#d1efb4", "#fdfae6"]
+  flowerbed_structure: ["#c8ebb0", "#fff5d1"]
+  flowerbed_symbol: ["#c8ebb0", "#f7f6c9"]
+  golf_rough: ["#cde9b0", "#fdfae6"]
   grave_yard_generic: ["#abccb0", "#8fbb97"]
   grave_yard_christian: ["#abccb0", "#8fbb97"]
   grave_yard_jewish: ["#abccb0", "#8fbb97"]
