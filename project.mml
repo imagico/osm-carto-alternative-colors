@@ -59,8 +59,8 @@ Stylesheet:
   - style/golf.mss
   - style/aerialways.mss
   - style/admin.mss
-  - style/power.mss
   - style/amenity-points.mss
+  - style/power.mss
   - style/placenames.mss
   - style/symbols-labels-generated.mss
   - style/addressing.mss
@@ -3559,6 +3559,19 @@ Layer:
         ) AS admin_high_zoom
     properties:
       minzoom: 13
+  - id: street-lamps
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way
+          FROM planet_osm_point
+          WHERE highway = 'street_lamp'
+        ) AS street_lamps
+    properties:
+      minzoom: 19
   - id: power-minorline
     geometry: linestring
     <<: *extents

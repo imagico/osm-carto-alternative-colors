@@ -21,6 +21,9 @@
 @tree-icon: #4d9945;
 @tree-text: @tree-icon;
 
+@street-lamp-halo: #fefecc;
+@street-lamp: @man-made-icon;
+
 @station-color: #7981b0;
 @station-text: darken(saturate(@station-color, 15%), 10%);
 
@@ -160,6 +163,34 @@
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       text-placement: interior;
+    }
+  }
+}
+
+#street-lamps [zoom >= 19] {
+  ::halo {
+    halo/opacity: 0.85;
+    halo/marker-fill: @street-lamp-halo;
+    halo/marker-allow-overlap: true;
+    halo/marker-line-width: 0;
+    halo/marker-ignore-placement: true;
+    halo/marker-width: 6;
+    halo/marker-height: 6;
+    [zoom >= 20] {
+      halo/marker-width: 7.5;
+      halo/marker-height: 7.5;
+    }
+  }
+  ::pole {
+    pole/marker-fill: @street-lamp;
+    pole/marker-allow-overlap: true;
+    pole/marker-line-width: 0;
+    pole/marker-width: 2.1;
+    pole/marker-height: 2.1;
+    pole/marker-ignore-placement: true;
+    [zoom >= 20] {
+      pole/marker-width: 2.5;
+      pole/marker-height: 2.5;
     }
   }
 }

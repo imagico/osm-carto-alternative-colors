@@ -215,6 +215,12 @@ layers:
     source: layers/admin.mml
     stylesheets:
       - style/admin.mss
+  street-lamps:
+    source: layers/street-lamps.mml
+    stylesheets:
+      - style/amenity-points.mss
+    tags:
+      - "ac"
   power-line:
     source: layers/power-line.mml
     stylesheets:
