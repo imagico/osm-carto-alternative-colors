@@ -1,0 +1,96 @@
+# ---------------------------------------------------------------------------
+#  unpaved_patterns.yaml
+#
+#  input for scripts/generate_unpaved_patterns.py
+#
+#  defines the color names for which to generate patterns
+#  and the mss files in which to search for these colors
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2023 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+
+settings:
+  dir: symbols/unpaved
+
+# List of patterns and their default adjustments
+#
+# darken:
+# The value by which the original color is darkened for the pattern foreground
+# This value should always be negative.
+#
+# brighten_darken_ratio:
+# The pattern foreground occupies less space than the background. So lightening
+# the background has to be less intense than darkening the foreground. This
+# value is multiplied with the negative value of "darken" to get a value for
+# "brighten", so brighten_darken_ration must also be negative to make sure
+# the "brighten" result is positive. This value should (only) be changed when
+# the pattern itself is changed.
+patterns:
+  unpaved:
+    source: symbols/unpaved/unpaved.svg
+    darken: -50
+    brighten_darken_ratio: -0.065
+  unknown:
+    source: symbols/unpaved/unknown.svg
+    darken: -7
+    brighten_darken_ratio: -0.35
+
+# List of names of mss files in which we search for color variables
+file_names:
+  - style/roads.mss
+  - style/road-colors-generated.mss
+  - style/landcover.mss
+
+# List of names of color variables in mss code for which we will generate
+# patterns - and the patterns to generate.
+# Can contain custom adjustments
+colors:
+  motorway-fill: unpaved
+  trunk-fill: unpaved
+  primary-fill: unpaved
+  secondary-fill: unpaved
+  tertiary-fill: unpaved
+  road-fill: unpaved
+  busway-fill: unpaved
+  residential-fill: unpaved
+  service-fill: unpaved
+  pedestrian-fill: unpaved
+  track-area-fill: unpaved
+  platform-fill: unpaved
+  aeroway-fill: unpaved
+  raceway-fill: unpaved
+  apron:
+    unpaved:
+      darken: -40
+  parking:
+    unpaved:
+      darken: -40
+    unknown:

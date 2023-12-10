@@ -55,6 +55,47 @@ END)
 $func$;
 
 /* query the language_regions polygon set to determine the default language for a certain geometry */
+CREATE OR REPLACE FUNCTION carto_local_currency(geom geometry)
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+    SELECT currency FROM language_regions WHERE ST_Intersects(ST_PointOnSurface($1), way) AND currency IS NOT NULL ORDER BY level DESC LIMIT 1
+$func$;
+
+/* query the language_regions polygon set to determine the default language for a certain geometry */
+CREATE OR REPLACE FUNCTION carto_currency_symbol(currency text)
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+    SELECT
+      CASE
+        WHEN currency = 'EUR' THEN 'euro'
+        WHEN currency IN ('USD', 'CAD', 'AUD', 'NZD', 'BND', 'HKD', 'TWD', 'SGD', 'LRD', 'NAD', 'FJD', 'BSD', 'ARS', 'CLP', 'COP', 'CUP', 'DOP', 'MXN', 'UYU', 'XCD', 'BRL') THEN 'dollar'
+        WHEN currency IN ('DZD', 'BHD', 'IQD', 'JOD', 'KWD', 'LYD', 'TND', 'MAD', 'AED', 'DZD') THEN 'dinar'
+        WHEN currency IN ('SAR', 'YER', 'OMR', 'QAR') THEN 'rial'
+        WHEN currency IN ('DKK', 'NOK', 'SEK', 'ISK') THEN 'krone'
+        WHEN currency IN ('CNY', 'YPY') THEN 'yen'
+        WHEN currency IN ('KRW', 'KPW') THEN 'won'
+        WHEN currency = 'GBP' THEN 'pound'
+        WHEN currency = 'CHF' THEN 'franc'
+        WHEN currency = 'TRY' THEN 'tr_lira'
+        WHEN currency = 'RUB' THEN 'ruble'
+        WHEN currency = 'INR' THEN 'in_rupee'
+        WHEN currency = 'IRR' THEN 'ir_rial'
+        WHEN currency = 'UAH' THEN 'hryvnia'
+        WHEN currency = 'THB' THEN 'baht'
+        WHEN currency = 'VND' THEN 'dong'
+        WHEN currency = 'ILS' THEN 'shekel'
+        WHEN currency = 'PHP' THEN 'ph_peso'
+        WHEN currency = 'ZAR' THEN 'rand'
+        WHEN currency = 'PLN' THEN 'zloty'
+        ELSE 'unknown'
+     END
+$func$;
+
+/* query the language_regions polygon set to determine the default language for a certain geometry */
 CREATE OR REPLACE FUNCTION carto_default_language(geom geometry)
   RETURNS text
   LANGUAGE SQL

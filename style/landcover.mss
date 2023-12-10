@@ -58,8 +58,9 @@
 @aerodrome-line: @transportation-line;
 @garages: @transportation;
 @garages-line: @transportation-line;
-@apron: #e9d1ff;
 @parking: #faecdd;  // Lch(94,9,76)
+@parking-outline: saturate(darken(@parking, 35%), 20%);
+@apron: #e9d1ff;
 @railway: @industrial;
 @railway-line: @industrial-line;
 @rest_area: #efc8c8; // also services
@@ -739,8 +740,20 @@
       polygon-fill: @built-up-lowzoom;
       [zoom >= 12] { polygon-fill: @parking; }
       [zoom >= 15] {
+        [surface = 'unpaved'] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_parking.svg');
+          polygon-pattern-alignment: global;
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        }
+        [surface = 'unknown'][zoom >= 18] {
+          polygon-pattern-file: url('symbols/unpaved/unknown_parking.svg');
+          polygon-pattern-alignment: global;
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        }
         line-width: 0.3;
-        line-color: desaturate(darken(@parking, 40%), 20%);
+        line-color: @parking-outline;
       }
       [way_pixels >= 4]  { polygon-gamma: 0.75; }
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
@@ -751,6 +764,10 @@
       [zoom >= 11] { polygon-fill: @aerodrome; }
       [zoom >= 12] { polygon-fill: @apron; }
       [zoom >= 15] {
+        [surface = 'unpaved'] {
+          polygon-pattern-file: url('symbols/unpaved/unpaved_apron.svg');
+          polygon-pattern-alignment: global;
+        }
         line-width: 0.3;
         line-color: darken(@apron, 7%);
       }
@@ -831,101 +848,222 @@
       [way_pixels >= 4]  { polygon-gamma: 0.75; }
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
     }
+
+    [feature = 'amenity_parking_space'][zoom >= 18] {
+      [zoom >= 19] {
+        polygon-fill: @parking;
+        polygon-comp-op: dst-out;
+      }
+      line-width: 0.3;
+      line-color: mix(@parking-outline, @parking, 50%);
+    }
   }
 
-  [zoom >= 13] {
-    ::backdrop {
-      [feature = 'leisure_pitch'] {
-        polygon-fill: @pitch;
-        [way_pixels >= 4]  { polygon-gamma: 0.75; }
-        [way_pixels >= 64] { polygon-gamma: 0.3;  }
-        [zoom >= 15][way_pixels >= 480] {
-          [sport = 'soccer'] {
-            marker-file: url('symbols/sport/soccer.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
+  ::backdrop {
+    [zoom >= 13] {
+    [feature = 'leisure_pitch'] {
+      polygon-fill: @pitch;
+      [zoom >= 15][way_pixels >= 480] {
+        [sport = 'soccer'] {
+          marker-file: url('symbols/sport/soccer.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'handball'] {
+          marker-file: url('symbols/sport/handball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'baseball'] {
+          marker-file: url('symbols/sport/baseball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'basketball'] {
+          marker-file: url('symbols/sport/basketball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'american_football'] {
+          marker-file: url('symbols/sport/american_football.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'tennis'] {
+          marker-file: url('symbols/sport/tennis.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'skateboard'] {
+          marker-file: url('symbols/sport/skateboard.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'boules'],
+        [sport = 'bowls'] {
+          marker-file: url('symbols/sport/boules.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
             [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [sport = 'volleyball'],
+        [sport = 'beachvolleyball'] {
+          marker-file: url('symbols/sport/volleyball.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@pitch, 16%), 5%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+      }
+      comp-op: dst-over;
+    }
+    }
+    [zoom >= 19] {
+    [feature = 'amenity_parking_space'] {
+      polygon-fill: @parking;
+      [surface = 'unpaved'] {
+        polygon-pattern-file: url('symbols/unpaved/unpaved_parking.svg');
+        polygon-pattern-alignment: global;
+      }
+      [surface = 'unknown'] {
+        polygon-pattern-file: url('symbols/unpaved/unknown_parking.svg');
+        polygon-pattern-alignment: global;
+      }
+      [way_pixels >= 160] {
+        [int_parking_space = 'disabled'] {
+          bkg/marker-file: url('symbols/transport/disabled.svg');
+          bkg/marker-placement: interior;
+          bkg/marker-clip: false;
+          bkg/marker-line-color: @parking;
+          bkg/marker-line-width: 2.5;
+          bkg/marker-ignore-placement: true;
+          bkg/marker-allow-overlap: true;
+          symbol/marker-file: url('symbols/transport/disabled.svg');
+          symbol/marker-placement: interior;
+          symbol/marker-clip: false;
+          symbol/marker-fill: desaturate(darken(@parking, 16%), 5%);
+          symbol/marker-ignore-placement: true;
+          symbol/marker-allow-overlap: true;
+          [way_pixels >= 640] {
+            bkg/marker-transform: 'scale (2)';
+            symbol/marker-transform: 'scale (2)';
+            symbol/marker-fill: desaturate(darken(@parking, 9%), 5%);
           }
-          [sport = 'handball'] {
-            marker-file: url('symbols/sport/handball.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [int_parking_space = 'charging'] {
+          bkg/marker-file: url('symbols/transport/charging.svg');
+          bkg/marker-placement: interior;
+          bkg/marker-clip: false;
+          bkg/marker-line-color: @parking;
+          bkg/marker-line-width: 2.5;
+          bkg/marker-ignore-placement: true;
+          bkg/marker-allow-overlap: true;
+          symbol/marker-file: url('symbols/transport/charging.svg');
+          symbol/marker-placement: interior;
+          symbol/marker-clip: false;
+          symbol/marker-fill: desaturate(darken(@parking, 16%), 5%);
+          symbol/marker-ignore-placement: true;
+          symbol/marker-allow-overlap: true;
+          [way_pixels >= 640] {
+            bkg/marker-transform: 'scale (2)';
+            symbol/marker-transform: 'scale (2)';
+            symbol/marker-fill: desaturate(darken(@parking, 9%), 5%);
           }
-          [sport = 'baseball'] {
-            marker-file: url('symbols/sport/baseball.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [int_parking_space = 'shopping'] {
+          bkg/marker-file: url('symbols/transport/shopping_large.svg');
+          bkg/marker-placement: interior;
+          bkg/marker-clip: false;
+          bkg/marker-line-color: @parking;
+          bkg/marker-line-width: 2.5;
+          bkg/marker-ignore-placement: true;
+          bkg/marker-allow-overlap: true;
+          symbol/marker-file: url('symbols/transport/shopping_large.svg');
+          symbol/marker-placement: interior;
+          symbol/marker-clip: false;
+          symbol/marker-fill: desaturate(darken(@parking, 16%), 5%);
+          symbol/marker-ignore-placement: true;
+          symbol/marker-allow-overlap: true;
+          [way_pixels >= 640] {
+            bkg/marker-transform: 'scale (2)';
+            symbol/marker-transform: 'scale (2)';
+            symbol/marker-fill: desaturate(darken(@parking, 9%), 5%);
           }
-          [sport = 'basketball'] {
-            marker-file: url('symbols/sport/basketball.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+        }
+        [int_parking_space = 'private'],
+        [int_parking_space = 'capacity'] {
+          text-name: "[int_parking_label]";
+          text-face-name: @standard-font;
+          text-size: 11;
+          text-placement: interior;
+          text-fill: desaturate(darken(@parking, 16%), 5%);
+          [way_pixels >= 640] {
+            text-size: 14;
+            symbol/marker-fill: desaturate(darken(@parking, 9%), 5%);
           }
-          [sport = 'american_football'] {
-            marker-file: url('symbols/sport/american_football.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
-          }
-          [sport = 'tennis'] {
-            marker-file: url('symbols/sport/tennis.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
-          }
-          [sport = 'skateboard'] {
-            marker-file: url('symbols/sport/skateboard.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
-          }
-          [sport = 'boules'],
-          [sport = 'bowls'] {
-            marker-file: url('symbols/sport/boules.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-              [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
-          }
-          [sport = 'volleyball'],
-          [sport = 'beachvolleyball'] {
-            marker-file: url('symbols/sport/volleyball.svg');
-            marker-placement: interior;
-            marker-clip: false;
-            marker-fill: desaturate(darken(@pitch, 16%), 5%);
-            marker-ignore-placement: true;
-            marker-allow-overlap: true;
-            [way_pixels >= 3200] { marker-transform: 'scale (2)'; marker-fill: desaturate(darken(@pitch, 10%), 5%); }
+          text-allow-overlap: true;
+          text-halo-radius: 2.5;
+          text-halo-fill: @parking;
+        }
+      }
+      [way_pixels >= 240] {
+        [int_parking_space = 'bus'] {
+          bkg/marker-file: url('symbols/transport/bus.svg');
+          bkg/marker-placement: interior;
+          bkg/marker-clip: false;
+          bkg/marker-line-color: @parking;
+          bkg/marker-line-width: 2.5;
+          bkg/marker-ignore-placement: true;
+          bkg/marker-allow-overlap: true;
+          symbol/marker-file: url('symbols/transport/bus.svg');
+          symbol/marker-placement: interior;
+          symbol/marker-clip: false;
+          // bus symbol is somewhat larger so it can be a bit weaker
+          symbol/marker-fill: desaturate(darken(@parking, 12%), 5%);
+          symbol/marker-ignore-placement: true;
+          symbol/marker-allow-overlap: true;
+          [way_pixels >= 640] {
+            bkg/marker-transform: 'scale (2)';
+            symbol/marker-transform: 'scale (2)';
+            symbol/marker-fill: desaturate(darken(@parking, 6%), 4%);
           }
         }
       }
       comp-op: dst-over;
+    }
     }
   }
 }

@@ -20,6 +20,18 @@ described [in this blog post](https://imagico.de/blog/en/competing-priorities-sy
 Symbol sources can be found in the [sources/](sources/) subdirectory, the definition 
 of colors and rendering parameters in [symbols-labels.yaml](../symbols-labels.yaml)
 
+Addon symbols for augmenting other point symbols are rendered directly from their SVG sources.  These can be seen in preview here:
+
+![contact sheet point symbols](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_symbols_amenity-points.png)
+![contact sheet currency symbols](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_symbols_currencies.png)
+
+## Single symbol patterns
+
+Single symbol patterns are rendered directly from SVG files.  They are currently used for indicating the type of sport on `leisure=pitch`, parking spaces and some building types.  Here are uncolored previews of the symbols used:
+
+![contact sheet landcover](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_symbols_landcover.png)
+![contact sheet buildings](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_symbols_buildings.png)
+
 ## Line patterns
 
 ![contact sheet line patterns](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_line_patterns.png)
@@ -35,4 +47,11 @@ on parameters in [line_patterns.yaml](../line_patterns.yaml)
 
 The polygon pattern SVGs are processed with ([/scripts/generate_patterns.py](../scripts/generate_patterns.py)) based
 on parameters in [patterns.yaml](../patterns.yaml)
+
+## Unpaved road patterns
+
+![contact sheet unpaved road patterns](https://raw.github.com/imagico/osm-carto-alternative-colors/master/doc/contactsheet_unpaved_patterns.png)
+
+The unpaved road pattern SVGs are processed with ([/scripts/generate_unpaved_patterns.py](../scripts/generate_unpaved_patterns.py)) based
+on parameters in [unpaved_patterns.yaml](../unpaved_patterns.yaml)
 

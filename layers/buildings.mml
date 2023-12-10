@@ -43,7 +43,8 @@
       table: |-
         (SELECT
             way,
-            building
+            building,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE building IS NOT NULL
             AND building != 'no'

@@ -2,20 +2,22 @@
 <svg
    version="1.1"
    id="svg2"
-   viewBox="0 0 14 14"
-   height="14"
-   width="14"
+   viewBox="0 0 10 10"
+   height="10"
+   width="10"
    xmlns="http://www.w3.org/2000/svg"
    xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
   <rect
-     width="14"
-     height="14"
+     width="10"
+     height="10"
      x="0"
      y="0"
      id="canvas"
-     style="fill:none;stroke:none;visibility:hidden" />
+     style="visibility:hidden;fill:none;stroke:none" />
   <path
-     id="path4"
-     style="fill:#000000"
-     d="M 3 1 L 3 13 L 4.75 13 L 4.75 8 L 9 8 A 3 3.5 0 0 0 9 1 L 3 1 z M 4.75 2.75 L 8.5 2.75 A 1.58 1.75 0 0 1 8.5 6.25 L 4.75 6.25 L 4.75 2.75 z " />
+     id="path1-4"
+     d="M 2,0 V 10 H 4 V 6 h 2.38086 c 3.5045,-0.02378 3.5045,-6 0,-6 z M 4,2 H 6 C 7.25,2 7.25,4 6,4 H 4 Z"
+     style="fill:#000000" />
 </svg>

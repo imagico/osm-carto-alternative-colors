@@ -96,6 +96,354 @@
         ) AS addon_symbols_shelter
     properties:
       minzoom: 16
+  - id: addon-symbols-parking
+    geometry: point
+    <<: *extents
+    Datasource:
+      geometry_table: planet_osm_point
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            feature,
+            addon,
+            shopping,
+            fee,
+            lit,
+            supervised,
+            disabled,
+            women,
+            parent,
+            capacity,
+            covered,
+            osm_id
+          FROM
+            (WITH parking_points AS
+              (SELECT
+                  ST_SnapToGrid(
+                    way,
+                    NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                  amenity AS feature,
+                  CASE WHEN access = 'customers' THEN 'yes' ELSE 'no' END AS shopping,
+                  CASE WHEN fee = 'yes' THEN carto_currency_symbol(carto_local_currency(way)) ELSE 'no' END AS fee,
+                  CASE WHEN lit = 'yes' THEN 'yes' ELSE 'no' END AS lit,
+                  CASE WHEN supervised = 'yes' THEN 'yes' ELSE 'no' END AS supervised,
+                  CASE WHEN disabled ~ '^[0-9]{1,4}$' THEN disabled WHEN disabled = 'yes' THEN 'yes' ELSE 'no' END AS disabled,
+                  CASE WHEN women ~ '^[0-9]{1,4}$' THEN women WHEN women = 'yes' THEN 'yes' ELSE 'no' END AS women,
+                  CASE WHEN parent ~ '^[0-9]{1,4}$' THEN parent WHEN parent = 'yes' THEN 'yes' ELSE 'no' END AS parent,
+                  CASE WHEN capacity ~ '^[0-9]{1,4}$' THEN capacity::INTEGER ELSE 0 END AS capacity,
+                  CASE WHEN parking = 'multi-storey' OR covered = 'yes' THEN 'yes' ELSE 'no' END AS covered,
+                  osm_id
+                FROM
+                  (SELECT
+                      way,
+                      amenity,
+                      access,
+                      tags->'covered' AS covered,
+                      tags->'fee' AS fee,
+                      tags->'lit' AS lit,
+                      tags->'supervised' AS supervised,
+                      tags->'parking' AS parking,
+                      tags->'capacity:disabled' AS disabled,
+                      tags->'capacity:women' AS women,
+                      tags->'capacity:parent' AS parent,
+                      tags->'capacity' AS capacity,
+                      osm_id
+                    FROM planet_osm_point
+                    WHERE way && !bbox!
+                  UNION ALL
+                  SELECT
+                      ST_PointOnSurface(way) AS way,
+                      amenity,
+                      access,
+                      tags->'covered' AS covered,
+                      tags->'fee' AS fee,
+                      tags->'lit' AS lit,
+                      tags->'supervised' AS supervised,
+                      tags->'parking' AS parking,
+                      tags->'capacity:disabled' AS disabled,
+                      tags->'capacity:women' AS women,
+                      tags->'capacity:parent' AS parent,
+                      tags->'capacity' AS capacity,
+                      osm_id
+                    FROM planet_osm_polygon
+                    WHERE way && !bbox!) AS p
+                WHERE
+                  (amenity IN ('parking') AND (access IS NULL OR access NOT IN ('private', 'no', 'permit', 'delivery')) AND
+                    (access = 'customers' OR 
+                      covered = 'yes' OR 
+                      fee = 'yes' OR 
+                      lit = 'yes' OR 
+                      supervised = 'yes' OR 
+                      disabled IS NOT NULL OR 
+                      women IS NOT NULL OR 
+                      parent IS NOT NULL OR 
+                      capacity IS NOT NULL OR 
+                      parking = 'multi-storey')) OR
+                  (amenity IN ('motorcycle_parking', 'bicycle_parking') AND (access IS NULL OR access NOT IN ('private', 'no', 'permit', 'delivery')) AND
+                    (access = 'customers' OR 
+                      covered = 'yes' OR 
+                      fee = 'yes' OR 
+                      lit = 'yes' OR 
+                      supervised = 'yes' OR 
+                      capacity IS NOT NULL))
+              )
+              SELECT
+                  way,
+                  feature,
+                  1 AS priority,
+                  'covered' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE covered != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  2 AS priority,
+                  'disabled' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE disabled != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  3 AS priority,
+                  'parent' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE parent != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  4 AS priority,
+                  'women' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE women != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  5 AS priority,
+                  'lit' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE lit != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  6 AS priority,
+                  'shopping' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE shopping != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  7 AS priority,
+                  'supervised' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE supervised != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  8 AS priority,
+                  'fee' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE fee != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  9 AS priority,
+                  'capacity' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE capacity > 0
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  10 AS priority,
+                  'disabled_text' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE disabled NOT IN('yes', 'no')
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  11 AS priority,
+                  'parent_text' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE parent NOT IN('yes', 'no')
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  12 AS priority,
+                  'women_text' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE women NOT IN('yes', 'no')
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  13 AS priority,
+                  'lit2' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE lit != 'no'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  14 AS priority,
+                  'shopping2' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE shopping != 'no'
+            ) AS _
+          ORDER BY priority
+        ) AS addon_symbols_parking
+    properties:
+      minzoom: 17
   - id: addon-symbols-water
     geometry: point
     <<: *extents

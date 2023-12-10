@@ -46,16 +46,36 @@
             crop,
             surface,
             sport,
+            int_parking_space,
+            CASE WHEN int_parking_space = 'private' THEN '🛇' ELSE capacity END AS int_parking_label,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
             feature
           FROM (SELECT
-              way, religion, crop, surface, sport, way_area, layer,
+              way,
+              religion,
+              crop,
+              CASE WHEN amenity IN ('aeroway_apron', 'amenity_parking', 'amenity_bicycle_parking', 'amenity_motorcycle_parking', 'amenity_parking_space') THEN
+                CASE
+                  WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                                   'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
+                  WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                                   'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
+                  ELSE 'unknown'::text
+                END
+              ELSE
+                surface
+              END AS surface,
+              sport,
+              int_parking_space,
+              capacity,
+              way_area,
+              layer,
               COALESCE(aeroway, golf, amenity, wetland, power, landuse, leisure, "natural", tourism, highway, railway) AS feature
             FROM (SELECT
                 way, carto_label_name(way, name, tags, E'\n') AS name_label,
                 ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
                 ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS golf,
-                ('amenity_' || (CASE WHEN amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'university', 'college', 'school',
+                ('amenity_' || (CASE WHEN amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
                                                       'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic')
                                                       THEN amenity ELSE NULL END)) AS amenity,
                 ('landuse_' || (CASE WHEN landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
@@ -73,16 +93,33 @@
                 ('railway_' || (CASE WHEN railway = 'station' THEN railway ELSE NULL END)) AS railway,
                 CASE WHEN religion IN ('christian', 'jewish', 'muslim') THEN religion ELSE 'INT-generic'::text END AS religion,
                 CASE WHEN landuse IN ('farmland') THEN tags->'crop' ELSE tags->'trees' END AS crop,
-                surface,
+                CASE WHEN amenity IN ('parking_space') AND surface IS NULL AND z(!scale_denominator!) >= 19 THEN
+                  -- this determines the surface of the enclosing parking area because we need that for the backfill single symbol pattern
+                  (SELECT surface FROM planet_osm_polygon AS p2 WHERE ST_Intersects(p1.way,p2.way) AND amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking') AND surface IS NOT NULL ORDER BY way_area ASC LIMIT 1)
+                ELSE surface
+                END AS surface,
                 (tags->'sport') AS sport,
+                CASE WHEN amenity IN ('parking_space') AND z(!scale_denominator!) >= 19 THEN
+                  CASE 
+                    WHEN (tags->'parking_space' IN('disabled')) OR (tags->'capacity:disabled' IN('yes')) OR ((tags->'capacity:disabled' ~ '^[0-9]{1,8}$') AND (tags->'capacity:disabled')::INTEGER > 0) THEN 'disabled'
+                    WHEN tags->'parking_space' IN('bus') THEN 'bus'
+                    WHEN tags->'parking_space' IN('charging') THEN 'charging'
+                    WHEN (tags->'parking_space' IN('customers')) OR (access IN ('customers')) THEN 'shopping'
+                    WHEN (tags->'parking_space' IN('private')) OR (access IN ('private', 'no')) THEN 'private'
+                    WHEN (tags->'capacity' ~ '^[0-9]{1,4}$') AND ((tags->'capacity')::INTEGER > 1) THEN 'capacity'
+                    ELSE NULL
+                  END
+                ELSE NULL
+                END AS int_parking_space,
+                (tags->'capacity') AS capacity,
                 way_area, layer
-              FROM planet_osm_polygon
-              WHERE (landuse IS NOT NULL
+              FROM planet_osm_polygon AS p1
+              WHERE way && !bbox! AND (landuse IS NOT NULL
                 OR leisure IS NOT NULL
                 OR (tags->'golf') IS NOT NULL
                 OR aeroway IN ('apron', 'aerodrome')
-                OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'university', 'college', 'school', 'hospital', 'kindergarten',
-                               'grave_yard', 'place_of_worship', 'prison', 'clinic')
+                OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
+                               'hospital', 'kindergarten', 'grave_yard', 'place_of_worship', 'prison', 'clinic')
                 OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
                 OR power IN ('station', 'sub_station', 'substation', 'generator')
                 OR tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site')

@@ -4502,6 +4502,7 @@
     }
   }
   [feature = 'amenity_toilets'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_toilets.svg');
@@ -4509,358 +4510,64 @@
       marker-opacity: @private-opacity;
     }
   }
-  [feature = 'amenity_parking'] {
-    [vis_type = 'symbol-for-label'],
-    [vis_type = 'symbol-only'] {
-      marker-anchor-set: '[osm_id]';
-      marker-placement: interior;
-      marker-clip: false;
-      marker-file: url('symbols/colored/amenity_parking.svg');
-      [int_access = 'restricted'] {
-        marker-opacity: @private-opacity;
-      }
+  [feature = 'amenity_parking'][variant = null] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_parking.svg');
+    [int_access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
-    [vis_type = 'symbol-label'] {
-      shield-placement: interior;
-      shield-clip: false;
-      shield-name: '[name]';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
-      shield-halo-radius: @standard-halo-radius * 1.0;
-      shield-halo-fill: @standard-halo-fill;
-      shield-wrap-width: @standard-wrap-width;
-      shield-line-spacing: @standard-line-spacing-size;
-      shield-fill: #6942b0;
-      shield-text-dy: 9;
-      shield-unlock-image: true;
-      shield-file: url('symbols/colored/amenity_parking.svg');
-      symbolonly/marker-placement: interior;
-      symbolonly/marker-clip: false;
-      symbolonly/marker-file: url('symbols/colored/amenity_parking.svg');
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-      [int_access = 'restricted'] {
-        shield-opacity: @private-opacity;
-        shield-text-opacity: @private-opacity;
-        shield-halo-radius: 0;
-        symbolonly/marker-opacity: @private-opacity;
-        textonly/text-opacity: @private-opacity;
-        textonly/text-halo-radius: 0;
-      }
-    }
-    [vis_type = 'label-for-symbol'] {
-      text-anchor-cond: '[osm_id]';
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-dy: 9;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      textonly/text-anchor-cond: "'!'+[osm_id]";
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-      [int_access = 'restricted'] {
-        text-opacity: @private-opacity;
-        text-halo-radius: 0;
-        textonly/text-opacity: @private-opacity;
-        textonly/text-halo-radius: 0;
-      }
-    }
-    [vis_type = 'label-only'] {
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      [int_access = 'restricted'] {
-        text-opacity: @private-opacity;
-        text-halo-radius: 0;
-      }
+    // modification amenity_parking+large based on style symbol-only-zoom-variant
+    [zoom >= 18] {
+      marker-file: url('symbols/colored/amenity_parking_large.svg');
     }
   }
-  [feature = 'amenity_motorcycle_parking'] {
-    [vis_type = 'symbol-for-label'],
-    [vis_type = 'symbol-only'] {
+  [feature = 'amenity_parking'][variant = 'street_side'] {
       marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
-      marker-file: url('symbols/colored/amenity_motorcycle_parking.svg');
+      marker-file: url('symbols/colored/amenity_parking_street_side.svg');
       [int_access = 'restricted'] {
         marker-opacity: @private-opacity;
       }
+  }
+  [feature = 'amenity_parking_entrance/multi-storey'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_parking_entrance_multi-storey.svg');
+  }
+  [feature = 'amenity_parking_entrance/underground'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_parking_entrance_underground.svg');
+  }
+  [feature = 'amenity_motorcycle_parking'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_motorcycle_parking.svg');
+    [int_access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
-    [vis_type = 'symbol-label'] {
-      shield-placement: interior;
-      shield-clip: false;
-      shield-name: '[name]';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
-      shield-halo-radius: @standard-halo-radius * 1.0;
-      shield-halo-fill: @standard-halo-fill;
-      shield-wrap-width: @standard-wrap-width;
-      shield-line-spacing: @standard-line-spacing-size;
-      shield-fill: #6942b0;
-      shield-text-dy: 12;
-      shield-unlock-image: true;
-      shield-file: url('symbols/colored/amenity_motorcycle_parking.svg');
-      symbolonly/marker-placement: interior;
-      symbolonly/marker-clip: false;
-      symbolonly/marker-file: url('symbols/colored/amenity_motorcycle_parking.svg');
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-      [int_access = 'restricted'] {
-        shield-opacity: @private-opacity;
-        shield-text-opacity: @private-opacity;
-        shield-halo-radius: 0;
-        symbolonly/marker-opacity: @private-opacity;
-        textonly/text-opacity: @private-opacity;
-        textonly/text-halo-radius: 0;
-      }
-    }
-    [vis_type = 'label-for-symbol'] {
-      text-anchor-cond: '[osm_id]';
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-dy: 12;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      textonly/text-anchor-cond: "'!'+[osm_id]";
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-      [int_access = 'restricted'] {
-        text-opacity: @private-opacity;
-        text-halo-radius: 0;
-        textonly/text-opacity: @private-opacity;
-        textonly/text-halo-radius: 0;
-      }
-    }
-    [vis_type = 'label-only'] {
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      [int_access = 'restricted'] {
-        text-opacity: @private-opacity;
-        text-halo-radius: 0;
-      }
+    // modification amenity_motorcycle_parking+large based on style symbol-only-zoom-variant
+    [zoom >= 17] {
+      marker-file: url('symbols/colored/amenity_motorcycle_parking_large.svg');
     }
   }
   [feature = 'amenity_bicycle_parking'] {
-    [vis_type = 'symbol-for-label'],
-    [vis_type = 'symbol-only'] {
-      marker-anchor-set: '[osm_id]';
-      marker-placement: interior;
-      marker-clip: false;
-      marker-file: url('symbols/colored/amenity_bicycle_parking.svg');
-      [int_access = 'restricted'] {
-        marker-opacity: @private-opacity;
-      }
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_bicycle_parking.svg');
+    [int_access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
-    [vis_type = 'symbol-label'] {
-      shield-placement: interior;
-      shield-clip: false;
-      shield-name: '[name]';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
-      shield-halo-radius: @standard-halo-radius * 1.0;
-      shield-halo-fill: @standard-halo-fill;
-      shield-wrap-width: @standard-wrap-width;
-      shield-line-spacing: @standard-line-spacing-size;
-      shield-fill: #6942b0;
-      shield-text-dy: 12;
-      shield-unlock-image: true;
-      shield-file: url('symbols/colored/amenity_bicycle_parking.svg');
-      symbolonly/marker-placement: interior;
-      symbolonly/marker-clip: false;
-      symbolonly/marker-file: url('symbols/colored/amenity_bicycle_parking.svg');
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-      [int_access = 'restricted'] {
-        shield-opacity: @private-opacity;
-        shield-text-opacity: @private-opacity;
-        shield-halo-radius: 0;
-        symbolonly/marker-opacity: @private-opacity;
-        textonly/text-opacity: @private-opacity;
-        textonly/text-halo-radius: 0;
-      }
-    }
-    [vis_type = 'label-for-symbol'] {
-      text-anchor-cond: '[osm_id]';
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-dy: 12;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      textonly/text-anchor-cond: "'!'+[osm_id]";
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-      [int_access = 'restricted'] {
-        text-opacity: @private-opacity;
-        text-halo-radius: 0;
-        textonly/text-opacity: @private-opacity;
-        textonly/text-halo-radius: 0;
-      }
-    }
-    [vis_type = 'label-only'] {
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      [int_access = 'restricted'] {
-        text-opacity: @private-opacity;
-        text-halo-radius: 0;
-      }
+    // modification amenity_bicycle_parking+large based on style symbol-only-zoom-variant
+    [zoom >= 17] {
+      marker-file: url('symbols/colored/amenity_bicycle_parking_large.svg');
     }
   }
   [feature = 'amenity_bicycle_rental'] {
@@ -5656,21 +5363,25 @@
     }
   }
   [feature = 'emergency_phone'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/emergency_phone.svg');
   }
   [feature = 'amenity_phone'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_phone.svg');
   }
   [feature = 'highway_elevator'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/highway_elevator.svg');
   }
   [feature = 'highway_traffic_signals'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/highway_traffic_signals.svg');
@@ -5680,6 +5391,7 @@
     }
   }
   [feature = 'railway_crossing'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/railway_crossing.svg');
@@ -5689,6 +5401,7 @@
     }
   }
   [feature = 'railway_level_crossing'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/railway_level_crossing.svg');
@@ -5698,16 +5411,19 @@
     }
   }
   [feature = 'amenity_bench'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_bench.svg');
   }
   [feature = 'amenity_waste_basket'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_waste_basket.svg');
   }
   [feature = 'amenity_waste_disposal'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_waste_disposal.svg');
@@ -5831,21 +5547,25 @@
     }
   }
   [feature = 'barrier_gate'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/barrier_gate.svg');
   }
   [feature = 'barrier_lift_gate'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/barrier_lift_gate.svg');
   }
   [feature = 'barrier_swing_gate'] {
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/barrier_swing_gate.svg');
   }
   [feature = 'barrier_bollard'] {
+    marker-anchor-set: '[osm_id]';
     marker-width: 3;
     marker-line-width: 0;
     marker-fill: #7d7c7c;
@@ -5856,6 +5576,7 @@
     }
   }
   [feature = 'barrier_block'] {
+    marker-anchor-set: '[osm_id]';
     marker-width: 3;
     marker-line-width: 0;
     marker-fill: #7d7c7c;
@@ -5866,6 +5587,7 @@
     }
   }
   [feature = 'barrier_log'] {
+    marker-anchor-set: '[osm_id]';
     marker-width: 3;
     marker-line-width: 0;
     marker-fill: #7d7c7c;

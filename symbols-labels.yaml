@@ -54,6 +54,11 @@ settings:
   min_zoom: 10
   mml: layers/symbols-labels-generated.mml
   mss: style/symbols-labels-generated.mss
+  # mss files with addon symbols for contact sheet
+  addon_mss:
+    - style/amenity-points.mss
+    - style/landcover.mss
+    - style/buildings.mss
   table_points: planet_osm_point
   table_lines: planet_osm_line
   table_polygons: planet_osm_polygon
@@ -798,6 +803,7 @@ styles:
     }
 
   symbol-only: |
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('[[symbol_file]]');
@@ -808,6 +814,7 @@ styles:
     }
 
   symbol-only-access-light: |
+    marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('[[symbol_file]]');
@@ -815,7 +822,13 @@ styles:
       marker-opacity: @private-opacity;
     }
 
+  symbol-only-attribute-variant: |
+    [[attribute_selector]] {
+      marker-file: url('[[symbol_file]]');
+    }
+
   dot-only: |
+    marker-anchor-set: '[osm_id]';
     marker-width: [[marker_width]];
     marker-line-width: 0;
     marker-fill: [[symbol_color]];
@@ -1204,9 +1217,15 @@ attributes:
   osm_id:
     always: true
   int_access:
-    sql: CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
+    sql: >-
+      CASE WHEN amenity IN ('parking', 'parking_entrance', 'bicycle_parking', 'motorcycle_parking') THEN
+        CASE WHEN "access" IN ('private', 'no', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
+      ELSE
+        CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
+      END
     attributes:
       - access
+      - amenity
   int_text_offset:
     sql: >-
       ROUND(GREATEST(
@@ -1320,6 +1339,8 @@ templates:
 #   label_color: label color, default: black
 #   text_dy: text offset for label above/below symbol, default: 11
 #   type: point, line, polygon or pp (point and polygon) or all.  default: pp
+#   snap: snap coordinates to pixel grid in SQL for this feature (to facilitate precise augmentation with text)
+#         either 'even' or 'odd', default: off
 #   condition: SQL filter condition, no default
 #   attributes: Attributes needed by the feature - either as a list or with an SQL condition, no default
 #   variants: Rendering variants of this features (with different starting zoom levels or condition)
@@ -1660,39 +1681,76 @@ features:
     attributes:
       - int_access
   amenity=parking:
-    style: access-light
+    style: symbol-only-access-light
     symbol_file: symbols/sources/transport/parking.svg
     symbol_color: transportation-icon
-    label_color: transportation-text
     start_symbol: 10
-    start_label: 10
-    text_dy: 9
     way_pixels_min: 900
-    way_pixels_start_all: 17
+    way_pixels_start_all: 16
+    variants:
+      street_side:
+        condition: >-
+          "parking" IN ('street_side', 'lane')
+        symbol_file: symbols/sources/transport/parking_small.svg
+        start_symbol: 18
+    modifications:
+      large:
+        style: symbol-only-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/transport/parking_large.svg
+    condition: ("parking" IS NULL OR "parking" NOT IN ('underground'))
+    snap: even
     attributes:
-      - int_access
-  amenity=motorcycle_parking:
-    style: access-light
-    symbol_file: symbols/sources/transport/motorcycle_parking.svg
+      int_access:
+      "parking":
+  amenity=parking_entrance/multi-storey:
+    type: point
+    style: symbol-only
+    symbol_file: symbols/sources/transport/parking_small_horizontal.svg
     symbol_color: transportation-icon
-    label_color: transportation-text
+    start_symbol: 18
+    condition: ("parking" IN ('multi-storey') AND ("access" IS NULL OR "access" NOT IN ('private', 'no', 'permit', 'delivery')))
+    attributes:
+      int_access:
+      "parking":
+  amenity=parking_entrance/underground:
+    type: point
+    style: symbol-only
+    symbol_file: symbols/sources/transport/parking_small_down.svg
+    symbol_color: transportation-icon
+    start_symbol: 18
+    condition: ("parking" IN ('underground') AND ("access" IS NULL OR "access" NOT IN ('private', 'no', 'permit', 'delivery')))
+    attributes:
+      int_access:
+      "parking":
+  amenity=motorcycle_parking:
+    style: symbol-only-access-light
+    symbol_file: symbols/sources/transport/motorcycle_parking_small.svg
+    symbol_color: transportation-icon
     start_symbol: 10
-    start_label: 10
-    text_dy: 12
     way_pixels_min: 900
-    way_pixels_start_all: 17
+    way_pixels_start_all: 16
+    modifications:
+      large:
+        style: symbol-only-zoom-variant
+        start_symbol: 17
+        symbol_file: symbols/sources/transport/motorcycle_parking.svg
+    snap: even
     attributes:
       - int_access
   amenity=bicycle_parking:
-    style: access-light
-    symbol_file: symbols/sources/transport/bicycle_parking.svg
+    style: symbol-only-access-light
+    symbol_file: symbols/sources/transport/bicycle_parking_small.svg
     symbol_color: transportation-icon
-    label_color: transportation-text
     start_symbol: 10
-    start_label: 10
-    text_dy: 12
     way_pixels_min: 900
-    way_pixels_start_all: 17
+    way_pixels_start_all: 16
+    modifications:
+      large:
+        style: symbol-only-zoom-variant
+        start_symbol: 17
+        symbol_file: symbols/sources/transport/bicycle_parking.svg
+    snap: even
     attributes:
       - int_access
   amenity=bicycle_rental:
@@ -1808,8 +1866,9 @@ features:
     symbol_color: amenity-icon
     start_symbol: 19
   amenity=waste_basket:
+    type: point
     style: symbol-only
-    symbol_file: symbols/sources/amenity/waste_basket.10.svg
+    symbol_file: symbols/sources/amenity/waste_basket.svg
     symbol_color: amenity-icon
     start_symbol: 19
   amenity=waste_disposal:
@@ -1851,6 +1910,7 @@ features:
     symbol_color: gate-icon
     start_symbol: 17
   barrier=bollard:
+    type: point
     style: dot-only
     marker_width: 3
     symbol_color: bollard-icon
@@ -2117,6 +2177,7 @@ features:
     text_dy: 0
 
   natural=tree:
+    type: point
     style: label-tree
     label_color: tree-text
     start_label: 17
@@ -2124,6 +2185,7 @@ features:
       - int_text_offset
 
   natural=peak:
+    type: point
     style: with-elevation
     symbol_file: symbols/sources/natural/peak_small.svg
     symbol_color: landform-icon
@@ -2470,6 +2532,7 @@ features:
     attributes:
       - religion
   man_made=cross:
+    type: point
     symbol_file: symbols/sources/religion/christian.9.svg
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
@@ -2477,6 +2540,7 @@ features:
     start_label: 17
     text_dy: 6
   historic=wayside_cross:
+    type: point
     symbol_file: symbols/sources/religion/christian.9.svg
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
@@ -2484,6 +2548,7 @@ features:
     start_label: 17
     text_dy: 6
   historic=wayside_shrine:
+    type: point
     symbol_file: symbols/sources/religion/shrine.svg
     symbol_color: man-made-icon
     label_color: place-of-worship-text

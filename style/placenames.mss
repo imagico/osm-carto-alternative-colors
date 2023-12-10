@@ -446,3 +446,35 @@
   }
 }
 
+#placenames-small::ac {
+  [place = 'ac_test_label_left'],
+  [place = 'ac_test_label_small'],
+  [place = 'ac_test_label'] {
+    text-name: "[name]";
+    text-size: 12;
+    text-fill: @placenames-light;
+    text-face-name: @book-fonts;
+    [font = 'jp'] { text-face-name: @book-fonts-jp; }
+    [font = 'tc'] { text-face-name: @book-fonts-tc; }
+    [font = 'kr'] { text-face-name: @book-fonts-kr; }
+    [font = 'ur'] { text-face-name: @book-fonts-ur; }
+    [font = 'bg'] { text-face-name: @book-fonts-bg; }
+    text-halo-fill: white;
+    text-halo-radius: @standard-halo-radius * 1.5;
+    text-wrap-width: 60;
+    text-line-spacing: -0.60;
+    text-margin: 8.4;
+    [place = 'ac_test_label_small'] {
+      text-size: 10;
+      text-fill: @placenames;
+      text-halo-fill: @standard-halo-fill;
+      text-wrap-width: 45;
+      text-line-spacing: -0.8;
+      text-margin: 7.0;
+    }
+    [place = 'ac_test_label_left'] {
+      text-align: left;
+    }
+  }
+}
+

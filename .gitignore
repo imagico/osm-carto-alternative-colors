@@ -1,4 +1,6 @@
 .thumb.png
+symbols/unpaved/png/
+symbols/unpaved/previews/
 symbols/patterns/previews/
 symbols/patterns/processed/
 symbols/line_patterns/previews/
@@ -9,6 +11,7 @@ data/
 fonts/
 tmp/
 *.xml
+*_tmp.*
 *.osm.pbf
 node_modules/
 localconfig.json

@@ -252,6 +252,9 @@ def main():
 
     convex_hull_features = dict()
 
+    snap_features_even = set()
+    snap_features_odd = set()
+
     # this makes sure the feature keys are in correct priority order in the COALESCE()
     for key in config['keys']:
         if key not in feature_types:
@@ -452,6 +455,12 @@ def main():
             columns_polygons_direct.add("\""+fkey+"\"")
         else:
             columns_polygons.add("tags->\'"+fkey+"\' AS \""+fkey+"\"")
+
+        if 'snap' in params:
+            if (params["snap"] == 'even'):
+                snap_features_even.add(fkey+"_"+fval)
+            elif (params["snap"] == 'odd'):
+                snap_features_odd.add(fkey+"_"+fval)
 
         if 'attributes' in params:
             # we only want attributes as columns in the inner query
@@ -922,7 +931,7 @@ def main():
     cols_generated.add("way_pixels")
     cols_generated.add("zoom_threshold")
 
-    cols_combined.append("way")
+    #cols_combined.append("way")
     cols_zoom_thresholds.append("way")
     cols_final.append("way")
     cols_final_symbol_only.append("way")
@@ -1143,6 +1152,30 @@ def main():
     print (indent_base+"        "+((",\n"+indent_base+"        ").join(cols_zoom_thresholds)), file=file_mml)
     print (indent_base+"      FROM", file=file_mml)
     print (indent_base+"      (SELECT -- this subselect generates the variant and zoom_threshold columns and expands arrays", file=file_mml)
+
+    if (snap_features_even or snap_features_odd):
+        print (indent_base+"          CASE", file=file_mml)
+
+        if snap_features_even:
+            ft_snap_even = "\'"+("\', \'".join(sorted(snap_features_even)))+"\'"
+            print (indent_base+"            WHEN feature IN ("+ft_snap_even+") THEN", file=file_mml)
+            print (indent_base+"              ST_SnapToGrid(", file=file_mml)
+            print (indent_base+"                way,", file=file_mml)
+            print (indent_base+"                NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))", file=file_mml)
+
+        if snap_features_odd:
+            ft_snap_odd = "\'"+("\', \'".join(sorted(snap_features_odd)))+"\'"
+            print (indent_base+"            WHEN feature IN ("+ft_snap_odd+") THEN", file=file_mml)
+            print (indent_base+"              ST_SnapToGrid(", file=file_mml)
+            print (indent_base+"                way,", file=file_mml)
+            print (indent_base+"                0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 0.5*NULLIF(!scale_denominator!*0.001*0.28,0),", file=file_mml)
+            print (indent_base+"                NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))", file=file_mml)
+
+        print (indent_base+"            ELSE way", file=file_mml)
+        print (indent_base+"          END AS way,", file=file_mml)
+    else:
+        print (indent_base+"          way,", file=file_mml)
+
     print (indent_base+"          "+((",\n"+indent_base+"          ").join(cols_combined)), file=file_mml)
     print (indent_base+"        FROM", file=file_mml)
     print (indent_base+"        (SELECT -- This subselect generates the feature column allows filtering on it", file=file_mml)
@@ -1457,6 +1490,7 @@ def main():
     file_mss.close()
 
     if not(opts.nopreviews):
+
         if contactsheet_files:
 
             logging.info("Assembling contact sheet...")
@@ -1471,6 +1505,84 @@ def main():
                 logging.warning("'montage' error: contaxt sheet generation failed")
 
             sys.stdout.flush()
+
+        if 'addon_mss' in config["settings"]:
+
+            contactsheet_files_all = []
+
+            for mss in config["settings"]['addon_mss']:
+
+                contactsheet_files2 = []
+
+                lnm = os.path.splitext(os.path.basename(mss))[0]
+
+                fin = open(mss, "rt")
+
+                for line in fin:
+
+                    if "marker-file" in line:
+                        if "url(" in line:
+
+                            m = re.match(r".*url\([\"']*([^\"')]+)[\"']*\)", line)
+
+                            fnm = m.group(1)
+                            fnm_base = os.path.splitext(os.path.basename(fnm))[0]
+                            fnm_preview = basedir+"/previews/addon_"+fnm_base+'.png'
+
+                            if os.path.exists(fnm):
+                                if not(fnm_preview in contactsheet_files_all):
+                                    logging.info("Rasterizing preview of "+fnm_base)
+                                    svg_convert(fnm, fnm_preview, opts.inkscape, opts.dpi)
+                                    if os.path.exists(fnm_preview):
+                                        contactsheet_files2.append(fnm_preview)
+                                        contactsheet_files_all.append(fnm_preview)
+
+                fin.close()
+
+                if contactsheet_files2:
+
+                    logging.info("Assembling addon symbols contact sheet for %s..." % lnm)
+
+                    sys.stdout.flush()
+
+                    if subprocess.call(
+                        ["montage" ] + contactsheet_files2 +
+                        ["-tile", "16x", "-geometry", "1x1+4+4<", "-background", "#f2efe9",
+                         "doc/contactsheet_symbols_"+lnm+".png"],
+                        stderr=subprocess.STDOUT) != 0:
+                        logging.warning("'montage' error: contaxt sheet generation failed")
+
+                    sys.stdout.flush()
+
+
+            contactsheet_files2 = []
+
+            for filename in os.listdir("symbols/currencies"):
+                fnm = os.path.join("symbols/currencies", filename)
+                if os.path.isfile(fnm):
+                    fnm_base = os.path.splitext(os.path.basename(fnm))[0]
+                    fnm_preview = basedir+"/previews/currency_"+fnm_base+'.png'
+                    if not(fnm_preview in contactsheet_files2):
+                        logging.info("Rasterizing preview of "+fnm_base)
+                        svg_convert(fnm, fnm_preview, opts.inkscape, opts.dpi)
+                        if os.path.exists(fnm_preview):
+                            contactsheet_files2.append(fnm_preview)
+
+            if contactsheet_files2:
+
+                logging.info("Assembling currency symbols contact sheet...")
+
+                sys.stdout.flush()
+
+                if subprocess.call(
+                    ["montage" ] + contactsheet_files2 +
+                    ["-tile", "16x", "-geometry", "1x1+4+4<", "-background", "#f2efe9",
+                     "doc/contactsheet_symbols_currencies.png"],
+                    stderr=subprocess.STDOUT) != 0:
+                    logging.warning("'montage' error: contaxt sheet generation failed")
+
+                sys.stdout.flush()
+
 
 if __name__ == "__main__":
     main()
