@@ -414,6 +414,18 @@ select
         when $2 >= 16 then 4.0
         else 0.0
       end)
+    when $1 = 'sidewalk' then
+      (case
+        when $2 = 18 then 0.8
+        when $2 >= 19 then 0.9
+        else 0.0
+      end)
+    when $1 = 'parking' then
+      (case
+        when $2 = 18 then 0.8
+        when $2 >= 19 then 0.9
+        else 0.0
+      end)
     else 0.0
   end;
 $func$;

@@ -15,6 +15,7 @@
                     NULL AS construction,
                     NULL AS service,
                     NULL AS link,
+                    0 AS width_lane,
                     0 AS width_nominal,
                     0 AS width_tagged,
                     0 AS casing_width,

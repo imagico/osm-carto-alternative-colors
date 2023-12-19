@@ -72,13 +72,13 @@ AS $func$
     SELECT
       CASE
         WHEN currency = 'EUR' THEN 'euro'
-        WHEN currency IN ('USD', 'CAD', 'AUD', 'NZD', 'BND', 'HKD', 'TWD', 'SGD', 'LRD', 'NAD', 'FJD', 'BSD', 'ARS', 'CLP', 'COP', 'CUP', 'DOP', 'MXN', 'UYU', 'XCD', 'BRL') THEN 'dollar'
+        WHEN currency IN ('USD', 'CAD', 'AUD', 'NZD', 'BMD', 'BND', 'HKD', 'TWD', 'SGD', 'KYD', 'LRD', 'NAD', 'FJD', 'BSD', 'ARS', 'CLP', 'COP', 'CUP', 'DOP', 'MXN', 'UYU', 'XCD', 'BRL') THEN 'dollar'
         WHEN currency IN ('DZD', 'BHD', 'IQD', 'JOD', 'KWD', 'LYD', 'TND', 'MAD', 'AED', 'DZD') THEN 'dinar'
         WHEN currency IN ('SAR', 'YER', 'OMR', 'QAR') THEN 'rial'
         WHEN currency IN ('DKK', 'NOK', 'SEK', 'ISK') THEN 'krone'
         WHEN currency IN ('CNY', 'YPY') THEN 'yen'
         WHEN currency IN ('KRW', 'KPW') THEN 'won'
-        WHEN currency = 'GBP' THEN 'pound'
+        WHEN currency IN ('GBP', 'GIP', 'SHP', 'FKP') THEN 'pound'
         WHEN currency = 'CHF' THEN 'franc'
         WHEN currency = 'TRY' THEN 'tr_lira'
         WHEN currency = 'RUB' THEN 'ruble'

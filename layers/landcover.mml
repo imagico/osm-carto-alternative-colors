@@ -99,6 +99,7 @@
                 ELSE surface
                 END AS surface,
                 (tags->'sport') AS sport,
+                (tags->'parking') AS parking,
                 CASE WHEN amenity IN ('parking_space') AND z(!scale_denominator!) >= 19 THEN
                   CASE 
                     WHEN (tags->'parking_space' IN('disabled')) OR (tags->'capacity:disabled' IN('yes')) OR ((tags->'capacity:disabled' ~ '^[0-9]{1,8}$') AND (tags->'capacity:disabled')::INTEGER > 0) THEN 'disabled'
@@ -127,6 +128,7 @@
                 OR railway = 'station')
                 AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
             ) AS landcover
+            WHERE NOT(amenity = 'amenity_parking' AND parking = 'lane') -- lane parking is rendered separately in the roads layer
           ) AS landcover_all
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS features

@@ -38,10 +38,10 @@
 /* Function to determine the local scale factor of the map at a certain place, */
 /* that is the size of one map unit in real world units                        */
 CREATE OR REPLACE FUNCTION scale_factor (geometry)
-  returns numeric
-  language sql
-  immutable
-  returns NULL ON NULL input
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+  RETURNS NULL ON NULL INPUT
 AS $func$
 SELECT ST_DistanceSphere(ST_Transform(ST_Translate(geom, 0, 1), 4326), ST_Transform(geom, 4326))::numeric FROM (SELECT ST_Centroid($1) AS geom) AS p
 $func$;
@@ -50,10 +50,10 @@ $func$;
 /* Used to translate a way_pixels threshold into a zoom level threshold */
 /* with zoom_from_pixelsize(SQRT(way_area/way_pixels_threshold))        */
 CREATE OR REPLACE FUNCTION zoom_from_pixelsize (numeric)
-  returns numeric
-  language sql
-  immutable
-  returns NULL ON NULL input
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+  RETURNS NULL ON NULL INPUT
 AS $func$
 SELECT log(2,(2.0*PI()::numeric*6378137.0/256)/$1)
 $func$;

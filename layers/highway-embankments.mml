@@ -48,52 +48,66 @@
               -- this clips the embankment/cutting outlines with the adjacent lines that are not embankment/cutting
               (SELECT
                   COALESCE(
-                    ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
-                      (0.5*
-                        CASE WHEN o.barrier = 'hedge' THEN
-                          GREATEST(
-                            carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
-                            LEAST(carto_treerow_line_width_mapped(o.barrier, o.tags->'width', o.tags->'height', !bbox!, !scale_denominator!), 60)
+                    ST_Union(
+                      CASE WHEN (side_widths[1] = side_widths[2]) THEN
+                        ST_Buffer(ST_Intersection(o.way, l.way), (0.5*o.width_px_base + o.side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      ELSE -- separate buffering of both sides with different width
+                        ST_Union(
+                          ST_Intersection(
+                            ST_Buffer(ST_Intersection(o.way, l.way), (0.5*o.width_px_base + o.side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(o.way, -0.25*width_px_base*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*o.width_px_base + GREATEST(o.side_widths[1],o.side_widths[2]) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          ),
+                          ST_Intersection(
+                            ST_Buffer(ST_Intersection(o.way, l.way), (0.5*o.width_px_base + o.side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(o.way, 0.25*o.width_px_base*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*o.width_px_base + GREATEST(o.side_widths[1],o.side_widths[2]) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
                           )
-                        ELSE
-                          GREATEST(
-                            carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
-                            carto_highway_line_width_mapped(o.highway, CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END, o.tags->'lanes', !bbox!, !scale_denominator!)
-                          ) +
-                          (CASE WHEN
-                            z(!scale_denominator!) >= 18 AND
-                            ((o.tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
-                             (o.tags->'sidewalk:left') IN ('yes') OR
-                             (o.tags->'sidewalk:right') IN ('yes') OR
-                             (o.tags->'cycleway') IN ('track') OR
-                             (o.tags->'cycleway:left')  IN ('track') OR
-                             (o.tags->'cycleway:right') IN ('track')) THEN 7.5
-                           WHEN
-                            z(!scale_denominator!) >= 18 AND
-                            ((o.tags->'handrail') IN ('yes') OR
-                             (o.tags->'handrail:left') IN ('yes') OR
-                             (o.tags->'handrail:right') IN ('yes')) THEN 4.0
-                           ELSE 0.0 END)
-                        END + 2.5
-                      )*NULLIF(!scale_denominator!*0.001*0.28,0))),
-                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                        )
+                      END
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                   )
-                FROM planet_osm_line o
-                WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.barrier = 'hedge' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
-                  carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)) > 0.0 AND
-                  ST_DWithin(l.cline, o.way, 0.1) AND
-                  o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
-                  (
-                    (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
-                    (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
-                    (l.type = 'hedge_bank' AND NOT(o.tags @> 'hedge=>hedge_bank')) OR
-                    ((l.type = 'dyke_left' OR l.type = 'dyke_right') AND 
-                     (
-                       (o.man_made IS NULL OR o.man_made NOT IN ('dyke')) OR
-                       (l.embankment_width != (CASE WHEN o.man_made = 'dyke' THEN carto_dyke_side_width_mapped (o.tags->'width', !bbox!, !scale_denominator!) ELSE NULL END))
-                     )
-                    )
-                  )
+                FROM 
+                  (SELECT
+                      o.way AS way,
+                      CASE WHEN o.barrier = 'hedge' THEN
+                        GREATEST(
+                          carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
+                          LEAST(carto_treerow_line_width_mapped(o.barrier, o.tags->'width', o.tags->'height', !bbox!, !scale_denominator!), 60)
+                        )
+                      ELSE
+                        GREATEST(
+                          carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
+                          carto_highway_line_width_mapped(o.highway, CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END, o.tags->'lanes', !bbox!, !scale_denominator!)
+                        )
+                      END AS width_px_base,
+                      CASE WHEN o.highway IS NOT NULL AND z(!scale_denominator!) >= 18 THEN
+                        carto_highway_side_widths(o.way, o.tags, CASE WHEN o.oneway IN ('yes', '-1') THEN oneway ELSE 'no' END, z(!scale_denominator!))
+                      ELSE
+                        ARRAY[0.0, 0.0]
+                      END AS side_widths
+                    FROM planet_osm_line o
+                    WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.barrier = 'hedge' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
+                      carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)) > 0.0 AND
+                      ST_DWithin(l.cline, o.way, 0.1) AND
+                      o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
+                      (
+                        (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
+                        (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
+                        (l.type = 'hedge_bank' AND NOT(o.tags @> 'hedge=>hedge_bank')) OR
+                        ((l.type = 'dyke_left' OR l.type = 'dyke_right') AND 
+                         (
+                           (o.man_made IS NULL OR o.man_made NOT IN ('dyke')) OR
+                           (l.embankment_width != (CASE WHEN o.man_made = 'dyke' THEN carto_dyke_side_width_mapped (o.tags->'width', !bbox!, !scale_denominator!) ELSE NULL END))
+                         )
+                        )
+                      )
+                  ) AS o
               )
             ) AS way,
             "type",
@@ -107,8 +121,38 @@
             (WITH embankments AS
             (SELECT
                 way AS cline,
-                ST_Buffer(way, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
-                width_px,
+                CASE
+                  WHEN (width_px_base + GREATEST(side_widths[1],side_widths[2])) > 0.0 THEN
+                    CASE
+                      WHEN (side_widths[1] = side_widths[2]) THEN
+                        ST_Buffer(way, (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      WHEN (side_widths[1] > side_widths[2]) THEN
+                        ST_Union(
+                          ST_Intersection(
+                            ST_Buffer(way, (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(way, -(0.5*width_px_base + (side_widths[2] + (((0.5*width_px_base + side_widths[1])-(0.5*width_px_base + side_widths[2]))/((0.5*width_px_base + side_widths[1])+(0.5*width_px_base + side_widths[2])))*(side_widths[1]-side_widths[2])))*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          ),
+                          ST_Buffer(way, (0.5*width_px_base + side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                        )
+                      WHEN (side_widths[1] < side_widths[2]) THEN
+                        ST_Union(
+                          ST_Buffer(way, (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                          ST_Intersection(
+                            ST_Buffer(way, (0.5*width_px_base + side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(way, (0.5*width_px_base + (side_widths[1] + (((0.5*width_px_base + side_widths[2])-(0.5*width_px_base + side_widths[1]))/((0.5*width_px_base + side_widths[1])+(0.5*width_px_base + side_widths[2])))*(side_widths[2]-side_widths[1])))*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*width_px_base + side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        )
+                    END
+                ELSE
+                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                END AS way,
+                width_px_base + 2.0*GREATEST(side_widths[1], side_widths[2]) AS width_px,
                 "type",
                 width_tagged
               FROM 
@@ -117,21 +161,12 @@
                     GREATEST(
                       carto_highway_line_width(COALESCE(highway, railway, waterway, man_made, barrier), service, z(!scale_denominator!)),
                       -- dykes have a width dependent pattern so the tagged width goes in there and not here
-                      carto_highway_line_width_mapped(highway, CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END, tags->'lanes', !bbox!, !scale_denominator!)) + 
-                    (CASE WHEN
-                      z(!scale_denominator!) >= 18 AND
-                      ((tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
-                       (tags->'sidewalk:left') IN ('yes') OR
-                       (tags->'sidewalk:right') IN ('yes') OR
-                       (tags->'cycleway') IN ('track') OR
-                       (tags->'cycleway:left')  IN ('track') OR
-                       (tags->'cycleway:right') IN ('track')) THEN 7.5
-                      WHEN
-                       z(!scale_denominator!) >= 18 AND
-                      ((tags->'handrail') IN ('yes') OR
-                       (tags->'handrail:left') IN ('yes') OR
-                       (tags->'handrail:right') IN ('yes')) THEN 4.0
-                      ELSE 0.0 END) AS width_px,
+                      carto_highway_line_width_mapped(highway, CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END, tags->'lanes', !bbox!, !scale_denominator!)) AS width_px_base,
+                    CASE WHEN z(!scale_denominator!) >= 18 THEN
+                      carto_highway_side_widths(way, tags, CASE WHEN oneway IN ('yes', '-1') THEN 'yes' ELSE 'no' END, !scale_denominator!)
+                    ELSE
+                      ARRAY[0.0, 0.0]
+                    END AS side_widths,
                     (CASE
                        WHEN (tags @> 'cutting=>yes') THEN 'cutting'
                        WHEN (man_made = 'dyke') THEN 'dyke'

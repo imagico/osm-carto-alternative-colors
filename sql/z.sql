@@ -29,16 +29,16 @@ __Example Mapbox Studio query:__
 ) AS data
 ```
 ******************************************************************************/
-create or replace function z (numeric)
-  returns integer
-  language sql
-  immutable
-  returns null on null input
-as $func$
-select
-  case
+CREATE OR REPLACE FUNCTION z (numeric)
+  RETURNS integer
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+  RETURNS NULL ON NULL INPUT
+AS $func$
+SELECT
+  CASE
     -- Don't bother if the scale is larger than ~zoom level 0
-    when $1 > 600000000 or $1 = 0 then null
-    else cast (round(log(2,559082264.028/$1)) as integer)
-  end;
+    WHEN $1 > 600000000 OR $1 = 0 THEN NULL
+    ELSE cast (round(log(2,559082264.028/$1)) as integer)
+  END;
 $func$;

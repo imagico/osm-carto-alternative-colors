@@ -158,6 +158,7 @@ Layer:
                 ELSE surface
                 END AS surface,
                 (tags->'sport') AS sport,
+                (tags->'parking') AS parking,
                 CASE WHEN amenity IN ('parking_space') AND z(!scale_denominator!) >= 19 THEN
                   CASE 
                     WHEN (tags->'parking_space' IN('disabled')) OR (tags->'capacity:disabled' IN('yes')) OR ((tags->'capacity:disabled' ~ '^[0-9]{1,8}$') AND (tags->'capacity:disabled')::INTEGER > 0) THEN 'disabled'
@@ -186,6 +187,7 @@ Layer:
                 OR railway = 'station')
                 AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
             ) AS landcover
+            WHERE NOT(amenity = 'amenity_parking' AND parking = 'lane') -- lane parking is rendered separately in the roads layer
           ) AS landcover_all
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS features
@@ -894,52 +896,66 @@ Layer:
               -- this clips the embankment/cutting outlines with the adjacent lines that are not embankment/cutting
               (SELECT
                   COALESCE(
-                    ST_Union(ST_Buffer(ST_Intersection(o.way, l.way),
-                      (0.5*
-                        CASE WHEN o.barrier = 'hedge' THEN
-                          GREATEST(
-                            carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
-                            LEAST(carto_treerow_line_width_mapped(o.barrier, o.tags->'width', o.tags->'height', !bbox!, !scale_denominator!), 60)
+                    ST_Union(
+                      CASE WHEN (side_widths[1] = side_widths[2]) THEN
+                        ST_Buffer(ST_Intersection(o.way, l.way), (0.5*o.width_px_base + o.side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      ELSE -- separate buffering of both sides with different width
+                        ST_Union(
+                          ST_Intersection(
+                            ST_Buffer(ST_Intersection(o.way, l.way), (0.5*o.width_px_base + o.side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(o.way, -0.25*width_px_base*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*o.width_px_base + GREATEST(o.side_widths[1],o.side_widths[2]) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          ),
+                          ST_Intersection(
+                            ST_Buffer(ST_Intersection(o.way, l.way), (0.5*o.width_px_base + o.side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(o.way, 0.25*o.width_px_base*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*o.width_px_base + GREATEST(o.side_widths[1],o.side_widths[2]) + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
                           )
-                        ELSE
-                          GREATEST(
-                            carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
-                            carto_highway_line_width_mapped(o.highway, CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END, o.tags->'lanes', !bbox!, !scale_denominator!)
-                          ) +
-                          (CASE WHEN
-                            z(!scale_denominator!) >= 18 AND
-                            ((o.tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
-                             (o.tags->'sidewalk:left') IN ('yes') OR
-                             (o.tags->'sidewalk:right') IN ('yes') OR
-                             (o.tags->'cycleway') IN ('track') OR
-                             (o.tags->'cycleway:left')  IN ('track') OR
-                             (o.tags->'cycleway:right') IN ('track')) THEN 7.5
-                           WHEN
-                            z(!scale_denominator!) >= 18 AND
-                            ((o.tags->'handrail') IN ('yes') OR
-                             (o.tags->'handrail:left') IN ('yes') OR
-                             (o.tags->'handrail:right') IN ('yes')) THEN 4.0
-                           ELSE 0.0 END)
-                        END + 2.5
-                      )*NULLIF(!scale_denominator!*0.001*0.28,0))),
-                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                        )
+                      END
+                    ),
+                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                   )
-                FROM planet_osm_line o
-                WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.barrier = 'hedge' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
-                  carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)) > 0.0 AND
-                  ST_DWithin(l.cline, o.way, 0.1) AND
-                  o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
-                  (
-                    (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
-                    (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
-                    (l.type = 'hedge_bank' AND NOT(o.tags @> 'hedge=>hedge_bank')) OR
-                    ((l.type = 'dyke_left' OR l.type = 'dyke_right') AND 
-                     (
-                       (o.man_made IS NULL OR o.man_made NOT IN ('dyke')) OR
-                       (l.embankment_width != (CASE WHEN o.man_made = 'dyke' THEN carto_dyke_side_width_mapped (o.tags->'width', !bbox!, !scale_denominator!) ELSE NULL END))
-                     )
-                    )
-                  )
+                FROM 
+                  (SELECT
+                      o.way AS way,
+                      CASE WHEN o.barrier = 'hedge' THEN
+                        GREATEST(
+                          carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
+                          LEAST(carto_treerow_line_width_mapped(o.barrier, o.tags->'width', o.tags->'height', !bbox!, !scale_denominator!), 60)
+                        )
+                      ELSE
+                        GREATEST(
+                          carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
+                          carto_highway_line_width_mapped(o.highway, CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END, o.tags->'lanes', !bbox!, !scale_denominator!)
+                        )
+                      END AS width_px_base,
+                      CASE WHEN o.highway IS NOT NULL AND z(!scale_denominator!) >= 18 THEN
+                        carto_highway_side_widths(o.way, o.tags, CASE WHEN o.oneway IN ('yes', '-1') THEN oneway ELSE 'no' END, z(!scale_denominator!))
+                      ELSE
+                        ARRAY[0.0, 0.0]
+                      END AS side_widths
+                    FROM planet_osm_line o
+                    WHERE (o.highway IS NOT NULL OR o.railway IS NOT NULL OR o.man_made = 'dyke' OR o.barrier = 'hedge' OR o.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')) AND
+                      carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)) > 0.0 AND
+                      ST_DWithin(l.cline, o.way, 0.1) AND
+                      o.way && ST_Expand(!bbox!, (0.5*carto_highway_line_width('motorway', z(!scale_denominator!)) + 10.0)*NULLIF(!scale_denominator!*0.001*0.28,0)) AND
+                      (
+                        (l.type = 'cutting' AND NOT(o.tags @> 'cutting=>yes')) OR
+                        (l.type = 'embankment' AND NOT(o.tags @> 'embankment=>yes')) OR
+                        (l.type = 'hedge_bank' AND NOT(o.tags @> 'hedge=>hedge_bank')) OR
+                        ((l.type = 'dyke_left' OR l.type = 'dyke_right') AND 
+                         (
+                           (o.man_made IS NULL OR o.man_made NOT IN ('dyke')) OR
+                           (l.embankment_width != (CASE WHEN o.man_made = 'dyke' THEN carto_dyke_side_width_mapped (o.tags->'width', !bbox!, !scale_denominator!) ELSE NULL END))
+                         )
+                        )
+                      )
+                  ) AS o
               )
             ) AS way,
             "type",
@@ -953,8 +969,38 @@ Layer:
             (WITH embankments AS
             (SELECT
                 way AS cline,
-                ST_Buffer(way, (0.5*width_px + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
-                width_px,
+                CASE
+                  WHEN (width_px_base + GREATEST(side_widths[1],side_widths[2])) > 0.0 THEN
+                    CASE
+                      WHEN (side_widths[1] = side_widths[2]) THEN
+                        ST_Buffer(way, (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      WHEN (side_widths[1] > side_widths[2]) THEN
+                        ST_Union(
+                          ST_Intersection(
+                            ST_Buffer(way, (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(way, -(0.5*width_px_base + (side_widths[2] + (((0.5*width_px_base + side_widths[1])-(0.5*width_px_base + side_widths[2]))/((0.5*width_px_base + side_widths[1])+(0.5*width_px_base + side_widths[2])))*(side_widths[1]-side_widths[2])))*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          ),
+                          ST_Buffer(way, (0.5*width_px_base + side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                        )
+                      WHEN (side_widths[1] < side_widths[2]) THEN
+                        ST_Union(
+                          ST_Buffer(way, (0.5*width_px_base + side_widths[1] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                          ST_Intersection(
+                            ST_Buffer(way, (0.5*width_px_base + side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            ST_Buffer(
+                              ST_OffsetCurve(way, (0.5*width_px_base + (side_widths[1] + (((0.5*width_px_base + side_widths[2])-(0.5*width_px_base + side_widths[1]))/((0.5*width_px_base + side_widths[1])+(0.5*width_px_base + side_widths[2])))*(side_widths[2]-side_widths[1])))*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*width_px_base + side_widths[2] + 2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        )
+                    END
+                ELSE
+                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                END AS way,
+                width_px_base + 2.0*GREATEST(side_widths[1], side_widths[2]) AS width_px,
                 "type",
                 width_tagged
               FROM 
@@ -963,21 +1009,12 @@ Layer:
                     GREATEST(
                       carto_highway_line_width(COALESCE(highway, railway, waterway, man_made, barrier), service, z(!scale_denominator!)),
                       -- dykes have a width dependent pattern so the tagged width goes in there and not here
-                      carto_highway_line_width_mapped(highway, CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END, tags->'lanes', !bbox!, !scale_denominator!)) + 
-                    (CASE WHEN
-                      z(!scale_denominator!) >= 18 AND
-                      ((tags->'sidewalk') IN ('yes', 'both', 'left', 'right') OR
-                       (tags->'sidewalk:left') IN ('yes') OR
-                       (tags->'sidewalk:right') IN ('yes') OR
-                       (tags->'cycleway') IN ('track') OR
-                       (tags->'cycleway:left')  IN ('track') OR
-                       (tags->'cycleway:right') IN ('track')) THEN 7.5
-                      WHEN
-                       z(!scale_denominator!) >= 18 AND
-                      ((tags->'handrail') IN ('yes') OR
-                       (tags->'handrail:left') IN ('yes') OR
-                       (tags->'handrail:right') IN ('yes')) THEN 4.0
-                      ELSE 0.0 END) AS width_px,
+                      carto_highway_line_width_mapped(highway, CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END, tags->'lanes', !bbox!, !scale_denominator!)) AS width_px_base,
+                    CASE WHEN z(!scale_denominator!) >= 18 THEN
+                      carto_highway_side_widths(way, tags, CASE WHEN oneway IN ('yes', '-1') THEN 'yes' ELSE 'no' END, !scale_denominator!)
+                    ELSE
+                      ARRAY[0.0, 0.0]
+                    END AS side_widths,
                     (CASE
                        WHEN (tags @> 'cutting=>yes') THEN 'cutting'
                        WHEN (man_made = 'dyke') THEN 'dyke'
@@ -1560,14 +1597,13 @@ Layer:
             int_surface,
             int_tunnel,
             int_bridge,
-            int_lane_right,
-            int_lane_left,
             int_lanes,
             int_access,
             construction,
             service,
             link,
             tc_type,
+            width_lane,
             width_nominal,
             width_max,
             width,
@@ -1581,14 +1617,14 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
+                int_lane,
                 int_lanes,
                 int_junction,
                 int_access,
                 construction,
                 service,
                 link,
+                width_lane,
                 width_nominal,
                 GREATEST(width_nominal, width_tagged) AS width_max,
                 CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
@@ -1603,87 +1639,93 @@ Layer:
                 (
                   SELECT
                       way,
-                      ('highway_' || highway) AS feature, -- only motorway to tertiary links are accepted later on
+                      feature,
                       highway,
-                      carto_path_type(foot, bicycle, horse) AS path_type,
-                      CASE
-                        WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
-                                         'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
-                        WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
-                                         'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
-                        ELSE NULL
-                      END AS int_surface,
-                      CASE
-                        WHEN (tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
-                        WHEN (covered = 'yes') THEN 'yes'::text
-                        ELSE 'no'::text
-                      END AS int_tunnel,
-                      CASE
-                        WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
-                        WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
-                        ELSE 'no'::text
-                      END AS int_bridge,
-                      CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:right') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_right,
-                      CASE WHEN (tags->'cycleway') IN ('lane') OR (tags->'cycleway:left') IN ('lane') THEN 'cycle'::text ELSE NULL END AS int_lane_left,
-                      CASE
-                        WHEN highway IN ('steps') THEN
-                          CASE
-                            WHEN (tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
-                            WHEN (tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
-                            WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
-                            WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
-                          ELSE ''::text END
-                        WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
-                        ELSE
-                          CASE
-                            WHEN highway IN ('motorway', 'trunk') THEN '2'::text
-                            WHEN (oneway IS NULL OR NOT (oneway IN ('no', 'reversible'))) THEN '1'::text
-                            WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
-                            ELSE '1'::text
-                          END
-                      END ||
-                      CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS int_lanes,
-                      CASE
-                        WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN 
-                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'both'::text ELSE 'foot'::text END
-                        ELSE
-                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:right') IN ('track') THEN 'cycle'::text
-                          ELSE
-                            CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
-                            ELSE
-                              NULL
-                            END
-                          END
-                      END AS int_side_right,
-                      CASE
-                        WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN 
-                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'both'::text ELSE 'foot'::text END
-                        ELSE
-                          CASE WHEN (tags->'cycleway') IN ('track') OR (tags->'cycleway:left') IN ('track') THEN 'cycle'::text
-                          ELSE
-                            CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
-                            ELSE
-                              NULL
-                            END
-                          END
-                      END AS int_side_left,
-                      carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
+                      path_type,
+                      int_surface,
+                      int_tunnel,
+                      int_bridge,
+                      lanes_sides[1] AS int_lane_right,
+                      lanes_sides[2] AS int_lane_left,
+                      int_lanes,
+                      lanes_sides[3] AS int_side_right,
+                      lanes_sides[4] AS int_side_left,
+                      int_access,
                       construction,
-                      CASE
-                        WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
-                        ELSE 'INT-normal'::text
-                      END AS service,
-                      CASE
-                        WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
-                        ELSE 'no'
-                      END AS link,
-                      carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
-                      carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!) AS width_tagged,
-                      COALESCE(layer,0) AS layernotnull,
+                      service,
+                      link,
+                      LEAST(width_lane, GREATEST(width_nominal, width_tagged)/int_lanes_num - 2.0*carto_casing_line_width(highway, int_bridge, z(!scale_denominator!))) AS width_lane,
+                      width_nominal,
+                      width_tagged,
+                      layernotnull,
                       osm_id,
                       z_order
-                    FROM planet_osm_line
-                    WHERE highway IS NOT NULL AND way && !bbox!
+                    FROM
+                       (SELECT
+                           way,
+                           -- sidewalks and lanes are only rendered at z18+
+                           CASE WHEN z(!scale_denominator!) >= 18 THEN
+                             carto_highway_lanes_sides(way, tags, CASE WHEN oneway IN ('yes', '-1') THEN oneway ELSE 'no' END)
+                           ELSE
+                             ARRAY[NULL, NULL, NULL, NULL]
+                           END AS lanes_sides,
+                           ('highway_' || highway) AS feature, -- only motorway to tertiary links are accepted later on
+                           highway,
+                           carto_path_type(foot, bicycle, horse) AS path_type,
+                           CASE
+                             WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                                              'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
+                             WHEN surface IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                                              'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
+                             ELSE NULL
+                           END AS int_surface,
+                           CASE
+                             WHEN (tunnel IN ('yes', 'building_passage', 'avalanche_protector') OR covered = 'yes') THEN 'yes'::text
+                             WHEN (covered = 'yes') THEN 'yes'::text
+                             ELSE 'no'::text
+                           END AS int_tunnel,
+                           CASE
+                             WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
+                             WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
+                             ELSE 'no'::text
+                           END AS int_bridge,
+                           CASE
+                             WHEN highway IN ('steps') THEN
+                               CASE
+                                 WHEN (tags @> 'ramp:bicycle=>yes') THEN 'ramp_bicycle'::text
+                                 WHEN (tags @> 'ramp:stroller=>yes') THEN 'ramp_stroller'::text
+                                 WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
+                                 WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
+                               ELSE ''::text END
+                             WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
+                             ELSE
+                               CASE
+                                 WHEN highway IN ('motorway', 'trunk') THEN '2'::text
+                                 WHEN oneway IN ('yes', '-1') THEN '1'::text
+                                 WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
+                                 ELSE '1'::text
+                               END
+                           END ||
+                           CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS int_lanes,
+                           CASE WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::numeric ELSE 2 END AS int_lanes_num,
+                           carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
+                           construction,
+                           CASE
+                             WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
+                             ELSE 'INT-normal'::text
+                           END AS service,
+                           CASE
+                             WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
+                             ELSE 'no'
+                           END AS link,
+                           GREATEST(carto_ground_to_px(2.5, !bbox!, !scale_denominator!), carto_highway_line_width('sidewalk', z(!scale_denominator!))) AS width_lane,
+                           carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                           carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!) AS width_tagged,
+                           COALESCE(layer,0) AS layernotnull,
+                           osm_id,
+                           z_order
+                         FROM planet_osm_line
+                         WHERE highway IS NOT NULL AND way && !bbox!) AS _
                 ), -- end highways_raw CTE
                 junctions AS
                 (SELECT
@@ -1935,6 +1977,7 @@ Layer:
                     h.construction AS construction,
                     h.service AS service,
                     h.link AS link,
+                    h.width_lane AS width_lane,
                     h.width_nominal AS width_nominal,
                     h.width_tagged AS width_tagged,
                     carto_casing_line_width(h.highway, h.int_bridge, z(!scale_denominator!)) AS casing_width,
@@ -1953,26 +1996,53 @@ Layer:
                 ), -- end highways_all CTE
                 sidewalks_raw AS
                 (SELECT
-                    buffer,
+                    CASE WHEN feature = 'highway_side_parking' THEN
+                      ST_Buffer(line, 0.5*line_width*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
+                    ELSE
+                      CASE
+                        WHEN int_side_right IS NULL AND int_side_left IS NOT NULL THEN
+                          ST_Intersection(
+                            buffer,
+                            ST_Buffer(
+                              ST_OffsetCurve(way, (0.5*width_max + 0.5*side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              (0.5*width_max + side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        WHEN int_side_left IS NULL AND int_side_right IS NOT NULL THEN
+                          ST_Intersection(
+                            buffer,
+                            ST_Buffer(
+                              ST_OffsetCurve(way, -(0.5*width_max + 0.5*side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                             (0.5*width_max + side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        ELSE
+                          buffer
+                      END
+                    END AS buffer,
+                    buffer_base,
                     -- this generates a buffer outline (either both or one sided)
                     -- for all rows with some kind of sidewalk
                     CASE
                       WHEN int_side_right IS NULL AND int_side_left IS NULL THEN
                         NULL
+                      WHEN feature = 'highway_side_parking' THEN
+                        -- parking geometries are already supplied as line geometries here
+                        line
                       WHEN int_side_right IS NULL THEN
                         ST_Intersection(
                           ST_Boundary(buffer),
                           ST_Buffer(
-                            ST_OffsetCurve(way, (0.5*width_max)*NULLIF(!scale_denominator!*0.001*0.28,0)),
-                            (0.5*width_max + sw_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            ST_OffsetCurve(way, (0.5*width_max + 0.5*side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            (0.5*width_max + side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
                           )
                         )
                       WHEN int_side_left IS NULL THEN
                         ST_Intersection(
                           ST_Boundary(buffer),
                           ST_Buffer(
-                            ST_OffsetCurve(way, -(0.5*width_max)*NULLIF(!scale_denominator!*0.001*0.28,0)),
-                            (0.5*width_max + sw_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            ST_OffsetCurve(way, -(0.5*width_max + 0.5*side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                            (0.5*width_max + side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
                           )
                         )
                       ELSE ST_Boundary(buffer)
@@ -1990,26 +2060,56 @@ Layer:
                     link,
                     width_nominal,
                     width_tagged,
-                    carto_casing_line_width('sidewalk', int_bridge, z(!scale_denominator!)) AS casing_width,
+                    line_width AS casing_width,
                     layernotnull,
                     osm_id,
-                    z_order
+                    z_order-1 AS z_order -- we lower this for consistent odering and to render the parking casing behind the main road casing
                   FROM
                     (SELECT
-                        -- this is the buffer that forms the basis for the sidewalk geometries and their clipping
-                        ST_Difference(
-                          ST_Buffer(
-                            way_orig,
-                            (0.5*width_max + sw_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
-                          ),
-                          COALESCE(
-                            ST_Buffer(clip, (sw_offset + 1.0)*NULLIF(!scale_denominator!*0.001*0.28,0)),
-                            ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                        CASE WHEN side_type = 'parking' THEN
+                          NULL
+                        ELSE
+                          -- this is the buffer that forms the basis for the sidewalk geometries and their clipping
+                          ST_Difference(
+                            ST_Buffer(
+                              way_orig,
+                              (0.5*width_max + side_offset)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            ),
+                            COALESCE(
+                              ST_Buffer(clip, (side_offset + 1.0)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                            )
                           )
-                        ) AS buffer,
+                        END AS buffer,
+                          ST_Difference(
+                            ST_Buffer(
+                              way_orig,
+                              (0.5*width_max + casing_width*2.0 + sidewalk_width)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                              'endcap=flat join=round'
+                            ),
+                            COALESCE(
+                              ST_Buffer(clip, (side_offset + 1.0)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                              ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                            )
+                          ) AS buffer_base,
+                        CASE WHEN side_type = 'parking' THEN
+                          CASE
+                            WHEN int_side_right IS NULL THEN
+                              ST_OffsetCurve(way, (0.5*width_max + side_offset - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                            WHEN int_side_left IS NULL THEN
+                              ST_OffsetCurve(way, -(0.5*width_max + side_offset - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                            ELSE
+                              ST_Union(
+                                ST_OffsetCurve(way, (0.5*width_max + side_offset - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                ST_OffsetCurve(way, -(0.5*width_max + side_offset - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                              )
+                          END
+                        ELSE
+                          NULL
+                        END AS line,
                         way,
                         way_orig,
-                        ('highway_sidewalk_' || COALESCE(int_side_right,int_side_left)) AS feature,
+                        ('highway_side_' || COALESCE(int_side_right,int_side_left)) AS feature,
                         path_type,
                         int_surface,
                         int_tunnel,
@@ -2023,12 +2123,13 @@ Layer:
                         width_nominal,
                         width_tagged,
                         width_max,
-                        sw_offset,
+                        line_width,
+                        side_offset,
                         layernotnull,
                         osm_id,
                         z_order
                       FROM
-                        -- roads_side are the roads with sidewalks
+                        -- roads_side are the roads with sidewalks or street_side parkings
                         (WITH roads_side AS
                           (SELECT
                               way,
@@ -2041,6 +2142,10 @@ Layer:
                               int_bridge,
                               int_side_right,
                               int_side_left,
+                              reverse(split_part(reverse(int_side_right), '+', 1)) AS int_sidewalk_right,
+                              reverse(split_part(reverse(int_side_left), '+', 1)) AS int_sidewalk_left,
+                              CASE WHEN split_part(int_side_right, '+', 1) = 'parking' THEN 'parking' ELSE NULL END int_parking_right,
+                              CASE WHEN split_part(int_side_left, '+', 1) = 'parking' THEN 'parking' ELSE NULL END int_parking_left,
                               int_access,
                               construction,
                               highway AS service, -- we use this to store the original highway value to be able to use that in MSS code
@@ -2048,7 +2153,12 @@ Layer:
                               width_nominal,
                               width_tagged,
                               GREATEST(width_nominal, width_tagged) AS width_max,
-                              carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
+                              carto_casing_line_width('sidewalk', int_bridge, z(!scale_denominator!)) AS casing_width,
+                              carto_highway_line_width('sidewalk', z(!scale_denominator!)) AS sidewalk_width,
+                              GREATEST(
+                                carto_highway_line_width('parking', z(!scale_denominator!)),
+                                carto_ground_to_px(2.5, way_orig, !scale_denominator!)
+                              ) AS parking_width,
                               layernotnull,
                               osm_id,
                               z_order
@@ -2056,9 +2166,73 @@ Layer:
                             WHERE (int_side_right IS NOT NULL OR int_side_left IS NOT NULL)
                               AND width_nominal > 0.0
                               AND z(!scale_denominator!) >= 18
+                          ),
+                        -- this are all other roads without sidewalks the sidewalks need to be clipped with
+                        roads_noside AS
+                          (SELECT
+                              way,
+                              way_orig,
+                              clip,
+                              feature,
+                              path_type,
+                              int_surface,
+                              int_tunnel,
+                              int_bridge,
+                              NULL AS int_sidewalk_right,
+                              NULL AS int_sidewalk_left,
+                              int_access,
+                              construction,
+                              service,
+                              link,
+                              width_nominal,
+                              width_tagged,
+                              GREATEST(width_nominal, width_tagged) AS width_max,
+                              carto_casing_line_width('sidewalk', int_bridge, z(!scale_denominator!)) AS casing_width,
+                              carto_highway_line_width('sidewalk', z(!scale_denominator!)) AS sidewalk_width,
+                              layernotnull,
+                              osm_id,
+                              z_order
+                            FROM highways_all
+                            WHERE (int_side_right IS NULL AND int_side_left IS NULL)
+                              AND width_nominal > 0.0
+                              AND z(!scale_denominator!) >= 18
+                          ),
+                        -- roads_sidewalk are the roads with sidewalks
+                        roads_sidewalk AS
+                          (SELECT
+                              way,
+                              way_orig,
+                              clip,
+                              feature,
+                              path_type,
+                              int_surface,
+                              int_tunnel,
+                              int_bridge,
+                              int_side_right,
+                              int_side_left,
+                              CASE WHEN int_sidewalk_right IN ('', 'parking') THEN NULL ELSE int_sidewalk_right END AS int_sidewalk_right,
+                              CASE WHEN int_sidewalk_left IN ('', 'parking') THEN NULL ELSE int_sidewalk_left END AS int_sidewalk_left,
+                              int_parking_right,
+                              int_parking_left,
+                              int_access,
+                              construction,
+                              service,
+                              link,
+                              width_nominal,
+                              width_tagged,
+                              width_max,
+                              casing_width,
+                              sidewalk_width,
+                              parking_width,
+                              layernotnull,
+                              osm_id,
+                              z_order
+                            FROM roads_side
+                            WHERE ((int_sidewalk_right IS NOT NULL AND int_sidewalk_right NOT IN ('', 'parking')) OR (int_sidewalk_left IS NOT NULL AND int_sidewalk_left NOT IN ('', 'parking')))
                           )
                         -- this are the roads with either just one or two identical sidewalks
                         SELECT
+                            'sidewalk' AS side_type,
                             way,
                             way_orig,
                             clip,
@@ -2067,8 +2241,8 @@ Layer:
                             int_surface,
                             int_tunnel,
                             int_bridge,
-                            int_side_right,
-                            int_side_left,
+                            int_sidewalk_right AS int_side_right,
+                            int_sidewalk_left AS int_side_left,
                             int_access,
                             construction,
                             service,
@@ -2077,15 +2251,19 @@ Layer:
                             width_tagged,
                             width_max,
                             casing_width,
-                            CASE WHEN int_bridge = 'no' THEN 3.0 ELSE 2.5 END * casing_width AS sw_offset,
+                            sidewalk_width,
+                            casing_width AS line_width,
+                            CASE WHEN int_parking_right IS NOT NULL OR int_parking_left IS NOT NULL THEN casing_width + parking_width ELSE 0.0 END +
+                            casing_width*2.0 + sidewalk_width AS side_offset,
                             layernotnull,
                             osm_id,
                             z_order
-                          FROM roads_side
+                          FROM roads_sidewalk
                           WHERE (int_side_right = int_side_left OR int_side_right IS NULL OR int_side_left IS NULL)
                         UNION ALL
                         -- this are (separately) the roads with two different sidewalks
                         SELECT
+                            'sidewalk' AS side_type,
                             way,
                             way_orig,
                             clip,
@@ -2094,7 +2272,7 @@ Layer:
                             int_surface,
                             int_tunnel,
                             int_bridge,
-                            int_side_right,
+                            int_sidewalk_right AS int_side_right,
                             NULL AS int_side_left,
                             int_access,
                             construction,
@@ -2104,14 +2282,19 @@ Layer:
                             width_tagged,
                             width_max,
                             casing_width,
-                            CASE WHEN int_bridge = 'no' THEN 3.0 ELSE 2.5 END * casing_width AS sw_offset,
+                            sidewalk_width,
+                            casing_width AS line_width,
+                            CASE WHEN int_parking_right IS NOT NULL THEN casing_width + parking_width ELSE 0.0 END +
+                            casing_width*2.0 + sidewalk_width AS side_offset,
                             layernotnull,
                             osm_id,
                             z_order
-                          FROM roads_side
+                          FROM roads_sidewalk
                           WHERE NOT(int_side_right = int_side_left OR int_side_right IS NULL OR int_side_left IS NULL)
+                            AND int_sidewalk_right IS NOT NULL
                         UNION ALL
                         SELECT
+                            'sidewalk' AS side_type,
                             way,
                             way_orig,
                             clip,
@@ -2121,7 +2304,7 @@ Layer:
                             int_tunnel,
                             int_bridge,
                             NULL AS int_side_right,
-                            int_side_left,
+                            int_sidewalk_left AS int_side_left,
                             int_access,
                             construction,
                             service,
@@ -2130,15 +2313,21 @@ Layer:
                             width_tagged,
                             width_max,
                             casing_width,
-                            CASE WHEN int_bridge = 'no' THEN 3.0 ELSE 2.5 END * casing_width AS sw_offset,
+                            sidewalk_width,
+                            casing_width AS line_width,
+                            CASE WHEN int_parking_left IS NOT NULL THEN casing_width + parking_width ELSE 0.0 END +
+                            casing_width*2.0 + sidewalk_width AS side_offset,
                             layernotnull,
                             osm_id,
                             z_order
-                          FROM roads_side
+                          FROM roads_sidewalk
                           WHERE NOT(int_side_right = int_side_left OR int_side_right IS NULL OR int_side_left IS NULL)
+                            AND int_sidewalk_left IS NOT NULL
                         UNION ALL
-                        -- this are all other roads without sidewalks the sidewalks need to be clipped with
+                        -- this are the roads with either just one or two identical parkings
+                        -- (which is the case for all parkings atm. - could be extended for differentiated parkings just like with sidewalks)
                         SELECT
+                            'parking' AS side_type,
                             way,
                             way_orig,
                             clip,
@@ -2147,87 +2336,854 @@ Layer:
                             int_surface,
                             int_tunnel,
                             int_bridge,
-                            NULL AS int_side_right,
-                            NULL AS int_side_left,
+                            int_parking_right AS int_side_right,
+                            int_parking_left AS int_side_left,
                             int_access,
                             construction,
                             service,
                             link,
                             width_nominal,
                             width_tagged,
-                            GREATEST(width_nominal, width_tagged) AS width_max,
-                            carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
-                            3.0 * carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS sw_offset,
+                            width_max,
+                            casing_width,
+                            sidewalk_width,
+                            parking_width AS line_width,
+                            casing_width + parking_width*0.5 AS side_offset,
                             layernotnull,
                             osm_id,
                             z_order
-                          FROM highways_all
-                          WHERE (int_side_right IS NULL AND int_side_left IS NULL)
-                            AND width_nominal > 0.0
-                            AND z(!scale_denominator!) >= 18
+                          FROM roads_side
+                          WHERE (int_parking_right IS NOT NULL OR int_parking_left IS NOT NULL) AND
+                            (int_parking_right = int_parking_left OR int_parking_right IS NULL OR int_parking_left IS NULL)
+                        UNION ALL
+                        -- this are all other roads without sidewalks/parkings the sidewalks/parkings need to be clipped with
+                        SELECT
+                            'noside' AS side_type,
+                            way,
+                            way_orig,
+                            clip,
+                            feature,
+                            path_type,
+                            int_surface,
+                            int_tunnel,
+                            int_bridge,
+                            int_sidewalk_right AS int_side_right,
+                            int_sidewalk_left AS int_side_left,
+                            int_access,
+                            construction,
+                            service,
+                            link,
+                            width_nominal,
+                            width_tagged,
+                            width_max,
+                            casing_width,
+                            sidewalk_width,
+                            casing_width AS line_width,
+                            casing_width*2.0 + sidewalk_width AS side_offset,
+                            layernotnull,
+                            osm_id,
+                            z_order
+                          FROM roads_noside
                         ) AS sidewalks
                     ) AS l -- end of sidewalks select
                 ) -- end sidewalks_raw CTE
                 SELECT -- begin of sidewalks select
-                    ST_Difference(
-                      ST_Difference(
-                        line,
-                        -- this clips the sidewalk outlines with all adjacent roads
-                        (SELECT
-                            COALESCE(
-                              ST_Union(buffer),
-                              ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                            )
-                          FROM sidewalks_raw o
-                          WHERE
-                            -- intersect at ends or in equal layer
-                            ((ST_DWithin(l.way_orig, o.way_orig, 0.1) AND
-                              (o.layernotnull = l.layernotnull OR (l.int_bridge = 'no' AND l.int_tunnel = 'no')) AND
-                              o.int_bridge = l.int_bridge AND
-                              o.int_tunnel = l.int_tunnel) OR
-                             ST_DWithin(
-                               ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
-                               ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
-                            )
-                            AND o.osm_id != l.osm_id
-                        )
-                      ),
-                      -- this clips the sidewalk outlines with a possible junction clip polygon
-                      (SELECT
-                          COALESCE(
-                            ST_Union(ST_Buffer(j.clip, 6.0*GREATEST(j.casing_width, l.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
-                            ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                          )
-                        FROM junctions j
-                        WHERE
-                          j.int_bridge = l.int_bridge AND
-                          j.int_tunnel = l.int_tunnel AND
-                          j.osm_id = l.osm_id
-                      )
-                    ) AS way,
+                    way,
                     feature,
                     path_type,
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    'null' AS int_lane_right,
-                    'null' AS int_lane_left,
+                    'no' AS int_lane,
                     NULL AS int_lanes,
                     'no' AS int_junction,
                     int_access,
                     construction,
                     service,
                     link,
+                    0 AS width_lane,
                     width_nominal,
                     width_tagged,
                     casing_width,
                     layernotnull,
                     osm_id,
                     z_order
-                  FROM sidewalks_raw l
-                  WHERE line IS NOT NULL
-                    AND int_tunnel = 'no'
+                  FROM
+                    (SELECT -- begin of sidewalks select
+                        ST_Difference(
+                          CASE WHEN feature = 'highway_side_parking' THEN
+                            ST_Difference(
+                              buffer,
+                              -- this clips the sidewalk outlines with all adjacent roads
+                              (SELECT
+                                  COALESCE(
+                                    ST_Union(
+                                      CASE
+                                        WHEN o.feature = 'highway_side_parking' THEN
+                                          ST_Union(buffer_base, ST_Buffer(buffer, 1.5*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                                        -- WHEN line IS NOT NULL THEN
+                                        --   buffer
+                                        ELSE
+                                          buffer_base
+                                      END
+                                    ),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                FROM sidewalks_raw o
+                                WHERE
+                                  -- intersect at ends or in equal layer
+                                  ((ST_DWithin(l.way_orig, o.way_orig, 0.1) AND
+                                    (o.layernotnull = l.layernotnull OR (l.int_bridge = 'no' AND l.int_tunnel = 'no')) AND
+                                    o.int_bridge = l.int_bridge AND
+                                    o.int_tunnel = l.int_tunnel) OR
+                                   ST_DWithin(
+                                     ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
+                                     ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  )
+                                  AND o.osm_id != l.osm_id
+                              )
+                            )
+                          ELSE
+                            ST_Difference(
+                              line,
+                              -- this clips the sidewalk outlines with all adjacent roads
+                              (SELECT
+                                  COALESCE(
+                                    ST_Union(
+                                      CASE WHEN o.feature = 'highway_side_parking' THEN
+                                        -- ST_Buffer(buffer, 1.0*NULLIF(!scale_denominator!*0.001*0.28,0))
+                                        ST_Union(buffer_base, ST_Buffer(buffer, 1.5*NULLIF(!scale_denominator!*0.001*0.28,0)))
+                                      ELSE
+                                        ST_Union(buffer_base, buffer)
+                                      END
+                                    ),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                FROM sidewalks_raw o
+                                WHERE
+                                  -- intersect at ends or in equal layer
+                                  ((ST_DWithin(l.way_orig, o.way_orig, 0.1) AND
+                                    (o.layernotnull = l.layernotnull OR (l.int_bridge = 'no' AND l.int_tunnel = 'no')) AND
+                                    o.int_bridge = l.int_bridge AND
+                                    o.int_tunnel = l.int_tunnel) OR
+                                   ST_DWithin(
+                                     ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
+                                     ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  )
+                                  AND o.osm_id != l.osm_id
+                              )
+                            )
+                          END,
+                          -- this clips the sidewalk outlines with a possible junction clip polygon
+                          (SELECT
+                              COALESCE(
+                                ST_Union(ST_Buffer(j.clip, 6.0*GREATEST(j.casing_width, l.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                              )
+                            FROM junctions j
+                            WHERE
+                              j.int_bridge = l.int_bridge AND
+                              j.int_tunnel = l.int_tunnel AND
+                              j.osm_id = l.osm_id
+                          )
+                        ) AS way,
+                        feature,
+                        path_type,
+                        int_surface,
+                        int_tunnel,
+                        int_bridge,
+                        int_access,
+                        construction,
+                        service,
+                        link,
+                        width_nominal,
+                        width_tagged,
+                        casing_width,
+                        layernotnull,
+                        osm_id,
+                        z_order
+                      FROM sidewalks_raw l
+                      WHERE line IS NOT NULL
+                        AND int_tunnel = 'no') AS _
                   -- end of sidewalks select
+                UNION ALL
+                SELECT -- begin of lanes select
+                    line AS way,
+                    ('highway_lane_' || int_lane) AS feature,
+                    int_lane AS path_type,
+                    int_surface,
+                    int_tunnel,
+                    int_bridge,
+                    int_lane,
+                    NULL AS int_lanes,
+                    'no' AS int_junction,
+                    int_access,
+                    construction,
+                    service,
+                    link,
+                    width_lane,
+                    width_nominal,
+                    width_tagged,
+                    casing_width,
+                    layernotnull,
+                    osm_id,
+                    z_order
+                  FROM
+                    -- roads_lane are the roads with special function lanes (either parking, cycle or bus)
+                    (WITH roads_lane AS
+                      (SELECT
+                          way,
+                          way_orig,
+                          clip,
+                          feature,
+                          path_type,
+                          int_surface,
+                          int_tunnel,
+                          int_bridge,
+                          int_lane_right,
+                          int_lane_left,
+                          string_to_array(int_lane_right, '+') AS int_lane_types_right,
+                          string_to_array(int_lane_left, '+') AS int_lane_types_left,
+                          int_access,
+                          construction,
+                          service,
+                          link,
+                          width_lane,
+                          width_nominal,
+                          width_tagged,
+                          GREATEST(width_nominal, width_tagged) AS width_max,
+                          carto_casing_line_width('sidewalk', int_bridge, z(!scale_denominator!)) AS casing_width,
+                          layernotnull,
+                          osm_id,
+                          z_order
+                        FROM highways_all
+                        WHERE (int_lane_right IS NOT NULL OR int_lane_left IS NOT NULL)
+                          AND width_nominal > 0.0
+                      ),
+                    -- all roads the lanes need to be clipped with
+                    roads_other AS
+                      (SELECT
+                          way,
+                          way_orig,
+                          clip,
+                          ST_Buffer(
+                            way_orig,
+                            -- (GREATEST(width_nominal, width_tagged)*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                            (GREATEST(width_nominal, width_tagged)*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                            'endcap=flat join=round'
+                          ) AS buffer,
+                          feature,
+                          path_type,
+                          int_surface,
+                          int_tunnel,
+                          int_bridge,
+                          int_access,
+                          construction,
+                          service,
+                          link,
+                          layernotnull,
+                          osm_id,
+                          z_order
+                        FROM highways_all
+                        WHERE width_nominal > 0.0
+                      ),
+                    -- this are the roads with parking lane - either on one or both sides
+                    roads_parking AS
+                      (SELECT
+                          way,
+                          way_orig,
+                          clip,
+                          buffer,
+                          ST_Difference(
+                            ST_Difference(
+                              -- this generates a buffer outline (either both or one sided)
+                              -- for all rows with a parking lane and clips them - as necessary - to a single side
+                              CASE WHEN lane_clip IS NULL THEN
+                                ST_Boundary(buffer)
+                              ELSE
+                                ST_Intersection(
+                                  ST_Boundary(buffer),
+                                  lane_clip
+                                )
+                              END,
+                              -- this clips the lane outlines with all adjacent roads
+                              (SELECT
+                                  COALESCE(
+                                    ST_Union(
+                                      buffer
+                                    ),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                FROM roads_other o
+                                WHERE
+                                  -- intersect at ends or in equal layer
+                                  ((ST_DWithin(l.way_orig, o.way_orig, 0.1) AND
+                                    (o.layernotnull = l.layernotnull OR (l.int_bridge = 'no' AND l.int_tunnel = 'no')) AND
+                                    o.int_bridge = l.int_bridge AND
+                                    o.int_tunnel = l.int_tunnel) OR
+                                   ST_DWithin(
+                                     ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
+                                     ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  )
+                                  AND o.osm_id != l.osm_id
+                              )
+                            ),
+                            -- this clips the lane outlines with a possible junction clip polygon
+                            (SELECT
+                                COALESCE(
+                                  ST_Union(ST_Buffer(j.clip, 6.0*GREATEST(j.casing_width, l.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                )
+                              FROM junctions j
+                              WHERE
+                                j.int_bridge = l.int_bridge AND
+                                j.int_tunnel = l.int_tunnel AND
+                                j.osm_id = l.osm_id
+                            )
+                          ) AS line,
+                          feature,
+                          path_type,
+                          int_surface,
+                          int_tunnel,
+                          int_bridge,
+                          COALESCE(int_lane_right, int_lane_left) AS int_lane,
+                          int_lane_right,
+                          int_lane_left,
+                          int_access,
+                          construction,
+                          service,
+                          link,
+                          width_lane,
+                          width_nominal,
+                          width_tagged,
+                          width_max,
+                          casing_width,
+                          layernotnull,
+                          osm_id,
+                          z_order
+                        FROM
+                          (SELECT
+                              way,
+                              way_orig,
+                              clip,
+                              ST_Difference(
+                                ST_Buffer(
+                                  way_orig,
+                                  (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                ),
+                                COALESCE(
+                                  ST_Buffer(clip, (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                )
+                              ) AS buffer,
+                              CASE
+                                WHEN int_lane_right IS NULL AND int_lane_left IS NULL THEN
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                WHEN int_lane_right IS NULL THEN
+                                  ST_Buffer(
+                                    ST_OffsetCurve(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  )
+                                WHEN int_lane_left IS NULL THEN
+                                  ST_Buffer(
+                                    ST_OffsetCurve(way, -0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  )
+                                ELSE
+                                  NULL
+                              END AS lane_clip,
+                              feature,
+                              path_type,
+                              int_surface,
+                              int_tunnel,
+                              int_bridge,
+                              int_lane_right,
+                              int_lane_left,
+                              int_access,
+                              construction,
+                              service,
+                              link,
+                              width_lane,
+                              width_nominal,
+                              width_tagged,
+                              width_max,
+                              casing_width,
+                              layernotnull,
+                              osm_id,
+                              z_order
+                            FROM
+                              (SELECT
+                                  way,
+                                  way_orig,
+                                  clip,
+                                  feature,
+                                  path_type,
+                                  int_surface,
+                                  int_tunnel,
+                                  int_bridge,
+                                  CASE WHEN int_lane_types_right[1] = 'parking' THEN 'parking' ELSE NULL END AS int_lane_right,
+                                  CASE WHEN int_lane_types_left[1] = 'parking' THEN 'parking' ELSE NULL END int_lane_left,
+                                  int_access,
+                                  construction,
+                                  service,
+                                  link,
+                                  width_lane,
+                                  width_nominal,
+                                  width_tagged,
+                                  width_max,
+                                  casing_width,
+                                  layernotnull,
+                                  osm_id,
+                                  z_order
+                                FROM roads_lane
+                                WHERE (int_lane_types_right[1] = 'parking' OR int_lane_types_left[1] = 'parking')
+                              ) AS lp
+                          ) AS l
+                      ), -- end or roads_parking CTE
+                    -- this are the roads with cycle lane - either on one or both sides
+                    roads_cycle AS
+                      (SELECT
+                          way,
+                          way_orig,
+                          clip,
+                          buffer,
+                          ST_Difference(
+                            ST_Difference(
+                              -- this generates a buffer outline (either both or one sided)
+                              -- for all rows with a parking lane and clips them - as necessary - to a single side
+                              CASE WHEN lane_clip IS NULL THEN
+                                ST_Boundary(buffer)
+                              ELSE
+                                ST_Intersection(
+                                  ST_Boundary(buffer),
+                                  lane_clip
+                                )
+                              END,
+                              -- this clips the lane outlines with all adjacent roads
+                              (SELECT
+                                  COALESCE(
+                                    ST_Union(
+                                      buffer
+                                    ),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                FROM roads_other o
+                                WHERE
+                                  -- intersect at ends or in equal layer
+                                  ((ST_DWithin(l.way_orig, o.way_orig, 0.1) AND
+                                    (o.layernotnull = l.layernotnull OR (l.int_bridge = 'no' AND l.int_tunnel = 'no')) AND
+                                    o.int_bridge = l.int_bridge AND
+                                    o.int_tunnel = l.int_tunnel) OR
+                                   ST_DWithin(
+                                     ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
+                                     ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  )
+                                  AND o.osm_id != l.osm_id
+                              )
+                            ),
+                            -- this clips the lane outlines with a possible junction clip polygon
+                            (SELECT
+                                COALESCE(
+                                  ST_Union(ST_Buffer(j.clip, 6.0*GREATEST(j.casing_width, l.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                )
+                              FROM junctions j
+                              WHERE
+                                j.int_bridge = l.int_bridge AND
+                                j.int_tunnel = l.int_tunnel AND
+                                j.osm_id = l.osm_id
+                            )
+                          ) AS line,
+                          feature,
+                          path_type,
+                          int_surface,
+                          int_tunnel,
+                          int_bridge,
+                          COALESCE(int_lane_right, int_lane_left) AS int_lane,
+                          int_lane_right,
+                          int_lane_left,
+                          int_access,
+                          construction,
+                          service,
+                          link,
+                          width_lane,
+                          width_nominal,
+                          width_tagged,
+                          width_max,
+                          casing_width,
+                          layernotnull,
+                          osm_id,
+                          z_order
+                        FROM
+                          (SELECT
+                              way,
+                              way_orig,
+                              clip,
+                              ST_Difference(
+                                ST_Difference(
+                                  ST_Buffer(
+                                    way_orig,
+                                    (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  ),
+                                  COALESCE(
+                                    ST_Buffer(clip, (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                ),
+                                (SELECT
+                                    COALESCE(
+                                      ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*width_lane + casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                    )
+                                  FROM roads_parking o
+                                  WHERE
+                                    ST_DWithin(
+                                      ST_Collect(ST_StartPoint(lc.way_orig), ST_EndPoint(lc.way_orig)),
+                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                )
+                              ) AS buffer,
+                              CASE
+                                WHEN int_lane_right IS NULL AND int_lane_left IS NULL THEN
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                WHEN int_lane_right IS NULL THEN
+                                  ST_Buffer(
+                                    ST_OffsetCurve(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  )
+                                WHEN int_lane_left IS NULL THEN
+                                  ST_Buffer(
+                                    ST_OffsetCurve(way, -0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  )
+                                ELSE
+                                  NULL
+                              END AS lane_clip,
+                              feature,
+                              path_type,
+                              int_surface,
+                              int_tunnel,
+                              int_bridge,
+                              int_lane_right,
+                              int_lane_left,
+                              int_access,
+                              construction,
+                              service,
+                              link,
+                              width_lane,
+                              width_nominal,
+                              width_tagged,
+                              width_max,
+                              casing_width,
+                              layernotnull,
+                              osm_id,
+                              z_order
+                            FROM
+                              (SELECT
+                                  way,
+                                  way_orig,
+                                  clip,
+                                  feature,
+                                  path_type,
+                                  int_surface,
+                                  int_tunnel,
+                                  int_bridge,
+                                  CASE WHEN int_lane_types_right[1] = 'cycle' OR int_lane_types_right[2] = 'cycle' THEN 'cycle' ELSE NULL END AS int_lane_right,
+                                  CASE WHEN int_lane_types_left[1] = 'cycle' OR int_lane_types_left[2] = 'cycle' THEN 'cycle' ELSE NULL END int_lane_left,
+                                  int_access,
+                                  construction,
+                                  service,
+                                  link,
+                                  width_lane,
+                                  width_nominal,
+                                  width_tagged,
+                                  width_max,
+                                  casing_width,
+                                  layernotnull,
+                                  osm_id,
+                                  z_order
+                                FROM roads_lane
+                                WHERE (int_lane_types_right[1] = 'cycle'
+                                   OR int_lane_types_left[1] = 'cycle'
+                                   OR int_lane_types_right[2] = 'cycle'
+                                   OR int_lane_types_left[2] = 'cycle')
+                              ) AS lc
+                          ) AS l
+                      ), -- end or roads_cycle CTE
+                    -- this are the roads with bus lane - either on one or both sides
+                    roads_bus AS
+                      (SELECT
+                          way,
+                          way_orig,
+                          clip,
+                          buffer,
+                          ST_Difference(
+                            ST_Difference(
+                              -- this generates a buffer outline (either both or one sided)
+                              -- for all rows with a parking lane and clips them - as necessary - to a single side
+                              CASE WHEN lane_clip IS NULL THEN
+                                ST_Boundary(buffer)
+                              ELSE
+                                ST_Intersection(
+                                  ST_Boundary(buffer),
+                                  lane_clip
+                                )
+                              END,
+                              -- this clips the lane outlines with all adjacent roads
+                              (SELECT
+                                  COALESCE(
+                                    ST_Union(
+                                      buffer
+                                    ),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                FROM roads_other o
+                                WHERE
+                                  -- intersect at ends or in equal layer
+                                  ((ST_DWithin(l.way_orig, o.way_orig, 0.1) AND
+                                    (o.layernotnull = l.layernotnull OR (l.int_bridge = 'no' AND l.int_tunnel = 'no')) AND
+                                    o.int_bridge = l.int_bridge AND
+                                    o.int_tunnel = l.int_tunnel) OR
+                                   ST_DWithin(
+                                     ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
+                                     ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  )
+                                  AND o.osm_id != l.osm_id
+                              )
+                            ),
+                            -- this clips the lane outlines with a possible junction clip polygon
+                            (SELECT
+                                COALESCE(
+                                  ST_Union(ST_Buffer(j.clip, 6.0*GREATEST(j.casing_width, l.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                )
+                              FROM junctions j
+                              WHERE
+                                j.int_bridge = l.int_bridge AND
+                                j.int_tunnel = l.int_tunnel AND
+                                j.osm_id = l.osm_id
+                            )
+                          ) AS line,
+                          feature,
+                          path_type,
+                          int_surface,
+                          int_tunnel,
+                          int_bridge,
+                          COALESCE(int_lane_right, int_lane_left) AS int_lane,
+                          int_lane_right,
+                          int_lane_left,
+                          int_access,
+                          construction,
+                          service,
+                          link,
+                          width_lane,
+                          width_nominal,
+                          width_tagged,
+                          width_max,
+                          casing_width,
+                          layernotnull,
+                          osm_id,
+                          z_order
+                        FROM
+                          (SELECT
+                              way,
+                              way_orig,
+                              clip,
+                              ST_Difference(
+                                ST_Difference(
+                                  ST_Buffer(
+                                    way_orig,
+                                    (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  ),
+                                  COALESCE(
+                                    ST_Buffer(clip, (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                ),
+                                ST_Union(
+                                  (SELECT
+                                      COALESCE(
+                                        ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*width_lane + casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                      )
+                                    FROM roads_parking o
+                                    WHERE
+                                      ST_DWithin(
+                                        ST_Collect(ST_StartPoint(lc.way_orig), ST_EndPoint(lc.way_orig)),
+                                        ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  ),
+                                  (SELECT
+                                      COALESCE(
+                                        ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*width_lane + casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                      )
+                                    FROM roads_cycle o
+                                    WHERE
+                                      ST_DWithin(
+                                        ST_Collect(ST_StartPoint(lc.way_orig), ST_EndPoint(lc.way_orig)),
+                                        ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  )
+                                )
+                              ) AS buffer,
+                              CASE
+                                WHEN int_lane_right IS NULL AND int_lane_left IS NULL THEN
+                                  ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                WHEN int_lane_right IS NULL THEN
+                                  ST_Buffer(
+                                    ST_OffsetCurve(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  )
+                                WHEN int_lane_left IS NULL THEN
+                                  ST_Buffer(
+                                    ST_OffsetCurve(way, -0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                  )
+                                ELSE
+                                  NULL
+                              END AS lane_clip,
+                              feature,
+                              path_type,
+                              int_surface,
+                              int_tunnel,
+                              int_bridge,
+                              int_lane_right,
+                              int_lane_left,
+                              int_access,
+                              construction,
+                              service,
+                              link,
+                              width_lane,
+                              width_nominal,
+                              width_tagged,
+                              width_max,
+                              casing_width,
+                              layernotnull,
+                              osm_id,
+                              z_order
+                            FROM
+                              (SELECT
+                                  way,
+                                  way_orig,
+                                  clip,
+                                  feature,
+                                  path_type,
+                                  int_surface,
+                                  int_tunnel,
+                                  int_bridge,
+                                  CASE WHEN int_lane_types_right[1] = 'bus' OR int_lane_types_right[2] = 'bus' OR int_lane_types_right[3] = 'bus' THEN 'bus' ELSE NULL END AS int_lane_right,
+                                  CASE WHEN int_lane_types_left[1] = 'bus' OR int_lane_types_left[2] = 'bus' OR int_lane_types_left[3] = 'bus' THEN 'bus' ELSE NULL END int_lane_left,
+                                  int_access,
+                                  construction,
+                                  service,
+                                  link,
+                                  width_lane,
+                                  width_nominal,
+                                  width_tagged,
+                                  width_max,
+                                  casing_width,
+                                  layernotnull,
+                                  osm_id,
+                                  z_order
+                                FROM roads_lane
+                                WHERE (int_lane_types_right[1] = 'bus'
+                                   OR int_lane_types_left[1] = 'bus'
+                                   OR int_lane_types_right[2] = 'bus'
+                                   OR int_lane_types_left[2] = 'bus'
+                                   OR int_lane_types_right[3] = 'bus'
+                                   OR int_lane_types_left[3] = 'bus')
+                              ) AS lc
+                          ) AS l
+                      ) -- end or roads_bus CTE
+                    -- these are the parking, cycle and bus lanes together
+                    SELECT
+                        'parking' AS lane_type,
+                        buffer,
+                        line,
+                        way,
+                        way_orig,
+                        clip,
+                        feature,
+                        path_type,
+                        int_surface,
+                        int_tunnel,
+                        int_bridge,
+                        int_lane,
+                        int_lane_right,
+                        int_lane_left,
+                        int_access,
+                        construction,
+                        service,
+                        link,
+                        width_lane,
+                        width_nominal,
+                        width_tagged,
+                        width_max,
+                        casing_width,
+                        layernotnull,
+                        osm_id,
+                        z_order
+                      FROM roads_parking
+                    UNION ALL
+                    SELECT
+                        'cycle' AS lane_type,
+                        buffer,
+                        line,
+                        way,
+                        way_orig,
+                        clip,
+                        feature,
+                        path_type,
+                        int_surface,
+                        int_tunnel,
+                        int_bridge,
+                        int_lane,
+                        int_lane_right,
+                        int_lane_left,
+                        int_access,
+                        construction,
+                        service,
+                        link,
+                        GREATEST(casing_width, width_lane-casing_width*1.5) AS width_lane,
+                        width_nominal,
+                        width_tagged,
+                        width_max,
+                        casing_width,
+                        layernotnull,
+                        osm_id,
+                        z_order
+                      FROM roads_cycle
+                    UNION ALL
+                    SELECT
+                        'bus' AS lane_type,
+                        buffer,
+                        line,
+                        way,
+                        way_orig,
+                        clip,
+                        feature,
+                        path_type,
+                        int_surface,
+                        int_tunnel,
+                        int_bridge,
+                        int_lane,
+                        int_lane_right,
+                        int_lane_left,
+                        int_access,
+                        construction,
+                        service,
+                        link,
+                        GREATEST(casing_width, width_lane-casing_width*1.5) AS width_lane,
+                        width_nominal,
+                        width_tagged,
+                        width_max,
+                        casing_width,
+                        layernotnull,
+                        osm_id,
+                        z_order
+                      FROM roads_bus
+                    ) AS lanes
+                  WHERE int_tunnel = 'no'
+                    AND z(!scale_denominator!) >= 18
+                  -- end of lanes select
                 UNION ALL
                 SELECT -- begin of main road select
                     way,
@@ -2236,14 +3192,14 @@ Layer:
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    int_lane_right,
-                    int_lane_left,
+                    'no' AS int_lane,
                     int_lanes,
                     'no' AS int_junction,
                     int_access,
                     construction,
                     service,
                     link,
+                    width_lane,
                     width_nominal,
                     width_tagged,
                     casing_width,
@@ -2260,14 +3216,14 @@ Layer:
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    int_lane_right,
-                    int_lane_left,
+                    'no' AS int_lane,
                     int_lanes,
                     'yes' AS int_junction,
                     int_access,
                     construction,
                     service,
                     link,
+                    0 AS width_lane,
                     width_nominal,
                     width_tagged,
                     casing_width,
@@ -2284,14 +3240,14 @@ Layer:
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    'null' AS int_lane_right,
-                    'null' AS int_lane_left,
+                    'no' AS int_lane,
                     NULL AS int_lanes,
                     'no' AS int_junction,
                     int_access,
                     construction,
                     service,
                     link,
+                    0 AS width_lane,
                     width_nominal,
                     width_tagged,
                     carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
@@ -2370,8 +3326,7 @@ Layer:
                       WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
                       ELSE 'no'::text
                     END AS int_bridge,
-                    'null' AS int_lane_right,
-                    'null' AS int_lane_left,
+                    'no' AS int_lane,
                     NULL AS int_lanes,
                     'no' AS int_junction,
                     NULL AS int_access,
@@ -2381,6 +3336,7 @@ Layer:
                       ELSE 'INT-normal'::text
                     END AS service,
                     'no' AS link,
+                    0 AS width_lane,
                     carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
                     CASE
                       WHEN aeroway IS NOT NULL THEN
@@ -2719,14 +3675,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2735,7 +3690,7 @@ Layer:
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
+              WHERE int_junction = 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- background
                 way,
@@ -2747,14 +3702,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2763,7 +3717,7 @@ Layer:
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
+              WHERE int_junction = 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- background_unpaved
                 ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
@@ -2775,14 +3729,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2794,6 +3747,7 @@ Layer:
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_surface = 'unpaved'
+                AND int_lane = 'no'
                 AND width >= 0.0
                 AND
                   -- this is all the roads with a fill that is patterened for unpaved roads - only at high zoom and rendered as background
@@ -2810,14 +3764,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2826,7 +3779,7 @@ Layer:
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
+              WHERE int_junction = 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- fill_unpaved
                 CASE
@@ -2845,14 +3798,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2864,6 +3816,7 @@ Layer:
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_surface = 'unpaved'
+                AND int_lane = 'no'
                 AND
                   -- this is all the roads with a fill that is patterened for unpaved roads
                   feature IN (
@@ -2883,14 +3836,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2899,7 +3851,7 @@ Layer:
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction != 'no'
+              WHERE int_junction != 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- junction_fill
                 way,
@@ -2911,14 +3863,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2927,7 +3878,67 @@ Layer:
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction != 'no'
+              WHERE int_junction != 'no' AND int_lane = 'no'
+            UNION ALL
+            SELECT -- fill_lanes
+                way,
+                'fill_lanes' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_lane,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_lane != 'no'
+                AND z(!scale_denominator!) >= 18
+            UNION ALL
+            SELECT -- parkings_lane
+                way,
+                'parkings_lane' AS road_layer,
+                'amenity_parking' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM planet_osm_polygon
+              WHERE amenity = 'parking' AND (tags->'parking') = 'lane'
+                AND building IS NULL
+                AND way && !bbox!
+                AND z(!scale_denominator!) >= 12
             UNION ALL
             SELECT -- centerline
                 way,
@@ -2939,14 +3950,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2957,7 +3967,9 @@ Layer:
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
-                AND feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
+                AND int_lane = 'no'
+                AND
+                  feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- lanes
@@ -2970,14 +3982,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -2988,6 +3999,7 @@ Layer:
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
+                AND int_lane = 'no'
                 AND int_lanes IS NOT NULL
                 AND z(!scale_denominator!) >= 18
             UNION ALL
@@ -3001,14 +4013,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -3020,6 +4031,7 @@ Layer:
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_access IS NOT NULL
+                AND int_lane = 'no'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- centerline_top
@@ -3032,14 +4044,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -3051,6 +4062,7 @@ Layer:
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_bridge IN ('ford', 'ford_node',  'mountain_pass')
+                AND int_lane = 'no'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- area_casing
@@ -3063,14 +4075,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                0 AS width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -3091,14 +4102,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                0 AS width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -3118,14 +4128,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -3145,14 +4154,13 @@ Layer:
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -3172,14 +4180,13 @@ Layer:
                 'null' AS int_surface,
                 CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
                 'yes' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 0 AS width,
@@ -3203,14 +4210,13 @@ Layer:
                 'null' AS int_surface,
                 CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
                 'yes' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 0 AS width,
@@ -3234,14 +4240,13 @@ Layer:
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -3272,14 +4277,13 @@ Layer:
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -3311,14 +4315,13 @@ Layer:
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -3339,14 +4342,13 @@ Layer:
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 0 AS width,
@@ -3371,14 +4373,13 @@ Layer:
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS width,
@@ -3422,6 +4423,8 @@ Layer:
               WHEN road_layer = 'junction_fill' THEN 8
               WHEN road_layer = 'fill' THEN 8
               WHEN road_layer = 'fill_unpaved' THEN 8
+              WHEN road_layer = 'fill_lanes' THEN 8
+              WHEN road_layer = 'parkings_lane' THEN 8
               WHEN road_layer = 'centerline' THEN 8
               WHEN road_layer = 'lanes' THEN 8
               WHEN road_layer = 'access' THEN 8
@@ -3447,13 +4450,21 @@ Layer:
               WHEN road_layer = 'junction_fill' THEN 12
               WHEN road_layer = 'fill' THEN 13
               WHEN road_layer = 'fill_unpaved' THEN 14
-              WHEN road_layer = 'centerline' THEN 15
-              WHEN road_layer = 'lanes' THEN 16
-              WHEN road_layer = 'access' THEN 17
-              WHEN road_layer = 'tc_fill' THEN 18
-              WHEN road_layer = 'centerline_top' THEN 19
+              WHEN road_layer = 'fill_lanes' THEN 15
+              WHEN road_layer = 'parkings_lane' THEN 16
+              WHEN road_layer = 'centerline' THEN 17
+              WHEN road_layer = 'lanes' THEN 18
+              WHEN road_layer = 'access' THEN 19
+              WHEN road_layer = 'tc_fill' THEN 20
+              WHEN road_layer = 'centerline_top' THEN 21
             END,
-            CASE WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0 ELSE 1 END,
+            CASE
+              WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0
+              WHEN feature = 'highway_lane_parking' THEN 1
+              WHEN feature = 'highway_lane_cycle' THEN 2
+              WHEN feature = 'highway_lane_bus' THEN 3
+              ELSE 4
+            END,
             -- order by how permissive it is to the target map user
             CASE
               WHEN int_access IN ('no') THEN 0

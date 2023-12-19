@@ -24,8 +24,7 @@
                       WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
                       ELSE 'no'::text
                     END AS int_bridge,
-                    'null' AS int_lane_right,
-                    'null' AS int_lane_left,
+                    'no' AS int_lane,
                     NULL AS int_lanes,
                     'no' AS int_junction,
                     NULL AS int_access,
@@ -35,6 +34,7 @@
                       ELSE 'INT-normal'::text
                     END AS service,
                     'no' AS link,
+                    0 AS width_lane,
                     carto_highway_line_width(COALESCE(railway, aeroway), z(!scale_denominator!)) AS width_nominal,
                     CASE
                       WHEN aeroway IS NOT NULL THEN

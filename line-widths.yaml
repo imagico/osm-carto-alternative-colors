@@ -75,6 +75,8 @@ sql:
     - taxiway
     - raceway
     - platform
+    - sidewalk
+    - parking
   casing:
     - casing-major
     - casing-secondary
@@ -325,6 +327,12 @@ classes:
     19: 12
   platform:
     16: 4
+  sidewalk:
+    18: 0.8
+    19: 0.9
+  parking:
+    18: 0.8
+    19: 0.9
   rail:
     7: 0.5
     8: 0.8

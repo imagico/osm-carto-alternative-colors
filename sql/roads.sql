@@ -5,15 +5,23 @@
 /*  depends on line-widths-generated.sql                                    */
 /* ======================================================================== */
 
+/* query the language_regions polygon set to determine the driving side for a certain geometry */
+CREATE OR REPLACE FUNCTION carto_driving_side(geom geometry)
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+    SELECT COALESCE(driving, 'right') FROM language_regions WHERE ST_Intersects(ST_PointOnSurface($1), way) AND driving IS NOT NULL  ORDER BY level DESC LIMIT 1
+$func$;
 
 /* classifying highway=path into foot/bicycle/horse */
 /* based on access tags foot/bicycle/horse */
 /* parameters: foot, bicycle, horse */
 /* returns: 'foot', 'bicycle' or, 'horse'' */
 CREATE OR REPLACE FUNCTION carto_path_type (text, text, text)
-  returns text
-  language sql
-  immutable
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT
   CASE
@@ -34,9 +42,9 @@ $func$;
 /* parameters: highway, access, vehicle, motor_vehicle, motorcar, bicycle, horse, foot, bus, psv */
 /* returns: 'no', 'light' or '' (for no restructions on primary mode) */
 CREATE OR REPLACE FUNCTION carto_road_access_primary_mode (text, text, text, text, text, text, text, text, text, text)
-  returns text
-  language sql
-  immutable
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT
   CASE
@@ -164,9 +172,9 @@ $func$;
 /*          'light', 'bus+light', 'bicycle+light', 'foot+light' or 'horse+light' */
 /*          or NULL (for no restructions) */
 CREATE OR REPLACE FUNCTION carto_road_access (text, text, text, text, text, text, text, text, text, text)
-  returns text
-  language sql
-  immutable
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT
   CASE carto_road_access_primary_mode ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
@@ -323,9 +331,9 @@ $func$;
 /* parameters: highway tag, service tag, zoom level */
 /* note this can be applied repeatedly without problems */
 CREATE OR REPLACE FUNCTION carto_highway_line_width (text, text, numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT carto_highway_line_width(
   CASE WHEN $1 = 'service' AND $2 IN ('parking_aisle', 'drive-through', 'driveway') 
@@ -336,10 +344,9 @@ $func$;
 
 /* wrapper for casing width - bridge or not */
 CREATE OR REPLACE FUNCTION carto_casing_line_width (text, text, numeric)
-  returns numeric
-  language sql
-  immutable
-  returns null on null input
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT
   CASE WHEN $2 = 'no' THEN carto_casing_line_width ($1, $3)
@@ -347,12 +354,22 @@ SELECT
   END
 $func$;
 
+/* convert ground unit dimension to pixels */
+/* parameters: ground unit length, way, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_ground_to_px (numeric, geometry, numeric)
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT $1 / NULLIF(scale_factor($2)*$3*0.001*0.28,0)
+$func$;
+
 /* tagged width or width estimated from lanes */
 /* parameters: highway tag, width tag, lanes tag, way, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_highway_line_width_mapped (text, text, text, geometry, numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT (CASE
   WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 150) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
@@ -405,9 +422,9 @@ $func$;
 /* tagged width or width estimated from length */
 /* parameters: aeroway tag, width tag, way, bbox, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_aeroway_line_width_mapped (text, text, geometry, geometry, numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT (CASE
   WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 150) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
@@ -424,9 +441,9 @@ $func$;
 /* half tagged width or minimum assumed width of dyke */
 /* parameters: width tag, way, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_dyke_side_width_mapped (text, geometry, numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT (CASE
   WHEN $1 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($1::NUMERIC, 50) * 0.5 / NULLIF(scale_factor($2)*$3*0.001*0.28,0)
@@ -437,9 +454,9 @@ $func$;
 /* tagged width or width estimated from barrier type */
 /* parameters: barrier tag, width tag, way, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_barrier_line_width_mapped (text, text, geometry, numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT (CASE
   WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 20) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
@@ -455,9 +472,9 @@ $func$;
 
 /* crevasse profile curve: half width as a function of normalized distance from center [0..1] */
 CREATE OR REPLACE FUNCTION carto_crevasse_profile_curve (numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT
     (CASE
@@ -469,9 +486,9 @@ $func$;
 /* tagged width or width estimated from length and nominal width progression */
 /* parameters: width tag, way, length, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_crevasse_drawing_width (text, geometry, numeric, numeric)
-  returns numeric
-  language sql
-  immutable
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT
     (CASE
@@ -502,4 +519,309 @@ SELECT
             END) AS width_tagged
         ) AS w_nominal
     ) AS w_calc
+$func$;
+
+
+/*
+Function to determine lanes and sidewalks/tracks/street_side parking
+on roads on right and left based on tags
+
+Parameters:
+
+  way
+  hstore
+  int_oneway: 'yes', '-1' or 'no'
+
+Returns [lane_right, lane_left, side_right, side_left] with:
+
+  lane_right/lane_left: 'cycle'|'bus'|'parking' or combinations like 'cycle'+'bus'
+  side_right/side_left: 'cycle'|'foot'|'both'|'handrail'|'parking' or combinations like 'both'+'parking'
+*/
+CREATE OR REPLACE FUNCTION carto_highway_lanes_sides (way geometry, tags hstore, int_oneway text)
+  RETURNS text[4]
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT
+  ARRAY[
+    NULLIF(CONCAT_WS(
+      '+',
+      CASE
+        WHEN (tags->'parking:right') IN ('lane') OR (tags->'parking:both') IN ('lane') THEN
+          'parking'::text
+      ELSE
+        NULL
+      END,
+      CASE
+        WHEN (tags->'cycleway:right') IN ('lane') OR (tags->'cycleway:both') IN ('lane') THEN
+          'cycle'::text
+        WHEN (tags->'cycleway') IN ('lane') AND
+              (int_oneway = 'no' OR
+               (driving_side = 'right' AND int_oneway = 'yes') OR 
+               (driving_side = 'left' AND int_oneway = '-1')
+              ) THEN
+          'cycle'::text
+        WHEN (tags->'cycleway') IN ('opposite_lane') AND 
+              ((driving_side = 'right' AND int_oneway = '-1') OR (driving_side = 'left' AND int_oneway = 'yes')) THEN
+          'cycle'::text
+      ELSE
+        NULL
+      END,
+      CASE
+        WHEN (tags->'busway:right') IN ('lane') OR (tags->'busway:both') IN ('lane') THEN
+          'bus'::text
+        WHEN (tags->'busway') IN ('lane') AND
+              (int_oneway = 'no' OR
+               (driving_side = 'right' AND int_oneway = 'yes') OR 
+               (driving_side = 'left' AND int_oneway = '-1')
+              ) THEN
+          'bus'::text
+        WHEN (tags->'busway') IN ('opposite_lane') AND 
+              ((driving_side = 'right' AND int_oneway = '-1') OR (driving_side = 'left' AND int_oneway = 'yes')) THEN
+          'bus'::text
+      ELSE
+        NULL
+      END
+    ), ''),
+    -- ----------------------------
+    NULLIF(CONCAT_WS(
+      '+',
+      CASE
+        WHEN (tags->'parking:left') IN ('lane') OR (tags->'parking:both') IN ('lane') THEN
+          'parking'::text
+      ELSE
+        NULL
+      END,
+      CASE
+        WHEN (tags->'cycleway:left') IN ('lane') OR (tags->'cycleway:both') IN ('lane') THEN
+          'cycle'::text
+        WHEN (tags->'cycleway') IN ('lane') AND
+              (int_oneway = 'no' OR
+               (driving_side = 'left' AND int_oneway = 'yes') OR 
+               (driving_side = 'right' AND int_oneway = '-1')
+              ) THEN
+          'cycle'::text
+        WHEN (tags->'cycleway') IN ('opposite_lane') AND 
+              ((driving_side = 'left' AND int_oneway = '-1') OR (driving_side = 'right' AND int_oneway = 'yes')) THEN
+          'cycle'::text
+      ELSE
+        NULL
+      END,
+      CASE
+        WHEN (tags->'busway:left') IN ('lane') OR (tags->'busway:both') IN ('lane') THEN
+          'bus'::text
+        WHEN (tags->'busway') IN ('lane') AND
+              (int_oneway = 'no' OR
+               (driving_side = 'left' AND int_oneway = 'yes') OR 
+               (driving_side = 'right' AND int_oneway = '-1')
+              ) THEN
+          'bus'::text
+        WHEN (tags->'busway') IN ('opposite_lane') AND 
+              ((driving_side = 'left' AND int_oneway = '-1') OR (driving_side = 'right' AND int_oneway = 'yes')) THEN
+          'bus'::text
+      ELSE
+        NULL
+      END
+    ), ''),
+    -- ----------------------------
+    NULLIF(CONCAT_WS(
+      '+',
+      CASE
+        WHEN (tags->'parking:right') IN ('street_side') OR (tags->'parking:both') IN ('street_side') THEN
+          'parking'::text
+      ELSE
+        NULL
+      END,
+      CASE WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN
+          CASE
+            WHEN (tags->'cycleway:right') IN ('track') OR (tags->'cycleway:both') IN ('track') THEN
+              'both'::text
+            WHEN (tags->'cycleway') IN ('track') AND
+                  (int_oneway = 'no' OR
+                   (driving_side = 'right' AND int_oneway = 'yes') OR 
+                   (driving_side = 'left' AND int_oneway = '-1')
+                  ) THEN
+              'both'::text
+            WHEN (tags->'cycleway') IN ('opposite_track') AND 
+                  ((driving_side = 'right' AND int_oneway = '-1') OR (driving_side = 'left' AND int_oneway = 'yes')) THEN
+              'both'::text
+            ELSE
+              'foot'::text
+          END
+      ELSE
+          CASE
+            WHEN (tags->'cycleway:right') IN ('track') OR (tags->'cycleway:both') IN ('track') THEN
+              'cycle'::text
+            WHEN (tags->'cycleway') IN ('track') AND
+                  (int_oneway = 'no' OR
+                   (driving_side = 'right' AND int_oneway = 'yes') OR 
+                   (driving_side = 'left' AND int_oneway = '-1')
+                  ) THEN
+              'cycle'::text
+            WHEN (tags->'cycleway') IN ('opposite_track') AND 
+                  ((driving_side = 'right' AND int_oneway = '-1') OR (driving_side = 'left' AND int_oneway = 'yes')) THEN
+              'cycle'::text
+            ELSE
+              CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN 'handrail'::text
+              ELSE
+                NULL
+              END
+          END
+      END
+    ), ''),
+    -- ----------------------------
+    NULLIF(CONCAT_WS(
+      '+',
+      CASE
+        WHEN (tags->'parking:left') IN ('street_side') OR (tags->'parking:both') IN ('street_side') THEN
+          'parking'::text
+      ELSE
+        NULL
+      END,
+      CASE WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN
+          CASE
+            WHEN (tags->'cycleway:left') IN ('track') OR (tags->'cycleway:both') IN ('track') THEN
+              'both'::text
+            WHEN (tags->'cycleway') IN ('track') AND
+                  (int_oneway = 'no' OR
+                   (driving_side = 'left' AND int_oneway = 'yes') OR 
+                   (driving_side = 'right' AND int_oneway = '-1')
+                  ) THEN
+              'both'::text
+            WHEN (tags->'cycleway') IN ('opposite_track') AND 
+                  ((driving_side = 'left' AND int_oneway = '-1') OR (driving_side = 'right' AND int_oneway = 'yes')) THEN
+              'both'::text
+            ELSE
+              'foot'::text
+          END
+      ELSE
+          CASE
+            WHEN (tags->'cycleway:left') IN ('track') OR (tags->'cycleway:both') IN ('track') THEN
+              'cycle'::text
+            WHEN (tags->'cycleway') IN ('track') AND
+                  (int_oneway = 'no' OR
+                   (driving_side = 'left' AND int_oneway = 'yes') OR 
+                   (driving_side = 'right' AND int_oneway = '-1')
+                  ) THEN
+              'cycle'::text
+            WHEN (tags->'cycleway') IN ('opposite_track') AND 
+                  ((driving_side = 'left' AND int_oneway = '-1') OR (driving_side = 'right' AND int_oneway = 'yes')) THEN
+              'cycle'::text
+            ELSE
+              CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN 'handrail'::text
+              ELSE
+                NULL
+              END
+          END
+      END
+    ), '')
+  ]
+  FROM
+    (SELECT
+        CASE WHEN
+          (tags->'cycleway') IN ('lane', 'opposite_lane') OR
+          (tags->'busway') IN ('lane', 'opposite_lane') OR 
+          (tags->'cycleway') IN ('track', 'opposite_track') THEN
+          carto_driving_side(way)
+        ELSE
+          ''::text
+        END AS driving_side) AS _
+$func$;
+
+
+/*
+Function to determine overall side width right and left (for embankment rendering)
+of the sidewalks/handrails/street_side parkings based on tags
+
+Parameters:
+
+  way
+  hstore
+  int_oneway: 'yes', '-1' or 'no'
+  scale_denominator
+
+Returns [width_right, width_left]
+*/
+CREATE OR REPLACE FUNCTION carto_highway_side_widths (way geometry, tags hstore, int_oneway text, scale_denominator numeric)
+  RETURNS numeric[2]
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT
+  ARRAY[
+      CASE WHEN (tags->'sidewalk') IN ('yes', 'both', 'right') OR (tags->'sidewalk:right') IN ('yes') THEN
+        casing_width*2.75 + sidewalk_width
+      ELSE
+          CASE
+            WHEN (tags->'cycleway:right') IN ('track') OR (tags->'cycleway:both') IN ('track') THEN
+              casing_width*2.5 + sidewalk_width
+            WHEN (tags->'cycleway') IN ('track') AND
+                  (int_oneway = 'no' OR
+                   (driving_side = 'right' AND int_oneway = 'yes') OR 
+                   (driving_side = 'left' AND int_oneway = '-1')
+                  ) THEN
+              casing_width*2.75 + sidewalk_width
+            WHEN (tags->'cycleway') IN ('opposite_track') AND 
+                  ((driving_side = 'right' AND int_oneway = '-1') OR (driving_side = 'left' AND int_oneway = 'yes')) THEN
+              casing_width*2.75 + sidewalk_width
+            ELSE
+              CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:right') IN ('yes') THEN
+                casing_width*2.0 + sidewalk_width
+              ELSE
+                0.0
+              END
+          END
+      END +
+      CASE
+        WHEN (tags->'parking:right') IN ('street_side') OR (tags->'parking:both') IN ('street_side') THEN
+          casing_width + parking_width
+        ELSE
+          0.0
+      END,
+      -- ----------------------------
+      CASE WHEN (tags->'sidewalk') IN ('yes', 'both', 'left') OR (tags->'sidewalk:left') IN ('yes') THEN
+        casing_width*2.75 + sidewalk_width
+      ELSE
+          CASE
+            WHEN (tags->'cycleway:left') IN ('track') OR (tags->'cycleway:both') IN ('track') THEN
+              casing_width*2.75 + sidewalk_width
+            WHEN (tags->'cycleway') IN ('track') AND
+                  (int_oneway = 'no' OR
+                   (driving_side = 'left' AND int_oneway = 'yes') OR 
+                   (driving_side = 'right' AND int_oneway = '-1')
+                  ) THEN
+              casing_width*2.75 + sidewalk_width
+            WHEN (tags->'cycleway') IN ('opposite_track') AND 
+                  ((driving_side = 'left' AND int_oneway = '-1') OR (driving_side = 'right' AND int_oneway = 'yes')) THEN
+              casing_width*2.75 + sidewalk_width
+            ELSE
+              CASE WHEN (tags->'handrail') IN ('yes') OR (tags->'handrail:left') IN ('yes') THEN
+                casing_width*2.0 + sidewalk_width
+              ELSE
+                0.0
+              END
+          END
+      END +
+      CASE
+        WHEN (tags->'parking:left') IN ('street_side') OR (tags->'parking:both') IN ('street_side') THEN
+          casing_width + parking_width
+        ELSE
+          0.0
+      END
+  ]
+  FROM
+    (SELECT
+        CASE WHEN
+          (tags->'cycleway') IN ('track', 'opposite_track') THEN
+          carto_driving_side(way)
+        ELSE
+          ''::text
+        END AS driving_side,
+        carto_casing_line_width('sidewalk', 'no', z(scale_denominator)) AS casing_width,
+        carto_highway_line_width('sidewalk', z(scale_denominator)) AS sidewalk_width,
+        GREATEST(
+          carto_highway_line_width('parking', z(scale_denominator)),
+          carto_ground_to_px(2.5, way, scale_denominator)
+        ) AS parking_width
+    ) AS _
 $func$;

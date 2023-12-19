@@ -56,14 +56,13 @@
             int_surface,
             int_tunnel,
             int_bridge,
-            int_lane_right,
-            int_lane_left,
             int_lanes,
             int_access,
             construction,
             service,
             link,
             tc_type,
+            width_lane,
             width_nominal,
             width_max,
             width,
@@ -77,14 +76,14 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
+                int_lane,
                 int_lanes,
                 int_junction,
                 int_access,
                 construction,
                 service,
                 link,
+                width_lane,
                 width_nominal,
                 GREATEST(width_nominal, width_tagged) AS width_max,
                 CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
@@ -130,6 +129,7 @@
                     h.construction AS construction,
                     h.service AS service,
                     h.link AS link,
+                    h.width_lane AS width_lane,
                     h.width_nominal AS width_nominal,
                     h.width_tagged AS width_tagged,
                     carto_casing_line_width(h.highway, h.int_bridge, z(!scale_denominator!)) AS casing_width,
@@ -147,7 +147,10 @@
                     ON j.osm_id = h.osm_id
                 ), -- end highways_all CTE
               @@if(ac)
+                @@include(roads/sidewalks-cte.sql)
                 @@include(roads/sidewalks.sql)
+                UNION ALL
+                @@include(roads/lanes.sql)
               @@else
                 @@include(roads/sidewalks-dummy.sql)
               @@end
@@ -159,14 +162,14 @@
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    int_lane_right,
-                    int_lane_left,
+                    'no' AS int_lane,
                     int_lanes,
                     'no' AS int_junction,
                     int_access,
                     construction,
                     service,
                     link,
+                    width_lane,
                     width_nominal,
                     width_tagged,
                     casing_width,
@@ -183,14 +186,14 @@
                     int_surface,
                     int_tunnel,
                     int_bridge,
-                    int_lane_right,
-                    int_lane_left,
+                    'no' AS int_lane,
                     int_lanes,
                     'yes' AS int_junction,
                     int_access,
                     construction,
                     service,
                     link,
+                    0 AS width_lane,
                     width_nominal,
                     width_tagged,
                     casing_width,
@@ -235,14 +238,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -251,7 +253,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
+              WHERE int_junction = 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- background
                 way,
@@ -263,14 +265,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -279,7 +280,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
+              WHERE int_junction = 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- background_unpaved
                 ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
@@ -291,14 +292,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -310,6 +310,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_surface = 'unpaved'
+                AND int_lane = 'no'
                 AND width >= 0.0
                 AND
                   -- this is all the roads with a fill that is patterened for unpaved roads - only at high zoom and rendered as background
@@ -326,14 +327,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -342,7 +342,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
+              WHERE int_junction = 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- fill_unpaved
                 CASE
@@ -361,14 +361,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -380,6 +379,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_surface = 'unpaved'
+                AND int_lane = 'no'
                 AND
                   -- this is all the roads with a fill that is patterened for unpaved roads
                   feature IN (
@@ -399,14 +399,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -415,7 +414,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction != 'no'
+              WHERE int_junction != 'no' AND int_lane = 'no'
             UNION ALL
             SELECT -- junction_fill
                 way,
@@ -427,14 +426,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -443,7 +441,67 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction != 'no'
+              WHERE int_junction != 'no' AND int_lane = 'no'
+            UNION ALL
+            SELECT -- fill_lanes
+                way,
+                'fill_lanes' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_lane,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no'
+                AND int_tunnel = 'no'
+                AND int_lane != 'no'
+                AND z(!scale_denominator!) >= 18
+            UNION ALL
+            SELECT -- parkings_lane
+                way,
+                'parkings_lane' AS road_layer,
+                'amenity_parking' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM planet_osm_polygon
+              WHERE amenity = 'parking' AND (tags->'parking') = 'lane'
+                AND building IS NULL
+                AND way && !bbox!
+                AND z(!scale_denominator!) >= 12
             UNION ALL
             SELECT -- centerline
                 way,
@@ -455,14 +513,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -473,7 +530,9 @@
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
-                AND feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
+                AND int_lane = 'no'
+                AND
+                  feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- lanes
@@ -486,14 +545,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -504,6 +562,7 @@
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
+                AND int_lane = 'no'
                 AND int_lanes IS NOT NULL
                 AND z(!scale_denominator!) >= 18
             UNION ALL
@@ -517,14 +576,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -536,6 +594,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_access IS NOT NULL
+                AND int_lane = 'no'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- centerline_top
@@ -548,14 +607,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -567,6 +625,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_bridge IN ('ford', 'ford_node',  'mountain_pass')
+                AND int_lane = 'no'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- area_casing
@@ -579,14 +638,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                0 AS width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -607,14 +665,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 'null' AS tc_type,
+                0 AS width_lane,
                 width_nominal,
                 width_max,
                 width,
@@ -634,14 +691,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -661,14 +717,13 @@
                 int_surface,
                 int_tunnel,
                 int_bridge,
-                int_lane_right,
-                int_lane_left,
                 int_lanes,
                 int_access,
                 construction,
                 service,
                 link,
                 tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -688,14 +743,13 @@
                 'null' AS int_surface,
                 CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
                 'yes' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 0 AS width,
@@ -719,14 +773,13 @@
                 'null' AS int_surface,
                 CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
                 'yes' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 0 AS width,
@@ -750,14 +803,13 @@
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -788,14 +840,13 @@
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -827,14 +878,13 @@
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 CASE WHEN height <= 0.5 THEN 'yes' ELSE 'no' END AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 width,
@@ -855,14 +905,13 @@
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 0 AS width,
@@ -887,14 +936,13 @@
                 'null' AS int_surface,
                 'no' AS int_tunnel,
                 'no' AS int_bridge,
-                'null' AS int_lane_right,
-                'null' AS int_lane_left,
                 'null' AS int_lanes,
                 'null' AS int_access,
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
                 'null' tc_type,
+                0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
                 way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS width,
@@ -938,6 +986,8 @@
               WHEN road_layer = 'junction_fill' THEN 8
               WHEN road_layer = 'fill' THEN 8
               WHEN road_layer = 'fill_unpaved' THEN 8
+              WHEN road_layer = 'fill_lanes' THEN 8
+              WHEN road_layer = 'parkings_lane' THEN 8
               WHEN road_layer = 'centerline' THEN 8
               WHEN road_layer = 'lanes' THEN 8
               WHEN road_layer = 'access' THEN 8
@@ -963,13 +1013,21 @@
               WHEN road_layer = 'junction_fill' THEN 12
               WHEN road_layer = 'fill' THEN 13
               WHEN road_layer = 'fill_unpaved' THEN 14
-              WHEN road_layer = 'centerline' THEN 15
-              WHEN road_layer = 'lanes' THEN 16
-              WHEN road_layer = 'access' THEN 17
-              WHEN road_layer = 'tc_fill' THEN 18
-              WHEN road_layer = 'centerline_top' THEN 19
+              WHEN road_layer = 'fill_lanes' THEN 15
+              WHEN road_layer = 'parkings_lane' THEN 16
+              WHEN road_layer = 'centerline' THEN 17
+              WHEN road_layer = 'lanes' THEN 18
+              WHEN road_layer = 'access' THEN 19
+              WHEN road_layer = 'tc_fill' THEN 20
+              WHEN road_layer = 'centerline_top' THEN 21
             END,
-            CASE WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0 ELSE 1 END,
+            CASE
+              WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0
+              WHEN feature = 'highway_lane_parking' THEN 1
+              WHEN feature = 'highway_lane_cycle' THEN 2
+              WHEN feature = 'highway_lane_bus' THEN 3
+              ELSE 4
+            END,
             -- order by how permissive it is to the target map user
             CASE
               WHEN int_access IN ('no') THEN 0
