@@ -364,57 +364,82 @@ AS $func$
 SELECT $1 / NULLIF(scale_factor($2)*$3*0.001*0.28,0)
 $func$;
 
+
 /* tagged width or width estimated from lanes */
-/* parameters: highway tag, width tag, lanes tag, way, scale_denominator */
-CREATE OR REPLACE FUNCTION carto_highway_line_width_mapped (text, text, text, geometry, numeric)
+/* parameters: parking:both tag, parking:right tag, parking:left tag */
+CREATE OR REPLACE FUNCTION carto_highway_num_parking_lanes (text, text, text)
+  RETURNS integer
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT (CASE
+  WHEN $1 = 'lane' OR ($2 = 'lane' AND $3 = 'lane') THEN 2
+  WHEN $2 = 'lane' OR $3 = 'lane' THEN 1
+  ELSE 0
+END)
+$func$;
+
+/* tagged width or width estimated from lanes */
+/* parameters: highway tag, width:carriageway tag, width tag, lanes tag, parking:both tag, parking:right tag, parking:left tag, way, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_highway_line_width_mapped (text, text, text, text, text, text, text, geometry, numeric)
   RETURNS numeric
   LANGUAGE SQL
   IMMUTABLE PARALLEL SAFE
 AS $func$
 SELECT (CASE
-  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 150) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-  WHEN $3 IN ('1', '2', '3', '4', '5', '6') THEN
-  case
-    when $1 = 'motorway' then
-      ($3::NUMERIC * 3.75 + 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'motorway_link' then
-      ($3::NUMERIC * 3.5 + 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 IN ('trunk', 'trunk_link') then
-      ($3::NUMERIC * 3.5 + 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 IN ('primary', 'primary_link') then
-      ($3::NUMERIC * 3.0 + 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 IN ('secondary', 'secondary_link') then
-      ($3::NUMERIC * 2.75 + 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 IN ('tertiary', 'tertiary_link') then
-      ($3::NUMERIC * 2.5 + 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'residential' then
-      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'unclassified' then
-      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'service' then
-      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'service-minor' then
-      ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'living_street' then
-      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'pedestrian' then
-      ($3::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'steps' then
-      ($3::NUMERIC * 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'road' then
-      ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'bridleway' then
-      ($3::NUMERIC * 1.0) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'footway' then
-      ($3::NUMERIC * 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'cycleway' then
-      ($3::NUMERIC * 0.75) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'path' then
-      ($3::NUMERIC * 0.5) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    when $1 = 'track' then
-      ($3::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
-    else 0.0
-  end
+  -- width:carriageway when it contains a valid value
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 150) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+  -- width when it contains a valid value
+  WHEN $3 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($3::NUMERIC, 150) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+  WHEN $4 IN ('1', '2', '3', '4', '5', '6') THEN
+    -- estimate width based on typical driving lane width of the road class in question
+    CASE
+      WHEN $1 = 'motorway' THEN
+        ($4::NUMERIC * 3.75 + 1.0) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'motorway_link' THEN
+        ($4::NUMERIC * 3.5 + 1.0) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 IN ('trunk', 'trunk_link') THEN
+        ($4::NUMERIC * 3.5 + 1.0) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 IN ('primary', 'primary_link') THEN
+        ($4::NUMERIC * 3.0 + 0.5) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 IN ('secondary', 'secondary_link') THEN
+        ($4::NUMERIC * 2.75 + 0.5) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 IN ('tertiary', 'tertiary_link') THEN
+        ($4::NUMERIC * 2.5 + 0.5) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'residential' THEN
+        ($4::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'unclassified' THEN
+        ($4::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'service' THEN
+        ($4::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'service-minor' THEN
+        ($4::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'living_street' THEN
+        ($4::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'pedestrian' THEN
+        ($4::NUMERIC * 2.25 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'steps' THEN
+        ($4::NUMERIC * 1.0) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'road' THEN
+        ($4::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'bridleway' THEN
+        ($4::NUMERIC * 1.0) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'footway' THEN
+        ($4::NUMERIC * 0.5) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'cycleway' THEN
+        ($4::NUMERIC * 0.75) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'path' THEN
+        ($4::NUMERIC * 0.5) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      WHEN $1 = 'track' THEN
+        ($4::NUMERIC * 2.0 + 0.25) / NULLIF(scale_factor($8)*$9*0.001*0.28,0)
+      ELSE 0.0
+    END +
+    -- plus parking lane widths
+    CASE
+      WHEN $5 = 'lane' OR ($6 = 'lane' AND $7 = 'lane') THEN 2.0*2.5
+      WHEN $6 = 'lane' OR $7 = 'lane' THEN 2.5
+      ELSE 0.0
+    END
   ELSE 0.0
 END)
 $func$;
@@ -435,6 +460,21 @@ SELECT (CASE
     /* this is the minimum assumed ground unit taxiway width */
     6.0 / NULLIF(scale_factor($4)*$5*0.001*0.28,0)
   ELSE 0.0
+END)
+$func$;
+
+/* tagged width or assummed minimum width */
+/* parameters: railway tag, width tag, bbox, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_railway_line_width_mapped (text, text, geometry, numeric)
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT (CASE
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 50) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  ELSE
+    /* this is the minimum assumed ground unit railway width */
+    2.0 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
 END)
 $func$;
 
@@ -492,7 +532,7 @@ CREATE OR REPLACE FUNCTION carto_crevasse_drawing_width (text, geometry, numeric
 AS $func$
 SELECT
     (CASE
-      WHEN width_tagged <= 0.0 THEN width_calc -- use nominal width when there is no real width tagged
+      WHEN width_tagged <= 0.0 THEN width_calc -- use nominal width WHEN there is no real width tagged
       WHEN width_tagged < 2.0 THEN 0.0 -- very narrow tagged width drawn as simple line - independent of nominal drawing width
       WHEN width_calc <= width_tagged THEN width_tagged -- wide tagged width drawn in tagged width
       WHEN width_calc > 1.5*width_tagged THEN 1.5*width_tagged -- the rest we make sure not to draw wider than 1.5 times tagged width

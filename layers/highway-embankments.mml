@@ -83,7 +83,17 @@
                       ELSE
                         GREATEST(
                           carto_highway_line_width(COALESCE(o.highway, o.railway, o.waterway, o.man_made, o.barrier), o.service, z(!scale_denominator!)),
-                          carto_highway_line_width_mapped(o.highway, CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END, o.tags->'lanes', !bbox!, !scale_denominator!)
+                          carto_highway_line_width_mapped(
+                            o.highway, 
+                            CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width:carriageway' END,
+                            CASE WHEN o.man_made = 'dyke' THEN NULL ELSE o.tags->'width' END,
+                            o.tags->'lanes',
+                            o.tags->'parking:both',
+                            o.tags->'parking:right',
+                            o.tags->'parking:left',
+                            !bbox!, 
+                            !scale_denominator!
+                          )
                         )
                       END AS width_px_base,
                       CASE WHEN o.highway IS NOT NULL AND z(!scale_denominator!) >= 18 THEN
@@ -161,7 +171,18 @@
                     GREATEST(
                       carto_highway_line_width(COALESCE(highway, railway, waterway, man_made, barrier), service, z(!scale_denominator!)),
                       -- dykes have a width dependent pattern so the tagged width goes in there and not here
-                      carto_highway_line_width_mapped(highway, CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END, tags->'lanes', !bbox!, !scale_denominator!)) AS width_px_base,
+                      carto_highway_line_width_mapped(
+                        highway,
+                        CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width:carriageway' END,
+                        CASE WHEN man_made = 'dyke' THEN NULL ELSE tags->'width' END,
+                        tags->'lanes',
+                        tags->'parking:both',
+                        tags->'parking:right',
+                        tags->'parking:left',
+                        !bbox!,
+                        !scale_denominator!
+                      )
+                    ) AS width_px_base,
                     CASE WHEN z(!scale_denominator!) >= 18 THEN
                       carto_highway_side_widths(way, tags, CASE WHEN oneway IN ('yes', '-1') THEN 'yes' ELSE 'no' END, !scale_denominator!)
                     ELSE

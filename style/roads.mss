@@ -483,16 +483,16 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
     [feature = 'highway_platform'],
     [feature = 'railway_platform'] {
-      line-width: [width_max] + 2;
-      line-color: grey;
-      line-cap: round;
-      line-join: round;
-      [int_tunnel != 'no'] {
-        line-dasharray: 4,2;
-        line-cap: butt;
-      }
-      [int_bridge != 'no'] {
-        [zoom >= 16] {
+      [zoom >= 16] {
+        line-width: [width_max] + 2;
+        line-color: grey;
+        line-cap: round;
+        line-join: round;
+        [int_tunnel != 'no'] {
+          line-dasharray: 4,2;
+          line-cap: butt;
+        }
+        [int_bridge != 'no'] {
           line-color: @bridge-casing;
           line-join: round;
           line-cap: butt;

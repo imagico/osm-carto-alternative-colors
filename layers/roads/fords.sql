@@ -53,14 +53,35 @@
                             ELSE 'no'
                           END AS link,
                           carto_highway_line_width(l.highway, l.service, z(!scale_denominator!)) AS width_nominal,
-                          carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', !bbox!, !scale_denominator!) AS width_tagged,
+                          carto_highway_line_width_mapped(
+                            l.highway,
+                            l.tags->'width:carriageway',
+                            l.tags->'width',
+                            l.tags->'lanes',
+                            l.tags->'parking:both',
+                            l.tags->'parking:right',
+                            l.tags->'parking:left',
+                            !bbox!,
+                            !scale_denominator!
+                          ) AS width_tagged,
                           COALESCE(l.layer,0) AS layernotnull,
                           l.osm_id AS osm_id,
                           l.z_order AS z_order
                         FROM planet_osm_point p
                           JOIN planet_osm_line l ON ST_DWithin(p.way, l.way, 0.1) -- Assumes Mercator
                         WHERE (p.tags @> 'ford=>yes' OR p.tags @> 'ford=>stepping_stones' OR p.tags @> 'mountain_pass=>yes')
-                          AND l.highway IS NOT NULL
                           AND p.way && !bbox!
+                          AND
+                          CASE
+                            WHEN z(!scale_denominator!) <= 10 THEN
+                              l.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction')
+                            WHEN z(!scale_denominator!) <= 11 THEN
+                              l.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction')
+                            WHEN z(!scale_denominator!) <= 12 THEN
+                              l.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway')
+                            WHEN z(!scale_denominator!) <= 13 THEN
+                              l.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps')
+                            ELSE l.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps', 'platform')
+                          END
                       ) AS fords
                   -- end of ford/mountain_pass point pseudo-line select

@@ -1684,7 +1684,7 @@ features:
     style: symbol-only-access-light
     symbol_file: symbols/sources/transport/parking.svg
     symbol_color: transportation-icon
-    start_symbol: 10
+    start_symbol: 14
     way_pixels_min: 900
     way_pixels_start_all: 16
     variants:
@@ -1727,7 +1727,7 @@ features:
     style: symbol-only-access-light
     symbol_file: symbols/sources/transport/motorcycle_parking_small.svg
     symbol_color: transportation-icon
-    start_symbol: 10
+    start_symbol: 14
     way_pixels_min: 900
     way_pixels_start_all: 16
     modifications:
@@ -1742,7 +1742,7 @@ features:
     style: symbol-only-access-light
     symbol_file: symbols/sources/transport/bicycle_parking_small.svg
     symbol_color: transportation-icon
-    start_symbol: 10
+    start_symbol: 14
     way_pixels_min: 900
     way_pixels_start_all: 16
     modifications:

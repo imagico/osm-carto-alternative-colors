@@ -255,6 +255,11 @@ def main():
     snap_features_even = set()
     snap_features_odd = set()
 
+    prefilters_points = dict()
+    prefilters_lines = dict()
+    prefilters_polygons = dict()
+    way_pixels_thresholds_kv = dict()
+
     # this makes sure the feature keys are in correct priority order in the COALESCE()
     for key in config['keys']:
         if key not in feature_types:
@@ -456,6 +461,14 @@ def main():
         else:
             columns_polygons.add("tags->\'"+fkey+"\' AS \""+fkey+"\"")
 
+        z_start = 100
+        if 'start_symbol' in params:
+            if int(params['start_symbol']) < z_start:
+                z_start = int(params['start_symbol'])
+        if 'start_label' in params:
+            if int(params['start_label']) < z_start:
+                z_start = int(params['start_label'])
+
         if 'snap' in params:
             if (params["snap"] == 'even'):
                 snap_features_even.add(fkey+"_"+fval)
@@ -628,8 +641,12 @@ def main():
 
                         if 'start_symbol' in params_m:
                             modifications[fn][modification]['start_symbol'] = params_m['start_symbol']
+                            if int(params_m['start_symbol']) < z_start:
+                                z_start = int(params_m['start_symbol'])
                         if 'start_label' in params_m:
                             modifications[fn][modification]['start_label'] = params_m['start_label']
+                            if int(params_m['start_label']) < z_start:
+                                z_start = int(params_m['start_label'])
 
                         if 'symbol_color' in params_m:
                             symbol_color_mod = resolve_color(params_m['symbol_color'], config['colors'])
@@ -682,6 +699,22 @@ def main():
                 if 'way_pixels_start_all' in params:
                     way_pixels_thresholds[fn]['way_pixels_start_all'] = params['way_pixels_start_all']
 
+            if kv not in way_pixels_thresholds_kv:
+                way_pixels_thresholds_kv[kv] = dict()
+                wpmin = int(params['way_pixels_min'])
+                if 'way_pixels_min' not in way_pixels_thresholds_kv[kv]:
+                    way_pixels_thresholds_kv[kv]['way_pixels_min'] = wpmin
+                elif wpmin < way_pixels_thresholds_kv[kv]['way_pixels_min']:
+                    way_pixels_thresholds_kv[kv]['way_pixels_min'] = wpmin
+                if 'way_pixels_start_all' in params:
+                    wpsa = int(params['way_pixels_start_all'])
+                    if 'way_pixels_start_all' not in way_pixels_thresholds_kv[kv]:
+                        way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = wpsa
+                    elif wpsa < way_pixels_thresholds_kv[kv]['way_pixels_start_all']:
+                        way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = wpsa
+                elif 'way_pixels_start_all' not in way_pixels_thresholds_kv[kv]:
+                    way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = 100
+
         variants_style = list()
         nvar = 0
 
@@ -727,12 +760,16 @@ def main():
 
                     if 'start_symbol' in params_v:
                         zooms[fn][variant]['start_symbol'] = params_v['start_symbol']
+                        if int(params_v['start_symbol']) < z_start:
+                            z_start = int(params_v['start_symbol'])
                     elif 'start_symbol' in params:
                         zooms[fn][variant]['start_symbol'] = params['start_symbol']
                     else:
                         zooms[fn][variant]['start_symbol'] = 'NULL'
                     if 'start_label' in params_v:
                         zooms[fn][variant]['start_label'] = params_v['start_label']
+                        if int(params_v['start_label']) < z_start:
+                            z_start = int(params_v['start_label'])
                     elif 'start_label' in params:
                         zooms[fn][variant]['start_label'] = params['start_label']
                     else:
@@ -785,6 +822,33 @@ def main():
                                 zooms[fn][variant][pn] = params[pn]
                             else:
                                 zooms[fn][variant][pn] = default
+
+
+        # record the overall starting zoom levels or pre-filtering
+        if z_start < 100:
+            if have_points:
+                if z_start not in prefilters_points:
+                    prefilters_points[z_start] = dict()
+                if fkey not in prefilters_points[z_start]:
+                    prefilters_points[z_start][fkey] = set()
+                if fval not in prefilters_points[z_start][fkey]:
+                    prefilters_points[z_start][fkey].add(fval)
+
+            if have_lines:
+                if z_start not in prefilters_lines:
+                    prefilters_lines[z_start] = dict()
+                if fkey not in prefilters_lines[z_start]:
+                    prefilters_lines[z_start][fkey] = set()
+                if fval not in prefilters_lines[z_start][fkey]:
+                    prefilters_lines[z_start][fkey].add(fval)
+
+            if have_polygons:
+                if z_start not in prefilters_polygons:
+                    prefilters_polygons[z_start] = dict()
+                if fkey not in prefilters_polygons[z_start]:
+                    prefilters_polygons[z_start][fkey] = set()
+                if fval not in prefilters_polygons[z_start][fkey]:
+                    prefilters_polygons[z_start][fkey].add(fval)
 
 
         # generate MSS code
@@ -1351,7 +1415,56 @@ def main():
         print (indent_base+"                NULL AS way_length,", file=file_mml)
         print (indent_base+"                NULL AS way_area", file=file_mml)
         print (indent_base+"              FROM planet_osm_point", file=file_mml)
-        print (indent_base+"             WHERE way && !bbox!", file=file_mml)
+        print (indent_base+"              WHERE way && !bbox! AND", file=file_mml)
+        print (indent_base+"                CASE", file=file_mml)
+
+        filter_first = True
+        kvs = dict()
+
+        for z in sorted(prefilters_points):
+            if filter_first:
+                print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
+                filter_first = False
+
+            for filter_key, filter_vals in prefilters_points[z].items():
+                if filter_key not in kvs:
+                    kvs[filter_key] = set()
+                for v in filter_vals:
+                    if v not in kvs[filter_key]:
+                        kvs[filter_key].add(v)
+
+            fconds_all = None
+
+            for filter_key, filter_vals in kvs.items():
+                if filter_key in columns_points_db:
+                    filter_col = "\""+filter_key+"\""
+                else:
+                    filter_col = "(tags->\'"+filter_key+"\')"
+
+                fconds_nowp = None
+
+                if (len(filter_vals) > 0) and (None not in filter_vals):
+                    vals = "\'"+("\', \'".join(sorted(filter_vals)))+"\'"
+                    fconds_nowp = filter_col+" IN ("+vals+")"
+
+                else:
+                    fconds_nowp = filter_col+" IS NOT NULL"
+
+                if fconds_nowp is not None:
+                    if fconds_all is None:
+                        fconds_all = ""
+                    else:
+                        fconds_all += " OR\n"+indent_base+"                    "
+                    fconds_all += "("+fconds_nowp+")"
+
+            if fconds_all is not None:
+                if z == sorted(prefilters_points)[-1]:
+                    print (indent_base+"                  ELSE", file=file_mml)
+                else:
+                    print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
+                print (indent_base+"                    "+fconds_all, file=file_mml)
+
+        print (indent_base+"                END", file=file_mml)
 
     if have_lines:
         if have_points:
@@ -1362,8 +1475,57 @@ def main():
         print (indent_base+"                tags,", file=file_mml)
         print (indent_base+"                ST_Length(way) AS way_length,", file=file_mml)
         print (indent_base+"                NULL AS way_area", file=file_mml)
-        print (indent_base+"                FROM planet_osm_line", file=file_mml)
-        print (indent_base+"                WHERE way && !bbox!", file=file_mml)
+        print (indent_base+"              FROM planet_osm_line", file=file_mml)
+        print (indent_base+"              WHERE way && !bbox! AND", file=file_mml)
+        print (indent_base+"                CASE", file=file_mml)
+
+        filter_first = True
+        kvs = dict()
+
+        for z in sorted(prefilters_lines):
+            if filter_first:
+                print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
+                filter_first = False
+
+            for filter_key, filter_vals in prefilters_lines[z].items():
+                if filter_key not in kvs:
+                    kvs[filter_key] = set()
+                for v in filter_vals:
+                    if v not in kvs[filter_key]:
+                        kvs[filter_key].add(v)
+
+            fconds_all = None
+
+            for filter_key, filter_vals in kvs.items():
+                if filter_key in columns_lines_db:
+                    filter_col = "\""+filter_key+"\""
+                else:
+                    filter_col = "(tags->\'"+filter_key+"\')"
+
+                fconds_nowp = None
+
+                if (len(filter_vals) > 0) and (None not in filter_vals):
+                    vals = "\'"+("\', \'".join(sorted(filter_vals)))+"\'"
+                    fconds_nowp = filter_col+" IN ("+vals+")"
+
+                else:
+                    fconds_nowp = filter_col+" IS NOT NULL"
+
+                if fconds_nowp is not None:
+                    if fconds_all is None:
+                        fconds_all = ""
+                    else:
+                        fconds_all += " OR\n"+indent_base+"                    "
+                    fconds_all += "("+fconds_nowp+")"
+
+            if fconds_all is not None:
+                if z == sorted(prefilters_lines)[-1]:
+                    print (indent_base+"                  ELSE", file=file_mml)
+                else:
+                    print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
+                print (indent_base+"                    "+fconds_all, file=file_mml)
+
+        print (indent_base+"                END", file=file_mml)
 
     if have_polygons:
         if have_points or have_lines:
@@ -1385,6 +1547,85 @@ def main():
                     col = "tags->\'"+attr+"\'"
                 vals = "\'"+("\', \'".join(sorted(vals_plain)))+"\'"
                 print (indent_base+"                AND ("+col+" NOT IN ("+vals+") OR "+col+" IS NULL)", file=file_mml)
+        print (indent_base+"                AND", file=file_mml)
+        print (indent_base+"                CASE", file=file_mml)
+
+        filter_first = True
+        kvs = dict()
+
+        for z in sorted(prefilters_polygons):
+            if filter_first:
+                print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
+                filter_first = False
+
+            for filter_key, filter_vals in prefilters_polygons[z].items():
+                if filter_key not in kvs:
+                    kvs[filter_key] = set()
+                for v in filter_vals:
+                    if v not in kvs[filter_key]:
+                        kvs[filter_key].add(v)
+
+            fconds_all = None
+
+            for filter_key, filter_vals in kvs.items():
+                if filter_key in columns_polygons_db:
+                    filter_col = "\""+filter_key+"\""
+                else:
+                    filter_col = "(tags->\'"+filter_key+"\')"
+
+                fconds_wp = None
+                fconds_nowp = None
+
+                if (len(filter_vals) > 0) and (None not in filter_vals):
+                    vals_wp = set()
+                    vals_nowp = set()
+                    wpmin = 1000000000
+                    for fval in filter_vals:
+                        if filter_key+"="+fval in way_pixels_thresholds_kv:
+                            if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_start_all'] > z:
+                                if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_min'] < wpmin:
+                                    wpmin = way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_min']
+                                    vals_wp.add(fval)
+                        if wpmin == 1000000000:
+                            vals_nowp.add(fval)
+
+                    if len(vals_wp) > 0:
+                        vals = "\'"+("\', \'".join(sorted(vals_wp)))+"\'"
+                        fconds_wp = filter_col+" IN ("+vals+")"
+                        fconds_wp = fconds_wp+" AND way_area >= "+str(wpmin)+"*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)"
+
+                    if len(vals_nowp) > 0:
+                        vals = "\'"+("\', \'".join(sorted(vals_nowp)))+"\'"
+                        fconds_nowp = filter_col+" IN ("+vals+")"
+
+                else:
+                    fconds_nowp = filter_col+" IS NOT NULL"
+
+                    if filter_key in way_pixels_thresholds_kv:
+                        if way_pixels_thresholds_kv[filter_key]['way_pixels_start_all'] > z:
+                            fconds_nowp = fconds_nowp+" AND way_area >= "+str(way_pixels_thresholds_kv[filter_key]['way_pixels_min'])+"*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)"
+
+                if fconds_wp is not None:
+                    if fconds_all is None:
+                        fconds_all = ""
+                    else:
+                        fconds_all += " OR\n"+indent_base+"                    "
+                    fconds_all += "("+fconds_wp+")"
+                if fconds_nowp is not None:
+                    if fconds_all is None:
+                        fconds_all = ""
+                    else:
+                        fconds_all += " OR\n"+indent_base+"                    "
+                    fconds_all += "("+fconds_nowp+")"
+
+            if fconds_all is not None:
+                if z == sorted(prefilters_polygons)[-1]:
+                    print (indent_base+"                  ELSE", file=file_mml)
+                else:
+                    print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
+                print (indent_base+"                    "+fconds_all, file=file_mml)
+
+        print (indent_base+"                END", file=file_mml)
 
     if have_convex_hulls:
         if have_points or have_lines or have_polygons:

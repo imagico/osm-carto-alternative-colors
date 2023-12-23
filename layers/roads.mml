@@ -130,6 +130,7 @@
                     h.service AS service,
                     h.link AS link,
                     h.width_lane AS width_lane,
+                    h.width_lane_cycle AS width_lane_cycle,
                     h.width_nominal AS width_nominal,
                     h.width_tagged AS width_tagged,
                     carto_casing_line_width(h.highway, h.int_bridge, z(!scale_denominator!)) AS casing_width,

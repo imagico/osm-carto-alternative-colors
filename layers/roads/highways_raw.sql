@@ -8,14 +8,19 @@
                     int_bridge,
                     lanes_sides[1] AS int_lane_right,
                     lanes_sides[2] AS int_lane_left,
-                    int_lanes,
+                    COALESCE(steps_type, (lanes_num+lanes_parking)::text || lane_markings) AS int_lanes,
                     lanes_sides[3] AS int_side_right,
                     lanes_sides[4] AS int_side_left,
                     int_access,
                     construction,
                     service,
                     link,
-                    LEAST(width_lane, GREATEST(width_nominal, width_tagged)/int_lanes_num - 2.0*carto_casing_line_width(highway, int_bridge, z(!scale_denominator!))) AS width_lane,
+                    width_lane_cycle,
+                    CASE WHEN z(!scale_denominator!) >= 18 THEN
+                      LEAST(width_lane, GREATEST(width_nominal, width_tagged)/(lanes_num+lanes_parking) - 2.0*carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)))
+                    ELSE
+                      0.0
+                    END AS width_lane,
                     width_nominal,
                     width_tagged,
                     layernotnull,
@@ -58,17 +63,26 @@
                                WHEN (tags @> 'ramp:wheelchair=>yes') THEN 'ramp_wheelchair'::text
                                WHEN (tags @> 'handrail:center=>yes') THEN 'handrail'::text
                              ELSE ''::text END
-                           WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::text
+                           ELSE
+                             NULL
+                         END AS steps_type,
+                         CASE
+                           WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN 
+                             (tags->'lanes')::numeric
                            ELSE
                              CASE
-                               WHEN highway IN ('motorway', 'trunk') THEN '2'::text
-                               WHEN oneway IN ('yes', '-1') THEN '1'::text
-                               WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN '2'::text
-                               ELSE '1'::text
+                               WHEN highway IN ('motorway', 'trunk') THEN 2
+                               WHEN oneway IN ('yes', '-1') THEN 1
+                               WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN 2
+                               ELSE 1
                              END
-                         END ||
-                         CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS int_lanes,
-                         CASE WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN (tags->'lanes')::numeric ELSE 2 END AS int_lanes_num,
+                         END AS lanes_num,
+                         CASE WHEN z(!scale_denominator!) >= 18 THEN
+                           carto_highway_num_parking_lanes (tags->'parking:both', tags->'parking:right', tags->'parking:left')
+                         ELSE
+                           0
+                         END AS lanes_parking,
+                         CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS lane_markings,
                          carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
                          construction,
                          CASE
@@ -79,11 +93,43 @@
                            WHEN substr(highway, length(highway)-4, 5) = '_link' THEN 'yes'
                            ELSE 'no'
                          END AS link,
-                         GREATEST(carto_ground_to_px(2.5, !bbox!, !scale_denominator!), carto_highway_line_width('sidewalk', z(!scale_denominator!))) AS width_lane,
+                         CASE WHEN z(!scale_denominator!) >= 18 THEN
+                           GREATEST(carto_ground_to_px(2.5, !bbox!, !scale_denominator!), carto_highway_line_width('sidewalk', z(!scale_denominator!)))
+                         ELSE
+                           0.0
+                         END AS width_lane,
+                         CASE WHEN z(!scale_denominator!) >= 18 THEN
+                           GREATEST(carto_ground_to_px(1.5, !bbox!, !scale_denominator!), carto_highway_line_width('sidewalk', z(!scale_denominator!)))
+                         ELSE
+                           0.0
+                         END AS width_lane_cycle,
                          carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
-                         carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!) AS width_tagged,
+                         carto_highway_line_width_mapped(
+                           highway,
+                           tags->'width:carriageway',
+                           tags->'width',
+                           tags->'lanes',
+                           tags->'parking:both',
+                           tags->'parking:right',
+                           tags->'parking:left',
+                           !bbox!,
+                           !scale_denominator!
+                         ) AS width_tagged,
                          COALESCE(layer,0) AS layernotnull,
                          osm_id,
                          z_order
                        FROM planet_osm_line
-                       WHERE highway IS NOT NULL AND way && !bbox!) AS _
+                       WHERE way && !bbox!
+                        AND
+                        CASE
+                          WHEN z(!scale_denominator!) <= 10 THEN
+                            highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction')
+                          WHEN z(!scale_denominator!) <= 11 THEN
+                            highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction')
+                          WHEN z(!scale_denominator!) <= 12 THEN
+                            highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway')
+                          WHEN z(!scale_denominator!) <= 13 THEN
+                            highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps')
+                          ELSE highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps', 'platform')
+                        END
+                    ) AS _

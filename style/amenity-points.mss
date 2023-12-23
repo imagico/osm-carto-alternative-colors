@@ -829,6 +829,72 @@
     }
   }
 
+  [feature = 'parking_minor'][zoom >= 18] {
+    [addon = 'shopping'] {
+      shopping/marker-anchor-cond: "[osm_id]";
+      shopping/marker-allow-overlap-anchor: "[osm_id]";
+      shopping/marker-anchor-set: "'shopping_'+[osm_id]";
+      shopping/marker-file: url('symbols/transport/shopping.svg');
+      shopping/marker-fill: @transportation-icon;
+      shopping/marker-transform: 'translate(3,4)';
+      shopping/marker-placement: interior;
+      shopping/marker-clip: false;
+    }
+    [addon = 'fee'] {
+      fee/marker-anchor-cond: "[osm_id]";
+      fee/marker-allow-overlap-anchor: "[osm_id]";
+      fee/marker-anchor-set: "'fee_'+[osm_id]";
+      fee/marker-file: url('symbols/currencies/[fee].svg');
+      fee/marker-fill: @transportation-icon;
+      fee/marker-transform: 'translate(4,6)';
+      fee/marker-placement: interior;
+      fee/marker-clip: false;
+
+      fee2/marker-anchor-cond: "[osm_id]+',!fee_'+[osm_id]";
+      fee2/marker-allow-overlap-anchor: "[osm_id]";
+      fee2/marker-anchor-set: "'fee_'+[osm_id]";
+      fee2/marker-file: url('symbols/currencies/[fee].svg');
+      fee2/marker-fill: @transportation-icon;
+      fee2/marker-transform: 'translate(-6,1)';
+      [capacity > 0] {
+        fee2/marker-transform: 'translate(-6,7)';
+      }
+      fee2/marker-placement: interior;
+      fee2/marker-clip: false;
+    }
+    [zoom >= 19] {
+      [addon = 'capacity'] {
+        capacity/text-anchor-cond: "[osm_id]+',!fee_'+[osm_id]";
+        capacity/text-allow-overlap-anchor: "[osm_id]+',fee_'+[osm_id]";
+        capacity/text-anchor-set: "'capacity_'+[osm_id]";
+        capacity/text-name: "[capacity]";
+        capacity/text-size: 9;
+        capacity/text-fill: @transportation-text;
+        capacity/text-face-name: @standard-font;
+        capacity/text-halo-radius: @standard-halo-radius;
+        capacity/text-halo-fill: @standard-halo-fill;
+        capacity/text-dy: -4;
+        capacity/text-dx: -4;
+        capacity/text-horizontal-alignment: left;
+        capacity/text-vertical-alignment: bottom;
+
+        capacity2/text-anchor-cond: "[osm_id]+',fee_'+[osm_id]";
+        capacity2/text-allow-overlap-anchor: "[osm_id]+',fee_'+[osm_id]";
+        capacity2/text-anchor-set: "'capacity_'+[osm_id]";
+        capacity2/text-name: "[capacity]";
+        capacity2/text-size: 9;
+        capacity2/text-fill: @transportation-text;
+        capacity2/text-face-name: @standard-font;
+        capacity2/text-halo-radius: @standard-halo-radius;
+        capacity2/text-halo-fill: @standard-halo-fill;
+        capacity2/text-dy: -5;
+        capacity2/text-dx: -4;
+        capacity2/text-horizontal-alignment: left;
+        capacity2/text-vertical-alignment: bottom;
+      }
+    }
+  }
+
   [feature = 'bicycle_parking'],
   [feature = 'motorcycle_parking'] {
     [zoom >= 18] {

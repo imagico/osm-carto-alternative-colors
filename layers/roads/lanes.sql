@@ -40,6 +40,7 @@
                           service,
                           link,
                           width_lane,
+                          width_lane_cycle,
                           width_nominal,
                           width_tagged,
                           GREATEST(width_nominal, width_tagged) AS width_max,
@@ -59,10 +60,13 @@
                           clip,
                           ST_Buffer(
                             way_orig,
-                            -- (GREATEST(width_nominal, width_tagged)*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0),
                             (GREATEST(width_nominal, width_tagged)*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0),
                             'endcap=flat join=round'
                           ) AS buffer,
+                          ST_Buffer(
+                            way_orig,
+                            (GREATEST(width_nominal, width_tagged)*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                          ) AS buffer_round,
                           feature,
                           path_type,
                           int_surface,
@@ -251,10 +255,15 @@
                                 )
                               END,
                               -- this clips the lane outlines with all adjacent roads
+                              -- using a compound buffer of flat and round end caps
+                              -- with the round caps minus the parkings (to avoid gaps in cycle lane display)
                               (SELECT
                                   COALESCE(
                                     ST_Union(
-                                      buffer
+                                      ST_Union(
+                                        buffer,
+                                        ST_Buffer(ST_Difference(buffer_round, parkings_buffer), -l.width_lane*0.5)
+                                      )
                                     ),
                                     ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                                   )
@@ -284,7 +293,7 @@
                                 j.int_tunnel = l.int_tunnel AND
                                 j.osm_id = l.osm_id
                             )
-                          ) AS line,
+                          ) AS line,---
                           feature,
                           path_type,
                           int_surface,
@@ -314,25 +323,16 @@
                                 ST_Difference(
                                   ST_Buffer(
                                     way_orig,
-                                    (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                    (0.5*width_max - 0.5*width_lane - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
                                   ),
                                   COALESCE(
-                                    ST_Buffer(clip, (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    ST_Buffer(clip, (0.5*width_max - 0.5*width_lane - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
                                     ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                                   )
                                 ),
-                                (SELECT
-                                    COALESCE(
-                                      ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*width_lane + casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
-                                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                                    )
-                                  FROM roads_parking o
-                                  WHERE
-                                    ST_DWithin(
-                                      ST_Collect(ST_StartPoint(lc.way_orig), ST_EndPoint(lc.way_orig)),
-                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
-                                )
+                                parkings_buffer
                               ) AS buffer,
+                              parkings_buffer,
                               CASE
                                 WHEN int_lane_right IS NULL AND int_lane_left IS NULL THEN
                                   ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
@@ -373,6 +373,17 @@
                                   way,
                                   way_orig,
                                   clip,
+                                  (SELECT
+                                      COALESCE(
+                                        ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*roads_lane.width_lane_cycle + roads_lane.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                      )
+                                    FROM roads_parking o
+                                    WHERE
+                                      ST_DWithin(
+                                        ST_Collect(ST_StartPoint(roads_lane.way_orig), ST_EndPoint(roads_lane.way_orig)),
+                                        ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                  ) AS parkings_buffer,
                                   feature,
                                   path_type,
                                   int_surface,
@@ -384,7 +395,7 @@
                                   construction,
                                   service,
                                   link,
-                                  width_lane,
+                                  width_lane_cycle AS width_lane,
                                   width_nominal,
                                   width_tagged,
                                   width_max,
@@ -419,11 +430,18 @@
                                   lane_clip
                                 )
                               END,
+
+
                               -- this clips the lane outlines with all adjacent roads
+                              -- using a compound buffer of flat and round end caps
+                              -- with the round caps minus the parkings/cyclelanes (to avoid gaps in bus lane display)
                               (SELECT
                                   COALESCE(
                                     ST_Union(
-                                      buffer
+                                      ST_Union(
+                                        buffer,
+                                        ST_Buffer(ST_Difference(buffer_round, cycle_buffer), -l.width_lane*0.5)
+                                      )
                                     ),
                                     ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                                   )
@@ -479,42 +497,21 @@
                               way,
                               way_orig,
                               clip,
+
                               ST_Difference(
                                 ST_Difference(
                                   ST_Buffer(
                                     way_orig,
-                                    (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                                    (0.5*width_max - 0.5*width_lane - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)
                                   ),
                                   COALESCE(
-                                    ST_Buffer(clip, (width_max*0.5 - width_lane*0.5 - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
+                                    ST_Buffer(clip, (0.5*width_max - 0.5*width_lane - casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)),
                                     ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
                                   )
                                 ),
-                                ST_Union(
-                                  (SELECT
-                                      COALESCE(
-                                        ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*width_lane + casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
-                                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                                      )
-                                    FROM roads_parking o
-                                    WHERE
-                                      ST_DWithin(
-                                        ST_Collect(ST_StartPoint(lc.way_orig), ST_EndPoint(lc.way_orig)),
-                                        ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
-                                  ),
-                                  (SELECT
-                                      COALESCE(
-                                        ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*width_lane + casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
-                                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                                      )
-                                    FROM roads_cycle o
-                                    WHERE
-                                      ST_DWithin(
-                                        ST_Collect(ST_StartPoint(lc.way_orig), ST_EndPoint(lc.way_orig)),
-                                        ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
-                                  )
-                                )
+                                cycle_buffer
                               ) AS buffer,
+                              cycle_buffer,
                               CASE
                                 WHEN int_lane_right IS NULL AND int_lane_left IS NULL THEN
                                   ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
@@ -555,6 +552,30 @@
                                   way,
                                   way_orig,
                                   clip,
+                                  ST_Union(
+                                    (SELECT
+                                        COALESCE(
+                                          ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*roads_lane.width_lane + roads_lane.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                          ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                        )
+                                      FROM roads_parking o
+                                      WHERE
+                                        ST_DWithin(
+                                          ST_Collect(ST_StartPoint(roads_lane.way_orig), ST_EndPoint(roads_lane.way_orig)),
+                                          ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                    ),
+                                    (SELECT
+                                        COALESCE(
+                                          ST_Union(ST_Buffer(o.line, (0.5*o.width_lane + 0.5*roads_lane.width_lane + roads_lane.casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))),
+                                          ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                        )
+                                      FROM roads_cycle o
+                                      WHERE
+                                        ST_DWithin(
+                                          ST_Collect(ST_StartPoint(roads_lane.way_orig), ST_EndPoint(roads_lane.way_orig)),
+                                          ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
+                                    )
+                                  ) AS cycle_buffer,
                                   feature,
                                   path_type,
                                   int_surface,
@@ -617,7 +638,10 @@
                     SELECT
                         'cycle' AS lane_type,
                         buffer,
-                        line,
+                        ST_Difference(
+                          line,
+                          (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1)) FROM roads_cycle)
+                        ) AS line,
                         way,
                         way_orig,
                         clip,
@@ -646,7 +670,10 @@
                     SELECT
                         'bus' AS lane_type,
                         buffer,
-                        line,
+                        ST_Difference(
+                          line,
+                          (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1)) FROM roads_bus)
+                        ) AS line,
                         way,
                         way_orig,
                         clip,

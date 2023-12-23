@@ -48,7 +48,7 @@
                   WHEN combined.feature = 'amenity_parking' THEN
                     CASE
                       WHEN combined.variant = 'street_side' THEN GREATEST(18, zoom_threshold)
-                      ELSE GREATEST(10, zoom_threshold)
+                      ELSE GREATEST(14, zoom_threshold)
                     END
                   WHEN combined.feature = 'amenity_recycling' THEN
                     CASE
@@ -106,14 +106,13 @@
                   WHEN combined.feature IN ('aerialway_station', 'natural_volcano', 'railway_halt', 'railway_tram_stop', 'tourism_alpine_hut', 'tourism_wilderness_hut') THEN 13
                   WHEN combined.feature IN ('aeroway_gate', 'amenity_arts_centre', 'amenity_atm', 'amenity_bank', 'amenity_bar', 'amenity_bbq', 'amenity_bicycle_rental', 'amenity_biergarten', 'amenity_cafe', 'amenity_car_rental', 'amenity_car_wash', 'amenity_charging_station', 'amenity_community_centre', 'amenity_dentist', 'amenity_doctors', 'amenity_drinking_water', 'amenity_driving_school', 'amenity_fast_food', 'amenity_food_court', 'amenity_fountain', 'amenity_fuel', 'amenity_ice_cream', 'amenity_nightclub', 'amenity_pharmacy', 'amenity_phone', 'amenity_post_box', 'amenity_post_office', 'amenity_prison', 'amenity_pub', 'amenity_public_bath', 'amenity_restaurant', 'amenity_social_facility', 'amenity_taxi', 'amenity_veterinary', 'amenity_water_point', 'barrier_block', 'barrier_bollard', 'barrier_gate', 'barrier_lift_gate', 'barrier_log', 'barrier_swing_gate', 'highway_traffic_signals', 'historic_city_gate', 'leisure_firepit', 'leisure_miniature_golf', 'leisure_picnic_table', 'leisure_playground', 'leisure_sauna', 'leisure_slipway', 'man_made_obelisk', 'man_made_water_tap', 'man_made_water_tower', 'military_bunker', 'shop_massage', 'tourism_artwork', 'tourism_camp_site', 'tourism_caravan_site', 'tourism_charlet', 'tourism_guest_house', 'tourism_hostel', 'tourism_hotel', 'tourism_motel') THEN 17
                   WHEN combined.feature IN ('amenity_parking_entrance/multi-storey', 'amenity_parking_entrance/underground', 'amenity_shower', 'highway_elevator', 'railway_subway_entrance', 'tourism_apartment') THEN 18
-                  WHEN combined.feature IN ('amenity_bicycle_parking', 'amenity_motorcycle_parking') THEN GREATEST(10, zoom_threshold)
+                  WHEN combined.feature IN ('amenity_bicycle_parking', 'amenity_motorcycle_parking', 'leisure_water_park') THEN GREATEST(14, zoom_threshold)
                   WHEN combined.feature IN ('advertising_column', 'amenity_bench', 'amenity_waste_basket', 'amenity_waste_disposal', 'emergency_phone') THEN 19
                   WHEN combined.feature IN ('amenity_hospital', 'leisure_golf_course', 'man_made_lighthouse', 'man_made_water_well', 'natural_cave_entrance', 'natural_saddle', 'railway_crossing') THEN 15
                   WHEN combined.feature IN ('man_made_communications_tower', 'natural_geyser', 'natural_hot_spring', 'natural_spring', 'railway_level_crossing') THEN 14
                   WHEN combined.feature IN ('railway_station') THEN 12
                   WHEN combined.feature IN ('natural_peak') THEN 11
                   WHEN combined.feature IN ('amenity_marketplace') THEN GREATEST(16, zoom_threshold)
-                  WHEN combined.feature IN ('leisure_water_park') THEN GREATEST(14, zoom_threshold)
                 END AS start_symbol,
                 CASE
                   WHEN combined.feature = 'tourism_information' THEN
@@ -500,7 +499,164 @@
                         NULL AS way_length,
                         NULL AS way_area
                       FROM planet_osm_point
-                     WHERE way && !bbox!
+                      WHERE way && !bbox! AND
+                        CASE
+                          WHEN z(!scale_denominator!) <= 9 THEN FALSE
+                          WHEN z(!scale_denominator!) <= 10 THEN
+                            ("aeroway" IN ('aerodrome', 'apron')) OR
+                            ("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'park', 'sport_centre', 'stadium')) OR
+                            ("shop" IN ('mall')) OR
+                            ("place" IN ('archipelago', 'island')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'grass', 'greenhouse_horticulture', 'landfill', 'meadow', 'military', 'quarry', 'recreation_ground', 'reservoir', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('college', 'grave_yard', 'kindergarten', 'school', 'university')) OR
+                            ("natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('theme_park', 'zoo')) OR
+                            ("power" IN ('generator', 'plant'))
+                          WHEN z(!scale_denominator!) <= 11 THEN
+                            ("aeroway" IN ('aerodrome', 'apron')) OR
+                            ("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'park', 'sport_centre', 'stadium')) OR
+                            ("shop" IN ('mall')) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'grass', 'greenhouse_horticulture', 'landfill', 'meadow', 'military', 'quarry', 'recreation_ground', 'reservoir', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('college', 'grave_yard', 'kindergarten', 'school', 'university')) OR
+                            ("natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'peak', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('theme_park', 'zoo')) OR
+                            ("power" IN ('generator', 'plant'))
+                          WHEN z(!scale_denominator!) <= 12 THEN
+                            ("aeroway" IN ('aerodrome', 'apron')) OR
+                            ("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'park', 'sport_centre', 'stadium')) OR
+                            ("shop" IN ('mall')) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'grass', 'greenhouse_horticulture', 'landfill', 'meadow', 'military', 'quarry', 'recreation_ground', 'reservoir', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('college', 'grave_yard', 'kindergarten', 'school', 'university')) OR
+                            ("natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'peak', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('theme_park', 'zoo')) OR
+                            ("power" IN ('generator', 'plant')) OR
+                            ("railway" IN ('station')) OR
+                            ("man_made" IN ('bridge'))
+                          WHEN z(!scale_denominator!) <= 13 THEN
+                            ("aeroway" IN ('aerodrome', 'apron')) OR
+                            ("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'park', 'sport_centre', 'stadium')) OR
+                            ("shop" IN ('mall')) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('college', 'grave_yard', 'kindergarten', 'school', 'university')) OR
+                            ("natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'peak', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'theme_park', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'plant', 'substation')) OR
+                            ("railway" IN ('halt', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area', 'services'))
+                          WHEN z(!scale_denominator!) <= 14 THEN
+                            ("aeroway" IN ('aerodrome', 'apron')) OR
+                            ("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'park', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IN ('mall')) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('bicycle_parking', 'college', 'grave_yard', 'kindergarten', 'motorcycle_parking', 'parking', 'school', 'university')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'theme_park', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'plant', 'substation')) OR
+                            ("railway" IN ('halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'communications_tower', 'mast', 'tower', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area', 'services'))
+                          WHEN z(!scale_denominator!) <= 15 THEN
+                            ("aeroway" IN ('aerodrome', 'apron')) OR
+                            ("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'park', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IN ('mall')) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('bicycle_parking', 'college', 'grave_yard', 'hospital', 'kindergarten', 'motorcycle_parking', 'parking', 'school', 'university')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'theme_park', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'communications_tower', 'lighthouse', 'mast', 'tower', 'water_well', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area', 'services')) OR
+                            ("historic" IN ('castle'))
+                          WHEN z(!scale_denominator!) <= 16 THEN
+                            ("aeroway" IN ('aerodrome', 'apron', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'park', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('danger_area')) OR
+                            ("amenity" IN ('bicycle_parking', 'bus_station', 'cinema', 'clinic', 'college', 'courthouse', 'fire_station', 'grave_yard', 'hospital', 'hunting_stand', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'parking', 'place_of_worship', 'police', 'school', 'shelter', 'theatre', 'townhall', 'university')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'communications_tower', 'cross', 'lighthouse', 'mast', 'tower', 'water_well', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'rest_area', 'services')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'fort', 'manor', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('toll_booth'))
+                          WHEN z(!scale_denominator!) <= 17 THEN
+                            ("aeroway" IN ('aerodrome', 'apron', 'gate', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'firepit', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'miniature_golf', 'park', 'picnic_table', 'playground', 'sauna', 'slipway', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('bunker', 'danger_area')) OR
+                            ("amenity" IN ('arts_centre', 'atm', 'bank', 'bar', 'bbq', 'bicycle_parking', 'bicycle_rental', 'biergarten', 'bus_station', 'cafe', 'car_rental', 'car_wash', 'charging_station', 'cinema', 'clinic', 'college', 'community_centre', 'courthouse', 'dentist', 'doctors', 'drinking_water', 'driving_school', 'fast_food', 'fire_station', 'food_court', 'fountain', 'fuel', 'grave_yard', 'hospital', 'hunting_stand', 'ice_cream', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'nightclub', 'parking', 'pharmacy', 'phone', 'place_of_worship', 'police', 'post_box', 'post_office', 'prison', 'pub', 'public_bath', 'recycling', 'restaurant', 'school', 'shelter', 'social_facility', 'taxi', 'theatre', 'toilets', 'townhall', 'university', 'veterinary', 'water_point')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'tree', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'artwork', 'camp_site', 'caravan_site', 'charlet', 'guest_house', 'hostel', 'hotel', 'information', 'motel', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'water_tower', 'water_well', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'rest_area', 'services', 'traffic_signals')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'city_gate', 'fort', 'manor', 'memorial', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('block', 'bollard', 'gate', 'lift_gate', 'log', 'swing_gate', 'toll_booth')) OR
+                            ((tags->'office') IS NOT NULL)
+                          WHEN z(!scale_denominator!) <= 18 THEN
+                            ("aeroway" IN ('aerodrome', 'apron', 'gate', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'firepit', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'miniature_golf', 'park', 'picnic_table', 'playground', 'sauna', 'slipway', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('bunker', 'danger_area')) OR
+                            ("amenity" IN ('arts_centre', 'atm', 'bank', 'bar', 'bbq', 'bicycle_parking', 'bicycle_rental', 'biergarten', 'bus_station', 'cafe', 'car_rental', 'car_wash', 'charging_station', 'cinema', 'clinic', 'college', 'community_centre', 'courthouse', 'dentist', 'doctors', 'drinking_water', 'driving_school', 'fast_food', 'fire_station', 'food_court', 'fountain', 'fuel', 'grave_yard', 'hospital', 'hunting_stand', 'ice_cream', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'nightclub', 'parking', 'parking_entrance/multi-storey', 'parking_entrance/underground', 'pharmacy', 'phone', 'place_of_worship', 'police', 'post_box', 'post_office', 'prison', 'pub', 'public_bath', 'recycling', 'restaurant', 'school', 'shelter', 'shower', 'social_facility', 'taxi', 'theatre', 'toilets', 'townhall', 'university', 'veterinary', 'water_point')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'tree', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'apartment', 'artwork', 'camp_site', 'caravan_site', 'charlet', 'guest_house', 'hostel', 'hotel', 'information', 'motel', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'subway_entrance', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'water_tower', 'water_well', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'elevator', 'rest_area', 'services', 'traffic_signals')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'city_gate', 'fort', 'manor', 'memorial', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('block', 'bollard', 'gate', 'lift_gate', 'log', 'swing_gate', 'toll_booth')) OR
+                            ((tags->'office') IS NOT NULL)
+                          ELSE
+                            ("aeroway" IN ('aerodrome', 'apron', 'gate', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'firepit', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'miniature_golf', 'park', 'picnic_table', 'playground', 'sauna', 'slipway', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('bunker', 'danger_area')) OR
+                            ("amenity" IN ('arts_centre', 'atm', 'bank', 'bar', 'bbq', 'bench', 'bicycle_parking', 'bicycle_rental', 'biergarten', 'bus_station', 'cafe', 'car_rental', 'car_wash', 'charging_station', 'cinema', 'clinic', 'college', 'community_centre', 'courthouse', 'dentist', 'doctors', 'drinking_water', 'driving_school', 'fast_food', 'fire_station', 'food_court', 'fountain', 'fuel', 'grave_yard', 'hospital', 'hunting_stand', 'ice_cream', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'nightclub', 'parking', 'parking_entrance/multi-storey', 'parking_entrance/underground', 'pharmacy', 'phone', 'place_of_worship', 'police', 'post_box', 'post_office', 'prison', 'pub', 'public_bath', 'recycling', 'restaurant', 'school', 'shelter', 'shower', 'social_facility', 'taxi', 'theatre', 'toilets', 'townhall', 'university', 'veterinary', 'waste_basket', 'waste_disposal', 'water_point')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'tree', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'apartment', 'artwork', 'camp_site', 'caravan_site', 'charlet', 'guest_house', 'hostel', 'hotel', 'information', 'motel', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'subway_entrance', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'water_tower', 'water_well', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'elevator', 'rest_area', 'services', 'traffic_signals')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'city_gate', 'fort', 'manor', 'memorial', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('block', 'bollard', 'gate', 'lift_gate', 'log', 'swing_gate', 'toll_booth')) OR
+                            ((tags->'office') IS NOT NULL) OR
+                            ((tags->'emergency') IN ('phone')) OR
+                            ((tags->'advertising') IN ('column'))
+                        END
                     UNION ALL
                     SELECT
                         ST_PointOnSurface(way) AS way,
@@ -557,6 +713,183 @@
                       WHERE way && !bbox!
                         AND way_area < 768000*POW(!scale_denominator!*0.001*0.28,2)
                         AND ("place" NOT IN ('archipelago') OR "place" IS NULL)
+                        AND
+                        CASE
+                          WHEN z(!scale_denominator!) <= 9 THEN FALSE
+                          WHEN z(!scale_denominator!) <= 10 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IN ('mall') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('school') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0))
+                          WHEN z(!scale_denominator!) <= 11 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IN ('mall') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('school') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0))
+                          WHEN z(!scale_denominator!) <= 12 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IN ('mall') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('school') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("railway" IN ('station')) OR
+                            ("man_made" IN ('bridge') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0))
+                          WHEN z(!scale_denominator!) <= 13 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IN ('mall') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('school') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('volcano')) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("railway" IN ('halt', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'works') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0))
+                          WHEN z(!scale_denominator!) <= 14 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IN ('mall') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('parking') AND way_area >= 900*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier', 'scrub') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("railway" IN ('halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'works') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("man_made" IN ('communications_tower', 'tower')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0))
+                          WHEN z(!scale_denominator!) <= 15 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IN ('mall') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('parking') AND way_area >= 900*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier', 'scrub') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('saddle')) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('generator/wind')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'works') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("man_made" IN ('communications_tower', 'lighthouse', 'tower')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("historic" IN ('castle'))
+                          WHEN z(!scale_denominator!) <= 16 THEN
+                            ("aeroway" IN ('apron') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("aeroway" IN ('aerodrome', 'helipad')) OR
+                            ("leisure" IN ('garden') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('islet') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("place" IN ('archipelago', 'island')) OR
+                            ("landuse" IN ('quarry') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("military" IN ('danger_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("amenity" IN ('grave_yard') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('glacier', 'scrub') AND way_area >= 750*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("natural" IN ('saddle')) OR
+                            ("tourism" IN ('zoo') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('plant') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("power" IN ('generator/wind')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge', 'works') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("man_made" IN ('communications_tower', 'cross', 'lighthouse', 'tower')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('rest_area') AND way_area >= 3000*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'fort', 'manor', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('toll_booth'))
+                          WHEN z(!scale_denominator!) <= 17 THEN
+                            ("aeroway" IN ('aerodrome', 'apron', 'gate', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'firepit', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'miniature_golf', 'park', 'picnic_table', 'playground', 'sauna', 'slipway', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('bunker', 'danger_area')) OR
+                            ("amenity" IN ('arts_centre', 'atm', 'bank', 'bar', 'bbq', 'bicycle_parking', 'bicycle_rental', 'biergarten', 'bus_station', 'cafe', 'car_rental', 'car_wash', 'charging_station', 'cinema', 'clinic', 'college', 'community_centre', 'courthouse', 'dentist', 'doctors', 'drinking_water', 'driving_school', 'fast_food', 'fire_station', 'food_court', 'fountain', 'fuel', 'grave_yard', 'hospital', 'hunting_stand', 'ice_cream', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'nightclub', 'parking', 'pharmacy', 'phone', 'place_of_worship', 'police', 'post_box', 'post_office', 'prison', 'pub', 'public_bath', 'recycling', 'restaurant', 'school', 'shelter', 'social_facility', 'taxi', 'theatre', 'toilets', 'townhall', 'university', 'veterinary', 'water_point')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'tree', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'artwork', 'camp_site', 'caravan_site', 'charlet', 'guest_house', 'hostel', 'hotel', 'information', 'motel', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'tram_stop')) OR
+                            ("man_made" IN ('bridge') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("man_made" IN ('communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'rest_area', 'services', 'traffic_signals')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'city_gate', 'fort', 'manor', 'memorial', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('block', 'bollard', 'gate', 'lift_gate', 'log', 'swing_gate', 'toll_booth')) OR
+                            ((tags->'office') IS NOT NULL)
+                          WHEN z(!scale_denominator!) <= 18 THEN
+                            ("aeroway" IN ('aerodrome', 'apron', 'gate', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'firepit', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'miniature_golf', 'park', 'picnic_table', 'playground', 'sauna', 'slipway', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('bunker', 'danger_area')) OR
+                            ("amenity" IN ('arts_centre', 'atm', 'bank', 'bar', 'bbq', 'bicycle_parking', 'bicycle_rental', 'biergarten', 'bus_station', 'cafe', 'car_rental', 'car_wash', 'charging_station', 'cinema', 'clinic', 'college', 'community_centre', 'courthouse', 'dentist', 'doctors', 'drinking_water', 'driving_school', 'fast_food', 'fire_station', 'food_court', 'fountain', 'fuel', 'grave_yard', 'hospital', 'hunting_stand', 'ice_cream', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'nightclub', 'parking', 'parking_entrance/multi-storey', 'parking_entrance/underground', 'pharmacy', 'phone', 'place_of_worship', 'police', 'post_box', 'post_office', 'prison', 'pub', 'public_bath', 'recycling', 'restaurant', 'school', 'shelter', 'shower', 'social_facility', 'taxi', 'theatre', 'toilets', 'townhall', 'university', 'veterinary', 'water_point')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'tree', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'apartment', 'artwork', 'camp_site', 'caravan_site', 'charlet', 'guest_house', 'hostel', 'hotel', 'information', 'motel', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'subway_entrance', 'tram_stop')) OR
+                            ("man_made" IN ('bridge') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("man_made" IN ('communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'elevator', 'rest_area', 'services', 'traffic_signals')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'city_gate', 'fort', 'manor', 'memorial', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('block', 'bollard', 'gate', 'lift_gate', 'log', 'swing_gate', 'toll_booth')) OR
+                            ((tags->'office') IS NOT NULL)
+                          ELSE
+                            ("aeroway" IN ('aerodrome', 'apron', 'gate', 'helipad')) OR
+                            ("leisure" IN ('beach_resort', 'common', 'dog_park', 'firepit', 'fitness_centre', 'fitness_station', 'garden', 'golf_course', 'marina', 'miniature_golf', 'park', 'picnic_table', 'playground', 'sauna', 'slipway', 'sport_centre', 'stadium', 'swimming_pool', 'water_park')) OR
+                            ("shop" IS NOT NULL) OR
+                            ("place" IN ('archipelago', 'island', 'islet')) OR
+                            ("landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green')) OR
+                            ("military" IN ('bunker', 'danger_area')) OR
+                            ("amenity" IN ('arts_centre', 'atm', 'bank', 'bar', 'bbq', 'bench', 'bicycle_parking', 'bicycle_rental', 'biergarten', 'bus_station', 'cafe', 'car_rental', 'car_wash', 'charging_station', 'cinema', 'clinic', 'college', 'community_centre', 'courthouse', 'dentist', 'doctors', 'drinking_water', 'driving_school', 'fast_food', 'fire_station', 'food_court', 'fountain', 'fuel', 'grave_yard', 'hospital', 'hunting_stand', 'ice_cream', 'kindergarten', 'library', 'marketplace', 'motorcycle_parking', 'nightclub', 'parking', 'parking_entrance/multi-storey', 'parking_entrance/underground', 'pharmacy', 'phone', 'place_of_worship', 'police', 'post_box', 'post_office', 'prison', 'pub', 'public_bath', 'recycling', 'restaurant', 'school', 'shelter', 'shower', 'social_facility', 'taxi', 'theatre', 'toilets', 'townhall', 'university', 'veterinary', 'waste_basket', 'waste_disposal', 'water_point')) OR
+                            ("natural" IN ('bare_rock', 'bay', 'beach', 'cave_entrance', 'geyser', 'glacier', 'grassland', 'heath', 'hot_spring', 'mud', 'peak', 'reef', 'saddle', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'spring', 'tree', 'volcano', 'water', 'wetland', 'wood')) OR
+                            ("tourism" IN ('alpine_hut', 'apartment', 'artwork', 'camp_site', 'caravan_site', 'charlet', 'guest_house', 'hostel', 'hotel', 'information', 'motel', 'museum', 'picnic_site', 'theme_park', 'viewpoint', 'wilderness_hut', 'zoo')) OR
+                            ("power" IN ('generator', 'generator/wind', 'plant', 'substation')) OR
+                            ("railway" IN ('crossing', 'halt', 'level_crossing', 'station', 'subway_entrance', 'tram_stop')) OR
+                            ("man_made" IN ('bridge') AND way_area >= 62*NULLIF(POW(!scale_denominator!*0.001*0.28,2),0)) OR
+                            ("man_made" IN ('communications_tower', 'cross', 'lighthouse', 'mast', 'obelisk', 'tower', 'water_tap', 'windmill', 'works')) OR
+                            ("aerialway" IN ('station')) OR
+                            ("highway" IN ('bus_stop', 'elevator', 'rest_area', 'services', 'traffic_signals')) OR
+                            ("historic" IN ('archaeological_site', 'castle', 'city_gate', 'fort', 'manor', 'memorial', 'monument', 'wayside_cross', 'wayside_shrine')) OR
+                            ("barrier" IN ('block', 'bollard', 'gate', 'lift_gate', 'log', 'swing_gate', 'toll_booth')) OR
+                            ((tags->'office') IS NOT NULL) OR
+                            ((tags->'emergency') IN ('phone')) OR
+                            ((tags->'advertising') IN ('column'))
+                        END
                     UNION ALL
                     SELECT -- This is separately the archipelagos with the convex hull geometry processing
                         ST_ClosestPoint(oway,ST_PointOnSurface(way)) AS way,

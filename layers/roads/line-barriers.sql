@@ -12,7 +12,18 @@
                               (SELECT
                                   GREATEST(
                                     carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
-                                    carto_highway_line_width_mapped(h.highway, h.tags->'width', h.tags->'lanes', !bbox!, !scale_denominator!))
+                                    carto_highway_line_width_mapped(
+                                      h.highway,
+                                      h.tags->'width:carriageway',
+                                      h.tags->'width',
+                                      h.tags->'lanes',
+                                      h.tags->'parking:both',
+                                      h.tags->'parking:right',
+                                      h.tags->'parking:left',
+                                      !bbox!,
+                                      !scale_denominator!
+                                    )
+                                  )
                                 FROM planet_osm_line h
                                 WHERE ST_Intersects(h.way, e.way) AND h.highway IN
                                   ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
@@ -43,7 +54,7 @@
                 z_order
               FROM
                 (SELECT
-                    way,                    
+                    way,
                     ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                      'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
                     ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic,

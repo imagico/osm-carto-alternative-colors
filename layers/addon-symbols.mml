@@ -123,14 +123,18 @@
                   ST_SnapToGrid(
                     way,
                     NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
-                  amenity AS feature,
+                  CASE WHEN amenity = 'parking' AND parking IN ('street_side', 'lane') THEN
+                    'parking_minor'
+                  ELSE
+                    amenity
+                  END AS feature,
                   CASE WHEN access = 'customers' THEN 'yes' ELSE 'no' END AS shopping,
                   CASE WHEN fee = 'yes' THEN carto_currency_symbol(carto_local_currency(way)) ELSE 'no' END AS fee,
                   CASE WHEN lit = 'yes' THEN 'yes' ELSE 'no' END AS lit,
                   CASE WHEN supervised = 'yes' THEN 'yes' ELSE 'no' END AS supervised,
-                  CASE WHEN disabled ~ '^[0-9]{1,4}$' THEN disabled WHEN disabled = 'yes' THEN 'yes' ELSE 'no' END AS disabled,
-                  CASE WHEN women ~ '^[0-9]{1,4}$' THEN women WHEN women = 'yes' THEN 'yes' ELSE 'no' END AS women,
-                  CASE WHEN parent ~ '^[0-9]{1,4}$' THEN parent WHEN parent = 'yes' THEN 'yes' ELSE 'no' END AS parent,
+                  CASE WHEN disabled ~ '^[0-9]{1,4}$' AND disabled != '0' THEN disabled WHEN disabled = 'yes' THEN 'yes' ELSE 'no' END AS disabled,
+                  CASE WHEN women ~ '^[0-9]{1,4}$' AND women != '0' THEN women WHEN women = 'yes' THEN 'yes' ELSE 'no' END AS women,
+                  CASE WHEN parent ~ '^[0-9]{1,4}$' AND parent != '0' THEN parent WHEN parent = 'yes' THEN 'yes' ELSE 'no' END AS parent,
                   CASE WHEN capacity ~ '^[0-9]{1,4}$' THEN capacity::INTEGER ELSE 0 END AS capacity,
                   CASE WHEN parking = 'multi-storey' OR covered = 'yes' THEN 'yes' ELSE 'no' END AS covered,
                   osm_id

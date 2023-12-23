@@ -43,6 +43,7 @@ at mid zoom levels.
   - ground unit width rendering of roads
   - lane depiction on roads
   - rendering of implicitly mapped sidewalks on roads
+  - rendering of implicitly mapped streetside parkings and parking/cycle/bus lanes
   - differentiated rendering of turning circles, turning loops, mini roundabouts and passing places
   - rendering of details on steps
   - differentiation of unpaved roads
@@ -64,6 +65,12 @@ parts of the `name` tag and interpreting `default_language` tags.
 * differentiated rendering of `barrier=fence`, `barrier=guard_rail`, `barrier=wall`, `barrier=retaining_wall` and `barrier=ditch`.
 * rendering of `barrier=wall`, `barrier=retaining_wall` and `barrier=ditch` and `barrier=city_wall`/`historic=citywalls` parametrized according to `width` tagging
 * distinct rendering of `barrier=wall` and `barrier=retaining_wall` for `height<=0.5`
+* rendering of different types of parking spaces using single symbol patterns
+* rendering of surface type on parkings using a structure pattern
+* symbol augmentation for parkings illustrating secondary tags
+* symbol augmentation for bus/tram stops with a shelter
+* rendering some types of buildings with a distinct design at high zoom levels (`building=roof`, `building=greenhouse`, `building=garages`, `building=garage`, `building=carport`)
+* rendering of street lights with a design derived from the french style
 
 # Samples
 
@@ -98,6 +105,10 @@ Also the newest changes depend on [a custom version of Carto](https://github.com
 If you don't want to use that you can remove the XML code within CartoCSS code in [symbols-labels.yaml](symbols-labels.yaml)
 but you will loose the features that depend on that of course.  How you can modify kosmtik to use a custom local 
 version of carto can be found [here](https://github.com/imagico/kosmtik).
+
+Symbol augmentation used for rendering some symbols depends on a 
+[custom extension of Mapnik](https://github.com/imagico/mapnik/tree/anchors).  You can use the style without it,
+but will get some warnings and will not be able to use the symbol augmentation.
 
 For rendering all languages as intended you also need to download custom fonts - for which i adapted the
 [get-fonts.sh](get-fonts.sh) from upstream.  To get just the AC-Style specific fonts you can run the script without parameters,

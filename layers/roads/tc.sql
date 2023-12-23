@@ -69,7 +69,17 @@
                               END
                             ELSE carto_highway_line_width(l.highway, l.service, z(!scale_denominator!))*1.7
                           END,
-                          carto_highway_line_width_mapped(l.highway, l.tags->'width', l.tags->'lanes', !bbox!, !scale_denominator!)*1.375
+                          carto_highway_line_width_mapped(
+                            l.highway,
+                            l.tags->'width:carriageway',
+                            l.tags->'width',
+                            l.tags->'lanes',
+                            l.tags->'parking:both',
+                            l.tags->'parking:right',
+                            l.tags->'parking:left',
+                            !bbox!,
+                            !scale_denominator!
+                          )*1.375
                         ),
                         CASE WHEN p.tags->'diameter' ~ '^-?\d{1,4}(\.\d+)?$' THEN (p.tags->'diameter')::NUMERIC / NULLIF(scale_factor(p.way)*!scale_denominator!*0.001*0.28,0) ELSE 0.0 END
                       ) AS width,

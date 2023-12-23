@@ -128,7 +128,7 @@
                 OR railway = 'station')
                 AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
             ) AS landcover
-            WHERE NOT(amenity = 'amenity_parking' AND parking = 'lane') -- lane parking is rendered separately in the roads layer
+            WHERE amenity != 'amenity_parking' OR parking IS NULL OR parking != 'lane' -- lane parking is rendered separately in the roads layer
           ) AS landcover_all
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS features

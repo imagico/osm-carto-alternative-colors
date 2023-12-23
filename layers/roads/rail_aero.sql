@@ -40,7 +40,7 @@
                       WHEN aeroway IS NOT NULL THEN
                         carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !bbox!, !scale_denominator!)
                       ELSE
-                        carto_highway_line_width_mapped(railway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!)
+                        carto_railway_line_width_mapped(railway, tags->'width', !bbox!, !scale_denominator!)
                     END AS width_tagged,
                     carto_casing_line_width(
                        COALESCE(railway, aeroway),
