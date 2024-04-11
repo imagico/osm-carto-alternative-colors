@@ -199,6 +199,21 @@ layers:
       - style/road-colors-generated.mss
       - style/line-widths-generated.mss
       - style/barriers.mss
+  entrances-simple:
+    source: layers/entrances-simple.mml
+    stylesheets:
+      - style/buildings.mss
+      - style/entrances.mss
+    tags:
+      - "simple"
+      - "legacy"
+  entrances:
+    source: layers/entrances.mml
+    stylesheets:
+      - style/buildings.mss
+      - style/entrances.mss
+    tags:
+      - "ac"
   golf-lines:
     source: layers/golf-lines.mml
     stylesheets:
@@ -280,10 +295,21 @@ layers:
     stylesheets:
       - style/barriers.mss
       - style/water-features.mss
+  building-text:
+    source: layers/building-text.mml
+    stylesheets:
+      - style/addressing.mss
+  interpolation:
+    source: layers/interpolation.mml
+    stylesheets:
+      - style/addressing.mss
+  addresses:
+    source: layers/addresses.mml
+    stylesheets:
+      - style/addressing.mss
   minor-labels:
     source: layers/minor-labels.mml
     stylesheets:
-      - style/addressing.mss
       - style/water.mss
       - style/ferry-routes.mss
       - style/admin.mss

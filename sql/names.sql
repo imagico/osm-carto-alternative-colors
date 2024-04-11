@@ -514,3 +514,24 @@ AS $func$
 $func$;
 */
 
+/* shorten an address tag if too long */
+CREATE OR REPLACE FUNCTION carto_shorten_address(addr text)
+ RETURNS TEXT AS $$
+ DECLARE
+  addr_mod text;
+  parts text[];
+ BEGIN
+  addr_mod = replace(addr, ';', ',');
+  IF (char_length(addr_mod) <= 7) THEN
+    return addr_mod;
+  END IF;
+  IF (position(',' in addr_mod) > 0) THEN
+    parts = string_to_array(addr_mod, ',');
+    -- horizontal ellipsis
+    return parts[1] || U&'\2026' || parts[array_upper(parts, 1)];
+    -- midline ellipsis
+    -- return parts[1] || U&'\22ef' || parts[array_upper(parts, 1)];
+  END IF;
+  return addr_mod;
+ END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;

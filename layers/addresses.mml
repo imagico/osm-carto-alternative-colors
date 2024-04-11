@@ -1,0 +1,129 @@
+# ---------------------------------------------------------------------------
+#  addresses.mml
+#
+#  address labels
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2012-2024 by OSM-Carto contributors
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: addresses
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            osm_id_building,
+            ref,
+            entrance,
+            addr_housenumber,
+            addr_housename,
+            addr_unit,
+            addr_flats,
+            CONCAT('/', addr_flats) AS addr_flats_sep,
+            osm_id
+          FROM
+            (SELECT
+                ST_PointOnSurface(way) AS way,
+                'poly' || osm_id::text AS osm_id_building,
+                ref,
+                NULL AS entrance,
+                carto_shorten_address("addr:housenumber") AS addr_housenumber,
+                "addr:housename" AS addr_housename,
+                carto_shorten_address(tags->'addr:unit') AS addr_unit,
+                carto_shorten_address(tags->'addr:flats') AS addr_flats,
+                way_area,
+                'poly' || osm_id::text AS osm_id
+              FROM planet_osm_polygon a
+              WHERE way && !bbox! -- Not ST_PointOnSurface(way) because name might be NULL
+                AND (("addr:housenumber" IS NOT NULL) OR
+                     ("addr:housename" IS NOT NULL) OR
+                     ((tags->'addr:unit') IS NOT NULL) OR
+                     ((tags->'addr:flats') IS NOT NULL))
+                AND building IS NOT NULL AND building NOT IN ('no')
+                AND way_area < 4000000*POW(!scale_denominator!*0.001*0.28,2)
+            UNION ALL
+            SELECT
+                way,
+                -- this is the osm_id of the building with the same housenumber this address node is located on
+                -- or any other non-entrance address node with the same housenumber within the same building
+                COALESCE(
+                  CASE WHEN (apnt."addr:housenumber" IS NOT NULL) THEN
+                    (SELECT
+                        CASE WHEN b."addr:housenumber" = apnt."addr:housenumber" THEN
+                          'poly' || b.osm_id::text
+                        ELSE
+                          (SELECT
+                              'pnt' || apnt2.osm_id::text
+                            FROM planet_osm_point AS apnt2
+                            WHERE ST_DWithin(b.way, apnt2.way, 0.1) AND
+                              apnt2."addr:housenumber" = apnt."addr:housenumber" AND
+                              apnt2.osm_id != apnt.osm_id AND
+                              ((apnt2.tags->'entrance') IS NULL OR (apnt2.tags->'entrance') = 'no')
+                            ORDER BY apnt2.osm_id
+                            LIMIT 1)
+                        END
+                      FROM planet_osm_polygon b
+                      WHERE ST_DWithin(b.way, apnt.way, 0.1) AND
+                        building IS NOT NULL AND building NOT IN ('no')
+                      ORDER BY
+                        CASE WHEN b."addr:housenumber" = apnt."addr:housenumber" THEN 0 ELSE 1 END ASC,
+                        way_area DESC
+                      LIMIT 1
+                    )
+                  END,
+                  'pnt' || osm_id::text
+                ) AS osm_id_building,
+                ref,
+                tags->'entrance' AS entrance,
+                carto_shorten_address("addr:housenumber") AS addr_housenumber,
+                "addr:housename" AS addr_housename,
+                carto_shorten_address(tags->'addr:unit') AS addr_unit,
+                carto_shorten_address(tags->'addr:flats') AS addr_flats,
+                NULL AS way_area,
+                'pnt' || osm_id::text AS osm_id
+              FROM planet_osm_point AS apnt
+              WHERE way && !bbox!
+                AND (("addr:housenumber" IS NOT NULL) OR
+                     ("addr:housename" IS NOT NULL) OR
+                     ((tags->'addr:unit') IS NOT NULL) OR
+                     ((tags->'addr:flats') IS NOT NULL) OR
+                     ("ref" IS NOT NULL))
+            ) AS _
+          ORDER BY
+            way_area DESC NULLS LAST,
+            -- render entrance nodes after standalone address nodes
+            CASE WHEN entrance IS NULL OR entrance = 'no' THEN 0 ELSE 1 END ASC
+        ) AS addresses
+    properties:
+      minzoom: 17
