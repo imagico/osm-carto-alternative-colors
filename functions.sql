@@ -47,8 +47,8 @@ CREATE OR REPLACE FUNCTION carto_highway_int_highway(highway text, bicycle text,
 AS $$
 SELECT
 	CASE 
-    WHEN highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
-                 'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'living_street', 'service', 'road') THEN 'road'
+	WHEN highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+	      'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'living_street', 'service', 'road') THEN 'road'
 	WHEN highway IN ('footway', 'steps') THEN 'footway'
 	WHEN highway = 'path' THEN carto_path_type(bicycle, horse)
 	ELSE highway
@@ -66,14 +66,14 @@ SELECT
 	CASE carto_highway_int_highway(highway, bicycle, horse)
 	WHEN 'road' THEN
 		carto_int_access('road', CASE
-			WHEN motorcar <> 'unknown' THEN motorcar
-			WHEN motor_vehicle <> 'unknown' THEN motor_vehicle
-			WHEN vehicle <> 'unknown' THEN vehicle
+			WHEN motorcar IS NOT NULL THEN motorcar
+			WHEN motor_vehicle IS NOT NULL THEN motor_vehicle
+			WHEN vehicle IS NOT NULL THEN vehicle
 			ELSE "access" END)
-	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot <> 'unknown' THEN foot ELSE "access" END)
-	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot <> 'unknown' THEN foot ELSE "access" END)
-	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle <> 'unknown' THEN bicycle ELSE "access" END)
-	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse <> 'unknown' THEN horse ELSE "access" END)
+	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
+	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
+	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle IS NOT NULL THEN bicycle ELSE "access" END)
+	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse IS NOT NULL THEN horse ELSE "access" END)
 	ELSE carto_int_access(NULL, "access")
 	END
 $$;
