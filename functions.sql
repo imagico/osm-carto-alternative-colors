@@ -66,14 +66,14 @@ SELECT
 	CASE carto_highway_int_highway(highway, bicycle, horse)
 	WHEN 'road' THEN
 		carto_int_access('road', CASE
-			WHEN motorcar <> 'unknown' THEN motorcar
-			WHEN motor_vehicle <> 'unknown' THEN motor_vehicle
-			WHEN vehicle <> 'unknown' THEN vehicle
+			WHEN motorcar IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN motorcar
+			WHEN motor_vehicle IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN motor_vehicle
+			WHEN vehicle IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN vehicle
 			ELSE "access" END)
-	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot <> 'unknown' THEN foot ELSE "access" END)
-	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot <> 'unknown' THEN foot ELSE "access" END)
-	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle <> 'unknown' THEN bicycle ELSE "access" END)
-	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse <> 'unknown' THEN horse ELSE "access" END)
+	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN foot ELSE "access" END)
+	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN foot ELSE "access" END)
+	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN bicycle ELSE "access" END)
+	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN horse ELSE "access" END)
 	ELSE carto_int_access(NULL, "access")
 	END
 $$;
