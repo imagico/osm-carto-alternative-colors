@@ -7,7 +7,7 @@
   NULL is functionally equivalent to 'yes', but indicates the absence of a restriction 
   rather than a positive access = yes. 'unknown' corresponds to an uninterpretable 
   access restriction e.g. access=unknown or motorcar=occasionally  */
-CREATE OR REPLACE FUNCTION carto_int_access(int_highway text, accesstag text)
+CREATE OR REPLACE FUNCTION carto_int_access(int_highway text, accesstag text, fallback text)
 	RETURNS text
 	LANGUAGE SQL
 	IMMUTABLE PARALLEL SAFE
@@ -19,7 +19,15 @@ SELECT
 		CASE WHEN int_highway IN ('road', 'pedestrian') THEN 'restricted' ELSE 'no' END
 	WHEN accesstag IN ('no', 'permit', 'private', 'agricultural', 'forestry', 'agricultural;forestry') THEN 'no'
 	WHEN accesstag IS NULL THEN NULL
-	ELSE 'unknown'
+	ELSE
+		CASE
+		WHEN fallback IN ('yes', 'designated', 'permissive') THEN 'unknown_yes'
+		WHEN fallback IN ('destination',  'delivery', 'customers') THEN
+			CASE WHEN int_highway IN ('road', 'pedestrian') THEN 'unknown_restricted' ELSE 'unknown_no' END
+		WHEN fallback IN ('no', 'permit', 'private', 'agricultural', 'forestry', 'agricultural;forestry') THEN 'unknown_no'
+		WHEN fallback IS NULL THEN 'unknown_yes'
+		ELSE 'unknown'
+		END
 	END
 $$;
 
@@ -66,14 +74,18 @@ SELECT
 	CASE carto_highway_int_highway(highway, bicycle, horse)
 	WHEN 'road' THEN
 		carto_int_access('road', CASE
-			WHEN motorcar IS NOT NULL THEN motorcar
-			WHEN motor_vehicle IS NOT NULL THEN motor_vehicle
-			WHEN vehicle IS NOT NULL THEN vehicle
+			WHEN motorcar <> 'unknown' THEN motorcar
+			WHEN motor_vehicle <> 'unknown' THEN motor_vehicle
+			WHEN vehicle <> 'unknown' THEN vehicle
+			ELSE "access" END, CASE
+			WHEN motorcar IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN motorcar
+			WHEN motor_vehicle IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN motor_vehicle
+			WHEN vehicle IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN vehicle
 			ELSE "access" END)
-	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
-	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
-	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle IS NOT NULL THEN bicycle ELSE "access" END)
-	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse IS NOT NULL THEN horse ELSE "access" END)
+	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot <> 'unknown' THEN foot ELSE "access" END, CASE WHEN foot IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN foot ELSE "access" END)
+	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot <> 'unknown' THEN foot ELSE "access" END, CASE WHEN foot IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN foot ELSE "access" END)
+	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle <> 'unknown' THEN bicycle ELSE "access" END, CASE WHEN bicycle IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN foot ELSE "access" END)
+	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse <> 'unknown' THEN horse ELSE "access" END, CASE WHEN horse IN ('yes', 'designated', 'permissive', 'no', 'private', 'destination', 'customers', 'delivery', 'permit', 'agricultural', 'forestry', 'agricultural;forestry') THEN foot ELSE "access" END)
 	ELSE carto_int_access(NULL, "access")
 	END
 $$;
