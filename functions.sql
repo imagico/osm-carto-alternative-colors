@@ -72,6 +72,7 @@ SELECT
 			ELSE "access" END)
 	WHEN 'pedestrian' THEN carto_int_access('pedestrian', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
 	WHEN 'footway' THEN carto_int_access('footway', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
+	WHEN 'path' THEN carto_int_access('path', CASE WHEN foot IS NOT NULL THEN foot ELSE "access" END)
 	WHEN 'cycleway' THEN carto_int_access('cycleway', CASE WHEN bicycle IS NOT NULL THEN bicycle ELSE "access" END)
 	WHEN 'bridleway' THEN carto_int_access('bridleway', CASE WHEN horse IS NOT NULL THEN horse ELSE "access" END)
 	ELSE carto_int_access(NULL, "access")
