@@ -16,14 +16,14 @@ SELECT
 	CASE
 	WHEN accesstag IN ('yes', 'designated', 'permissive') THEN 'yes'
 	WHEN accesstag IN ('destination',  'delivery', 'customers') THEN
-		CASE WHEN int_highway IN ('road', 'pedestrian') THEN 'restricted' ELSE 'no' END
+		CASE WHEN int_highway IN ('road', 'pedestrian') THEN 'restricted' ELSE 'yes' END
 	WHEN accesstag IN ('no', 'permit', 'private', 'agricultural', 'forestry', 'agricultural;forestry') THEN 'no'
 	WHEN accesstag IS NULL THEN NULL
 	ELSE
 		CASE
 		WHEN fallback IN ('yes', 'designated', 'permissive') THEN 'unknown_yes'
 		WHEN fallback IN ('destination',  'delivery', 'customers') THEN
-			CASE WHEN int_highway IN ('road', 'pedestrian') THEN 'unknown_restricted' ELSE 'unknown_no' END
+			CASE WHEN int_highway IN ('road', 'pedestrian') THEN 'unknown_restricted' ELSE 'unknown_yes' END
 		WHEN fallback IN ('no', 'permit', 'private', 'agricultural', 'forestry', 'agricultural;forestry') THEN 'unknown_no'
 		WHEN fallback IS NULL THEN 'unknown_yes'
 		ELSE 'unknown'
