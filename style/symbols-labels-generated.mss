@@ -5415,6 +5415,64 @@
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_bench.svg');
+    // modification amenity_bench+medium based on style symbol-only-zoom-variant
+    [zoom >= 19] {
+      marker-file: url('symbols/colored/amenity_bench_medium.svg');
+    }
+    // modification amenity_bench+medium+backrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 19][backrest = 'yes'] {
+      marker-file: url('symbols/colored/amenity_bench_medium+backrest.svg');
+    }
+    // modification amenity_bench+large+unknown based on style symbol-only-zoom-variant
+    [zoom >= 20] {
+      marker-file: url('symbols/colored/amenity_bench_large+unknown.svg');
+    }
+    // modification amenity_bench+large+backrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'unknown+backrest'] {
+      marker-file: url('symbols/colored/amenity_bench_large+backrest.svg');
+    }
+    // modification amenity_bench+large+nobackrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'unknown+nobackrest'] {
+      marker-file: url('symbols/colored/amenity_bench_large+nobackrest.svg');
+    }
+    // modification amenity_bench+large+light based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'light+unknown'] {
+      marker-file: url('symbols/colored/amenity_bench_large+light.svg');
+    }
+    // modification amenity_bench+large+heavy based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'heavy+unknown'] {
+      marker-file: url('symbols/colored/amenity_bench_large+heavy.svg');
+    }
+    // modification amenity_bench+large+light+backrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'light+backrest'] {
+      marker-file: url('symbols/colored/amenity_bench_large+light+backrest.svg');
+    }
+    // modification amenity_bench+large+light+nobackrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'light+nobackrest'] {
+      marker-file: url('symbols/colored/amenity_bench_large+light+nobackrest.svg');
+    }
+    // modification amenity_bench+large+heavy+backrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'heavy+backrest'] {
+      marker-file: url('symbols/colored/amenity_bench_large+heavy+backrest.svg');
+    }
+    // modification amenity_bench+large+heavy+nobackrest based on style symbol-only-zoom-attribute-variant
+    [zoom >= 20][int_bench_type = 'heavy+nobackrest'] {
+      marker-file: url('symbols/colored/amenity_bench_large+heavy+nobackrest.svg');
+    }
+  }
+  [feature = 'amenity_lounger'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_lounger.svg');
+    // modification amenity_lounger+medium based on style symbol-only-zoom-variant
+    [zoom >= 19] {
+      marker-file: url('symbols/colored/amenity_lounger_medium.svg');
+    }
+    // modification amenity_lounger+large based on style symbol-only-zoom-variant
+    [zoom >= 20] {
+      marker-file: url('symbols/colored/amenity_lounger_large.svg');
+    }
   }
   [feature = 'amenity_waste_basket'] {
     marker-anchor-set: '[osm_id]';

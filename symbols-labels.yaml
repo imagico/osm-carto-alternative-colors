@@ -827,6 +827,11 @@ styles:
       marker-file: url('[[symbol_file]]');
     }
 
+  symbol-only-zoom-attribute-variant: |
+    [zoom >= [[start_symbol]]][[attribute_selector]] {
+      marker-file: url('[[symbol_file]]');
+    }
+
   dot-only: |
     marker-anchor-set: '[osm_id]';
     marker-width: [[marker_width]];
@@ -1226,6 +1231,21 @@ attributes:
     attributes:
       - access
       - amenity
+  int_bench_type:
+    sql: >-
+      (CASE
+        WHEN "material" IN ('wood', 'plastic') THEN 'light'
+        WHEN "material" IN ('stone', 'concrete', 'metal', 'steel') THEN 'heavy'
+        ELSE 'unknown'
+      END || '+' ||
+      CASE
+        WHEN "backrest" IN ('yes') THEN 'backrest'
+        WHEN "backrest" IN ('no') THEN 'nobackrest'
+        ELSE 'unknown'
+      END)
+    attributes:
+      - backrest
+      - material
   int_text_offset:
     sql: >-
       ROUND(GREATEST(
@@ -1859,12 +1879,91 @@ features:
         style: symbol-only-zoom-variant
         symbol_file: symbols/sources/traffic/level_crossing2.svg
         start_symbol: 16
-
   amenity=bench:
     style: symbol-only
-    symbol_file: symbols/sources/amenity/bench.svg
+    symbol_file: symbols/sources/amenity/bench_small.svg
     symbol_color: amenity-icon
-    start_symbol: 19
+    start_symbol: 18
+    modifications:
+      medium:
+        style: symbol-only-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/amenity/bench_medium.svg
+      medium+backrest:
+        filters: >-
+          [backrest = 'yes']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/amenity/bench_medium_backrest.svg
+      large+unknown:
+        style: symbol-only-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_unknown_unknown.svg
+      large+backrest:
+        filters: >-
+          [int_bench_type = 'unknown+backrest']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_unknown_backrest.svg
+      large+nobackrest:
+        filters: >-
+          [int_bench_type = 'unknown+nobackrest']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_unknown_nobackrest.svg
+      large+light:
+        filters: >-
+          [int_bench_type = 'light+unknown']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_light_unknown.svg
+      large+heavy:
+        filters: >-
+          [int_bench_type = 'heavy+unknown']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_heavy_unknown.svg
+      large+light+backrest:
+        filters: >-
+          [int_bench_type = 'light+backrest']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_light_backrest.svg
+      large+light+nobackrest:
+        filters: >-
+          [int_bench_type = 'light+nobackrest']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_light_nobackrest.svg
+      large+heavy+backrest:
+        filters: >-
+          [int_bench_type = 'heavy+backrest']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_heavy_backrest.svg
+      large+heavy+nobackrest:
+        filters: >-
+          [int_bench_type = 'heavy+nobackrest']
+        style: symbol-only-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/bench_heavy_nobackrest.svg
+    attributes:
+      - int_bench_type
+      - backrest
+  amenity=lounger:
+    style: symbol-only
+    symbol_file: symbols/sources/amenity/bench_small.svg
+    symbol_color: amenity-icon
+    start_symbol: 18
+    modifications:
+      medium:
+        style: symbol-only-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/amenity/lounger_medium.svg
+      large:
+        style: symbol-only-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/amenity/lounger.svg
   amenity=waste_basket:
     type: point
     style: symbol-only
