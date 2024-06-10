@@ -1,4 +1,4 @@
-/* Basic standalone styling for tree inspection style */
+/* Basic standalone styling for symbols inspection style */
 
 @tree-color: #000;
 @label-color: #000080;

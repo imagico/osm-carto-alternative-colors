@@ -3,6 +3,9 @@ settings:
   schema: public
   database: gis
   symbols_table: carto_symbols
+  attributes:
+    leaf_type: text
+    leaf_cycle: text
   srid: 3857
 symbols:
   tree_needleleaved_5:

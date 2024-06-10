@@ -1,7 +1,7 @@
 scale: 1
 metatile: 2
-name: OpenStreetMap Carto tree symbols
-description: Tree symbol inspector for OSM-Carto alternative colors
+name: OpenStreetMap Carto script processed symbols
+description: Symbol inspector for OSM-Carto alternative colors
 bounds: &world
   - -180
   - -85.05112877980659
@@ -36,7 +36,7 @@ _parts:
     extent: "-20037508,-20037508,20037508,20037508"
 
 Stylesheet:
-  - style/treeinspector.mss
+  - style/symbolsinspector.mss
 Layer:
   - id: tree_symbols_compact
     geometry: polygon
@@ -90,7 +90,8 @@ Layer:
                   ) AS point,
                   name,
                   symbol_size
-                FROM carto_symbols WHERE symbol_size < 18 OR (symbol_size % 2) != 0
+                FROM carto_symbols
+                WHERE feature_type = 'tree' AND (symbol_size < 18 OR (symbol_size % 2) != 0)
               ) AS _
             ) AS features
         ) AS tree_symbols
@@ -148,6 +149,7 @@ Layer:
                   name,
                   symbol_size
                 FROM carto_symbols
+                WHERE feature_type = 'tree'
               ) AS _
             ) AS features
         ) AS tree_symbols
@@ -180,6 +182,7 @@ Layer:
               name,
               symbol_size
             FROM carto_symbols
+            WHERE feature_type = 'tree'
           ) AS features
         ) AS labels
     properties:

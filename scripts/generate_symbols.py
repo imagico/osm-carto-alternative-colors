@@ -42,12 +42,22 @@ def svg_get_dimensions(svg):
 
 
 class Table:
-    def __init__(self, conn, temp_schema, schema, symbols_table, srid):
+    def __init__(self, conn, temp_schema, schema, symbols_table, attributes, srid):
         self._conn = conn
         self._temp_schema = temp_schema
         self._dst_schema = schema
         self._symbols_table = symbols_table
+        self._attributes = attributes
+
         with self._conn.cursor() as cur:
+
+            cols = list()
+
+            for attribute, col_type in attributes.items():
+                cols.append(attribute+" "+col_type)
+
+            cols_comb = ", ".join(cols)
+
             cur.execute('''CREATE SCHEMA IF NOT EXISTS {temp_schema};'''
                         .format(temp_schema=self._temp_schema))
             cur.execute(('''DROP TABLE IF EXISTS "{schema}"."{symbols_table}";'''
@@ -59,11 +69,10 @@ class Table:
                          '''   width integer,'''
                          '''   height integer,'''
                          '''   symbol_size integer,'''
-                         '''   leaf_type text,'''
-                         '''   leaf_cycle text,'''
+                         '''   {cols},'''
                          '''   way geometry(MULTIPOLYGON,{srid})'''
                          ''' );'''
-                        ).format(schema=self._dst_schema, symbols_table=self._symbols_table, srid=srid))
+                        ).format(schema=self._dst_schema, symbols_table=self._symbols_table, cols=cols_comb, srid=srid))
             self._conn.commit()
 
     # Clean up the temporary table in preparation for loading
@@ -80,37 +89,65 @@ class Table:
             self._conn.commit()
 
     # Add imported symbol from temporary table to symbols table and nuke the temporary table
-    def add_symbol(self, name, width, height, ftype, size, leaf_type, leaf_cycle):
+    def add_symbol(self, name, width, height, ftype, size, attributes):
         with self._conn.cursor() as cur:
+
+            cols = list()
+            vals = list()
+            cols_conflict = list()
+
+            for attribute, val in attributes.items():
+                cols.append(attribute)
+                vals.append(val+" AS "+attribute)
+                cols_conflict.append(attribute+" = EXCLUDED."+attribute)
+
+            cols_comb = ", ".join(cols)
+            vals_comb = ", ".join(vals)
+            cols_conflict_comb = ", ".join(cols_conflict)
+
             cur.execute(('''INSERT INTO "{schema}"."{symbols_table}" '''
-                         '''(name, width, height, feature_type, symbol_size, leaf_type, leaf_cycle, way) '''
+                         '''(name, width, height, feature_type, symbol_size, {cols}, way) '''
                          '''SELECT '{name}' AS name, {width} AS width, {height} AS height, '''
-                         '''  '{ftype}' AS feature_type, {size} AS symbol_size, {leaf_type} AS leaf_type, {leaf_cycle} AS leaf_cycle, '''
+                         '''  '{ftype}' AS feature_type, {size} AS symbol_size, {vals}, '''
                          '''  ST_CollectionExtract(ST_Multi(ST_MakeValid(way)), 3) AS way FROM "{temp_schema}"."{name}"'''
                          '''  ON CONFLICT (name) DO UPDATE SET width = EXCLUDED.width, height = EXCLUDED.height, way = EXCLUDED.way, feature_type = EXCLUDED.feature_type,'''
-                         '''                                   symbol_size = EXCLUDED.symbol_size, leaf_type = EXCLUDED.leaf_type, leaf_cycle = EXCLUDED.leaf_cycle;'''
+                         '''                                   symbol_size = EXCLUDED.symbol_size, {cols_conflict};'''
                          )
                          .format(schema=self._dst_schema, symbols_table=self._symbols_table, temp_schema=self._temp_schema,
-                                 name=name, width=width, height=height, ftype=ftype, size=size, leaf_type=leaf_type, leaf_cycle=leaf_cycle))
+                                 cols=cols_comb, name=name, width=width, height=height, ftype=ftype, size=size, vals=vals_comb, cols_conflict=cols_conflict_comb))
 
             cur.execute('''DROP TABLE IF EXISTS "{temp_schema}"."{name}"'''
                         .format(temp_schema=self._temp_schema, name=name))
             self._conn.commit()
 
     # Add imported symbol from temporary table to symbols table and nuke the temporary table, symbol is scaled to size
-    def add_symbol_scaled(self, name, width, height, ftype, size, leaf_type, leaf_cycle):
+    def add_symbol_scaled(self, name, width, height, ftype, size, attributes):
         scale = float(size)/max(width, height)
         with self._conn.cursor() as cur:
+
+            cols = list()
+            vals = list()
+            cols_conflict = list()
+
+            for attribute, val in attributes.items():
+                cols.append(attribute)
+                vals.append(val+" AS "+attribute)
+                cols_conflict.append(attribute+" = EXCLUDED."+attribute)
+
+            cols_comb = ", ".join(cols)
+            vals_comb = ", ".join(vals)
+            cols_conflict_comb = ", ".join(cols_conflict)
+
             cur.execute(('''INSERT INTO "{schema}"."{symbols_table}" '''
-                         '''(name, width, height, feature_type, symbol_size, leaf_type, leaf_cycle, way) '''
+                         '''(name, width, height, feature_type, symbol_size, {cols}, way) '''
                          '''SELECT '{name}' AS name, {width} AS width, {height} AS height, '''
-                         '''  '{ftype}' AS feature_type, {size} AS symbol_size, {leaf_type} AS leaf_type, {leaf_cycle} AS leaf_cycle, '''
+                         '''  '{ftype}' AS feature_type, {size} AS symbol_size, {vals}, '''
                          '''  ST_Scale(ST_CollectionExtract(ST_Multi(ST_MakeValid(way)), 3), {scale}, {scale}) AS way FROM "{temp_schema}"."{name}"'''
                          '''  ON CONFLICT (name) DO UPDATE SET width = EXCLUDED.width, height = EXCLUDED.height, way = EXCLUDED.way, feature_type = EXCLUDED.feature_type,'''
-                         '''                                   symbol_size = EXCLUDED.symbol_size, leaf_type = EXCLUDED.leaf_type, leaf_cycle = EXCLUDED.leaf_cycle;'''
+                         '''                                   symbol_size = EXCLUDED.symbol_size, {cols_conflict};'''
                          )
                          .format(schema=self._dst_schema, symbols_table=self._symbols_table, temp_schema=self._temp_schema,
-                                 name=name, width=round(scale*width), height=round(scale*height), ftype=ftype, size=size, scale=scale, leaf_type=leaf_type, leaf_cycle=leaf_cycle))
+                                 cols=cols_comb, name=name, width=round(scale*width), height=round(scale*height), ftype=ftype, size=size, scale=scale, vals=vals_comb, cols_conflict=cols_conflict_comb))
 
             cur.execute('''DROP TABLE IF EXISTS "{temp_schema}"."{name}"'''
                         .format(temp_schema=self._temp_schema, name=name))
@@ -130,18 +167,32 @@ class Table:
             self._conn.commit()
 
     # Generate symbol using SQL code
-    def generate_symbol(self, name, sql, ftype, size, leaf_type, leaf_cycle):
+    def generate_symbol(self, name, sql, ftype, size, attributes):
         with self._conn.cursor() as cur:
+
+            cols = list()
+            vals = list()
+            cols_conflict = list()
+
+            for attribute, val in attributes.items():
+                cols.append(attribute)
+                vals.append(val+" AS "+attribute)
+                cols_conflict.append(attribute+" = EXCLUDED."+attribute)
+
+            cols_comb = ", ".join(cols)
+            vals_comb = ", ".join(vals)
+            cols_conflict_comb = ", ".join(cols_conflict)
+
             cur.execute(('''INSERT INTO "{schema}"."{symbols_table}" '''
-                         '''(name, width, height, feature_type, symbol_size, leaf_type, leaf_cycle, way) '''
+                         '''(name, width, height, feature_type, symbol_size, {cols}, way) '''
                          '''SELECT '{name}' AS name, ST_XMax(way)-ST_XMin(way) AS width, ST_YMax(way)-ST_YMin(way) AS height, '''
-                         '''  '{ftype}' AS feature_type, {size} AS symbol_size, {leaf_type} AS leaf_type, {leaf_cycle} AS leaf_cycle, '''
+                         '''  '{ftype}' AS feature_type, {size} AS symbol_size, {vals}, '''
                          '''  ST_CollectionExtract(ST_Multi(ST_MakeValid(ST_Translate(way, -ST_XMin(way), -ST_YMin(way)))), 3) AS way FROM (SELECT {sql} AS way) AS _'''
                          '''  ON CONFLICT (name) DO UPDATE SET width = EXCLUDED.width, height = EXCLUDED.height, way = EXCLUDED.way, feature_type = EXCLUDED.feature_type,'''
-                         '''                                   symbol_size = EXCLUDED.symbol_size, leaf_type = EXCLUDED.leaf_type, leaf_cycle = EXCLUDED.leaf_cycle;'''
+                         '''                                   symbol_size = EXCLUDED.symbol_size, {cols_conflict};'''
                          )
                          .format(schema=self._dst_schema, symbols_table=self._symbols_table,
-                                 name=name, sql=sql, ftype=ftype, size=size, leaf_type=leaf_type, leaf_cycle=leaf_cycle))
+                                 cols=cols_comb, name=name, sql=sql, ftype=ftype, size=size, vals=vals_comb, cols_conflict=cols_conflict_comb))
             self._conn.commit()
 
 def main():
@@ -234,6 +285,7 @@ def main():
                               config["settings"]["temp_schema"],
                               config["settings"]["schema"],
                               config["settings"]["symbols_table"],
+                              config["settings"]["attributes"],
                               config["settings"]["srid"])
 
         for name, symbol in config["symbols"].items():
@@ -284,15 +336,16 @@ def main():
                 max_size = width
                 name_base = None
 
-            if 'leaf_type' in symbol:
-                leaf_type = "'{}'".format(symbol['leaf_type'])
-            else:
-                leaf_type = "NULL"
+            attributes= dict()
 
-            if 'leaf_cycle' in symbol:
-                leaf_cycle = "'{}'".format(symbol['leaf_cycle'])
-            else:
-                leaf_cycle = "NULL"
+            for attribute, col_type in config["settings"]["attributes"].items():
+                if attribute in symbol:
+                    if (col_type == 'text'):
+                        attributes[attribute] = "'{}'".format(symbol[attribute])
+                    else:
+                        attributes[attribute] = "{}".format(symbol[attribute])
+                else:
+                    attributes[attribute] = "NULL"
 
             symbol_scaled = False
 
@@ -370,11 +423,11 @@ def main():
 
                     if symbol_scaled:
                         logging.info("  Adding {} scaled from {} to {}".format(name_real, max(width, height), size))
-                        symbols_table.add_symbol_scaled(name_real, width, height, ftype, size, leaf_type, leaf_cycle)
+                        symbols_table.add_symbol_scaled(name_real, width, height, ftype, size, attributes)
                         scale = float(size)/max(width, height)
                     else:
                         logging.info("  Adding {} at size {}".format(name_real, size))
-                        symbols_table.add_symbol(name_real, width, height, ftype, size, leaf_type, leaf_cycle)
+                        symbols_table.add_symbol(name_real, width, height, ftype, size, attributes)
                         scale = 1.0
 
                     if "sql" in symbol:
@@ -383,7 +436,7 @@ def main():
 
                 elif "sql" in symbol:
                     logging.info("  Generating {} from sql code".format(name_real))
-                    symbols_table.generate_symbol(name_real, symbol['sql'].replace('!size!', str(size)).replace('!size_orig!', str(size)), ftype, size, leaf_type, leaf_cycle)
+                    symbols_table.generate_symbol(name_real, symbol['sql'].replace('!size!', str(size)).replace('!size_orig!', str(size)), ftype, size, attributes)
 
                 else:
                     logging.info("  Ignoring symbol {} with neither file nor sql specified".format(name_real))
