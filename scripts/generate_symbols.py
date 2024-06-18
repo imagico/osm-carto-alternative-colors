@@ -289,6 +289,12 @@ def main():
                               config["settings"]["srid"])
 
         for name, symbol in config["symbols"].items():
+
+            if "types" in config["settings"]:
+                if 'type' in symbol:
+                    if symbol['type'] not in config["settings"]["types"]:
+                        continue
+
             logging.info("Checking symbol {}".format(name))
             # Don't attempt to handle strange names
             # Even if there was code to escape them properly here, you don't want

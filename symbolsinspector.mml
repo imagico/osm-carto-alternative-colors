@@ -155,7 +155,7 @@ Layer:
         ) AS tree_symbols
     properties:
       minzoom: 0
-  - id: labels
+  - id: labels_tree
     geometry: point
     <<: *extents
     Datasource:
@@ -184,6 +184,110 @@ Layer:
             FROM carto_symbols
             WHERE feature_type = 'tree'
           ) AS features
-        ) AS labels
+        ) AS labels_tree
+    properties:
+      minzoom: 0
+  - id: viewpoint_symbols
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            ST_Translate(
+              way,
+              ST_X(point),
+              ST_Y(point)
+            ) AS way
+          FROM
+            (SELECT
+                way,
+                CASE
+                  WHEN ((symbol_size % 2) = 0) THEN
+                       ST_SnapToGrid(
+                         point,
+                         NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                  ELSE
+                       ST_SnapToGrid(
+                         point,
+                         0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 0.5*NULLIF(!scale_denominator!*0.001*0.28,0),
+                         NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                END
+                AS point
+              FROM (SELECT
+                  ST_TransScale(
+                    way,
+                    -width*0.5,
+                    -height*0.5,
+                    NULLIF(!scale_denominator!*0.001*0.28,0),
+                    NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ) AS way,
+                  ST_Point(
+                    -512*NULLIF(!scale_denominator!*0.001*0.28,0) +
+                    ((CASE
+                      WHEN symbol_size = 14 THEN 0
+                      WHEN symbol_size = 15 THEN 1
+                      WHEN symbol_size = 16 THEN 2
+                      WHEN symbol_size = 17 THEN 3
+                      WHEN symbol_size = 18 THEN 4
+                      ELSE 10
+                    END)*50)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    (-60-angle*2.0)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ) AS point,
+                  name,
+                  symbol_size
+                FROM carto_symbols
+                WHERE feature_type = 'viewpoint'
+              ) AS _
+            ) AS features
+        ) AS viewpoint_symbols
+    properties:
+      minzoom: 0
+  - id: labels_viewpoint_x
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            symbol_size::text AS name
+          FROM (SELECT
+                  ST_Point(
+                    -512*NULLIF(!scale_denominator!*0.001*0.28,0) +
+                    ((CASE
+                      WHEN symbol_size = 14 THEN 0
+                      WHEN symbol_size = 15 THEN 1
+                      WHEN symbol_size = 16 THEN 2
+                      WHEN symbol_size = 17 THEN 3
+                      WHEN symbol_size = 18 THEN 4
+                      ELSE 10
+                    END)*50+15-width*0.5)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    -45*NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ) AS way,
+              symbol_size
+            FROM carto_symbols
+            WHERE feature_type = 'viewpoint'
+          ) AS features
+        ) AS labels_viewpoint_x
+  - id: labels_viewpoint_y
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            angle::text AS name
+          FROM (SELECT
+                  ST_Point(
+                    -550*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    (-58-angle*2.0)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ) AS way,
+              angle
+            FROM carto_symbols
+            WHERE feature_type = 'viewpoint'
+          ) AS features
+        ) AS labels_viewpoint_y
     properties:
       minzoom: 0

@@ -6,6 +6,7 @@ settings:
   attributes:
     leaf_type: text
     leaf_cycle: text
+    angle: real
   srid: 3857
 symbols:
   tree_needleleaved_5:
@@ -642,3 +643,635 @@ symbols:
     size: 49
     leaf_type: palm
     file: tree/tree_palm_49.svg
+  viewpoint_10_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 10
+    file: viewpoint/viewpoint_wide_14.svg
+  viewpoint_20_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 20
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(
+            ST_Rotate(ST_Scale(!file_scaled!,0.75, 1.0), -PI()*10.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!,0.75, 1.0), PI()*10.0/180)
+          ),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_30_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 30
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(
+            ST_Rotate(!file_scaled!, -PI()*15.0/180),
+            ST_Rotate(!file_scaled!, PI()*15.0/180)
+          ),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_40_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 40
+    file: viewpoint/viewpoint_wide_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(
+            ST_Rotate(!file_scaled!, -PI()*20.0/180),
+            ST_Rotate(!file_scaled!, PI()*20.0/180)
+          ),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_50_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 50
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*25.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*25.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_60_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 60
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*30.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*30.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_70_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 70
+    file: viewpoint/viewpoint_wide_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*35.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*35.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_80_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 80
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*40.0/180),
+            ST_Rotate(!file_scaled!, -PI()*13.3333/180),
+            ST_Rotate(!file_scaled!, PI()*13.3333/180),
+            ST_Rotate(!file_scaled!, PI()*40.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_90_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 90
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*45.0/180),
+            ST_Rotate(!file_scaled!, -PI()*15.0/180),
+            ST_Rotate(!file_scaled!, PI()*15.0/180),
+            ST_Rotate(!file_scaled!, PI()*45.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_100_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 100
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*50.0/180),
+            ST_Rotate(!file_scaled!, -PI()*16.6667/180),
+            ST_Rotate(!file_scaled!, PI()*16.6667/180),
+            ST_Rotate(!file_scaled!, PI()*50.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_110_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 110
+    file: viewpoint/viewpoint_wide_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*55.0/180),
+            ST_Rotate(!file_scaled!, -PI()*18.3333/180),
+            ST_Rotate(!file_scaled!, PI()*18.3333/180),
+            ST_Rotate(!file_scaled!, PI()*55.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_120_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 120
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*60.0/180),
+            ST_Rotate(!file_scaled!, -PI()*30.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*30.0/180),
+            ST_Rotate(!file_scaled!, PI()*60.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_130_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 130
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*65.0/180),
+            ST_Rotate(!file_scaled!, -PI()*32.5/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*32.5/180),
+            ST_Rotate(!file_scaled!, PI()*65.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_140_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 140
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*70.0/180),
+            ST_Rotate(!file_scaled!, -PI()*35.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*35.0/180),
+            ST_Rotate(!file_scaled!, PI()*70.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_150_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 150
+    file: viewpoint/viewpoint_wide_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*75.0/180),
+            ST_Rotate(!file_scaled!, -PI()*37.5/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*37.5/180),
+            ST_Rotate(!file_scaled!, PI()*75.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_160_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 160
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*80.0/180),
+            ST_Rotate(!file_scaled!, -PI()*48.0/180),
+            ST_Rotate(!file_scaled!, -PI()*16.0/180),
+            ST_Rotate(!file_scaled!, PI()*16.0/180),
+            ST_Rotate(!file_scaled!, PI()*48.0/180),
+            ST_Rotate(!file_scaled!, PI()*80.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_170_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 170
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*85.0/180),
+            ST_Rotate(!file_scaled!, -PI()*51.0/180),
+            ST_Rotate(!file_scaled!, -PI()*17.0/180),
+            ST_Rotate(!file_scaled!, PI()*17.0/180),
+            ST_Rotate(!file_scaled!, PI()*51.0/180),
+            ST_Rotate(!file_scaled!, PI()*85.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_180_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 180
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*90.0/180),
+            ST_Rotate(!file_scaled!, -PI()*60.0/180),
+            ST_Rotate(!file_scaled!, -PI()*30.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*30.0/180),
+            ST_Rotate(!file_scaled!, PI()*60.0/180),
+            ST_Rotate(!file_scaled!, PI()*90.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_190_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 190
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*95.0/180),
+            ST_Rotate(!file_scaled!, -PI()*63.3333/180),
+            ST_Rotate(!file_scaled!, -PI()*31.6667/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*31.6667/180),
+            ST_Rotate(!file_scaled!, PI()*63.3333/180),
+            ST_Rotate(!file_scaled!, PI()*95.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_200_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 200
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*100.0/180),
+            ST_Rotate(!file_scaled!, -PI()*66.6667/180),
+            ST_Rotate(!file_scaled!, -PI()*33.3333/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*33.3333/180),
+            ST_Rotate(!file_scaled!, PI()*66.6667/180),
+            ST_Rotate(!file_scaled!, PI()*100.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_210_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 210
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*105.0/180),
+            ST_Rotate(!file_scaled!, -PI()*70.0/180),
+            ST_Rotate(!file_scaled!, -PI()*35.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*35.0/180),
+            ST_Rotate(!file_scaled!, PI()*70.0/180),
+            ST_Rotate(!file_scaled!, PI()*105.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_220_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 220
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*110.0/180),
+            ST_Rotate(!file_scaled!, -PI()*78.5714/180),
+            ST_Rotate(!file_scaled!, -PI()*47.1429/180),
+            ST_Rotate(!file_scaled!, -PI()*15.7143/180),
+            ST_Rotate(!file_scaled!, PI()*15.7143/180),
+            ST_Rotate(!file_scaled!, PI()*47.1429/180),
+            ST_Rotate(!file_scaled!, PI()*78.5714/180),
+            ST_Rotate(!file_scaled!, PI()*110.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_230_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 230
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*115.0/180),
+            ST_Rotate(!file_scaled!, -PI()*82.1429/180),
+            ST_Rotate(!file_scaled!, -PI()*49.2857/180),
+            ST_Rotate(!file_scaled!, -PI()*16.4286/180),
+            ST_Rotate(!file_scaled!, PI()*16.4286/180),
+            ST_Rotate(!file_scaled!, PI()*49.2857/180),
+            ST_Rotate(!file_scaled!, PI()*82.1429/180),
+            ST_Rotate(!file_scaled!, PI()*115.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_240_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 240
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*120.0/180),
+            ST_Rotate(!file_scaled!, -PI()*90.0/180),
+            ST_Rotate(!file_scaled!, -PI()*60.0/180),
+            ST_Rotate(!file_scaled!, -PI()*30.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*30.0/180),
+            ST_Rotate(!file_scaled!, PI()*60.0/180),
+            ST_Rotate(!file_scaled!, PI()*90.0/180),
+            ST_Rotate(!file_scaled!, PI()*120.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_250_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 250
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*125.0/180),
+            ST_Rotate(!file_scaled!, -PI()*93.75/180),
+            ST_Rotate(!file_scaled!, -PI()*62.5/180),
+            ST_Rotate(!file_scaled!, -PI()*31.25/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*31.25/180),
+            ST_Rotate(!file_scaled!, PI()*62.5/180),
+            ST_Rotate(!file_scaled!, PI()*93.75/180),
+            ST_Rotate(!file_scaled!, PI()*125.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_260_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 260
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*130.0/180),
+            ST_Rotate(!file_scaled!, -PI()*97.5/180),
+            ST_Rotate(!file_scaled!, -PI()*65.0/180),
+            ST_Rotate(!file_scaled!, -PI()*32.5/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*32.5/180),
+            ST_Rotate(!file_scaled!, PI()*65.0/180),
+            ST_Rotate(!file_scaled!, PI()*97.5/180),
+            ST_Rotate(!file_scaled!, PI()*130.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_270_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 270
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*135.0/180),
+            ST_Rotate(!file_scaled!, -PI()*105.0/180),
+            ST_Rotate(!file_scaled!, -PI()*75.0/180),
+            ST_Rotate(!file_scaled!, -PI()*45.0/180),
+            ST_Rotate(!file_scaled!, -PI()*15.0/180),
+            ST_Rotate(!file_scaled!, PI()*15.0/180),
+            ST_Rotate(!file_scaled!, PI()*45.0/180),
+            ST_Rotate(!file_scaled!, PI()*75.0/180),
+            ST_Rotate(!file_scaled!, PI()*105.0/180),
+            ST_Rotate(!file_scaled!, PI()*135.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_280_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 280
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*140.0/180),
+            ST_Rotate(!file_scaled!, -PI()*108.8889/180),
+            ST_Rotate(!file_scaled!, -PI()*77.7778/180),
+            ST_Rotate(!file_scaled!, -PI()*46.6667/180),
+            ST_Rotate(!file_scaled!, -PI()*15.5556/180),
+            ST_Rotate(!file_scaled!, PI()*15.5556/180),
+            ST_Rotate(!file_scaled!, PI()*46.6667/180),
+            ST_Rotate(!file_scaled!, PI()*77.7778/180),
+            ST_Rotate(!file_scaled!, PI()*108.8889/180),
+            ST_Rotate(!file_scaled!, PI()*140.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_290_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 290
+    file: viewpoint/viewpoint_medium_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*145.0/180),
+            ST_Rotate(!file_scaled!, -PI()*112.7778/180),
+            ST_Rotate(!file_scaled!, -PI()*80.5556/180),
+            ST_Rotate(!file_scaled!, -PI()*48.3333/180),
+            ST_Rotate(!file_scaled!, -PI()*16.1111/180),
+            ST_Rotate(!file_scaled!, PI()*16.1111/180),
+            ST_Rotate(!file_scaled!, PI()*48.3333/180),
+            ST_Rotate(!file_scaled!, PI()*80.5556/180),
+            ST_Rotate(!file_scaled!, PI()*112.7778/180),
+            ST_Rotate(!file_scaled!, PI()*145.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_300_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 300
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*150.0/180),
+            ST_Rotate(!file_scaled!, -PI()*120.0/180),
+            ST_Rotate(!file_scaled!, -PI()*90.0/180),
+            ST_Rotate(!file_scaled!, -PI()*60.0/180),
+            ST_Rotate(!file_scaled!, -PI()*30.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*30.0/180),
+            ST_Rotate(!file_scaled!, PI()*60.0/180),
+            ST_Rotate(!file_scaled!, PI()*90.0/180),
+            ST_Rotate(!file_scaled!, PI()*120.0/180),
+            ST_Rotate(!file_scaled!, PI()*150.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_310_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 310
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*155.0/180),
+            ST_Rotate(!file_scaled!, -PI()*124.0/180),
+            ST_Rotate(!file_scaled!, -PI()*93.0/180),
+            ST_Rotate(!file_scaled!, -PI()*62.0/180),
+            ST_Rotate(!file_scaled!, -PI()*31.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*31.0/180),
+            ST_Rotate(!file_scaled!, PI()*62.0/180),
+            ST_Rotate(!file_scaled!, PI()*93.0/180),
+            ST_Rotate(!file_scaled!, PI()*124.0/180),
+            ST_Rotate(!file_scaled!, PI()*155.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_320_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 320
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*160.0/180),
+            ST_Rotate(!file_scaled!, -PI()*128.0/180),
+            ST_Rotate(!file_scaled!, -PI()*96.0/180),
+            ST_Rotate(!file_scaled!, -PI()*64.0/180),
+            ST_Rotate(!file_scaled!, -PI()*32.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*32.0/180),
+            ST_Rotate(!file_scaled!, PI()*64.0/180),
+            ST_Rotate(!file_scaled!, PI()*96.0/180),
+            ST_Rotate(!file_scaled!, PI()*128.0/180),
+            ST_Rotate(!file_scaled!, PI()*160.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )
+  viewpoint_360_:
+    type: viewpoint
+    min-size: 14
+    max-size: 18
+    scaled: true
+    angle: 360
+    file: viewpoint/viewpoint_narrow_14.svg
+    sql: |-
+        ST_Union(
+          ST_Union(ARRAY[
+            ST_Rotate(!file_scaled!, -PI()*180.0/180),
+            ST_Rotate(!file_scaled!, -PI()*150.0/180),
+            ST_Rotate(!file_scaled!, -PI()*120.0/180),
+            ST_Rotate(!file_scaled!, -PI()*90.0/180),
+            ST_Rotate(!file_scaled!, -PI()*60.0/180),
+            ST_Rotate(!file_scaled!, -PI()*30.0/180),
+            !file_scaled!,
+            ST_Rotate(!file_scaled!, PI()*30.0/180),
+            ST_Rotate(!file_scaled!, PI()*60.0/180),
+            ST_Rotate(!file_scaled!, PI()*90.0/180),
+            ST_Rotate(!file_scaled!, PI()*120.0/180),
+            ST_Rotate(!file_scaled!, PI()*150.0/180)
+          ]),
+          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+        )

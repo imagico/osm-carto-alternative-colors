@@ -5,12 +5,15 @@
 
 @book-fonts: "Noto Sans Regular", "DejaVu Sans Book";
 
+#viewpoint_symbols,
 #tree_symbols,
 #tree_symbols_compact {
   polygon-fill: @tree-color;
 }
 
-#labels {
+#labels_viewpoint_x,
+#labels_viewpoint_y,
+#labels_tree {
   text-name: "[name]";
   text-horizontal-alignment: left;
   text-face-name: @book-fonts;
