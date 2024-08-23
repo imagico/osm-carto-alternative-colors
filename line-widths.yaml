@@ -100,6 +100,7 @@ sql:
     - tree_row
     - gully
     - crevasse
+    - viewpoint
 
 tags:
   river: IN ('river', 'canal')
@@ -409,6 +410,12 @@ classes:
     18: 9
     19: 14
     20: 19
+  viewpoint:
+    16: 14
+    17: 17
+    18: 19
+    19: 22
+    20: 24
   gully:
     16: 10
     17: 10

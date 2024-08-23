@@ -1,9 +1,41 @@
 #!/usr/bin/env python3
-'''This script loads symbols into a special postgis table to be used for
-customized symbol rendering and processing.
-
-Based on get-external-data.py from OSM-Carto
-'''
+# ---------------------------------------------------------------------------
+#  generate_symbols.py
+#
+#  This script loads symbols into a special postgis table to be used for
+#  customized symbol rendering and processing.
+#  Based on get-external-data.py from OSM-Carto.
+#
+#  Copyright 2012-2023 by OSM-Carto contributors
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
 
 # inkscape --export-type="pdf" test9.svg
 # ogr2ogr --config GDAL_PDF_DPI 96 --config OGR_PDF_READ_NON_STRUCTURED YES -f GeoJSON test16.geojson test16.pdf

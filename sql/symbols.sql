@@ -70,10 +70,10 @@ SELECT
   END
 $func$;
 
-/* get a symbol geometry from table, scaled/resized to target symbol_size */
+/* get a tree symbol geometry from table, scaled/resized to target symbol_size */
 /* symbol choice is by best match in size, leaf_type and leaf_cycle */
 /* parameters:  feature_type, symbol_size, symbol_size_px, leaf_type, leaf_cycle */
-CREATE OR REPLACE FUNCTION carto_symbol_from_db (text, real, real, text, text)
+CREATE OR REPLACE FUNCTION carto_tree_symbol_from_db (text, real, real, text, text)
   returns geometry
   language sql
   immutable
@@ -99,3 +99,125 @@ SELECT
     ABS($3-0.01 - symbol_size)
   LIMIT 1
 $func$;
+
+/* convert cardinal to numerical direction */
+CREATE OR REPLACE FUNCTION carto_cardinal_direction (text)
+  returns numeric
+  language sql
+  immutable
+AS $func$
+SELECT
+  CASE
+    WHEN $1 = 'N' THEN 0.0
+    WHEN $1 = 'E' THEN 90.0
+    WHEN $1 = 'S' THEN 180.0
+    WHEN $1 = 'W' THEN 270.0
+    WHEN $1 = 'NE' THEN 45.0
+    WHEN $1 = 'SE' THEN 135.0
+    WHEN $1 = 'SW' THEN 225.0
+    WHEN $1 = 'NW' THEN 315.0
+    WHEN $1 = 'NNE' THEN 22.5
+    WHEN $1 = 'ENE' THEN 67.5
+    WHEN $1 = 'ESE' THEN 112.5
+    WHEN $1 = 'SSE' THEN 157.5
+    WHEN $1 = 'SSW' THEN 202.5
+    WHEN $1 = 'WSW' THEN 247.5
+    WHEN $1 = 'WNW' THEN 292.5
+    WHEN $1 = 'NNW' THEN 337.5
+    ELSE NULL
+  END
+$func$;
+
+/* determine viewpoint azimuth and angle from direction tag */
+CREATE OR REPLACE FUNCTION carto_viewpoint_direction(direction text) RETURNS NUMERIC[2] AS $$
+ DECLARE
+  res numeric[2] = '{0.0,0.0}';
+  dirs text[];
+  dirs_n numeric[];
+ BEGIN
+   IF direction IS NULL THEN
+     return res;
+   END IF;
+
+   /* single value */
+   IF (direction ~ '^-?\d{1,3}(\.\d+)?$') THEN
+       res[1] = direction::NUMERIC;
+       res[2] = 56.0;
+       return res;
+   END IF;
+
+   /* single cardinal */
+   IF (direction ~ '^[NSEW]{1,3}$') THEN
+       res[1] = carto_cardinal_direction(direction);
+       res[2] = 56.0;
+       return res;
+   END IF;
+
+   /* value range */
+   IF (direction ~ '^\d{1,3}(\.\d+)?-\d{1,3}(\.\d+)?$') THEN
+       dirs = string_to_array(direction, '-');
+       dirs_n[1] = dirs[1]::NUMERIC;
+       dirs_n[2] = dirs[2]::NUMERIC;
+       IF (dirs_n[2] < dirs_n[1]) THEN
+           dirs_n[2] = dirs_n[2] + 360.0;
+           res[1] = 0.5*(dirs_n[1] + dirs_n[2]);
+           IF (res[1] > 360.0) THEN
+               res[1] = res[1] - 360.0;
+           END IF;
+           res[2] = (dirs_n[2] - dirs_n[1]);
+           IF (res[2] < 0.0) THEN
+               res[2] = res[2] + 360.0;
+           END IF;
+       ELSE
+           res[1] = 0.5*(dirs_n[1] + dirs_n[2]);
+           res[2] = (dirs_n[2] - dirs_n[1]);
+       END IF;
+       return res;
+   END IF;
+
+   /* cardinal range */
+   IF (direction ~ '^[NSEW]{1,3}-[NSEW]{1,3}$') THEN
+       dirs = string_to_array(direction, '-');
+       dirs_n[1] = carto_cardinal_direction(dirs[1]);
+       dirs_n[2] = carto_cardinal_direction(dirs[2]);
+       IF (dirs_n[2] < dirs_n[1]) THEN
+           dirs_n[2] = dirs_n[2] + 360.0;
+           res[1] = 0.5*(dirs_n[1] + dirs_n[2]);
+           IF (res[1] > 360.0) THEN
+               res[1] = res[1] - 360.0;
+           END IF;
+           res[2] = (dirs_n[2] - dirs_n[1]);
+           IF (res[2] < 0.0) THEN
+               res[2] = res[2] + 360.0;
+           END IF;
+       ELSE
+           res[1] = 0.5*(dirs_n[1] + dirs_n[2]);
+           res[2] = (dirs_n[2] - dirs_n[1]);
+       END IF;
+       return res;
+   END IF;
+
+   /* this returns {0.0,0.0} for any unrecognized syntax */
+   return res;
+ END;
+$$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
+
+/* get a viewpoint symbol geometry from table, rotated to azimuth, scaled to specified size */
+/* symbol choice is by best match in angle */
+/* parameters:  feature_type, symbol_size, symbol_size_px, azimuth, angle */
+CREATE OR REPLACE FUNCTION carto_viewpoint_symbol_from_db (text, real, real, real, real)
+  returns geometry
+  language sql
+  immutable
+AS $func$
+SELECT
+    ST_Rotate(ST_TransScale(way, -width*0.5, -height*0.5, $2/symbol_size, $2/symbol_size), -$4*PI()/180.0) AS way
+  FROM carto_symbols
+  WHERE feature_type = $1
+  ORDER BY
+    ABS($5+0.01 - angle),
+    -- slight offset to prefer smaller symbols to larger ones if size mismatch is the same
+    ABS($3-0.01 - symbol_size)
+  LIMIT 1
+$func$;
+

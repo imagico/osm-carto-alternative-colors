@@ -638,6 +638,15 @@ select
         when $2 >= 20 then 14.0
         else 0.0
       end)
+    when $1 = 'viewpoint' then
+      (case
+        when $2 = 16 then 14.0
+        when $2 = 17 then 17.0
+        when $2 = 18 then 19.0
+        when $2 = 19 then 22.0
+        when $2 >= 20 then 24.0
+        else 0.0
+      end)
     else 0.0
   end;
 $func$;

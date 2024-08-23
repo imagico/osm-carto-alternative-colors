@@ -230,14 +230,20 @@ Layer:
                       WHEN symbol_size = 16 THEN 2
                       WHEN symbol_size = 17 THEN 3
                       WHEN symbol_size = 18 THEN 4
-                      ELSE 10
-                    END)*50)*NULLIF(!scale_denominator!*0.001*0.28,0),
-                    (-60-angle*2.0)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                      WHEN symbol_size = 19 THEN 5
+                      WHEN symbol_size = 20 THEN 6
+                      WHEN symbol_size = 21 THEN 7
+                      WHEN symbol_size = 22 THEN 8
+                      WHEN symbol_size = 23 THEN 9
+                      WHEN symbol_size = 24 THEN 10
+                      ELSE 12
+                    END)*38)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    (-60-angle*2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
                   ) AS point,
                   name,
                   symbol_size
                 FROM carto_symbols
-                WHERE feature_type = 'viewpoint'
+                WHERE feature_type = 'viewpoint' AND angle != 1
               ) AS _
             ) AS features
         ) AS viewpoint_symbols
@@ -261,13 +267,19 @@ Layer:
                       WHEN symbol_size = 16 THEN 2
                       WHEN symbol_size = 17 THEN 3
                       WHEN symbol_size = 18 THEN 4
-                      ELSE 10
-                    END)*50+15-width*0.5)*NULLIF(!scale_denominator!*0.001*0.28,0),
-                    -45*NULLIF(!scale_denominator!*0.001*0.28,0)
+                      WHEN symbol_size = 19 THEN 5
+                      WHEN symbol_size = 20 THEN 6
+                      WHEN symbol_size = 21 THEN 7
+                      WHEN symbol_size = 22 THEN 8
+                      WHEN symbol_size = 23 THEN 9
+                      WHEN symbol_size = 24 THEN 10
+                      ELSE 12
+                    END)*38+15-width*0.5)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    -40*NULLIF(!scale_denominator!*0.001*0.28,0)
                   ) AS way,
               symbol_size
             FROM carto_symbols
-            WHERE feature_type = 'viewpoint'
+            WHERE feature_type = 'viewpoint' AND angle != 1
           ) AS features
         ) AS labels_viewpoint_x
   - id: labels_viewpoint_y
@@ -282,11 +294,11 @@ Layer:
           FROM (SELECT
                   ST_Point(
                     -550*NULLIF(!scale_denominator!*0.001*0.28,0),
-                    (-58-angle*2.0)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                    (-58-angle*2.5)*NULLIF(!scale_denominator!*0.001*0.28,0)
                   ) AS way,
               angle
             FROM carto_symbols
-            WHERE feature_type = 'viewpoint'
+            WHERE feature_type = 'viewpoint' AND angle != 1
           ) AS features
         ) AS labels_viewpoint_y
     properties:

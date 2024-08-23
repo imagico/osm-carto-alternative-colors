@@ -64,7 +64,7 @@
                           CASE WHEN t2.leaf_type IN ('palm') THEN
                             ST_Buffer(
                               ST_Translate(
-                                carto_symbol_from_db(
+                                carto_tree_symbol_from_db(
                                   'tree',
                                   t2.width_px*NULLIF(!scale_denominator!*0.001*0.28,0),
                                   t2.width_px,
@@ -269,7 +269,7 @@
                   (SELECT
                       point,
                       ST_Translate(
-                        carto_symbol_from_db(
+                        carto_tree_symbol_from_db(
                           'tree',
                           width,
                           width_px,
@@ -498,7 +498,7 @@
               (SELECT
                   ST_Difference(
                     ST_Translate(
-                      carto_symbol_from_db(
+                      carto_tree_symbol_from_db(
                         'tree',
                         width,
                         width_px,

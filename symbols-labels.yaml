@@ -1084,7 +1084,7 @@ styles:
     text-placement: interior;
     text-name: '[name]';
     text-size: [[label_size]];
-    text-dy: [int_text_offset];
+    text-dy: [int_text_offset_tree];
     text-wrap-width: @standard-wrap-width;
     text-line-spacing: @standard-line-spacing-size;
     text-fill: [[label_color]];
@@ -1096,6 +1096,55 @@ styles:
     [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
+
+  label-viewpoint: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'],
+    [vis_type = 'symbol-label'] {
+      footprint/marker-allow-overlap-anchor: "viewpoint";
+      footprint/marker-anchor-set: "'viewpoint,viewpoint_'+[osm_id]";
+      footprint/marker-width: [int_width_viewpoint];
+      footprint/marker-height: [int_height_viewpoint];
+      footprint/marker-line-width: 0;
+      footprint/marker-fill: "#ffffff";
+      footprint/marker-opacity: 0.0;
+      footprint/marker-placement: interior;
+      footprint/marker-transform: 'translate([int_offset_x_viewpoint], [int_offset_y_viewpoint])';
+      center/marker-anchor-cond: "'viewpoint_'+[osm_id]";
+      center/marker-allow-overlap-anchor: "viewpoint";
+      center/marker-anchor-set: "viewpoint";
+      center/marker-width: 1;
+      center/marker-height: 1;
+      center/marker-line-width: 0;
+      center/marker-fill: "#ffffff";
+      center/marker-opacity: 0.0;
+      center/marker-placement: interior;
+    }
+    [vis_type = 'symbol-geometry'] {
+      halo/line-anchor-cond: "'viewpoint_'+[osm_id]";
+      halo/line-color: @standard-halo-fill;
+      halo/line-width: 1.6;
+      fill/polygon-anchor-cond: "'viewpoint_'+[osm_id]";
+      fill/polygon-fill: @amenity-brown;
+    }
+    [vis_type = 'label-for-symbol'],
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: [[label_size]];
+      text-dy: [int_text_dy_viewpoint];
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: [[label_color]];
+      text-face-name: @[[font_type]]-fonts;
+      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+    }
 
   label-only: |
     text-placement: interior;
@@ -1196,12 +1245,13 @@ styles:
 # hstore only though.
 #
 # Attributes starting with '_' or 'int_' are assumed to be generated and
-# do not derive from OSM data.
+# do not derive from OSM data.  Attributes starting with 'tmp_' are not
+# included in the final columns (only to be used for column substitutes)
 #
 #   sql: SQL code to generate the column value
 #   score: if to use this column as score for sorting
 #   always: if to always generate a column for this (even if not listed in feature attributes)
-#   expand: list of column names to expland an array attribute to
+#   expand: list of column names to expand an array attribute to, potentially with sql code for the expansion
 
 attributes:
   _name_label:
@@ -1246,7 +1296,7 @@ attributes:
     attributes:
       - backrest
       - material
-  int_text_offset:
+  int_text_offset_tree:
     sql: >-
       ROUND(GREATEST(
         carto_barrier_line_width('tree', z(!scale_denominator!)),
@@ -1289,7 +1339,68 @@ attributes:
         ELSE 'other' END
     attributes:
       - shop
+  int_symbol_geometry:
+    sql: >-
+      (SELECT
+          ST_Translate(
+            carto_viewpoint_symbol_from_db(
+              'viewpoint',
+              width,
+              width_px,
+              azimuth,
+              angle
+            ),
+            ST_X(point),
+            ST_Y(point)
+          ) AS way
+        FROM
+          (SELECT
+              CASE WHEN ((width_px % 2) = 0) THEN
+                ST_SnapToGrid(
+                  way,
+                  NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+              ELSE
+                ST_SnapToGrid(
+                  way,
+                  0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 0.5*NULLIF(!scale_denominator!*0.001*0.28,0),
+                  NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+              END AS point,
+              view_geometry[1] AS azimuth,
+              view_geometry[2] AS angle,
+              width_px,
+              width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+            FROM
+              (SELECT
+                  way,
+                  osm_id AS hash,
+                  CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN 
+                    (tags->'ele')::NUMERIC
+                  ELSE
+                    -100000.0
+                  END AS elevation,
+                  carto_viewpoint_direction(tags->'direction') AS view_geometry,
+                  carto_barrier_line_width('viewpoint', z(!scale_denominator!)) AS width_px) AS t1
+          ) AS viewpoints_raw
+        WHERE width_px >= 10
+      )
+    expand:
+      tmp_symbol_geometry: >-
+        int_symbol_geometry
+      int_text_dy_viewpoint: >-
+        ROUND((ST_Y(way)-ST_YMin(int_symbol_geometry)) / NULLIF(!scale_denominator!*0.001*0.28,0) + 3.0)
+      int_offset_x_viewpoint: >-
+        ROUND((0.5*(ST_XMin(int_symbol_geometry)+ST_XMax(int_symbol_geometry)) - ST_X(way)) / NULLIF(!scale_denominator!*0.001*0.28,0))
+      int_offset_y_viewpoint: >-
+        ROUND((ST_Y(way) - (0.5*(ST_YMin(int_symbol_geometry)+ST_YMax(int_symbol_geometry)))) / NULLIF(!scale_denominator!*0.001*0.28,0))
+      int_width_viewpoint: >-
+        ROUND((ST_XMax(int_symbol_geometry)-ST_XMin(int_symbol_geometry)) / NULLIF(!scale_denominator!*0.001*0.28,0)-1.5)
+      int_height_viewpoint: >-
+        ROUND((ST_YMax(int_symbol_geometry)-ST_YMin(int_symbol_geometry)) / NULLIF(!scale_denominator!*0.001*0.28,0)-1.5)
 
+# additional instances of features to generate with columns replaced - in particular for the way column
+column_substitutes:
+  symbol-geometry:
+    way: tmp_symbol_geometry
 
 # defaults for feature parameters
 
@@ -1358,7 +1469,7 @@ templates:
 #   symbol_color: symbol color, default: unchanged (for SVG), black (for MSS)
 #   label_color: label color, default: black
 #   text_dy: text offset for label above/below symbol, default: 11
-#   type: point, line, polygon or pp (point and polygon) or all.  default: pp
+#   type: point, line, polygon, convex_hull or pp (point and polygon) or all.  default: pp
 #   snap: snap coordinates to pixel grid in SQL for this feature (to facilitate precise augmentation with text)
 #         either 'even' or 'odd', default: off
 #   condition: SQL filter condition, no default
@@ -2040,6 +2151,19 @@ features:
         marker_width: 4
         start_symbol: 18
 
+  tourism=viewpoint:
+    type: point
+    style: label-viewpoint
+    label_color: amenity-text
+    start_symbol: 16
+    start_label: 16
+    attributes:
+      - int_text_dy_viewpoint
+      - int_offset_x_viewpoint
+      - int_offset_y_viewpoint
+      - int_width_viewpoint
+      - int_width_viewpoint
+
   barrier=toll_booth:
     symbol_file: symbols/sources/transport/toll_booth.svg
     symbol_color: transportation-icon
@@ -2047,12 +2171,6 @@ features:
     start_symbol: 16
     start_label: 17
     text_dy: 13
-  tourism=viewpoint:
-    symbol_file: symbols/sources/tourism/viewpoint.svg
-    symbol_color: amenity-icon
-    label_color: amenity-text
-    start_symbol: 16
-    start_label: 16
   tourism=artwork:
     symbol_file: symbols/sources/tourism/artwork.svg
     symbol_color: memorial-icon
@@ -2281,7 +2399,7 @@ features:
     label_color: tree-text
     start_label: 17
     attributes:
-      - int_text_offset
+      - int_text_offset_tree
 
   natural=peak:
     type: point

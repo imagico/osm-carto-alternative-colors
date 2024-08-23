@@ -239,9 +239,12 @@ def main():
     columns_polygons = set()
     columns_polygons_direct = set()
 
+    expansion_depencencies = dict()
+    expansions = dict()
     score_attributes = list()
     default_attributes = dict()
     attributes = dict()
+    attributes_expanded = dict()
     variants = dict()
     way_pixels_thresholds = dict()
     feature_types = dict()
@@ -276,6 +279,12 @@ def main():
                     default_attributes[attr]['sql'] = params['sql']
                 if 'expand' in params:
                     default_attributes[attr]['expand'] = params['expand']
+        else:
+                if 'expand' in params:
+                    expansions[attr] = params['expand'];
+                    for attr2 in params['expand']:
+                        expansion_depencencies[attr2] = attr;
+
         if 'attributes' in params:
             for attr2 in params['attributes']:
                 if attr2 in columns_points_db:
@@ -295,7 +304,7 @@ def main():
 
     for attr, params in default_attributes.items():
         if 'sql' not in params:
-            if not (attr.startswith('int_')) and not (attr.startswith('_')):
+            if not (attr.startswith('int_')) and not (attr.startswith('tmp_')) and not (attr.startswith('_')):
                 if attr in columns_points_db:
                     columns_points.add("\""+attr+"\"")
                 else:
@@ -477,9 +486,9 @@ def main():
 
         if 'attributes' in params:
             # we only want attributes as columns in the inner query
-            # if they don't start with 'int_' or '_'
+            # if they don't start with 'int_', 'tmp_' or '_'
             for attr in params['attributes']:
-                if not (attr.startswith('int_')) and not (attr.startswith('_')):
+                if not (attr.startswith('int_')) and not (attr.startswith('tmp_')) and not (attr.startswith('_')):
                     if attr in columns_points_db:
                         columns_points.add("\""+attr+"\"")
                     else:
@@ -497,38 +506,76 @@ def main():
             if hasattr(params['attributes'], 'items'):
                 for attr, acond in params['attributes'].items():
                     sql = ''
+                    attr_mod = attr
                     if attr in config['attributes']:
                         if 'sql' in config['attributes'][attr]:
                             sql = config['attributes'][attr]['sql']
-                    if attr not in attributes:
-                        attributes[attr] = dict()
-                    if sql not in attributes[attr]:
-                        attributes[attr][sql] = dict()
-                    if acond not in attributes[attr][sql]:
-                        attributes[attr][sql][acond] = dict()
-                    if fkey not in attributes[attr][sql][acond]:
-                        attributes[attr][sql][acond][fkey] = dict()
-                    if fval not in attributes[attr][sql][acond][fkey]:
-                        attributes[attr][sql][acond][fkey][fval] = set()
-                    attributes[attr][sql][acond][fkey][fval].add(variant)
+                    elif attr in expansion_depencencies:
+                        attr_mod = expansion_depencencies[attr]
+                        if attr_mod in config['attributes']:
+                            if 'sql' in config['attributes'][attr_mod]:
+                                sql = config['attributes'][attr_mod]['sql']
+
+                    if attr_mod not in attributes:
+                        attributes[attr_mod] = dict()
+                    if sql not in attributes[attr_mod]:
+                        attributes[attr_mod][sql] = dict()
+                    if acond not in attributes[attr_mod][sql]:
+                        attributes[attr_mod][sql][acond] = dict()
+                    if fkey not in attributes[attr_mod][sql][acond]:
+                        attributes[attr_mod][sql][acond][fkey] = dict()
+                    if fval not in attributes[attr_mod][sql][acond][fkey]:
+                        attributes[attr_mod][sql][acond][fkey][fval] = set()
+                    attributes[attr_mod][sql][acond][fkey][fval].add(variant)
+
+                    if attr not in attributes_expanded:
+                        attributes_expanded[attr] = dict()
+                    if sql not in attributes_expanded[attr]:
+                        attributes_expanded[attr][sql] = dict()
+                    if acond not in attributes_expanded[attr][sql]:
+                        attributes_expanded[attr][sql][acond] = dict()
+                    if fkey not in attributes_expanded[attr][sql][acond]:
+                        attributes_expanded[attr][sql][acond][fkey] = dict()
+                    if fval not in attributes_expanded[attr][sql][acond][fkey]:
+                        attributes_expanded[attr][sql][acond][fkey][fval] = set()
+                    attributes_expanded[attr][sql][acond][fkey][fval].add(variant)
             else:
                 for attr in params['attributes']:
                     acond = ''
                     sql = ''
+                    attr_mod = attr
                     if attr in config['attributes']:
                         if 'sql' in config['attributes'][attr]:
                             sql = config['attributes'][attr]['sql']
-                    if attr not in attributes:
-                        attributes[attr] = dict()
-                    if sql not in attributes[attr]:
-                        attributes[attr][sql] = dict()
-                    if acond not in attributes[attr][sql]:
-                        attributes[attr][sql][acond] = dict()
-                    if fkey not in attributes[attr][sql][acond]:
-                        attributes[attr][sql][acond][fkey] = dict()
-                    if fval not in attributes[attr][sql][acond][fkey]:
-                        attributes[attr][sql][acond][fkey][fval] = set()
-                    attributes[attr][sql][acond][fkey][fval].add(variant)
+                    elif attr in expansion_depencencies:
+                        attr_mod = expansion_depencencies[attr]
+                        if attr_mod in config['attributes']:
+                            if 'sql' in config['attributes'][attr_mod]:
+                                sql = config['attributes'][attr_mod]['sql']
+
+                    if attr_mod not in attributes:
+                        attributes[attr_mod] = dict()
+                    if sql not in attributes[attr_mod]:
+                        attributes[attr_mod][sql] = dict()
+                    if acond not in attributes[attr_mod][sql]:
+                        attributes[attr_mod][sql][acond] = dict()
+                    if fkey not in attributes[attr_mod][sql][acond]:
+                        attributes[attr_mod][sql][acond][fkey] = dict()
+                    if fval not in attributes[attr_mod][sql][acond][fkey]:
+                        attributes[attr_mod][sql][acond][fkey][fval] = set()
+                    attributes[attr_mod][sql][acond][fkey][fval].add(variant)
+
+                    if attr not in attributes_expanded:
+                        attributes_expanded[attr] = dict()
+                    if sql not in attributes_expanded[attr]:
+                        attributes_expanded[attr][sql] = dict()
+                    if acond not in attributes_expanded[attr][sql]:
+                        attributes_expanded[attr][sql][acond] = dict()
+                    if fkey not in attributes_expanded[attr][sql][acond]:
+                        attributes_expanded[attr][sql][acond][fkey] = dict()
+                    if fval not in attributes_expanded[attr][sql][acond][fkey]:
+                        attributes_expanded[attr][sql][acond][fkey][fval] = set()
+                    attributes_expanded[attr][sql][acond][fkey][fval].add(variant)
 
             if attr in config['attributes']:
                 if 'score' in config['attributes'][attr]:
@@ -980,6 +1027,16 @@ def main():
     cols_final = list()
     cols_final_symbol_only = list()
     cols_final_label_only = list()
+    cols_final_addon = dict()
+
+    addon_columns_required = dict()
+
+    column_substitutes = dict()
+
+    if 'column_substitutes' in config:
+        for sname, params in config['column_substitutes'].items():
+            column_substitutes[sname] = params
+            cols_final_addon[sname] = list()
 
     # these are reserved column names that cannot be used by attributes
     cols_generated.add("way")
@@ -1001,23 +1058,58 @@ def main():
     cols_final_symbol_only.append("way")
     cols_final_label_only.append("way")
 
+    for sname, params in column_substitutes.items():
+        if 'way' in params:
+            cols_final_addon[sname].append("\""+params['way']+"\" AS way")
+            addon_columns_required[sname] = params['way']
+        else:
+            cols_final_addon[sname].append("way")
+
     # expansion of array based columns
     for attr, params in default_attributes.items():
         if not (attr in cols_generated):
             if 'expand' in params:
-                for i, col in enumerate(params['expand']):
-                    cols_combined.append(("\""+attr+"\"[%s] AS \""+col+"\"") % (i+1))
-                    cols_zoom_thresholds.append("\""+col+"\"")
-                    cols_final.append("\""+col+"\"")
-                    cols_final_symbol_only.append("\""+col+"\"")
-                    cols_final_label_only.append("\""+col+"\"")
-                    cols_generated.add(col)
+                if hasattr(params['expand'], 'items'):
+                    for col, esql in params['expand'].items():
+                        cols_combined.append(esql+" AS \""+col+"\"")
+                        cols_zoom_thresholds.append("\""+col+"\"")
+                        if not (col.startswith('tmp_')):
+                            cols_final.append("\""+col+"\"")
+                            cols_final_symbol_only.append("\""+col+"\"")
+                            cols_final_label_only.append("\""+col+"\"")
+                            for sname, params in column_substitutes.items():
+                                if col in params:
+                                    cols_final_addon[sname].append(params[col]+" AS \""+col+"\"")
+                                else:
+                                    cols_final_addon[sname].append("\""+col+"\"")
+                        cols_generated.add(col)
+
+                else:
+                    for i, col in enumerate(params['expand']):
+                        cols_combined.append(("\""+attr+"\"[%s] AS \""+col+"\"") % (i+1))
+                        cols_zoom_thresholds.append("\""+col+"\"")
+                        if not (col.startswith('tmp_')):
+                            cols_final.append("\""+col+"\"")
+                            cols_final_symbol_only.append("\""+col+"\"")
+                            cols_final_label_only.append("\""+col+"\"")
+                            for sname, params in column_substitutes.items():
+                                if col in params:
+                                    cols_final_addon[sname].append(params[col]+" AS \""+col+"\"")
+                                else:
+                                    cols_final_addon[sname].append("\""+col+"\"")
+                        cols_generated.add(col)
             else:
                 cols_combined.append("\""+attr+"\"")
                 cols_zoom_thresholds.append("\""+attr+"\"")
-                cols_final.append("\""+attr+"\"")
-                cols_final_symbol_only.append("\""+attr+"\"")
-                cols_final_label_only.append("\""+attr+"\"")
+                if not (attr.startswith('tmp_')):
+                    cols_final.append("\""+attr+"\"")
+                    cols_final_symbol_only.append("\""+attr+"\"")
+                    cols_final_label_only.append("\""+attr+"\"")
+                    for sname, params in column_substitutes.items():
+                        if attr in params:
+                            cols_final_addon[sname].append(params[attr]+" AS \""+attr+"\"")
+                        else:
+                            cols_final_addon[sname].append("\""+attr+"\"")
                 cols_generated.add(attr)
 
     cols_combined.append("feature")
@@ -1025,6 +1117,11 @@ def main():
     cols_final.append("feature")
     cols_final_symbol_only.append("feature")
     cols_final_label_only.append("feature")
+    for sname, params in column_substitutes.items():
+        if "feature" in params:
+            cols_final_addon[sname].append(params["feature"]+" AS feature")
+        else:
+            cols_final_addon[sname].append("feature")
 
     # variant column
     if len(variants) == 0:
@@ -1045,6 +1142,11 @@ def main():
     cols_final.append("variant")
     cols_final_symbol_only.append("variant")
     cols_final_label_only.append("variant")
+    for sname, params in column_substitutes.items():
+        if "variant" in params:
+            cols_final_addon[sname].append(params["variant"]+" AS variant")
+        else:
+            cols_final_addon[sname].append("variant")
 
     # zoom_threshold column
     if len(way_pixels_thresholds) == 0:
@@ -1136,10 +1238,20 @@ def main():
         cols_final.append(attr)
         cols_final_symbol_only.append(attr)
         cols_final_label_only.append(attr)
+        for sname, params in column_substitutes.items():
+            if attr in params:
+                cols_final_addon[sname].append(params[attr]+" AS "+attr)
+            else:
+                cols_final_addon[sname].append(attr)
 
     cols_final.append("prio")
     cols_final_symbol_only.append("prio")
     cols_final_label_only.append("prio")
+    for sname, params in column_substitutes.items():
+        if "prio" in params:
+            cols_final_addon[sname].append(params["prio"]+" AS prio")
+        else:
+            cols_final_addon[sname].append("prio")
 
     line = "CASE\n"
     line += indent_base+"          WHEN z(!scale_denominator!) >= start_symbol THEN\n"
@@ -1173,6 +1285,9 @@ def main():
 
     cols_final_label_only.append(line)
 
+    for sname, params in column_substitutes.items():
+        cols_final_addon[sname].append("\'"+sname+"\' AS vis_type")
+
     cols_zoom_thresholds.append("f.prio AS prio")
     if (len(score_attributes) == 0):
         cols_zoom_thresholds.append("NULL AS score")
@@ -1182,14 +1297,53 @@ def main():
         cols_zoom_thresholds.append("COALESCE(\""+("\",\"".join(score_attributes))+"\") AS score")
 
     # attributes
-    for attr in attributes:
+    for attr in attributes_expanded:
         if not (attr in cols_generated):
-            cols_combined.append("\""+attr+"\"")
-            cols_zoom_thresholds.append("\""+attr+"\"")
-            cols_final.append("\""+attr+"\"")
-            cols_final_symbol_only.append("\""+attr+"\"")
-            cols_final_label_only.append("\""+attr+"\"")
-            cols_generated.add(attr)
+
+            if attr in expansion_depencencies:
+
+                if hasattr(expansions[expansion_depencencies[attr]], 'items'):
+                    for col, esql in expansions[expansion_depencencies[attr]].items():
+                        cols_combined.append(esql+" AS \""+col+"\"")
+                        cols_zoom_thresholds.append("\""+col+"\"")
+                        if not (col.startswith('tmp_')):
+                            cols_final.append("\""+col+"\"")
+                            cols_final_symbol_only.append("\""+col+"\"")
+                            cols_final_label_only.append("\""+col+"\"")
+                            for sname, params in column_substitutes.items():
+                                if col in params:
+                                    cols_final_addon[sname].append(params[col]+" AS \""+col+"\"")
+                                else:
+                                    cols_final_addon[sname].append("\""+col+"\"")
+                        cols_generated.add(col)
+
+                else:
+                    for i, col in enumerate(expansions[expansion_depencencies[attr]]):
+                        cols_combined.append(("\""+attr+"\"[%s] AS \""+col+"\"") % (i+1))
+                        cols_zoom_thresholds.append("\""+col+"\"")
+                        if not (col.startswith('tmp_')):
+                            cols_final.append("\""+col+"\"")
+                            cols_final_symbol_only.append("\""+col+"\"")
+                            cols_final_label_only.append("\""+col+"\"")
+                            for sname, params in column_substitutes.items():
+                                if col in params:
+                                    cols_final_addon[sname].append(params[col]+" AS \""+col+"\"")
+                                else:
+                                    cols_final_addon[sname].append("\""+col+"\"")
+                        cols_generated.add(col)
+            else:
+                cols_combined.append("\""+attr+"\"")
+                cols_zoom_thresholds.append("\""+attr+"\"")
+                if not (attr.startswith('tmp_')):
+                    cols_final.append("\""+attr+"\"")
+                    cols_final_symbol_only.append("\""+attr+"\"")
+                    cols_final_label_only.append("\""+attr+"\"")
+                    for sname, params in column_substitutes.items():
+                        if attr in params:
+                            cols_final_addon[sname].append(params[attr]+" AS \""+attr+"\"")
+                        else:
+                            cols_final_addon[sname].append("\""+attr+"\"")
+                cols_generated.add(attr)
 
     cols_combined.append("way_area")
     cols_combined.append("way_length")
@@ -1206,6 +1360,19 @@ def main():
     cols_final_label_only.append("way_area")
     cols_final_label_only.append("way_length")
     cols_final_label_only.append("way_pixels")
+    for sname, params in column_substitutes.items():
+        if "way_area" in params:
+            cols_final_addon[sname].append(params["way_area"]+" AS way_area")
+        else:
+            cols_final_addon[sname].append("way_area")
+        if "way_length" in params:
+            cols_final_addon[sname].append(params["way_length"]+" AS way_length")
+        else:
+            cols_final_addon[sname].append("way_length")
+        if "way_pixels" in params:
+            cols_final_addon[sname].append(params["way_pixels"]+" AS way_pixels")
+        else:
+            cols_final_addon[sname].append("way_pixels")
 
     print (indent_base+"(SELECT", file=file_mml)
     print (indent_base+"    *", file=file_mml)
@@ -1703,6 +1870,17 @@ def main():
         print (indent_base+"      FROM zoom_thresholds", file=file_mml)
         print (indent_base+"      WHERE z(!scale_denominator!) >= start_label", file=file_mml)
 
+    for sname, params in column_substitutes.items():
+        print (indent_base+"    UNION ALL", file=file_mml)
+        print (indent_base+"    SELECT -- column substituted "+sname, file=file_mml)
+        print (indent_base+"        "+((",\n"+indent_base+"        ").join(cols_final_addon[sname])), file=file_mml)
+        print (indent_base+"      FROM zoom_thresholds", file=file_mml)
+        if sname in addon_columns_required:
+            print (indent_base+"      WHERE \""+addon_columns_required[sname]+"\" IS NOT NULL", file=file_mml)
+            print (indent_base+"        AND z(!scale_denominator!) >= start_symbol", file=file_mml)
+        else:
+            print (indent_base+"      WHERE z(!scale_denominator!) >= start_symbol", file=file_mml)
+
     print (indent_base+"  ) AS final", file=file_mml)
 
     print (indent_base+"  ORDER BY", file=file_mml)
@@ -1717,7 +1895,18 @@ def main():
     print (indent_base+"    way_pixels DESC NULLS LAST,", file=file_mml)
     print (indent_base+"    way_length DESC NULLS LAST,", file=file_mml)
     print (indent_base+"    char_length(name) DESC NULLS LAST,", file=file_mml)
-    print (indent_base+"    name DESC NULLS LAST", file=file_mml)
+    i = 2;
+    if (len(column_substitutes) > 0):
+        print (indent_base+"    name DESC NULLS LAST,", file=file_mml)
+        print (indent_base+"    (CASE -- put the column substituted types after the normal ones", file=file_mml)
+        for sname, params in column_substitutes.items():
+            print (indent_base+"      WHEN vis_type = '"+sname+"' THEN "+str(i), file=file_mml)
+            i += 1
+        print (indent_base+"      ELSE 1", file=file_mml)
+        print (indent_base+"    END) ASC", file=file_mml)
+    else:
+        print (indent_base+"    name DESC NULLS LAST", file=file_mml)
+
     print (indent_base+") AS "+config["settings"].get("layer").replace("-", "_"), file=file_mml)
 
     print ("    properties:", file=file_mml)

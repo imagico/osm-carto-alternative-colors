@@ -1,3 +1,40 @@
+# ---------------------------------------------------------------------------
+#  symbols.yml
+#
+#  input for scripts/generate_symbols.py
+#
+#  defines symbols to be stored in and rendered from the database
+#
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+
 settings:
   temp_schema: loading
   schema: public
@@ -643,178 +680,197 @@ symbols:
     size: 49
     leaf_type: palm
     file: tree/tree_palm_49.svg
+  viewpoint_0_:
+    type: viewpoint
+    min-size: 14
+    max-size: 17
+    scaled: true
+    angle: 0
+    file: sources/tourism/viewpoint.svg
+  viewpoint_1_:
+    type: viewpoint
+    min-size: 14
+    max-size: 24
+    scaled: true
+    angle: 1
+    file: viewpoint/viewpoint_wide_14.svg
   viewpoint_10_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 10
     file: viewpoint/viewpoint_wide_14.svg
+    sql: |-
+        ST_Union(
+          ST_Scale(!file_scaled!, 1.25, 1.25),
+          ST_Buffer(ST_Point(0,0), 0.5*1.5)
+        )
   viewpoint_20_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 20
     file: viewpoint/viewpoint_narrow_14.svg
     sql: |-
         ST_Union(
           ST_Union(
-            ST_Rotate(ST_Scale(!file_scaled!,0.75, 1.0), -PI()*10.0/180),
-            ST_Rotate(ST_Scale(!file_scaled!,0.75, 1.0), PI()*10.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 0.75*1.25, 1.25), -PI()*10.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 0.75*1.25, 1.25), PI()*10.0/180)
           ),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.5)
         )
   viewpoint_30_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 30
     file: viewpoint/viewpoint_narrow_14.svg
     sql: |-
         ST_Union(
           ST_Union(
-            ST_Rotate(!file_scaled!, -PI()*15.0/180),
-            ST_Rotate(!file_scaled!, PI()*15.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), -PI()*15.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), PI()*15.0/180)
           ),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.5)
         )
   viewpoint_40_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 40
     file: viewpoint/viewpoint_wide_14.svg
     sql: |-
         ST_Union(
           ST_Union(
-            ST_Rotate(!file_scaled!, -PI()*20.0/180),
-            ST_Rotate(!file_scaled!, PI()*20.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), -PI()*20.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), PI()*20.0/180)
           ),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.5)
         )
   viewpoint_50_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 50
     file: viewpoint/viewpoint_narrow_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*25.0/180),
-            !file_scaled!,
-            ST_Rotate(!file_scaled!, PI()*25.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), -PI()*25.0/180),
+            ST_Scale(!file_scaled!, 1.25, 1.25),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), PI()*25.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.5)
         )
   viewpoint_60_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 60
     file: viewpoint/viewpoint_medium_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*30.0/180),
-            !file_scaled!,
-            ST_Rotate(!file_scaled!, PI()*30.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), -PI()*30.0/180),
+            ST_Scale(!file_scaled!, 1.25, 1.25),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.25, 1.25), PI()*30.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.5)
         )
   viewpoint_70_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 70
     file: viewpoint/viewpoint_wide_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*35.0/180),
-            !file_scaled!,
-            ST_Rotate(!file_scaled!, PI()*35.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*35.0/180),
+            ST_Scale(!file_scaled!, 1.15, 1.15),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*35.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.35)
         )
   viewpoint_80_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 80
     file: viewpoint/viewpoint_narrow_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*40.0/180),
-            ST_Rotate(!file_scaled!, -PI()*13.3333/180),
-            ST_Rotate(!file_scaled!, PI()*13.3333/180),
-            ST_Rotate(!file_scaled!, PI()*40.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*40.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*13.3333/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*13.3333/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*40.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.35)
         )
   viewpoint_90_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 90
     file: viewpoint/viewpoint_narrow_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*45.0/180),
-            ST_Rotate(!file_scaled!, -PI()*15.0/180),
-            ST_Rotate(!file_scaled!, PI()*15.0/180),
-            ST_Rotate(!file_scaled!, PI()*45.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*45.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*15.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*15.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*45.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.35)
         )
   viewpoint_100_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 100
     file: viewpoint/viewpoint_medium_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*50.0/180),
-            ST_Rotate(!file_scaled!, -PI()*16.6667/180),
-            ST_Rotate(!file_scaled!, PI()*16.6667/180),
-            ST_Rotate(!file_scaled!, PI()*50.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*50.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), -PI()*16.6667/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*16.6667/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.15, 1.15), PI()*50.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.35)
         )
   viewpoint_110_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 110
     file: viewpoint/viewpoint_wide_14.svg
     sql: |-
         ST_Union(
           ST_Union(ARRAY[
-            ST_Rotate(!file_scaled!, -PI()*55.0/180),
-            ST_Rotate(!file_scaled!, -PI()*18.3333/180),
-            ST_Rotate(!file_scaled!, PI()*18.3333/180),
-            ST_Rotate(!file_scaled!, PI()*55.0/180)
+            ST_Rotate(ST_Scale(!file_scaled!, 1.05, 1.05), -PI()*55.0/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.05, 1.05), -PI()*18.3333/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.05, 1.05), PI()*18.3333/180),
+            ST_Rotate(ST_Scale(!file_scaled!, 1.05, 1.05), PI()*55.0/180)
           ]),
-          ST_Buffer(ST_Point(0,0), 0.5*1.25)
+          ST_Buffer(ST_Point(0,0), 0.5*1.35)
         )
   viewpoint_120_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 120
     file: viewpoint/viewpoint_narrow_14.svg
@@ -832,7 +888,7 @@ symbols:
   viewpoint_130_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 130
     file: viewpoint/viewpoint_narrow_14.svg
@@ -850,7 +906,7 @@ symbols:
   viewpoint_140_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 140
     file: viewpoint/viewpoint_medium_14.svg
@@ -868,7 +924,7 @@ symbols:
   viewpoint_150_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 150
     file: viewpoint/viewpoint_wide_14.svg
@@ -886,7 +942,7 @@ symbols:
   viewpoint_160_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 160
     file: viewpoint/viewpoint_narrow_14.svg
@@ -905,7 +961,7 @@ symbols:
   viewpoint_170_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 170
     file: viewpoint/viewpoint_medium_14.svg
@@ -924,7 +980,7 @@ symbols:
   viewpoint_180_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 180
     file: viewpoint/viewpoint_narrow_14.svg
@@ -944,7 +1000,7 @@ symbols:
   viewpoint_190_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 190
     file: viewpoint/viewpoint_narrow_14.svg
@@ -964,7 +1020,7 @@ symbols:
   viewpoint_200_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 200
     file: viewpoint/viewpoint_medium_14.svg
@@ -984,7 +1040,7 @@ symbols:
   viewpoint_210_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 210
     file: viewpoint/viewpoint_medium_14.svg
@@ -1004,7 +1060,7 @@ symbols:
   viewpoint_220_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 220
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1025,7 +1081,7 @@ symbols:
   viewpoint_230_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 230
     file: viewpoint/viewpoint_medium_14.svg
@@ -1046,7 +1102,7 @@ symbols:
   viewpoint_240_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 240
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1068,7 +1124,7 @@ symbols:
   viewpoint_250_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 250
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1090,7 +1146,7 @@ symbols:
   viewpoint_260_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 260
     file: viewpoint/viewpoint_medium_14.svg
@@ -1112,7 +1168,7 @@ symbols:
   viewpoint_270_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 270
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1135,7 +1191,7 @@ symbols:
   viewpoint_280_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 280
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1158,7 +1214,7 @@ symbols:
   viewpoint_290_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 290
     file: viewpoint/viewpoint_medium_14.svg
@@ -1181,7 +1237,7 @@ symbols:
   viewpoint_300_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 300
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1205,7 +1261,7 @@ symbols:
   viewpoint_310_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 310
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1229,7 +1285,7 @@ symbols:
   viewpoint_320_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 320
     file: viewpoint/viewpoint_narrow_14.svg
@@ -1253,7 +1309,7 @@ symbols:
   viewpoint_360_:
     type: viewpoint
     min-size: 14
-    max-size: 18
+    max-size: 24
     scaled: true
     angle: 360
     file: viewpoint/viewpoint_narrow_14.svg
