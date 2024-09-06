@@ -5659,7 +5659,7 @@
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'],
     [vis_type = 'symbol-label'] {
-      footprint/marker-allow-overlap-anchor: "viewpoint";
+      footprint/marker-allow-overlap-anchor: "'viewpoint,peak'";
       footprint/marker-anchor-set: "'viewpoint,viewpoint_'+[osm_id]";
       footprint/marker-width: [int_width_viewpoint];
       footprint/marker-height: [int_height_viewpoint];
@@ -5669,7 +5669,7 @@
       footprint/marker-placement: interior;
       footprint/marker-transform: 'translate([int_offset_x_viewpoint], [int_offset_y_viewpoint])';
       center/marker-anchor-cond: "'viewpoint_'+[osm_id]";
-      center/marker-allow-overlap-anchor: "viewpoint";
+      center/marker-allow-overlap-anchor: "'viewpoint,peak'";
       center/marker-anchor-set: "viewpoint";
       center/marker-width: 1;
       center/marker-height: 1;
@@ -5677,13 +5677,6 @@
       center/marker-fill: "#ffffff";
       center/marker-opacity: 0.0;
       center/marker-placement: interior;
-    }
-    [vis_type = 'symbol-geometry'] {
-      halo/line-anchor-cond: "'viewpoint_'+[osm_id]";
-      halo/line-color: @standard-halo-fill;
-      halo/line-width: 1.6;
-      fill/polygon-anchor-cond: "'viewpoint_'+[osm_id]";
-      fill/polygon-fill: @amenity-brown;
     }
     [vis_type = 'label-for-symbol'],
     [vis_type = 'label-only'] {
@@ -7899,6 +7892,197 @@
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
   }
+  [feature = 'natural_peak/viewpoint'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/natural_peak_viewpoint.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #6e441e;
+      shield-text-dy: 7;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/natural_peak_viewpoint.svg');
+      symbolnameonly/shield-placement: interior;
+      symbolnameonly/shield-clip: false;
+      symbolnameonly/shield-name: '[name]';
+      symbolnameonly/shield-size: @standard-font-size;
+      symbolnameonly/shield-face-name: @book-fonts;
+      [font = 'jp'] { symbolnameonly/shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { symbolnameonly/shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { symbolnameonly/shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { symbolnameonly/shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { symbolnameonly/shield-face-name: @book-fonts-bg; }
+      symbolnameonly/shield-halo-radius: @standard-halo-radius;
+      symbolnameonly/shield-halo-fill: @standard-halo-fill;
+      symbolnameonly/shield-wrap-width: 100;
+      symbolnameonly/shield-line-spacing: @standard-line-spacing-size;
+      symbolnameonly/shield-fill: #6e441e;
+      symbolnameonly/shield-text-dy: 7;
+      symbolnameonly/shield-unlock-image: true;
+      symbolnameonly/shield-file: url('symbols/colored/natural_peak_viewpoint.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/natural_peak_viewpoint.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #6e441e;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-vertical-alignment: bottom;
+      textonly/text-avoid-edges: true;
+      nameonly/text-placement: interior;
+      nameonly/text-name: '[name]';
+      nameonly/text-size: 10;
+      nameonly/text-wrap-width: @standard-wrap-width;
+      nameonly/text-line-spacing: @standard-line-spacing-size;
+      nameonly/text-fill: #6e441e;
+      nameonly/text-face-name: @book-fonts;
+      [font = 'jp'] { nameonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { nameonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { nameonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { nameonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { nameonly/text-face-name: @book-fonts-bg; }
+      nameonly/text-halo-radius: @standard-halo-radius;
+      nameonly/text-halo-fill: @standard-halo-fill;
+      nameonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #6e441e;
+      text-dy: 7;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius;
+      text-halo-fill: @standard-halo-fill;
+      symbolnameonly/text-anchor-cond: '[osm_id]';
+      symbolnameonly/text-placement: interior;
+      symbolnameonly/text-name: '[name]';
+      symbolnameonly/text-size: 10;
+      symbolnameonly/text-wrap-width: @standard-wrap-width;
+      symbolnameonly/text-line-spacing: @standard-line-spacing-size;
+      symbolnameonly/text-fill: #6e441e;
+      symbolnameonly/text-dy: 7;
+      symbolnameonly/text-face-name: @book-fonts;
+      [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { symbolnameonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { symbolnameonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { symbolnameonly/text-face-name: @book-fonts-bg; }
+      symbolnameonly/text-halo-radius: @standard-halo-radius;
+      symbolnameonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #6e441e;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-vertical-alignment: bottom;
+      textonly/text-avoid-edges: true;
+      nameonly/text-anchor-cond: "'!'+[osm_id]";
+      nameonly/text-placement: interior;
+      nameonly/text-name: '[name]';
+      nameonly/text-size: 10;
+      nameonly/text-wrap-width: @standard-wrap-width;
+      nameonly/text-line-spacing: @standard-line-spacing-size;
+      nameonly/text-fill: #6e441e;
+      nameonly/text-face-name: @book-fonts;
+      [font = 'jp'] { nameonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { nameonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { nameonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { nameonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { nameonly/text-face-name: @book-fonts-bg; }
+      nameonly/text-halo-radius: @standard-halo-radius;
+      nameonly/text-halo-fill: @standard-halo-fill;
+      nameonly/text-avoid-edges: true;
+    }
+    // modification natural_peak/viewpoint+large based on style large-symbol-variant-peak-viewpoint
+    [zoom >= 12] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
+        marker-file: url('symbols/colored/natural_peak_viewpoint_large.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
+        shield-file: url('symbols/colored/natural_peak_viewpoint_large.svg');
+        shield-text-dy: [int_text_dy_viewpoint];
+        symbolonly/marker-file: url('symbols/colored/natural_peak_viewpoint_large.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: [int_text_dy_viewpoint];
+      }
+    }
+    // modification natural_peak/viewpoint+large+viewpoint based on style peak-variant-with-viewpoint
+    [zoom >= 16] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'],
+      [vis_type = 'symbol-label'] {
+        footprint/marker-allow-overlap-anchor: "'viewpoint,peak'";
+        footprint/marker-anchor-set: "'viewpoint,viewpoint_'+[osm_id]";
+        footprint/marker-width: [int_width_viewpoint];
+        footprint/marker-height: [int_height_viewpoint];
+        footprint/marker-line-width: 0;
+        footprint/marker-fill: "#ffffff";
+        footprint/marker-opacity: 0.0;
+        footprint/marker-placement: interior;
+        footprint/marker-transform: 'translate([int_offset_x_viewpoint], [int_offset_y_viewpoint])';
+        center/marker-anchor-cond: "'viewpoint_'+[osm_id]";
+        center/marker-allow-overlap-anchor: "'viewpoint,peak'";
+        center/marker-anchor-set: "viewpoint";
+        center/marker-width: 1;
+        center/marker-height: 1;
+        center/marker-line-width: 0;
+        center/marker-fill: "#ffffff";
+        center/marker-opacity: 0.0;
+        center/marker-placement: interior;
+      }
+    }
+  }
   [feature = 'natural_peak'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
@@ -8046,15 +8230,15 @@
       nameonly/text-halo-fill: @standard-halo-fill;
       nameonly/text-avoid-edges: true;
     }
-    // modification natural_peak+large based on style large-symbol-variant
+    // modification natural_peak+large based on style large-symbol-variant-peak
     [zoom >= 12] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
-        marker-anchor-set: '[osm_id]';
+        marker-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
         marker-file: url('symbols/colored/natural_peak_large.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-anchor-set: '[osm_id]';
+        shield-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
         shield-file: url('symbols/colored/natural_peak_large.svg');
         symbolonly/marker-file: url('symbols/colored/natural_peak_large.svg');
       }

@@ -27,7 +27,7 @@
                 'null' AS int_lane_right,
                 'null' AS int_lane_left,
                 NULL AS int_lanes,
-                carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
+                carto_road_access(COALESCE(highway, railway, aeroway), access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
                 construction,
                 CASE
                   WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
@@ -38,7 +38,7 @@
                 0 AS width_max,
                 0 AS width,
                 carto_casing_line_width(
-                  highway,
+                  COALESCE(highway, railway, aeroway),
                   CASE
                     WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
                     WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text

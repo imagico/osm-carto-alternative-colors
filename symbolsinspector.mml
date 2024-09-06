@@ -187,6 +187,55 @@ Layer:
         ) AS labels_tree
     properties:
       minzoom: 0
+  - id: peak_symbols
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            ST_Translate(
+              way,
+              ST_X(point),
+              ST_Y(point)
+            ) AS way
+          FROM
+            (SELECT
+                way,
+                CASE
+                  WHEN ((symbol_size % 2) = 0) THEN
+                       ST_SnapToGrid(
+                         point,
+                         NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                  ELSE
+                       ST_SnapToGrid(
+                         point,
+                         0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 0.5*NULLIF(!scale_denominator!*0.001*0.28,0),
+                         NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                END
+                AS point
+              FROM (SELECT
+                  ST_TransScale(
+                    way,
+                    -width*0.5,
+                    -height*0.5,
+                    NULLIF(!scale_denominator!*0.001*0.28,0),
+                    NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ) AS way,
+                  ST_Point(
+                    20*NULLIF(!scale_denominator!*0.001*0.28,0) +
+                    (symbol_size*38)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    -90*NULLIF(!scale_denominator!*0.001*0.28,0)
+                  ) AS point,
+                  name,
+                  symbol_size
+                FROM carto_symbols
+                WHERE feature_type = 'peak'
+              ) AS _
+            ) AS features
+        ) AS peak_symbols
+    properties:
+      minzoom: 0
   - id: viewpoint_symbols
     geometry: polygon
     <<: *extents

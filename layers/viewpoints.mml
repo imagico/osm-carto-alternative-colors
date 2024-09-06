@@ -1,0 +1,176 @@
+# ---------------------------------------------------------------------------
+#  viewpoints.mml
+#
+#  ac-style viewpoints layer (visualizing direction)
+#  based on mapnik generated anchors table
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: viewpoints
+    geometry: polygon
+    <<: *extents
+    Datasource:
+      geometry_table: planet_osm_point
+      anchors_table: carto_anchors
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            ST_Difference(
+              ST_Translate(
+                carto_viewpoint_symbol_from_db(
+                  'viewpoint',
+                  width,
+                  width_px,
+                  azimuth,
+                  angle
+                ),
+                ST_X(point),
+                ST_Y(point)
+              ),
+              others
+            ) AS way,
+            'viewpoint' AS type
+          FROM
+            (SELECT
+                CASE WHEN ((width_px % 2) = 0) THEN
+                  ST_SnapToGrid(
+                    way,
+                    NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                ELSE
+                  ST_SnapToGrid(
+                    way,
+                    0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 0.5*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                END AS point,
+                (SELECT
+                    COALESCE(
+                      ST_Union(
+                          ST_Buffer(
+                            ST_Translate(
+                              carto_viewpoint_symbol_from_db(
+                                feature,
+                                t2.width_px*NULLIF(!scale_denominator!*0.001*0.28,0),
+                                t2.width_px,
+                                t2.azimuth,
+                                t2.angle
+                              ),
+                              ST_X(t2.way),
+                              ST_Y(t2.way)
+                            ),
+                            1.2*NULLIF(!scale_denominator!*0.001*0.28,0)
+                          )
+                      ),
+                      ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                    )
+                  FROM
+                    (SELECT
+                        CASE WHEN ((width_px % 2) = 0) THEN
+                          ST_SnapToGrid(
+                            way,
+                            NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                        ELSE
+                          ST_SnapToGrid(
+                            way,
+                            0.5*NULLIF(!scale_denominator!*0.001*0.28,0), 0.5*NULLIF(!scale_denominator!*0.001*0.28,0),
+                            NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0))
+                        END AS way,
+                        feature,
+                        hash,
+                        elevation,
+                        view_geometry[1] AS azimuth,
+                        view_geometry[2] AS angle,
+                        width_px
+                      FROM
+                        (SELECT
+                            way,
+                            'viewpoint' AS feature,
+                            osm_id AS hash,
+                            CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN 
+                              (tags->'ele')::NUMERIC
+                            ELSE
+                              -100000.0
+                            END AS elevation,
+                            carto_viewpoint_direction(tags->'direction') AS view_geometry,
+                            carto_barrier_line_width('viewpoint', z(!scale_denominator!)) AS width_px
+                          FROM planet_osm_point
+                          WHERE (tourism = 'viewpoint' AND EXISTS (SELECT 1 FROM carto_anchors WHERE "name" = 'viewpoint_' || osm_id::text))
+                            AND way && ST_Expand(
+                              t1.way,
+                              (t1.width_px+1.2)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                        UNION ALL
+                        SELECT
+                            way,
+                            'peak' AS feature,
+                            osm_id AS hash,
+                            0.0 AS elevation, -- ele does not matter for peaks since they always have priority over viewpoints
+                            '{0.0,0.0}' AS view_geometry,
+                            8.0 AS width_px
+                          FROM planet_osm_point
+                          WHERE ("natural" = 'peak' AND EXISTS (SELECT 1 FROM carto_anchors WHERE "name" = 'peak_' || osm_id::text))
+                            AND way && ST_Expand(
+                              t1.way,
+                              (0.5*(t1.width_px + 8.0)+1.2)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                        ) AS _
+                    ) AS t2
+                  WHERE ((t2.feature = 'peak') OR 
+                         (t2.elevation > t1.elevation) OR 
+                         ((t2.elevation = t1.elevation) AND (t2.angle > t1.view_geometry[2])) OR 
+                         ((t2.elevation = t1.elevation) AND (t2.angle = t1.view_geometry[2]) AND (t2.hash > t1.hash)))
+                    AND ST_DWithin(t2.way, t1.way, (0.5*(t1.width_px+t2.width_px)+1.2)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    AND t2.width_px >= 8
+                    AND t1.width_px >= 10
+                ) AS others,
+                view_geometry[1] AS azimuth,
+                view_geometry[2] AS angle,
+                width_px,
+                width_px*NULLIF(!scale_denominator!*0.001*0.28,0) AS width
+              FROM
+                (SELECT
+                    way,
+                    osm_id AS hash,
+                    CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN 
+                      (tags->'ele')::NUMERIC
+                    ELSE
+                      -100000.0
+                    END AS elevation,
+                    carto_viewpoint_direction(tags->'direction') AS view_geometry,
+                    carto_barrier_line_width('viewpoint', z(!scale_denominator!)) AS width_px
+                  FROM planet_osm_point
+                  WHERE tourism = 'viewpoint'
+                    AND way && !bbox!
+                    AND EXISTS (SELECT 1 FROM carto_anchors WHERE "name" = 'viewpoint_' || osm_id::text)
+                ) AS t1
+            ) AS viewpoints_raw
+          WHERE width_px >= 10
+        ) AS viewpoints
+    properties:
+      minzoom: 16

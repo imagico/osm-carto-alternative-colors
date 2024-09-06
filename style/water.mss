@@ -200,7 +200,8 @@
   }
 }
 
-#roads[road_layer = 'waterway_bridges_casing'] {
+#roads[road_layer = 'waterway_bridges_casing'],
+#roads-noareas[road_layer = 'waterway_bridges_casing'] {
   [feature = 'waterway_canal'],
   [feature = 'waterway_river'] {
     [int_bridge = 'yes'] {
@@ -240,7 +241,9 @@
 }
 
 #water-lines,
-#roads[road_layer = 'waterway_bridges_fill'] {
+#roads-noareas[road_layer = 'waterway_supplement'],
+#roads[road_layer = 'waterway_bridges_fill'],
+#roads-noareas[road_layer = 'waterway_bridges_fill'] {
   [feature = 'waterway_canal'][zoom >= 12],
   [feature = 'waterway_river'][zoom >= 12] {
     // the additional line of land color is used to provide a background for dashed casings
@@ -249,7 +252,7 @@
       background/line-width: @river-width-z12;
       background/line-cap: round;
       background/line-join: round;
-      background/line-comp-op: src-atop;
+      #water-lines { background/line-comp-op: src-atop; }
     }
 
     // this is an additional background line for rivers/canals to show the dashing also on dark backgrounds
@@ -259,7 +262,7 @@
         bkg_intermittent/line-color: @land-color;
         bkg_intermittent/line-join: round;
         bkg_intermittent/line-width: @river-width-z14 - 1;
-        bkg_intermittent/line-comp-op: src-atop;
+        #water-lines { bkg_intermittent/line-comp-op: src-atop; }
         [zoom >= 15] { bkg_intermittent/line-width: @river-width-z15 - 1; }
         [zoom >= 16] { bkg_intermittent/line-width: @river-width-z16 - 1; }
         [zoom >= 17] { bkg_intermittent/line-width: @river-width-z17 - 1; }
@@ -271,7 +274,7 @@
     water/line-width: @river-width-z12;
     water/line-cap: round;
     water/line-join: round;
-    water/line-comp-op: src-atop;
+    #water-lines { water/line-comp-op: src-atop; }
 
     [zoom >= 13] { water/line-width: @river-width-z13; }
     [zoom >= 14] { water/line-width: @river-width-z14; }
@@ -286,7 +289,7 @@
       artificial/line-width: @river-width-z12 * 0.5;
       artificial/line-cap: round;
       artificial/line-join: round;
-      artificial/line-comp-op: src-atop;
+      #water-lines { artificial/line-comp-op: src-atop; }
       [zoom >= 13] { artificial/line-width: @river-width-z13 * 0.5; }
       [zoom >= 14] { artificial/line-width: @river-width-z14 * 0.5; water/line-color: darken(@river-color, 3%); }
       [zoom >= 15] { 
@@ -358,7 +361,7 @@
       }
       water/line-color: @river-color;
       water/line-width: @stream-width-z12;
-      water/line-comp-op: src-atop;
+      #water-lines { water/line-comp-op: src-atop; }
       [zoom >= 13] { water/line-width: @stream-width-z13; }
       [zoom >= 14] { water/line-width: @stream-width-z14; }
       [zoom >= 15] { water/line-width: @stream-width-z15; }
@@ -427,12 +430,18 @@
       [zoom < 14] {
         centerline/line-color: @bare_ground;
         centerline/line-width: 0.65;
-        centerline/line-comp-op: src-atop;
+        #water-lines { centerline/line-comp-op: src-atop; }
         [zoom >= 13] { centerline/line-width: 0.9; }
       }
     }
   }
 }
+
+/*
+#water-lines {
+  gmic: '+cut. 0,255 -name. use';
+}
+*/
 
 #water-lines-text {
   [lock != 'yes'][int_tunnel != 'yes'] {

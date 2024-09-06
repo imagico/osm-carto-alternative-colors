@@ -199,6 +199,29 @@ layers:
       - style/road-colors-generated.mss
       - style/line-widths-generated.mss
       - style/barriers.mss
+  roads-noareas:
+    source: layers/roads_noareas.mml
+    stylesheets:
+      - style/roads.mss
+      - style/road-colors-generated.mss
+      - style/line-widths-generated.mss
+      - style/barriers.mss
+    tags:
+      - "ac"
+  roads-line-mask:
+    source: layers/roads_line_mask.mml
+    stylesheets:
+      - style/roads.mss
+      - style/line-widths-generated.mss
+      - style/barriers.mss
+    tags:
+      - "ac"
+  roads-area-mask:
+    source: layers/roads_area_mask.mml
+    stylesheets:
+      - style/roads.mss
+    tags:
+      - "ac"
   entrances-simple:
     source: layers/entrances-simple.mml
     stylesheets:
@@ -274,6 +297,12 @@ layers:
       - style/symbols-labels-generated.mss
   addon-symbols:
     source: layers/addon-symbols.mml
+    stylesheets:
+      - style/amenity-points.mss
+    tags:
+      - "ac"
+  viewpoints:
+    source: layers/viewpoints.mml
     stylesheets:
       - style/amenity-points.mss
     tags:

@@ -5,6 +5,7 @@
 
 @book-fonts: "Noto Sans Regular", "DejaVu Sans Book";
 
+#peak_symbols,
 #viewpoint_symbols,
 #tree_symbols,
 #tree_symbols_compact {

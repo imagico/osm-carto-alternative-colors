@@ -1,0 +1,147 @@
+# ---------------------------------------------------------------------------
+#  roads_line_mask.mml
+#
+#  roads line features to be shown above road areas
+#
+#  to be processed with assemble_project.py
+#
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+  - id: roads-line-mask
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            COALESCE(
+              ('highway_' || (CASE WHEN highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 
+                                                    'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 
+                                                    'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 
+                                                    'cycleway', 'bridleway', 'steps', 'platform') THEN highway ELSE NULL END)),
+              ('railway_' || (CASE WHEN railway = 'preserved' AND service IN ('spur', 'siding', 'yard') THEN 'INT-preserved-ssy'::text 
+                                   WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-spur-siding-yard'  
+                                   WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'tram-service' ELSE railway END)),
+              ('aeroway_' || (CASE WHEN aeroway IN ('runway', 'taxiway', 'helipad') THEN aeroway ELSE NULL END)),
+              ('waterway_' || (CASE WHEN aeroway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi') THEN waterway ELSE NULL END)),
+              ('barrier_' || (CASE WHEN barrier IN ('chain', 'fence', 'guard_rail', 'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END))
+            ) AS feature,
+            CASE WHEN (highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 
+                                   'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 
+                                   'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 
+                                   'cycleway', 'bridleway', 'steps', 'platform')) 
+                      OR (railway IN ('platform', 'rail', 'light_rail', 'funicular', 'narrow_gauge', 'disused', 'construction', 'miniature', 'monorail', 'preserved', 'subway', 'tram'))
+                      OR (aeroway IN ('runway', 'taxiway', 'helipad')) THEN
+                'highway'
+              WHEN waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi') THEN
+                'waterway'
+              ELSE
+                'barrier'
+            END AS ftype,
+            CASE WHEN (highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 
+                                   'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 
+                                   'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 
+                                   'cycleway', 'bridleway', 'steps', 'platform')) THEN
+                GREATEST(
+                  carto_highway_line_width(highway, service, z(!scale_denominator!)),
+                  carto_highway_line_width_mapped(
+                    highway,
+                    tags->'width:carriageway',
+                    tags->'width',
+                    tags->'lanes',
+                    tags->'parking:both',
+                    tags->'parking:right',
+                    tags->'parking:left',
+                    !bbox!,
+                    !scale_denominator!
+                  )
+                ) + 
+                CASE WHEN highway IN ('footway', 'cycleway', 'bridleway', 'steps', 'track', 'path') THEN 4.0 ELSE 1.5 END -- for tunnel casing
+              WHEN (railway IN ('platform', 'rail', 'light_rail', 'funicular', 'narrow_gauge', 'disused', 'construction', 'miniature', 'monorail', 'preserved', 'subway', 'tram')) THEN
+                carto_highway_line_width(railway, z(!scale_denominator!))
+              WHEN (aeroway IN ('runway', 'taxiway', 'helipad')) THEN
+                GREATEST(
+                  carto_highway_line_width(aeroway, z(!scale_denominator!)),
+                  carto_aeroway_line_width_mapped(aeroway, tags->'width', way, !bbox!, !scale_denominator!)
+                )
+              WHEN waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi') THEN
+                carto_waterway_line_width(waterway, z(!scale_denominator!)) + 0.25
+              ELSE
+                GREATEST(
+                  carto_barrier_line_width(barrier, z(!scale_denominator!)),
+                  carto_barrier_line_width_mapped(
+                    barrier,
+                    tags->'width',
+                    !bbox!, !scale_denominator!
+                  )
+                )
+            END AS width,
+            CASE WHEN (tags->'height') ~ '^-?\d{1,4}(\.\d+)?$' THEN
+              (CASE WHEN (tags->'height')::NUMERIC <= 0.5 THEN 'yes' ELSE 'no' END)
+            ELSE 'no' END AS int_access
+          FROM planet_osm_line
+          WHERE (((highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 
+                               'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 
+                               'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 
+                               'cycleway', 'bridleway', 'steps', 'platform')
+                OR railway IN ('platform', 'rail', 'light_rail', 'funicular', 'narrow_gauge', 'disused', 'construction', 'miniature', 'monorail', 'preserved', 'subway', 'tram')
+                OR aeroway IN ('runway', 'taxiway', 'helipad')
+              )
+              AND ((tunnel IN ('yes', 'building_passage', 'avalanche_protector')) OR (covered = 'yes'))
+            )
+            OR
+            (highway IN ('steps'))
+            OR
+            (barrier IN ('chain', 'fence', 'guard_rail', 'handrail', 'retaining_wall', 'wall'))
+            OR
+            ((waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi')) AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))))
+            AND way && !bbox!
+        UNION ALL
+        SELECT
+            ST_Boundary(way),
+            COALESCE(
+              ('highway_' || (CASE WHEN highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'living_street', 
+                                                'track', 'path', 'platform', 'services') THEN highway ELSE NULL END)),
+              ('railway_' || (CASE WHEN railway IN ('platform') THEN railway ELSE NULL END)),
+              ('aeroway_' || (CASE WHEN aeroway IN ('runway', 'taxiway', 'helipad') THEN aeroway ELSE NULL END))
+            ) AS feature,
+            'highway_area' AS ftype,
+            carto_casing_line_width(COALESCE(highway, railway, aeroway), 'no'::text, z(!scale_denominator!)) AS width,
+            'yes' AS int_access
+          FROM planet_osm_polygon
+          WHERE (highway IN ('residential', 'unclassified', 'pedestrian', 'service', 'footway', 'living_street', 'track', 'path', 'platform')
+              OR railway IN ('platform')
+              OR aeroway IN ('runway', 'taxiway', 'helipad')
+            )
+            AND ((tunnel IN ('yes', 'building_passage', 'avalanche_protector')) OR (covered = 'yes'))
+            AND way && !bbox!
+        ) AS roads_line_mask
+    properties:
+      minzoom: 14

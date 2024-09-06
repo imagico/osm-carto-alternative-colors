@@ -202,8 +202,8 @@ CREATE OR REPLACE FUNCTION carto_viewpoint_direction(direction text) RETURNS NUM
  END;
 $$ LANGUAGE 'plpgsql' IMMUTABLE PARALLEL SAFE;
 
-/* get a viewpoint symbol geometry from table, rotated to azimuth, scaled to specified size */
-/* symbol choice is by best match in angle */
+/* get a viewpoint symbol geometry from table, rotated to azimuth */
+/* symbol choice is by best match in angle and size, in contrast to trees it does not get scaled */
 /* parameters:  feature_type, symbol_size, symbol_size_px, azimuth, angle */
 CREATE OR REPLACE FUNCTION carto_viewpoint_symbol_from_db (text, real, real, real, real)
   returns geometry
@@ -211,7 +211,7 @@ CREATE OR REPLACE FUNCTION carto_viewpoint_symbol_from_db (text, real, real, rea
   immutable
 AS $func$
 SELECT
-    ST_Rotate(ST_TransScale(way, -width*0.5, -height*0.5, $2/symbol_size, $2/symbol_size), -$4*PI()/180.0) AS way
+    ST_Rotate(ST_TransScale(way, -width*0.5, -height*0.5, $2/$3, $2/$3), -$4*PI()/180.0) AS way
   FROM carto_symbols
   WHERE feature_type = $1
   ORDER BY

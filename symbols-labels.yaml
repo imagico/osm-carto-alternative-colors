@@ -75,6 +75,7 @@ keys:
   - aeroway
   - railway
   - highway
+  - natural
   - aerialway
   - tourism
   - amenity
@@ -86,7 +87,6 @@ keys:
   - power
   - man_made
   - landuse
-  - natural
   - waterway
   - place
   - historic
@@ -1019,6 +1019,54 @@ styles:
       [vis_type = 'label-only'] { text-size: [[label_size]]; }
     }
 
+  large-symbol-variant-peak: |
+    [zoom >= [[start_symbol]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
+        marker-file: url('[[symbol_file]]');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
+        shield-file: url('[[symbol_file]]');
+        shield-size: [[label_size]];
+        shield-text-dy: [[text_dy]];
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-size: [[label_size]];
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: [[text_dy]];
+        text-size: [[label_size]];
+      }
+      [vis_type = 'label-only'] { text-size: [[label_size]]; }
+    }
+
+  large-symbol-variant-peak-viewpoint: |
+    [zoom >= [[start_symbol]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
+        marker-file: url('[[symbol_file]]');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-anchor-set: "'peak,'+[osm_id]+',peak_'+[osm_id]";
+        shield-file: url('[[symbol_file]]');
+        shield-size: [[label_size]];
+        shield-text-dy: [int_text_dy_viewpoint];
+        symbolonly/marker-file: url('[[symbol_file]]');
+        textonly/text-size: [[label_size]];
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: [int_text_dy_viewpoint];
+        text-size: [[label_size]];
+      }
+      [vis_type = 'label-only'] { text-size: [[label_size]]; }
+    }
+
+
+
   bridges: |
     [vis_type = 'label-only'] {
       text-name: '[name]';
@@ -1097,11 +1145,11 @@ styles:
     text-halo-radius: @standard-halo-radius;
     text-halo-fill: @standard-halo-fill;
 
-  label-viewpoint: |
+  viewpoint: |
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'],
     [vis_type = 'symbol-label'] {
-      footprint/marker-allow-overlap-anchor: "viewpoint";
+      footprint/marker-allow-overlap-anchor: "'viewpoint,peak'";
       footprint/marker-anchor-set: "'viewpoint,viewpoint_'+[osm_id]";
       footprint/marker-width: [int_width_viewpoint];
       footprint/marker-height: [int_height_viewpoint];
@@ -1111,7 +1159,7 @@ styles:
       footprint/marker-placement: interior;
       footprint/marker-transform: 'translate([int_offset_x_viewpoint], [int_offset_y_viewpoint])';
       center/marker-anchor-cond: "'viewpoint_'+[osm_id]";
-      center/marker-allow-overlap-anchor: "viewpoint";
+      center/marker-allow-overlap-anchor: "'viewpoint,peak'";
       center/marker-anchor-set: "viewpoint";
       center/marker-width: 1;
       center/marker-height: 1;
@@ -1119,13 +1167,6 @@ styles:
       center/marker-fill: "#ffffff";
       center/marker-opacity: 0.0;
       center/marker-placement: interior;
-    }
-    [vis_type = 'symbol-geometry'] {
-      halo/line-anchor-cond: "'viewpoint_'+[osm_id]";
-      halo/line-color: @standard-halo-fill;
-      halo/line-width: 1.6;
-      fill/polygon-anchor-cond: "'viewpoint_'+[osm_id]";
-      fill/polygon-fill: @amenity-brown;
     }
     [vis_type = 'label-for-symbol'],
     [vis_type = 'label-only'] {
@@ -1144,6 +1185,32 @@ styles:
       [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
+    }
+
+  peak-variant-with-viewpoint: |
+    [zoom >= [[start_symbol]]] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'],
+      [vis_type = 'symbol-label'] {
+        footprint/marker-allow-overlap-anchor: "'viewpoint,peak'";
+        footprint/marker-anchor-set: "'viewpoint,viewpoint_'+[osm_id]";
+        footprint/marker-width: [int_width_viewpoint];
+        footprint/marker-height: [int_height_viewpoint];
+        footprint/marker-line-width: 0;
+        footprint/marker-fill: "#ffffff";
+        footprint/marker-opacity: 0.0;
+        footprint/marker-placement: interior;
+        footprint/marker-transform: 'translate([int_offset_x_viewpoint], [int_offset_y_viewpoint])';
+        center/marker-anchor-cond: "'viewpoint_'+[osm_id]";
+        center/marker-allow-overlap-anchor: "'viewpoint,peak'";
+        center/marker-anchor-set: "viewpoint";
+        center/marker-width: 1;
+        center/marker-height: 1;
+        center/marker-line-width: 0;
+        center/marker-fill: "#ffffff";
+        center/marker-opacity: 0.0;
+        center/marker-placement: interior;
+      }
     }
 
   label-only: |
@@ -1384,10 +1451,10 @@ attributes:
         WHERE width_px >= 10
       )
     expand:
-      tmp_symbol_geometry: >-
-        int_symbol_geometry
+      #tmp_symbol_geometry: >-
+      #  int_symbol_geometry
       int_text_dy_viewpoint: >-
-        ROUND((ST_Y(way)-ST_YMin(int_symbol_geometry)) / NULLIF(!scale_denominator!*0.001*0.28,0) + 3.0)
+        GREATEST(CASE WHEN feature = 'natural_peak/viewpoint' THEN 7 ELSE 0 END, ROUND((ST_Y(way)-ST_YMin(int_symbol_geometry)) / NULLIF(!scale_denominator!*0.001*0.28,0) + 3.0))
       int_offset_x_viewpoint: >-
         ROUND((0.5*(ST_XMin(int_symbol_geometry)+ST_XMax(int_symbol_geometry)) - ST_X(way)) / NULLIF(!scale_denominator!*0.001*0.28,0))
       int_offset_y_viewpoint: >-
@@ -1398,9 +1465,10 @@ attributes:
         ROUND((ST_YMax(int_symbol_geometry)-ST_YMin(int_symbol_geometry)) / NULLIF(!scale_denominator!*0.001*0.28,0)-1.5)
 
 # additional instances of features to generate with columns replaced - in particular for the way column
-column_substitutes:
-  symbol-geometry:
-    way: tmp_symbol_geometry
+# this would allow drawing symbols from the database within the symbols/labels layer
+#column_substitutes:
+#  symbol-geometry:
+#    way: tmp_symbol_geometry
 
 # defaults for feature parameters
 
@@ -2153,7 +2221,7 @@ features:
 
   tourism=viewpoint:
     type: point
-    style: label-viewpoint
+    style: viewpoint
     label_color: amenity-text
     start_symbol: 16
     start_label: 16
@@ -2162,7 +2230,7 @@ features:
       - int_offset_x_viewpoint
       - int_offset_y_viewpoint
       - int_width_viewpoint
-      - int_width_viewpoint
+      - int_height_viewpoint
 
   barrier=toll_booth:
     symbol_file: symbols/sources/transport/toll_booth.svg
@@ -2390,7 +2458,7 @@ features:
   natural=bay:
     style: label-only
     label_color: water-text
-    start_label: 14 
+    start_label: 14
     text_dy: 0
 
   natural=tree:
@@ -2401,22 +2469,52 @@ features:
     attributes:
       - int_text_offset_tree
 
+  natural=peak/viewpoint:
+    type: point
+    style: with-elevation
+    symbol_file: symbols/sources/natural/peak_small.svg
+    symbol_color: landform-icon
+    label_color: landform-text
+    condition: (tourism = 'viewpoint')
+    start_symbol: 11
+    start_label: 13
+    text_dy: 7
+    snap: even
+    modifications:
+      large:
+        style: large-symbol-variant-peak-viewpoint
+        start_symbol: 12
+        symbol_file: symbols/sources/natural/peak.svg
+      large+viewpoint:
+        style: peak-variant-with-viewpoint
+        start_symbol: 16
+    attributes:
+      - int_elevation
+      - int_text_dy_viewpoint
+      - int_offset_x_viewpoint
+      - int_offset_y_viewpoint
+      - int_width_viewpoint
+      - int_height_viewpoint
+
   natural=peak:
     type: point
     style: with-elevation
     symbol_file: symbols/sources/natural/peak_small.svg
     symbol_color: landform-icon
     label_color: landform-text
+    condition: (tourism IS NULL OR tourism NOT IN ('viewpoint'))
     start_symbol: 11
     start_label: 13
     text_dy: 7
+    snap: even
     modifications:
       large:
-        style: large-symbol-variant
+        style: large-symbol-variant-peak
         start_symbol: 12
         symbol_file: symbols/sources/natural/peak.svg
     attributes:
       - int_elevation
+
   natural=volcano:
     style: with-elevation
     symbol_file: symbols/sources/natural/volcano_small.svg

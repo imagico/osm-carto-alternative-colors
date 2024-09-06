@@ -18,6 +18,7 @@
 @advertising-grey: @man-made-icon;
 @landform-color: #d08f55;
 @leisure-icon: @amenity-brown;
+@viewpoints-icon: @amenity-brown;
 @tree-icon: #4d9945;
 @tree-text: @tree-icon;
 
@@ -193,6 +194,12 @@
       pole/marker-height: 2.5;
     }
   }
+}
+
+#viewpoints[zoom >= 16] {
+  halo/line-color: @standard-halo-fill;
+  halo/line-width: 1.6;
+  fill/polygon-fill: @viewpoints-icon;
 }
 
 #trees [zoom >= 16] {

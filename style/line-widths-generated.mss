@@ -188,3 +188,6 @@
 @raceway-width-z18: 9.5;
 @raceway-width-z19: 12;
 @platform-width-z16: 4;
+@platform-width-z17: 7;
+@platform-width-z18: 8.5;
+@platform-width-z19: 11;

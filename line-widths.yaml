@@ -69,6 +69,13 @@ sql:
     - rail
     - light_rail
     - tram
+    - funicular
+    - narrow_gauge
+    - disused
+    - miniature
+    - monorail
+    - preserved
+    - subway
     - dyke
     - hedge
     - runway
@@ -114,7 +121,7 @@ tags:
   bus-guideway: = 'bus_guideway'
   casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link')
   casing-secondary: IN ('secondary', 'secondary_link')
-  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
+  casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway', 'platform')
   bridge-casing-major: IN ('motorway', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 'secondary_link')
   bridge-casing: IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway')
 
@@ -328,6 +335,9 @@ classes:
     19: 12
   platform:
     16: 4
+    17: 7
+    18: 8.5
+    19: 11
   sidewalk:
     18: 0.8
     19: 0.9
@@ -348,6 +358,23 @@ classes:
     13: 1
     15: 1.5
     17: 2
+  funicular:
+    8: 1
+    13: 2
+  narrow_gauge:
+    8: 1
+    13: 2
+  disused:
+    15: 2
+  miniature:
+    15: 1.2
+  monorail:
+    14: 4
+  preserved:
+    12: 1.5
+    13: 3
+  subway:
+    12: 2
   runway:
     11: 2
     12: 4

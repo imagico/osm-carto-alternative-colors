@@ -204,6 +204,8 @@ def main():
     print ("    <<: *extents", file=file_mml)
     print ("    Datasource:", file=file_mml)
     print ("      geometry_table: planet_osm_point", file=file_mml)
+    if 'anchors_table' in config["settings"]:
+        print ("      anchors_table: "+config["settings"]['anchors_table'], file=file_mml)
     print ("      <<: *osm2pgsql", file=file_mml)
     print ("      table: |-", file=file_mml)
 
@@ -336,12 +338,14 @@ def main():
             (fkey, fval) = kv.split('=')
             fn = fkey+"_"+fval+"_"+variant
             fvaln = fval.replace("/", "_")
+            fval_base = fval.split('/')[0]
         elif fn.find("=") >= 0:
             kv = fn
             variant = None
             (fkey, fval) = kv.split('=')
             fn = fkey+"_"+fval
             fvaln = fval.replace("/", "_")
+            fval_base = fval.split('/')[0]
         else:
             kv = fn
             variant = None
@@ -505,6 +509,13 @@ def main():
 
             if hasattr(params['attributes'], 'items'):
                 for attr, acond in params['attributes'].items():
+
+                    if 'condition' in params:
+                        if acond is None or (acond == ''):
+                            acond = params['condition']
+                        else:
+                            acond = acond + " AND " + params['condition']
+
                     sql = ''
                     attr_mod = attr
                     if attr in config['attributes']:
@@ -524,9 +535,9 @@ def main():
                         attributes[attr_mod][sql][acond] = dict()
                     if fkey not in attributes[attr_mod][sql][acond]:
                         attributes[attr_mod][sql][acond][fkey] = dict()
-                    if fval not in attributes[attr_mod][sql][acond][fkey]:
-                        attributes[attr_mod][sql][acond][fkey][fval] = set()
-                    attributes[attr_mod][sql][acond][fkey][fval].add(variant)
+                    if fval_base not in attributes[attr_mod][sql][acond][fkey]:
+                        attributes[attr_mod][sql][acond][fkey][fval_base] = set()
+                    attributes[attr_mod][sql][acond][fkey][fval_base].add(variant)
 
                     if attr not in attributes_expanded:
                         attributes_expanded[attr] = dict()
@@ -536,12 +547,16 @@ def main():
                         attributes_expanded[attr][sql][acond] = dict()
                     if fkey not in attributes_expanded[attr][sql][acond]:
                         attributes_expanded[attr][sql][acond][fkey] = dict()
-                    if fval not in attributes_expanded[attr][sql][acond][fkey]:
-                        attributes_expanded[attr][sql][acond][fkey][fval] = set()
-                    attributes_expanded[attr][sql][acond][fkey][fval].add(variant)
+                    if fval_base not in attributes_expanded[attr][sql][acond][fkey]:
+                        attributes_expanded[attr][sql][acond][fkey][fval_base] = set()
+                    attributes_expanded[attr][sql][acond][fkey][fval_base].add(variant)
             else:
                 for attr in params['attributes']:
                     acond = ''
+
+                    if 'condition' in params:
+                        acond = params['condition']
+
                     sql = ''
                     attr_mod = attr
                     if attr in config['attributes']:
@@ -561,9 +576,9 @@ def main():
                         attributes[attr_mod][sql][acond] = dict()
                     if fkey not in attributes[attr_mod][sql][acond]:
                         attributes[attr_mod][sql][acond][fkey] = dict()
-                    if fval not in attributes[attr_mod][sql][acond][fkey]:
-                        attributes[attr_mod][sql][acond][fkey][fval] = set()
-                    attributes[attr_mod][sql][acond][fkey][fval].add(variant)
+                    if fval_base not in attributes[attr_mod][sql][acond][fkey]:
+                        attributes[attr_mod][sql][acond][fkey][fval_base] = set()
+                    attributes[attr_mod][sql][acond][fkey][fval_base].add(variant)
 
                     if attr not in attributes_expanded:
                         attributes_expanded[attr] = dict()
@@ -573,9 +588,9 @@ def main():
                         attributes_expanded[attr][sql][acond] = dict()
                     if fkey not in attributes_expanded[attr][sql][acond]:
                         attributes_expanded[attr][sql][acond][fkey] = dict()
-                    if fval not in attributes_expanded[attr][sql][acond][fkey]:
-                        attributes_expanded[attr][sql][acond][fkey][fval] = set()
-                    attributes_expanded[attr][sql][acond][fkey][fval].add(variant)
+                    if fval_base not in attributes_expanded[attr][sql][acond][fkey]:
+                        attributes_expanded[attr][sql][acond][fkey][fval_base] = set()
+                    attributes_expanded[attr][sql][acond][fkey][fval_base].add(variant)
 
             if attr in config['attributes']:
                 if 'score' in config['attributes'][attr]:
@@ -911,7 +926,27 @@ def main():
         else:
             style = "standard"
 
-        if style in config['styles']:
+        if isinstance(style, list):
+            for style2 in style:
+                if style2 in config['styles']:
+                    style_mss = config['styles'][style2]
+                    if 'symbol_file' in zooms[fn][None]:
+                        style_mss = style_mss.replace("[[symbol_file]]", zooms[fn][None]['symbol_file'])
+                    elif "[[symbol_file]]" in style_mss:
+                        logging.warning("No symbol_file specified for feature type {} - failed to replace symbol placeholder.".format(fn))
+
+                    style_mss = style_mss.replace("[[feature]]", fn)
+
+                    for pn in config['defaults']:
+                        if pn != 'style':
+                            style_mss = style_mss.replace("[["+pn+"]]", str(zooms[fn][None][pn]))
+
+                    print ("    "+("\n    ".join(style_mss.splitlines())), file=file_mss)
+
+                else:
+                    print ("    // missing style code here due to unknown style", file=file_mss)
+                    logging.warning("Unknown style {sty} for feature type {fn} - not generating mss code.".format(sty=style, fn=fn))
+        elif style in config['styles']:
             style_mss = config['styles'][style]
             if 'symbol_file' in zooms[fn][None]:
                 style_mss = style_mss.replace("[[symbol_file]]", zooms[fn][None]['symbol_file'])
@@ -1304,7 +1339,8 @@ def main():
 
                 if hasattr(expansions[expansion_depencencies[attr]], 'items'):
                     for col, esql in expansions[expansion_depencencies[attr]].items():
-                        cols_combined.append(esql+" AS \""+col+"\"")
+                        esql_mod = "CASE WHEN "+expansion_depencencies[attr]+" IS NOT NULL THEN "+esql+" END"
+                        cols_combined.append(esql_mod+" AS \""+col+"\"")
                         cols_zoom_thresholds.append("\""+col+"\"")
                         if not (col.startswith('tmp_')):
                             cols_final.append("\""+col+"\"")
@@ -1597,8 +1633,12 @@ def main():
                 if filter_key not in kvs:
                     kvs[filter_key] = set()
                 for v in filter_vals:
-                    if v not in kvs[filter_key]:
+                    if v is None:
                         kvs[filter_key].add(v)
+                    else:
+                        v_base = v.split("/")[0]
+                        if v_base not in kvs[filter_key]:
+                            kvs[filter_key].add(v_base)
 
             fconds_all = None
 
@@ -1658,8 +1698,12 @@ def main():
                 if filter_key not in kvs:
                     kvs[filter_key] = set()
                 for v in filter_vals:
-                    if v not in kvs[filter_key]:
+                    if v is None:
                         kvs[filter_key].add(v)
+                    else:
+                        v_base = v.split("/")[0]
+                        if v_base not in kvs[filter_key]:
+                            kvs[filter_key].add(v_base)
 
             fconds_all = None
 
@@ -1729,8 +1773,12 @@ def main():
                 if filter_key not in kvs:
                     kvs[filter_key] = set()
                 for v in filter_vals:
-                    if v not in kvs[filter_key]:
+                    if v is None:
                         kvs[filter_key].add(v)
+                    else:
+                        v_base = v.split("/")[0]
+                        if v_base not in kvs[filter_key]:
+                            kvs[filter_key].add(v_base)
 
             fconds_all = None
 
@@ -1915,6 +1963,11 @@ def main():
         min_zoom = config['settings']['min_zoom']
     print ("      minzoom: "+str(min_zoom), file=file_mml)
     file_mml.close()
+
+    if 'gmic' in config['settings']:
+        print ("  gmic: \'"+config['settings']['gmic']+"\';", file=file_mss)
+    if 'gmic-after' in config['settings']:
+        print ("  gmic-after: \'"+config['settings']['gmic-after']+"\';", file=file_mss)
 
     print ("}", file=file_mss)
     file_mss.close()

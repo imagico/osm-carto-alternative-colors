@@ -6,7 +6,7 @@
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -45,7 +45,7 @@
       # - Have roads and railways in the same layer to get ordering right
       # - Return two linestrings for ways which are both a road and railway
       # - Compute z_order here, rather than rely on osm2pgsql z_order
-      table: |-
+      table: &roads_sql |-
         (SELECT
             way,
             road_layer,
@@ -349,7 +349,7 @@
                 CASE
                   WHEN feature IN ('aeroway_runway', 'aeroway_taxiway') THEN
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
-                  WHEN feature IN ('highway_raceway', 'highway_platform', 'railway_platform') THEN
+                  WHEN feature IN ('highway_raceway') THEN
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
                   ELSE
                     ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
@@ -794,6 +794,36 @@
                 AND way && !bbox!
                 AND z(!scale_denominator!) >= 12
             UNION ALL
+            SELECT -- waterway_supplement
+                way,
+                'waterway_supplement' AS road_layer,
+                ('waterway_' || waterway) AS feature,
+                'null' AS path_type,
+                tags->'intermittent' AS intermittent,
+                tags->'seasonal' AS seasonal,
+                'null' AS int_surface,
+                CASE WHEN tunnel IN ('yes', 'culvert') THEN 'yes' ELSE 'no' END AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                0 AS width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM planet_osm_line
+              WHERE waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi')
+                AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
+                AND way && !bbox!
+                AND z(!scale_denominator!) >= 14
+            UNION ALL
             SELECT -- line_barriers
                 way,
                 'line_barriers' AS road_layer,
@@ -971,6 +1001,7 @@
             -- it is subordinate to the layer and z_oder
             CASE
               -- this is bridges only so it comes after all the non-bridge layers and before the road bridge layers
+              WHEN road_layer = 'waterway_supplement' THEN -1
               WHEN road_layer = 'waterway_bridges_casing' THEN 0
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
               WHEN road_layer = 'landuse_overlay' THEN 2
@@ -998,6 +1029,7 @@
             layernotnull,
             z_order,
             CASE
+              WHEN road_layer = 'waterway_supplement' THEN -1
               WHEN road_layer = 'waterway_bridges_casing' THEN 0
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
               WHEN road_layer = 'landuse_overlay' THEN 2

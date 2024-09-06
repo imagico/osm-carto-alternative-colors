@@ -680,6 +680,10 @@ symbols:
     size: 49
     leaf_type: palm
     file: tree/tree_palm_49.svg
+  peak:
+    type: peak
+    size: 8
+    file: sources/natural/peak.svg
   viewpoint_0_:
     type: viewpoint
     min-size: 14

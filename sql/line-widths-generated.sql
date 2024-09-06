@@ -363,6 +363,52 @@ select
         when $2 >= 17 then 2.0
         else 0.0
       end)
+    when $1 = 'funicular' then
+      (case
+        when $2 = 8 then 1.0
+        when $2 = 9 then 1.0
+        when $2 = 10 then 1.0
+        when $2 = 11 then 1.0
+        when $2 = 12 then 1.0
+        when $2 >= 13 then 2.0
+        else 0.0
+      end)
+    when $1 = 'narrow_gauge' then
+      (case
+        when $2 = 8 then 1.0
+        when $2 = 9 then 1.0
+        when $2 = 10 then 1.0
+        when $2 = 11 then 1.0
+        when $2 = 12 then 1.0
+        when $2 >= 13 then 2.0
+        else 0.0
+      end)
+    when $1 = 'disused' then
+      (case
+        when $2 >= 15 then 2.0
+        else 0.0
+      end)
+    when $1 = 'miniature' then
+      (case
+        when $2 >= 15 then 1.2
+        else 0.0
+      end)
+    when $1 = 'monorail' then
+      (case
+        when $2 >= 14 then 4.0
+        else 0.0
+      end)
+    when $1 = 'preserved' then
+      (case
+        when $2 = 12 then 1.5
+        when $2 >= 13 then 3.0
+        else 0.0
+      end)
+    when $1 = 'subway' then
+      (case
+        when $2 >= 12 then 2.0
+        else 0.0
+      end)
     when $1 = 'dyke' then
       (case
         when $2 >= 15 then 1.5
@@ -411,7 +457,10 @@ select
       end)
     when $1 = 'platform' then
       (case
-        when $2 >= 16 then 4.0
+        when $2 = 16 then 4.0
+        when $2 = 17 then 7.0
+        when $2 = 18 then 8.5
+        when $2 >= 19 then 11.0
         else 0.0
       end)
     when $1 = 'sidewalk' then
@@ -463,7 +512,7 @@ select
         when $2 >= 19 then 1.0
         else 0.0
       end)
-    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
+    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway', 'platform') then
       (case
         when $2 = 12 then 0.1
         when $2 = 13 then 0.5

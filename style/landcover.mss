@@ -1307,7 +1307,8 @@
 }
 
 #landuse-overlay-lz,
-#roads[zoom >= 10][road_layer = 'landuse_overlay'] {
+#roads[zoom >= 10][road_layer = 'landuse_overlay'],
+#roads-noareas[zoom >= 10][road_layer = 'landuse_overlay'] {
   // width is way_pixels here
   [zoom >= 7][width > 900],
   [zoom >= 8][width > 100],
