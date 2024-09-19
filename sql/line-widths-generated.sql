@@ -699,3 +699,79 @@ select
     else 0.0
   end;
 $func$;
+
+/* pipeline */
+create or replace function carto_pipeline_line_width (text, numeric)
+  returns numeric
+  language sql
+  immutable
+  returns null on null input
+as $func$
+select
+  case
+    when $1 = 'pipe_length' then
+      (case
+        when $2 = 14 then 14.0
+        when $2 = 15 then 16.0
+        when $2 = 16 then 20.0
+        when $2 = 17 then 24.0
+        when $2 = 18 then 30.0
+        when $2 = 19 then 36.0
+        when $2 >= 20 then 42.0
+        else 0.0
+      end)
+    when $1 = 'pipe_casing' then
+      (case
+        when $2 = 14 then 0.7
+        when $2 = 15 then 1.0
+        when $2 = 16 then 1.5
+        when $2 = 17 then 2.0
+        when $2 = 18 then 3.0
+        when $2 = 19 then 4.0
+        when $2 >= 20 then 5.0
+        else 0.0
+      end)
+    when $1 = 'pipe_fill' then
+      (case
+        when $2 = 17 then 1.0
+        when $2 = 18 then 2.0
+        when $2 = 19 then 2.75
+        when $2 >= 20 then 3.5
+        else 0.0
+      end)
+    when $1 = 'flange_width' then
+      (case
+        when $2 = 14 then 2.0
+        when $2 = 15 then 2.5
+        when $2 = 16 then 3.2
+        when $2 = 17 then 4.0
+        when $2 = 18 then 5.2
+        when $2 = 19 then 6.5
+        when $2 >= 20 then 8.0
+        else 0.0
+      end)
+    when $1 = 'flange_length' then
+      (case
+        when $2 = 14 then 0.7
+        when $2 = 15 then 0.8
+        when $2 = 16 then 0.9
+        when $2 = 17 then 1.0
+        when $2 = 18 then 1.0
+        when $2 = 19 then 1.0
+        when $2 >= 20 then 1.0
+        else 0.0
+      end)
+    when $1 = 'pipe_gap' then
+      (case
+        when $2 = 14 then 1.2
+        when $2 = 15 then 1.2
+        when $2 = 16 then 1.2
+        when $2 = 17 then 1.2
+        when $2 = 18 then 1.2
+        when $2 = 19 then 1.4
+        when $2 >= 20 then 1.4
+        else 0.0
+      end)
+    else 0.0
+  end;
+$func$;

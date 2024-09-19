@@ -8,7 +8,7 @@
                 z_order
               FROM
                 (SELECT
-                    way,                    
+                    way,
                     ('barrier_' || (CASE WHEN barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
                      'handrail', 'retaining_wall', 'wall') THEN barrier ELSE NULL END)) AS barrier,
                     ('historic_' || (CASE WHEN historic = 'citywalls' THEN historic ELSE NULL END)) AS historic,

@@ -865,3 +865,71 @@ SELECT
         ) AS parking_width
     ) AS _
 $func$;
+
+
+/*
+Function to put together the dasharray for a pipeline based on:
+
+  * zoom level dependent drawing dimensions returned by carto_pipeline_line_width()
+  * length of the line to adjust initial offset and segment length
+
+Parameters:
+
+  length_px: length of the line in pixels
+  zoom: zoom level
+
+Returns [dasharray_casing, dasharray_fill, dasharray_flange, dasharray_endcaps]
+*/
+CREATE OR REPLACE FUNCTION carto_pipeline_dasharrays (length_px numeric, zoom integer)
+  RETURNS text[]
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT
+    ARRAY[
+      TO_CHAR(0.5*(pipe_length_mod-flange_length-pipe_gap), 'FM9990.09') || ',' ||
+      TO_CHAR(pipe_gap+flange_length, 'FM9990.09') || ',' ||
+      TO_CHAR(0.5*(pipe_length_mod-flange_length-pipe_gap), 'FM9990.09') || ',0'
+      ,
+      TO_CHAR(0.5*(pipe_length_mod-2.0*flange_length-pipe_gap), 'FM9990.09') || ',' ||
+      TO_CHAR(pipe_gap+2.0*flange_length, 'FM9990.09') || ',' ||
+      TO_CHAR(0.5*(pipe_length_mod-2.0*flange_length-pipe_gap), 'FM9990.09') || ',0'
+      ,
+      '0,' ||
+      TO_CHAR(0.5*(pipe_length_mod-2.0*flange_length-pipe_gap), 'FM9990.09') || ',' ||
+      TO_CHAR(flange_length, 'FM9990.09') || ',' ||
+      TO_CHAR(pipe_gap, 'FM9990.09') || ',' ||
+      TO_CHAR(flange_length, 'FM9990.09') || ',' ||
+      TO_CHAR(0.5*(pipe_length_mod-2.0*flange_length-pipe_gap), 'FM9990.09')
+      ,
+      CASE WHEN length_px IS NULL THEN
+        'null'
+      ELSE
+        '0.1,' ||
+        TO_CHAR(length_px-0.2, 'FM9990.09') ||
+        ',0.1,0'
+      END
+    ]
+  FROM
+    (SELECT
+        CASE
+          -- default: use design pattern length as is
+          WHEN length_px IS NULL THEN pipe_length
+          -- too short: no flange, make length long enough to ensure that
+          WHEN length_px < 0.6*pipe_length THEN pipe_length*2.0
+          -- one flange in the middle: exactly match length
+          WHEN length_px < 1.6*pipe_length THEN length_px
+          -- otherwise: adjust dash pattern length to fit an integer number of times
+          ELSE length_px/ROUND(length_px/pipe_length)
+        END AS pipe_length_mod,
+        pipe_length,
+        flange_length,
+        pipe_gap
+      FROM
+        (SELECT
+            carto_pipeline_line_width ('pipe_length', zoom) AS pipe_length,
+            carto_pipeline_line_width ('flange_length', zoom) AS flange_length,
+            carto_pipeline_line_width ('pipe_gap', zoom) AS pipe_gap
+        ) AS dimensions_raw
+    ) AS dimensions
+$func$;

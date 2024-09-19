@@ -228,7 +228,15 @@
             @@else
               @@include(roads/line-barriers-simple.sql)
             @@end
-            ) -- end of line_barriers_all CTE
+            ), -- end of line_barriers_all CTE
+            pipelines_all AS
+            (
+            @@if(ac)
+              @@include(roads/pipelines.sql)
+            @@else
+              @@include(roads/pipelines-simple.sql)
+            @@end
+            ) -- end of pipelines_all CTE
             SELECT -- casing
                 way,
                 'casing' AS road_layer,
@@ -954,6 +962,118 @@
               WHERE route = 'ferry'
                 AND way && !bbox!
             UNION ALL
+            SELECT -- goods_conveyor
+                way,
+                'goods_conveyor' AS road_layer,
+                'goods_conveyor' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                'null' AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                0 AS width,
+                0 AS casing_width,
+                COALESCE(layer,0) AS layernotnull,
+                osm_id,
+                z_order
+              FROM planet_osm_line
+              WHERE man_made = 'goods_conveyor'
+                AND (tags->'location' NOT IN ('underground') OR (tags->'location') IS NULL)
+                AND (tunnel NOT IN ('yes', 'culvert') OR tunnel IS NULL)
+                AND way && !bbox!
+                AND z(!scale_denominator!) >= 14
+            UNION ALL
+            SELECT -- pipeline casing
+                way,
+                'pipeline_casing' AS road_layer,
+                'pipeline' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                -- pipelines get layered strictly by layer tag - hence we promote that to bridge/tunnel
+                CASE WHEN layernotnull < 0 THEN 'yes' ELSE 'no' END AS int_tunnel,
+                CASE WHEN layernotnull > 0 THEN 'yes' ELSE 'no' END AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                dasharrays[1] AS construction,
+                substance AS service,
+                'no' AS link,
+                dasharrays[4] AS tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                pipe_casing AS width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM pipelines_all
+            UNION ALL
+            SELECT -- pipeline fill
+                way,
+                'pipeline_fill' AS road_layer,
+                'pipeline' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                -- pipelines get layered strictly by layer tag - hence we promote that to bridge/tunnel
+                CASE WHEN layernotnull < 0 THEN 'yes' ELSE 'no' END AS int_tunnel,
+                CASE WHEN layernotnull > 0 THEN 'yes' ELSE 'no' END AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                dasharrays[2] AS construction,
+                substance AS service,
+                'no' AS link,
+                dasharrays[4] AS tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                pipe_fill AS width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM pipelines_all
+            UNION ALL
+            SELECT -- pipeline flange
+                way,
+                'pipeline_flange' AS road_layer,
+                'pipeline' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                'null' AS int_surface,
+                -- pipelines get layered strictly by layer tag - hence we promote that to bridge/tunnel
+                CASE WHEN layernotnull < 0 THEN 'yes' ELSE 'no' END AS int_tunnel,
+                CASE WHEN layernotnull > 0 THEN 'yes' ELSE 'no' END AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                dasharrays[3] AS construction,
+                substance AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                flange_width AS width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM pipelines_all
+            UNION ALL
             SELECT -- landuse_overlay
                 way,
                 'landuse_overlay' AS road_layer,
@@ -1024,7 +1144,10 @@
               WHEN road_layer = 'lanes' THEN 8
               WHEN road_layer = 'access' THEN 8
               WHEN road_layer = 'tc_fill' THEN 8
-              WHEN road_layer = 'centerline_top' THEN 9
+              WHEN road_layer = 'pipeline_casing' THEN 9
+              WHEN road_layer = 'pipeline_fill' THEN 9
+              WHEN road_layer = 'pipeline_flange' THEN 9
+              WHEN road_layer = 'centerline_top' THEN 10
             END,
             layernotnull,
             z_order,
@@ -1036,23 +1159,26 @@
               WHEN road_layer = 'line_barriers' THEN 3
               WHEN road_layer = 'line_barrier_areas' THEN 4
               WHEN road_layer = 'ferry_routes' THEN 5
-              WHEN road_layer = 'tc_casing' THEN 6
-              WHEN road_layer = 'area_casing' THEN 7
-              WHEN road_layer = 'junction_casing' THEN 8
-              WHEN road_layer = 'casing' THEN 9
-              WHEN road_layer = 'background' THEN 10
-              WHEN road_layer = 'background_unpaved' THEN 10
-              WHEN road_layer = 'area_fill' THEN 11
-              WHEN road_layer = 'junction_fill' THEN 12
-              WHEN road_layer = 'fill' THEN 13
-              WHEN road_layer = 'fill_unpaved' THEN 14
-              WHEN road_layer = 'fill_lanes' THEN 15
-              WHEN road_layer = 'parkings_lane' THEN 16
-              WHEN road_layer = 'centerline' THEN 17
-              WHEN road_layer = 'lanes' THEN 18
-              WHEN road_layer = 'access' THEN 19
-              WHEN road_layer = 'tc_fill' THEN 20
-              WHEN road_layer = 'centerline_top' THEN 21
+              WHEN road_layer = 'pipeline_casing' THEN 6
+              WHEN road_layer = 'tc_casing' THEN 7
+              WHEN road_layer = 'area_casing' THEN 8
+              WHEN road_layer = 'junction_casing' THEN 9
+              WHEN road_layer = 'casing' THEN 10
+              WHEN road_layer = 'background' THEN 11
+              WHEN road_layer = 'background_unpaved' THEN 11
+              WHEN road_layer = 'area_fill' THEN 12
+              WHEN road_layer = 'junction_fill' THEN 13
+              WHEN road_layer = 'fill' THEN 14
+              WHEN road_layer = 'fill_unpaved' THEN 15
+              WHEN road_layer = 'fill_lanes' THEN 16
+              WHEN road_layer = 'parkings_lane' THEN 17
+              WHEN road_layer = 'centerline' THEN 18
+              WHEN road_layer = 'lanes' THEN 19
+              WHEN road_layer = 'access' THEN 20
+              WHEN road_layer = 'tc_fill' THEN 21
+              WHEN road_layer = 'pipeline_fill' THEN 22
+              WHEN road_layer = 'pipeline_flange' THEN 23
+              WHEN road_layer = 'centerline_top' THEN 24
             END,
             CASE
               WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0

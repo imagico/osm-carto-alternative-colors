@@ -3708,6 +3708,71 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     }
 
   } // == end centerline_top ==
+
+  [road_layer = 'goods_conveyor'] {
+    line/line-width: 0.7;
+    line/line-join: round;
+    line/line-cap: round;
+    line/line-color: #999999;
+
+    dash/line-width: 2;
+    dash/line-join: round;
+    dash/line-color: #999999;
+    dash/line-dasharray: 4,6;
+
+    [zoom >= 16] {
+      line/line-width: 1;
+      dash/line-width: 3;
+      dash/line-dasharray: 6,6;
+    }
+  }
+
+  [road_layer = 'pipeline_casing'] {
+    line-width: [width];
+    line-dasharray: [construction];
+    line-join: round;
+    line-color: #909090;
+    [tc_type != null] {
+      caps/line-width: [width];
+      caps/line-dasharray: [tc_type];
+      caps/line-cap: round;
+      caps/line-join: round;
+      caps/line-color: #909090;
+    }
+  }
+
+  [road_layer = 'pipeline_fill'][zoom >= 17] {
+    line-width: [width];
+    line-dasharray: [construction];
+    line-join: round;
+    line-color: @land-color;
+    [service = 'water'],
+    [service = 'rainwater'] { line-color: @water-color; }
+    [service = 'hot_water'] { line-color: #feaca6; }
+    [service = 'sewage'] { line-color: #c1c1c1; }
+    [service = 'gas'] { line-color: #fbd186; }
+    [service = 'oil'] { line-color: #d7b68d; }
+    [tc_type != null] {
+      caps/line-width: [width];
+      caps/line-dasharray: [tc_type];
+      caps/line-cap: round;
+      caps/line-join: round;
+      caps/line-color: @land-color;
+      [service = 'water'],
+      [service = 'rainwater'] { caps/line-color: @water-color; }
+      [service = 'hot_water'] { caps/line-color: #feaca6; }
+      [service = 'sewage'] { caps/line-color: #c1c1c1; }
+      [service = 'gas'] { caps/line-color: #fbd186; }
+      [service = 'oil'] { caps/line-color: #d7b68d; }
+    }
+  }
+
+  [road_layer = 'pipeline_flange'] {
+    line-width: [width];
+    line-dasharray: [construction];
+    line-join: round;
+    line-color: #909090;
+  }
 }
 
 #roads-noareas {
