@@ -56,6 +56,8 @@
 @station-line: @transportation-line;
 @aerodrome: @transportation;
 @aerodrome-line: @transportation-line;
+@ferry-terminal: @transportation;
+@ferry-terminal-line: @transportation-line;
 @garages: @transportation;
 @garages-line: @transportation-line;
 @parking: #faecdd;  // Lch(94,9,76)
@@ -782,6 +784,19 @@
         [zoom >= 13] {
           line-width: 0.5;
           line-color: @aerodrome-line;
+        }
+      }
+      [way_pixels >= 4]  { polygon-gamma: 0.75; }
+      [way_pixels >= 64] { polygon-gamma: 0.3;  }
+    }
+
+    [feature = 'amenity_ferry_terminal'][zoom >= 10] {
+      polygon-fill: @built-up-lowzoom;
+      [zoom >= 13] {
+        polygon-fill: @ferry-terminal;
+        [zoom >= 15] {
+          line-width: 0.5;
+          line-color: @ferry-terminal-line;
         }
       }
       [way_pixels >= 4]  { polygon-gamma: 0.75; }

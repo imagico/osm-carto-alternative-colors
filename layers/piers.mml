@@ -42,22 +42,94 @@
       <<: *osm2pgsql
       table: |-
         (SELECT
-            way, man_made
+            way,
+            man_made,
+            CASE WHEN tags->'mooring' IN('yes', 'private', 'commercial', 'cruise', 'ferry', 'yacht', 'guest') THEN
+              'yes'
+            ELSE 
+              'no'
+            END AS mooring,
+            tags->'material' AS material,
+            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE man_made IN ('pier', 'breakwater', 'groyne')
         ) AS piers_poly
     properties:
+      cache-features: true
       minzoom: 12
   - id: piers-line
-    geometry: linestring
     <<: *extents
     Datasource:
       <<: *osm2pgsql
+      geometry_table: planet_osm_line
       table: |-
         (SELECT
-            way, man_made
-          FROM planet_osm_line
-          WHERE man_made IN ('pier', 'breakwater', 'groyne')
+            way,
+            man_made,
+            width,
+            mooring,
+            material
+          FROM
+            (WITH piers_raw AS
+              (SELECT
+                  way,
+                  man_made,
+                  GREATEST(
+                    carto_barrier_line_width(
+                      man_made,
+                      z(!scale_denominator!)
+                    ),
+                    carto_pier_line_width_mapped(
+                      man_made,
+                      tags->'width',
+                      !bbox!, !scale_denominator!
+                    )
+                  ) AS width,
+                  CASE WHEN tags->'mooring' IN('yes', 'private', 'commercial', 'cruise', 'ferry', 'yacht', 'guest') THEN
+                    'yes'
+                  ELSE 
+                    'no'
+                  END AS mooring,
+                  tags->'material' AS material
+                FROM planet_osm_line
+                WHERE man_made IN ('pier', 'breakwater', 'groyne')
+                  AND way && !bbox!
+              )
+            SELECT
+                way,
+                man_made,
+                width,
+                mooring,
+                material
+              FROM piers_raw
+            UNION ALL
+            SELECT
+                (ST_Dump(
+                  CASE
+                    WHEN length < 3.0*width THEN ST_LineInterpolatePoint(way, 0.5)
+                    WHEN length < 5.0*width THEN ST_Collect(ST_LineInterpolatePoint(way, 0.25), ST_LineInterpolatePoint(way, 0.75))
+                    ELSE ST_Collect(ARRAY[ST_LineInterpolatePoint(way, 0.2), ST_LineInterpolatePoint(way, 0.5), ST_LineInterpolatePoint(way, 0.8)])
+                  END
+                )).geom AS way,
+                'pier_symbol' AS man_made,
+                (CASE WHEN length < width THEN length ELSE width END) AS width,
+                mooring,
+                material
+              FROM
+                (SELECT
+                    way,
+                    ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length,
+                    width,
+                    mooring,
+                    material
+                  FROM piers_raw
+                  WHERE man_made = 'pier' AND width >= 10 AND mooring = 'yes'
+                ) AS piers_wide_mooring
+            ) AS _
+          ORDER BY
+            -- symbol nodes last so symbols are drawn above the line signatures
+            CASE WHEN man_made = 'pier_symbol' THEN 2 ELSE 1 END
         ) AS piers_line
     properties:
+      cache-features: true
       minzoom: 12

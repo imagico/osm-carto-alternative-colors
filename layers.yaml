@@ -237,6 +237,12 @@ layers:
       - style/entrances.mss
     tags:
       - "ac"
+  planter-polygons:
+    source: layers/planter-polygons.mml
+    stylesheets:
+      - style/amenity-points.mss
+    tags:
+      - "ac"
   golf-lines:
     source: layers/golf-lines.mml
     stylesheets:

@@ -183,7 +183,7 @@
               FROM planet_osm_point
               WHERE place IN ('village', 'hamlet')
                  AND NOT tags @> 'capital=>yes'
-                 OR place IN ('suburb', 'neighbourhood', 'locality', 'isolated_dwelling', 'farm', 'ac_test_label', 'ac_test_label_small', 'ac_test_label_left')) AS _
+                 OR place IN ('suburb', 'neighbourhood', 'locality', 'isolated_dwelling', 'farm', 'ac_test_label', 'ac_test_label_small', 'ac_test_label_small_45', 'ac_test_label_left''ac_test_label_right')) AS _
           WHERE name_label[1] IS NOT NULL
           ORDER BY CASE
               WHEN place = 'suburb' THEN 3
@@ -194,8 +194,10 @@
               WHEN place = 'isolated_dwelling' THEN 8
               WHEN place = 'farm' THEN 9
               WHEN place = 'ac_test_label_left' THEN 10
-              WHEN place = 'ac_test_label' THEN 11
-              WHEN place = 'ac_test_label_small' THEN 11
+              WHEN place = 'ac_test_label_right' THEN 11
+              WHEN place = 'ac_test_label' THEN 12
+              WHEN place = 'ac_test_label_small' THEN 13
+              WHEN place = 'ac_test_label_small_45' THEN 14
             END ASC, length(name_label[1]) DESC, name_label[1]
         ) AS placenames_small
     properties:

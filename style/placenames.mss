@@ -447,8 +447,10 @@
 }
 
 #placenames-small::ac {
+  [place = 'ac_test_label_right'],
   [place = 'ac_test_label_left'],
   [place = 'ac_test_label_small'],
+  [place = 'ac_test_label_small_45'],
   [place = 'ac_test_label'] {
     text-name: "[name]";
     text-size: 12;
@@ -464,7 +466,8 @@
     text-wrap-width: 60;
     text-line-spacing: -0.60;
     text-margin: 8.4;
-    [place = 'ac_test_label_small'] {
+    [place = 'ac_test_label_small'],
+    [place = 'ac_test_label_small_45'] {
       text-size: 10;
       text-fill: @placenames;
       text-halo-fill: @standard-halo-fill;
@@ -472,8 +475,14 @@
       text-line-spacing: -0.8;
       text-margin: 7.0;
     }
+    [place = 'ac_test_label_small_45'] {
+      text-orientation: 45;
+    }
     [place = 'ac_test_label_left'] {
       text-align: left;
+    }
+    [place = 'ac_test_label_right'] {
+      text-align: right;
     }
   }
 }

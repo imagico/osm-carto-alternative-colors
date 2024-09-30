@@ -122,31 +122,89 @@
   }
 }
 
-#piers-poly {
-  [man_made = 'pier'][zoom >= 12] {
-    polygon-fill: @land-color;
-  }
+#piers-poly[zoom >= 12] {
+  ::main {
+    [man_made = 'pier'] {
+      polygon-fill: @land-color;
+      [mooring = 'yes'][zoom >= 15][way_pixels > 240] {
+        polygon-comp-op: dst-out;
+      }
+    }
 
-  [man_made = 'breakwater'][zoom >= 12],
-  [man_made = 'groyne'][zoom >= 12] {
-    polygon-fill: @breakwater-color;
+    [man_made = 'breakwater'],
+    [man_made = 'groyne'] {
+      polygon-fill: @breakwater-color;
+      [material = 'stone'][zoom >= 15] {
+        polygon-pattern-file: url('symbols/patterns/breakwater_stone.png');
+        polygon-pattern-alignment: global;
+      }
+    }
+  }
+  ::backdrop {
+    [man_made = 'pier']
+    [mooring = 'yes']
+    [zoom >= 15]
+    [way_pixels > 240] {
+      polygon-fill: @land-color;
+      marker-file: url('symbols/transport/anchor_small.svg');
+      marker-placement: interior;
+      marker-clip: false;
+      marker-fill: desaturate(darken(@land-color, 9%), 5%);
+      marker-ignore-placement: true;
+      marker-allow-overlap: true;
+      [way_pixels > 360] { marker-file: url('symbols/transport/anchor_medium.svg'); }
+      [way_pixels > 600] { marker-file: url('symbols/transport/anchor_large.svg'); }
+      comp-op: dst-over;
+    }
   }
 }
 
-#piers-line {
-  [man_made = 'pier'][zoom >= 12] {
-    line-width: 1.5;
-    line-color: @land-color;
-    [zoom >= 13] { line-width: 3; }
-    [zoom >= 16] { line-width: 7; }
-  }
+#piers-line[zoom >= 12] {
+  ::main {
+    [man_made = 'pier'] {
+      line-width: [width];
+      line-color: @land-color;
+      [mooring = 'yes'][zoom >= 15][width >= 10] {
+        line-comp-op: dst-out;
+      }
+    }
 
-  [man_made = 'breakwater'][zoom >= 12],
-  [man_made = 'groyne'][zoom >= 12] {
-    line-width: 1;
-    line-color: @breakwater-color;
-    [zoom >= 13] { line-width: 2; }
-    [zoom >= 16] { line-width: 4; }
+    [man_made = 'breakwater'],
+    [man_made = 'groyne'] {
+      line-width: [width];
+      line-color: @breakwater-color;
+      [material = 'stone'][zoom >= 15][width > 5] {
+        line-pattern-type: repeat;
+        line-pattern-alignment: global;
+        line-pattern-width: [width];
+        line-pattern-file: url('symbols/patterns/breakwater_stone.png');
+      }
+    }
+  }
+  ::backdrop {
+    [man_made = 'pier']
+    [mooring = 'yes']
+    [zoom >= 15]
+    [width >= 10] {
+      // backdrop is larger to avoid edge artefacts
+      line-width: [width]+1;
+      line-cap: round;
+      line-color: @land-color;
+      comp-op: dst-over;
+    }
+    [man_made = 'pier_symbol']
+    [mooring = 'yes']
+    [zoom >= 15]
+    [width >= 10] {
+      marker-file: url('symbols/transport/anchor_small.svg');
+      marker-placement: interior;
+      marker-clip: false;
+      marker-fill: desaturate(darken(@land-color, 9%), 5%);
+      marker-ignore-placement: true;
+      marker-allow-overlap: true;
+      [width >= 12] { marker-file: url('symbols/transport/anchor_medium.svg'); }
+      [width >= 15] { marker-file: url('symbols/transport/anchor_large.svg'); }
+    }
   }
 }
 

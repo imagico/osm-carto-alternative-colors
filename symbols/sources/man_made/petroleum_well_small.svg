@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="9"
+   height="9"
+   viewBox="0 0 9 9"
+   id="svg4"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <rect
+     width="9"
+     height="9"
+     x="0"
+     y="0"
+     id="canvas"
+     style="visibility:hidden;fill:none;stroke:none" />
+  <path
+     id="path4227"
+     style="fill:#000000"
+     d="M 4.5 1 A 0.5 0.5 0 0 0 4 1.5 L 4 3.9472656 A 0.75 0.75 0 0 0 3.75 4.5 A 0.75 0.75 0 0 0 4.5 5.25 A 0.75 0.75 0 0 0 5.25 4.5 A 0.75 0.75 0 0 0 5 3.9414062 L 5 2 L 8 2 L 8 1 L 4.5253906 1 A 0.5 0.5 0 0 0 4.5 1 z M 2.2109375 3.5 A 2.5 2.5 0 0 0 2 4.5 A 2.5 2.5 0 0 0 4.5 7 A 2.5 2.5 0 0 0 7 4.5 A 2.5 2.5 0 0 0 6.7890625 3.5 L 5.6152344 3.5 A 1.5 1.5 0 0 1 6 4.5 A 1.5 1.5 0 0 1 4.5 6 A 1.5 1.5 0 0 1 3 4.5 A 1.5 1.5 0 0 1 3.3847656 3.5 L 2.2109375 3.5 z " />
+</svg>

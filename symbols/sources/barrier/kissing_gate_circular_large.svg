@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   width="9"
+   height="5"
+   viewBox="0 0 9 5"
+   id="svg2"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <rect
+     width="10"
+     height="5"
+     x="0"
+     y="0"
+     id="canvas"
+     style="visibility:hidden;fill:none;stroke:none" />
+  <path
+     id="rect140-2-4"
+     style="display:inline;fill:#000000;stroke-width:0.7;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-dashoffset:1.2"
+     d="M 5.5 0 A 0.5 0.5 0 0 0 5 0.5 A 0.5 0.5 0 0 0 5.5 1 C 5.999999 1 6.3951871 1.0307072 6.5996094 1.1660156 C 6.8040316 1.3013241 7 1.5774025 7 2.4863281 C 7 3.4107237 6.7999378 3.6968557 6.5957031 3.8339844 C 6.3914684 3.9711129 5.999999 4 5.5 4 A 0.5 0.5 0 0 0 5 4.5 A 0.5 0.5 0 0 0 5.5 5 C 5.999999 5 6.608533 5.0305028 7.1542969 4.6640625 C 7.6089801 4.358776 7.8924609 3.8058472 7.9746094 3 L 9 3 L 9 2 L 7.9765625 2 C 7.8964701 1.1911325 7.6090684 0.63563312 7.1503906 0.33203125 C 6.6048144 -0.029089309 5.999999 0 5.5 0 z M 1.5 1.5 A 1 1 0 0 0 0.63671875 2 L 0 2 L 0 3 L 0.63671875 3 A 1 1 0 0 0 1.5 3.5 A 1 1 0 0 0 2.3632812 3 L 4.2265625 3 A 0.625 0.625 0 0 0 4.5976562 3.125 A 0.625 0.625 0 0 0 5.2226562 2.5 A 0.625 0.625 0 0 0 4.5976562 1.875 A 0.625 0.625 0 0 0 4.2265625 2 L 2.3652344 2 A 1 1 0 0 0 1.5 1.5 z " />
+</svg>

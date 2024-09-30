@@ -87,12 +87,17 @@ def svg_convert(fin, fout, inkscape, dpi):
 
     sys.stdout.flush()
 
-def colorize_svg(source, basedir, symbol_name, color):
+def colorize_svg(source, basedir, symbol_name, color, color2):
     with open(source, 'rt') as fin:
         with open(basedir + "/colored/" + symbol_name + '.svg', 'wt') as fout:
-            logging.info("Colorizing symbol for {name} ({col})...".format(name=symbol_name, col=color))
-            for line in fin:
-                fout.write(line.replace('#000000', color))
+            if color2 is None:
+                logging.info("Colorizing symbol for {name} ({col})...".format(name=symbol_name, col=color))
+                for line in fin:
+                    fout.write(line.replace('#000000', color))
+            else:
+                logging.info("Colorizing symbol for {name} ({col}, {col2})...".format(name=symbol_name, col=color, col2=color2))
+                for line in fin:
+                    fout.write(line.replace('#000000', color).replace('#ff0000', color2))
 
 def resolve_color(cn, colors):
     if cn in colors:
@@ -639,6 +644,12 @@ def main():
                 symbol_color = config['defaults']['symbol_color']
             else:
                 symbol_color = None
+
+            if 'symbol_color2' in params:
+                symbol_color2 = resolve_color(params['symbol_color2'], config['colors'])
+            else:
+                symbol_color2 = None
+
             if 'label_color' in params:
                 label_color = resolve_color(params['label_color'], config['colors'])
             elif 'label_color' in config['defaults']:
@@ -648,7 +659,7 @@ def main():
 
             if symbol_file is not None:
                 if 'symbol_color' in params:
-                    colorize_svg(symbol_file, basedir, fnn, symbol_color)
+                    colorize_svg(symbol_file, basedir, fnn, symbol_color, symbol_color2)
                 else:
                     logging.info("Copying symbol for {}...".format(fn))
                     copyfile(symbol_file, basedir+"/colored/"+fnn+".svg")
@@ -719,6 +730,13 @@ def main():
                         else:
                             symbol_color_mod = None
 
+                        if 'symbol_color2' in params_m:
+                            symbol_color2_mod = resolve_color(params_m['symbol_color2'], config['colors'])
+                        elif 'symbol_color2' in params:
+                            symbol_color2_mod = resolve_color(params['symbol_color2'], config['colors'])
+                        else:
+                            symbol_color2_mod = None
+
                         if 'label_color' in params_m:
                             label_color_mod = resolve_color(params_m['label_color'], config['colors'])
                         elif 'label_color' in params:
@@ -732,7 +750,7 @@ def main():
                             # only colorize own symbol for variant if a different symbol file or color is set
                             if ('symbol_file' in params_m) or ('symbol_color' in params_m):
                                 if symbol_color_mod is not None:
-                                    colorize_svg(symbol_file_mod, basedir, fnn+"_"+modification, symbol_color_mod)
+                                    colorize_svg(symbol_file_mod, basedir, fnn+"_"+modification, symbol_color_mod, symbol_color2_mod)
                                 else:
                                     logging.info("Copying symbol for {}...".format(fn+"_"+modification))
                                     copyfile(symbol_file_mod, basedir+"/colored/"+fnn+"_"+modification+".svg")
@@ -846,6 +864,13 @@ def main():
                     else:
                         symbol_color_variant = None
 
+                    if 'symbol_color2' in params_v:
+                        symbol_color2_variant = resolve_color(params_v['symbol_color2'], config['colors'])
+                    elif 'symbol_color2' in params:
+                        symbol_color2_variant = resolve_color(params['symbol_color2'], config['colors'])
+                    else:
+                        symbol_color2_variant = None
+
                     if 'label_color' in params_v:
                         label_color_variant = resolve_color(params_v['label_color'], config['colors'])
                     elif 'label_color' in params:
@@ -859,7 +884,7 @@ def main():
                         # only colorize own symbol for variant if a different symbol file or color is set
                         if ('symbol_file' in params_v) or ('symbol_color' in params_v):
                             if symbol_color_variant is not None:
-                                colorize_svg(symbol_file_variant, basedir, fnn+"_"+variant, symbol_color_variant)
+                                colorize_svg(symbol_file_variant, basedir, fnn+"_"+variant, symbol_color_variant, symbol_color2_variant)
                             else:
                                 logging.info("Copying symbol for {}...".format(fnn+"_"+variant))
                                 copyfile(symbol_file_variant, basedir+"/colored/"+fnn+"_"+variant+".svg")
@@ -1796,12 +1821,14 @@ def main():
                     vals_nowp = set()
                     wpmin = 1000000000
                     for fval in filter_vals:
+                        has_wp = False
                         if filter_key+"="+fval in way_pixels_thresholds_kv:
                             if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_start_all'] > z:
                                 if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_min'] < wpmin:
                                     wpmin = way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_min']
                                     vals_wp.add(fval)
-                        if wpmin == 1000000000:
+                                    has_wp = True
+                        if not(has_wp):
                             vals_nowp.add(fval)
 
                     if len(vals_wp) > 0:
@@ -1882,7 +1909,7 @@ def main():
 
         print (indent_base+"                ) AS archipelagos", file=file_mml)
 
-    print (indent_base+"          ) AS _", file=file_mml)
+    print (indent_base+"          ) AS points_all", file=file_mml)
 
     print (indent_base+"        ) AS features", file=file_mml)
     print (indent_base+"        WHERE feature IS NOT NULL", file=file_mml)

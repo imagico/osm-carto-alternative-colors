@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   version="1.1"
+   width="9"
+   height="9"
+   viewBox="0 0 9 9"
+   id="svg4"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <rect
+     width="9"
+     height="9"
+     x="0"
+     y="0"
+     id="canvas"
+     style="visibility:hidden;fill:none;stroke:none" />
+  <path
+     id="rect160-8"
+     style="fill:#ff0000"
+     d="m 1.875,4 h 5.25 V 6 L 6,7.125 H 3 L 1.875,6 Z" />
+  <path
+     id="rect153-1"
+     style="fill:#000000"
+     d="M 2 2 L 2 2.5 L 7 2.5 L 7 2 L 2 2 z M 1.3417969 3 A 3.5 3.5 0 0 0 1 4.5 A 3.5 3.5 0 0 0 4.5 8 A 3.5 3.5 0 0 0 8 4.5 A 3.5 3.5 0 0 0 7.6582031 3 L 6.6542969 3 A 2.6249995 2.625 0 0 1 7.125 4.5 A 2.6249995 2.625 0 0 1 4.5 7.125 A 2.6249995 2.625 0 0 1 1.875 4.5 A 2.6249995 2.625 0 0 1 2.3515625 3 L 1.3417969 3 z M 4.5 3.5 A 0.99999994 0.99999994 0 0 0 3.5 4.5 A 0.99999994 0.99999994 0 0 0 4.5 5.5 A 0.99999994 0.99999994 0 0 0 5.5 4.5 A 0.99999994 0.99999994 0 0 0 4.5 3.5 z " />
+</svg>

@@ -76,7 +76,7 @@
                 ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
                 ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS golf,
                 ('amenity_' || (CASE WHEN amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
-                                                      'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic')
+                                                      'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic', 'ferry_terminal')
                                                       THEN amenity ELSE NULL END)) AS amenity,
                 ('landuse_' || (CASE WHEN landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
                                                       'allotments', 'forest', 'farmyard', 'farmland', 'flowerbed', 'greenhouse_horticulture',
@@ -120,7 +120,7 @@
                 OR (tags->'golf') IS NOT NULL
                 OR aeroway IN ('apron', 'aerodrome')
                 OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
-                               'hospital', 'kindergarten', 'grave_yard', 'place_of_worship', 'prison', 'clinic')
+                               'hospital', 'kindergarten', 'grave_yard', 'place_of_worship', 'prison', 'clinic', 'ferry_terminal')
                 OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
                 OR power IN ('station', 'sub_station', 'substation', 'generator')
                 OR tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site')

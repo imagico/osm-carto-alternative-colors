@@ -104,17 +104,21 @@
                            0.0
                          END AS width_lane_cycle,
                          carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
-                         carto_highway_line_width_mapped(
-                           highway,
-                           tags->'width:carriageway',
-                           tags->'width',
-                           tags->'lanes',
-                           tags->'parking:both',
-                           tags->'parking:right',
-                           tags->'parking:left',
-                           !bbox!,
-                           !scale_denominator!
-                         ) AS width_tagged,
+                         CASE WHEN man_made = 'pier' AND highway IN ('track', 'path', 'footway', 'cycleway', 'bridleway') THEN
+                           0.0  -- no ground unit rendering for thin highways double tagged as man_made=pier
+                         ELSE
+                           carto_highway_line_width_mapped(
+                             highway,
+                             tags->'width:carriageway',
+                             tags->'width',
+                             tags->'lanes',
+                             tags->'parking:both',
+                             tags->'parking:right',
+                             tags->'parking:left',
+                             !bbox!,
+                             !scale_denominator!
+                           )
+                         END AS width_tagged,
                          COALESCE(layer,0) AS layernotnull,
                          osm_id,
                          z_order

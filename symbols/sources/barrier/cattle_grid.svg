@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   version="1.1"
+   width="8"
+   height="5"
+   viewBox="0 0 8 5"
+   id="svg2"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <rect
+     width="8"
+     height="5"
+     x="0"
+     y="0"
+     id="canvas"
+     style="visibility:hidden;fill:none;stroke:none" />
+  <path
+     id="rect1-9"
+     style="fill:#000000"
+     d="M 0 0 L 0 1 L 8 1 L 8 0 L 0 0 z M 0 2 L 0 3 L 8 3 L 8 2 L 0 2 z M 0 4 L 0 5 L 8 5 L 8 4 L 0 4 z " />
+</svg>

@@ -46,6 +46,32 @@
 
 @private-opacity: 0.33;
 
+#planter-polygons [zoom >= 18] {
+  ::shadow {
+    line-color: @man-made-icon;
+    line-width: 1.0;
+    line-clip: false;
+    line-opacity: 0.2;
+    line-geometry-transform: "translate(1.0, 1.0)"
+  }
+  ::main {
+    polygon-fill: @orchard;
+    polygon-clip: false;
+    line-width: 0.5;
+    [zoom >= 19] { line-width: 0.625; }
+    [zoom >= 20] { line-width: 0.75; }
+    line-color: @man-made-icon;
+    line-clip: false;
+    [way_pixels > 120] {
+      backside/line-width: 0.25;
+      backside/line-color: @man-made-icon;
+      backside/line-offset: -1.6;
+      [zoom >= 19] { backside/line-offset: -1.75; }
+      [zoom >= 20] { backside/line-offset: -1.9; }
+      backside/line-dasharray: 1.5,1;
+    }
+  }
+}
 
 /* Note that .text is also used in water.mss */
 #text-poly-low-zoom[zoom < 10] {

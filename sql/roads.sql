@@ -509,6 +509,24 @@ SELECT (CASE
 END)
 $func$;
 
+/* tagged width or width estimated from barrier type */
+/* parameters: man_made tag, width tag, way, scale_denominator */
+CREATE OR REPLACE FUNCTION carto_pier_line_width_mapped (text, text, geometry, numeric)
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT (CASE
+  WHEN $2 ~ '^-?\d{1,4}(\.\d+)?$' THEN LEAST($2::NUMERIC, 50) / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $1 = 'pier' THEN
+    /* this is the minimum assumed ground unit pier width */
+    1.0 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  WHEN $1 IN ('breakwater', 'groyne') THEN
+    0.5 / NULLIF(scale_factor($3)*$4*0.001*0.28,0)
+  ELSE 0.0
+END)
+$func$;
+
 
 /* crevasse profile curve: half width as a function of normalized distance from center [0..1] */
 CREATE OR REPLACE FUNCTION carto_crevasse_profile_curve (numeric)

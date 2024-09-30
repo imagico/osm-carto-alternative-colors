@@ -59,6 +59,7 @@ settings:
     - style/amenity-points.mss
     - style/landcover.mss
     - style/buildings.mss
+    - style/water-features.mss
   table_points: planet_osm_point
   table_lines: planet_osm_line
   table_polygons: planet_osm_polygon
@@ -156,6 +157,18 @@ colors:
   bollard-icon: "#7d7c7c"
   tree-text: "#4d9945"
   aeroway-gate-text: "#aa66cc"
+  planter-fill: "#addfa5"
+
+  content_water: "#a2d1e0"
+  content_oil: "#d1b188"
+  content_gas: "#ffd485"
+  content_sewage: "#c1c1c1"
+  content_silage: "#b1c68d"
+  content_grain: "#f6e29a"
+  content_manure: "#d1b188"
+  content_gravel: "#c1c1c1"
+  content_coal: "#777777"
+  content_salt: "#ffffff"
 
 # styling types for symbols and labels
 
@@ -808,8 +821,116 @@ styles:
     marker-clip: false;
     marker-file: url('[[symbol_file]]');
 
+  symbol-only-non-blocking: |
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('[[symbol_file]]');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+
   symbol-only-zoom-variant: |
     [zoom >= [[start_symbol]]] {
+      marker-file: url('[[symbol_file]]');
+    }
+
+  symbol-only-halo: |
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('[[symbol_file]]');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('[[symbol_file]]');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+
+  symbol-sidelabel-halo: |
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      halo/marker-anchor-set: "'halo_'+[osm_id]";
+      halo/marker-line-color: white;
+      halo/marker-line-width: 1.5;
+      halo/marker-placement: interior;
+      halo/marker-clip: false;
+      halo/marker-file: url('[[symbol_file]]');
+      marker-anchor-cond: "'halo_'+[osm_id]";
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+      marker-allow-overlap: true;
+      marker-ignore-placement: true;
+    }
+    [vis_type = 'symbol-label'] {
+      halo/marker-anchor-set: "'halo_'+[osm_id]";
+      halo/marker-line-color: white;
+      halo/marker-line-width: 1.5;
+      halo/marker-placement: interior;
+      halo/marker-clip: false;
+      halo/marker-file: url('[[symbol_file]]');
+      marker-anchor-cond: "'halo_'+[osm_id]";
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('[[symbol_file]]');
+      marker-allow-overlap: true;
+      marker-ignore-placement: true;
+
+      sidelabel/text-anchor-cond: '[osm_id]';
+      sidelabel/text-allow-overlap-anchor: "'halo_'+[osm_id]";
+      sidelabel/text-placement: interior;
+      sidelabel/text-name: '[int_maxheight]';
+      sidelabel/text-size: 8;
+      sidelabel/text-wrap-width: @standard-wrap-width;
+      sidelabel/text-line-spacing: @standard-line-spacing-size;
+      sidelabel/text-fill: [[label_color]];
+      sidelabel/text-dx: [[text_dy]];
+      sidelabel/text-horizontal-alignment: right;
+      sidelabel/text-face-name: @[[font_type]]-fonts;
+      sidelabel/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      sidelabel/text-halo-fill: @standard-halo-fill;
+    }
+    [vis_type = 'label-for-symbol'] {
+      sidelabel/text-anchor-cond: '[osm_id]';
+      sidelabel/text-allow-overlap-anchor: "'halo_'+[osm_id]";
+      sidelabel/text-placement: interior;
+      sidelabel/text-name: '[int_maxheight]';
+      sidelabel/text-size: 8;
+      sidelabel/text-wrap-width: @standard-wrap-width;
+      sidelabel/text-line-spacing: @standard-line-spacing-size;
+      sidelabel/text-fill: [[label_color]];
+      sidelabel/text-dx: [[text_dy]];
+      sidelabel/text-horizontal-alignment: right;
+      sidelabel/text-face-name: @[[font_type]]-fonts;
+      sidelabel/text-halo-radius: @standard-halo-radius * [[halo_radius]];
+      sidelabel/text-halo-fill: @standard-halo-fill;
+    }
+
+  symbol-only-halo-rotation: |
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('[[symbol_file]]');
+    halo/marker-transform: 'rotate([int_barrier_orientation])';
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('[[symbol_file]]');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    marker-transform: 'rotate([int_barrier_orientation])';
+
+  symbol-only-halo-zoom-variant: |
+    [zoom >= [[start_symbol]]] {
+      halo/marker-file: url('[[symbol_file]]');
       marker-file: url('[[symbol_file]]');
     }
 
@@ -829,6 +950,18 @@ styles:
 
   symbol-only-zoom-attribute-variant: |
     [zoom >= [[start_symbol]]][[attribute_selector]] {
+      marker-file: url('[[symbol_file]]');
+    }
+
+  symbol-only-halo-attribute-variant: |
+    [[attribute_selector]] {
+      halo/marker-file: url('[[symbol_file]]');
+      marker-file: url('[[symbol_file]]');
+    }
+
+  symbol-only-halo-zoom-attribute-variant: |
+    [zoom >= [[start_symbol]]][[attribute_selector]] {
+      halo/marker-file: url('[[symbol_file]]');
       marker-file: url('[[symbol_file]]');
     }
 
@@ -1315,6 +1448,9 @@ styles:
 # do not derive from OSM data.  Attributes starting with 'tmp_' are not
 # included in the final columns (only to be used for column substitutes)
 #
+# For avoiding ambiguities in subqueries, the table with the POI data on
+# which these attributes are generated is named "points_all".
+#
 #   sql: SQL code to generate the column value
 #   score: if to use this column as score for sorting
 #   always: if to always generate a column for this (even if not listed in feature attributes)
@@ -1363,6 +1499,125 @@ attributes:
     attributes:
       - backrest
       - material
+  int_gate_type:
+    sql: >-
+      (CASE
+        WHEN "gate:type" IN ('sliding', 'rolling') THEN 'sliding'
+      END)
+    attributes:
+      - "gate:type"
+  int_barrier_orientation:
+    sql: >-
+      COALESCE(
+        (SELECT
+            CASE
+              WHEN direction BETWEEN 45 AND 135 THEN -90.0
+              WHEN direction BETWEEN 225 AND 315 THEN -90.0
+            END AS direction
+          FROM
+            (SELECT
+                SUM(weight * (direction - floor(direction / 360.0) * 360.0))/SUM(weight) AS direction
+              FROM
+                (SELECT
+                    CASE WHEN ST_IsCollection(way) THEN
+                      DEGREES(ST_Azimuth(ST_StartPoint(St_GeometryN(ST_CollectionExtract(way, 2), 1)), ST_EndPoint(St_GeometryN(ST_CollectionExtract(way, 2), 1))))
+                    ELSE
+                      DEGREES(ST_Azimuth(ST_StartPoint(way), ST_EndPoint(way)))
+                    END +
+                    CASE WHEN weight > 1.0 THEN 90.0 ELSE 0.0 END AS direction,
+                    weight
+                  FROM
+                    (SELECT
+                        ST_Intersection(line.way, ST_Expand(points_all.way, 0.1)) AS way,
+                        CASE
+                          WHEN line.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                                                'handrail', 'retaining_wall', 'wall') THEN 10.0
+                          ELSE 1.0
+                        END AS weight
+                      FROM planet_osm_line line
+                      WHERE ST_DWithin(line.way, points_all.way, 0.1)
+                        AND (
+                          line.barrier IN ('chain', 'city_wall', 'ditch', 'fence', 'guard_rail',
+                                           'handrail', 'retaining_wall', 'wall') OR
+                          line.highway IN ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary',
+                                           'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service',
+                                           'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path',
+                                           'track', 'busway', 'bus_guideway')
+                        )
+
+                    ) AS lines_raw
+                ) AS directions
+            ) AS direction_avg
+        ),
+        0.0
+      )
+  int_lighthouse_type:
+    sql: >-
+      (CASE
+        WHEN "seamark:type" IN ('light_major', 'light_minor') THEN 'active' ELSE 'inactive'
+      END) ||
+      (CASE
+        WHEN "seamark:light:character" IS NOT NULL AND "seamark:light:character" != 'F' THEN '+variable'
+      ELSE
+        ''
+      END)
+    attributes:
+      - "seamark:type"
+      - "seamark:light:character"
+  int_tower_type:
+    sql: >-
+      (CASE
+        WHEN man_made = 'tower' THEN
+          (CASE
+            WHEN "tower:type" IN ('bell_tower') THEN
+              'bell_tower' ||
+              (CASE WHEN "roof:shape" IN ('flat', 'gabled', 'hipped', 'pyramidal') THEN '+' || "roof:shape" ELSE '' END) ||
+              (CASE WHEN "tower:construction" IN ('lattice') THEN '+' || "tower:construction" ELSE '' END)
+          ELSE
+            (CASE
+              WHEN "tower:construction" IN ('dish', 'dome', 'freestanding', 'lattice') THEN "tower:construction" ELSE 'unknown'
+            END) ||
+            (CASE
+              WHEN "tower:construction" IN ('dish', 'dome') THEN
+                -- dish and dome are only allowed with communication/radar
+                (CASE
+                  WHEN "tower:type" IN ('communication', 'radar') THEN '+' || "tower:type"
+                ELSE ''
+                END)
+            ELSE
+                (CASE
+                  WHEN "tower:type" IN ('cooling', 'communication', 'defensive', 'lighting', 'minaret', 'observation', 'radar', 'siren', 'watchtower') THEN '+' || "tower:type"
+                ELSE ''
+                END)
+            END)
+          END)
+        WHEN man_made = 'mast' THEN
+          (CASE
+            WHEN "tower:construction" IN ('freestanding', 'guyed_lattice', 'guyed_tube', 'lattice') THEN "tower:construction" ELSE 'unknown'
+          END) ||
+          (CASE
+            WHEN "tower:type" IN ('communication', 'lighting', 'radar', 'siren') THEN '+' || "tower:type" ELSE ''
+          END)
+      END)
+    attributes:
+      - "roof:shape"
+      - "tower:type"
+      - "tower:construction"
+  int_petroleum_well_type:
+    sql: >-
+      (CASE
+        WHEN pump = 'yes' THEN (CASE WHEN disused = 'yes' THEN 'disused+pump' ELSE 'pump' END)
+      ELSE
+        (CASE
+          WHEN disused = 'yes' THEN (CASE WHEN substance IN ('oil', 'gas') THEN 'disused+' || substance ELSE 'disused' END)
+        ELSE
+          (CASE WHEN substance IN ('oil', 'gas') THEN substance END)
+        END)
+      END)
+    attributes:
+      - substance
+      - disused
+      - pump
   int_text_offset_tree:
     sql: >-
       ROUND(GREATEST(
@@ -1391,6 +1646,8 @@ attributes:
       - religion
   int_elevation:
     sql: CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(E'\n', REPLACE(ROUND((tags->'ele')::NUMERIC)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') END
+  int_maxheight:
+    sql: CASE WHEN (tags ? 'maxheight') AND tags->'maxheight' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(TO_CHAR((tags->'maxheight')::NUMERIC, 'FM90.0'), 'm') END
   shop:
     sql: >-
       CASE WHEN shop IN ('supermarket', 'bag', 'bakery', 'beauty', 'bed', 'bookmaker', 'books', 'butcher', 'carpet', 'clothes', 'computer',
@@ -1534,7 +1791,8 @@ templates:
 #   start_label: Starting zoom level for label, default: infinity
 #   zoom_limit: Upper zoom level limit for rendering this feature, default: infinity
 #   style: default: standard
-#   symbol_color: symbol color, default: unchanged (for SVG), black (for MSS)
+#   symbol_color: symbol color (replacing #000000 in symbol source), default: unchanged (for SVG), black (for MSS)
+#   symbol_color2: second symbol color to substitute in SVGs (replacing #ff0000 in symbol source)
 #   label_color: label color, default: black
 #   text_dy: text offset for label above/below symbol, default: 11
 #   type: point, line, polygon, convex_hull or pp (point and polygon) or all.  default: pp
@@ -1742,12 +2000,6 @@ features:
     label_color: gastronomy-text
     start_symbol: 17
     start_label: 17
-  amenity=biergarten:
-    symbol_file: symbols/sources/amenity/biergarten.svg
-    symbol_color: gastronomy-icon
-    label_color: gastronomy-text
-    start_symbol: 17
-    start_label: 17
   amenity=restaurant:
     symbol_file: symbols/sources/amenity/restaurant.svg
     symbol_color: gastronomy-icon
@@ -1819,6 +2071,7 @@ features:
     start_label: 17
     text_dy: 12
   amenity=post_box:
+    type: point
     symbol_file: symbols/sources/amenity/post_box.12.svg
     symbol_color: public-service-icon
     start_symbol: 17
@@ -1960,6 +2213,7 @@ features:
     start_label: 17
     text_dy: 10
   highway=bus_stop:
+    type: point
     symbol_file: symbols/sources/square.6.svg
     symbol_color: transportation-icon
     label_color: transportation-text
@@ -1977,6 +2231,13 @@ features:
     label_color: transportation-text
     start_symbol: 16
     start_label: 17
+  amenity=ferry_terminal:
+    symbol_file: symbols/sources/transport/ferry.svg
+    symbol_color: transportation-icon
+    label_color: transportation-text
+    start_symbol: 15
+    start_label: 16
+    text_dy: 10
   amenity=car_rental:
     symbol_file: symbols/sources/transport/car_rental.svg
     symbol_color: transportation-icon
@@ -2011,6 +2272,7 @@ features:
     start_label: 17
 
   emergency=phone:
+    type: point
     style: symbol-only
     symbol_file: symbols/sources/amenity/emergency_phone.svg
     symbol_color: amenity-icon
@@ -2029,6 +2291,7 @@ features:
     attributes:
       - int_access
   highway=traffic_signals:
+    type: point
     style: symbol-only
     symbol_file: symbols/sources/traffic/light.svg
     symbol_color: traffic-light-icon
@@ -2039,6 +2302,7 @@ features:
         symbol_file: symbols/sources/traffic/light.16.svg
         start_symbol: 19
   railway=crossing:
+    type: point
     style: symbol-only
     symbol_file: symbols/sources/traffic/level_crossing.svg
     symbol_color: level-crossing-icon
@@ -2049,6 +2313,7 @@ features:
         symbol_file: symbols/sources/traffic/level_crossing2.svg
         start_symbol: 16
   railway=level_crossing:
+    type: point
     style: symbol-only
     symbol_file: symbols/sources/traffic/level_crossing.svg
     symbol_color: level-crossing-icon
@@ -2149,12 +2414,17 @@ features:
     symbol_file: symbols/sources/amenity/waste_basket.svg
     symbol_color: amenity-icon
     start_symbol: 19
+    variants:
+      recycling:
+        condition: waste IN ('recycling')
+        symbol_file: symbols/sources/amenity/recycling_basket.svg
+    attributes:
+      - waste
   amenity=waste_disposal:
-    style: symbol-only
+    style: symbol-only-access-light
     symbol_file: symbols/sources/amenity/waste_disposal.svg
     symbol_color: amenity-icon
-    start_symbol: 19
-    condition: ("access" IS NULL OR "access" NOT IN ('private', 'no', 'customers', 'permit', 'delivery'))
+    start_symbol: 18
     attributes:
       - int_access
   amenity=recycling:
@@ -2167,26 +2437,327 @@ features:
     text_dy: 10
     variants:
       centre:
+        style: access-light
         condition: recycling_type IN ('centre')
         start_symbol: 17
         start_label: 17
+        text_dy: 13
+        symbol_file: symbols/sources/amenity/recycling_centre.svg
+      container:
+        style: symbol-only-access-light
+        condition: recycling_type IN ('container')
+        start_symbol: 18
+        symbol_file: symbols/sources/amenity/recycling_container.svg
     attributes:
+      - int_access
       - recycling_type
   barrier=gate:
-    style: symbol-only
+    style: symbol-only-halo
     symbol_file: symbols/sources/barrier/gate.svg
     symbol_color: gate-icon
     start_symbol: 17
+    modifications:
+      small+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-attribute-variant
+        symbol_file: symbols/sources/barrier/gate_noaccess.svg
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/gate_large.svg
+      large+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/gate_large_noaccess.svg
+      sliding:
+        filters: >-
+          [int_gate_type = 'sliding']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/sliding_gate.svg
+      sliding+noaccess:
+        filters: >-
+          [int_gate_type = 'sliding'][int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/sliding_gate_noaccess.svg
+      sliding+large:
+        filters: >-
+          [int_gate_type = 'sliding']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/sliding_gate_large.svg
+      sliding+large+noaccess:
+        filters: >-
+          [int_gate_type = 'sliding'][int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/sliding_gate_large_noaccess.svg
+    attributes:
+      - int_access
+      - int_gate_type
   barrier=lift_gate:
-    style: symbol-only
+    type: point
+    style: symbol-only-halo
     symbol_file: symbols/sources/barrier/liftgate.svg
     symbol_color: gate-icon
     start_symbol: 17
+    modifications:
+      small+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-attribute-variant
+        symbol_file: symbols/sources/barrier/liftgate_noaccess.svg
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/liftgate_large.svg
+      large+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/liftgate_large_noaccess.svg
+    attributes:
+      - int_access
   barrier=swing_gate:
-    style: symbol-only
-    symbol_file: symbols/sources/barrier/liftgate.svg
+    type: point
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/swing_gate.svg
     symbol_color: gate-icon
     start_symbol: 17
+    modifications:
+      small+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-attribute-variant
+        symbol_file: symbols/sources/barrier/swing_gate_noaccess.svg
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/swing_gate_large.svg
+      large+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/swing_gate_large_noaccess.svg
+    attributes:
+      - int_access
+  barrier=cycle_barrier:
+    type: point
+    style: symbol-only-halo-rotation
+    symbol_file: symbols/sources/barrier/cycle_barrier.svg
+    symbol_color: gate-icon
+    start_symbol: 18
+    attributes:
+      - int_barrier_orientation
+  barrier=stile:
+    type: point
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/stile.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/stile_large.svg
+      large+squeezer:
+        filters: >-
+          [stile = 'squeezer']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/stile_squeezer.svg
+    attributes:
+      - stile
+  barrier=cattle_grid:
+    type: point
+    style: symbol-only-halo-rotation
+    symbol_file: symbols/sources/barrier/cattle_grid.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/cattle_grid_large.svg
+    attributes:
+      - int_barrier_orientation
+  barrier=kissing_gate:
+    type: point
+    style: symbol-only-halo-rotation
+    symbol_file: symbols/sources/barrier/kissing_gate.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/kissing_gate_circular_large.svg
+      large+triangular:
+        filters: >-
+          [kissing_gate = 'triangular_profile']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/kissing_gate_triangular_large.svg
+      large+square:
+        filters: >-
+          [kissing_gate = 'square_profile']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/kissing_gate_square_large.svg
+    attributes:
+      - int_barrier_orientation
+      - kissing_gate
+  barrier=chain:
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/chain.svg
+    symbol_color: gate-icon
+    start_symbol: 18
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/chain_large.svg
+  barrier=height_restrictor:
+    type: point
+    style: symbol-sidelabel-halo
+    symbol_file: symbols/sources/barrier/height_restrictor.svg
+    symbol_color: gate-icon
+    start_symbol: 18
+    start_label: 20
+    text_dy: 8
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/height_restrictor_large.svg
+    attributes:
+      - int_maxheight
+  barrier=sliding_gate:
+    type: point
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/gate.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      small+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-attribute-variant
+        symbol_file: symbols/sources/barrier/gate_noaccess.svg
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/sliding_gate.svg
+      large+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/sliding_gate_noaccess.svg
+      xlarge:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/sliding_gate_large.svg
+      xlarge+noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-zoom-attribute-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/sliding_gate_large_noaccess.svg
+    attributes:
+      - int_access
+  barrier=turnstile:
+    type: point
+    style: symbol-only-halo-rotation
+    symbol_file: symbols/sources/barrier/turnstile.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/turnstile_large.svg
+    attributes:
+      - int_barrier_orientation
+  barrier=full-height_turnstile:
+    type: point
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/turnstile.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/turnstile_large.svg
+      xlarge:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/full_height_turnstile.svg
+  barrier=wicket_gate:
+    type: point
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/wicket_gate.svg
+    symbol_color: gate-icon
+    start_symbol: 19
+    modifications:
+      noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: symbol-only-halo-attribute-variant
+        symbol_file: symbols/sources/barrier/wicket_gate_noaccess.svg
+    attributes:
+      - int_access
+  barrier=hampshire_gate:
+    type: point
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/hampshire_gate.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/barrier/hampshire_gate_large.svg
+  barrier=block:
+    style: symbol-only-halo
+    symbol_file: symbols/sources/barrier/block.svg
+    symbol_color: bollard-icon
+    start_symbol: 17
+    modifications:
+      medium:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/block_medium.svg
+        symbol_color: gate-icon
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/block_large.svg
+        symbol_color: gate-icon
+  barrier=log:
+    type: point
+    style: symbol-only-halo-rotation
+    symbol_file: symbols/sources/barrier/log.svg
+    symbol_color: gate-icon
+    start_symbol: 17
+    modifications:
+      medium:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/barrier/log_medium.svg
+      large:
+        style: symbol-only-halo-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/barrier/log_large.svg
+    attributes:
+      - int_barrier_orientation
   barrier=bollard:
     type: point
     style: dot-only
@@ -2198,26 +2769,22 @@ features:
         style: dot-only-zoom-size-variant
         marker_width: 4
         start_symbol: 18
-  barrier=block:
-    style: dot-only
-    marker_width: 3
-    symbol_color: bollard-icon
-    start_symbol: 17
+  man_made=planter:
+    type: point
+    style: symbol-only-non-blocking
+    symbol_file: symbols/sources/man_made/planter_small.svg
+    symbol_color: man-made-icon
+    symbol_color2: planter-fill
+    start_symbol: 18
     modifications:
-      high_zoom:
-        style: dot-only-zoom-size-variant
-        marker_width: 4
-        start_symbol: 18
-  barrier=log:
-    style: dot-only
-    marker_width: 3
-    symbol_color: bollard-icon
-    start_symbol: 17
-    modifications:
-      high_zoom:
-        style: dot-only-zoom-size-variant
-        marker_width: 4
-        start_symbol: 18
+      medium:
+        style: symbol-only-zoom-variant
+        start_symbol: 19
+        symbol_file: symbols/sources/man_made/planter.svg
+      large:
+        style: symbol-only-zoom-variant
+        start_symbol: 20
+        symbol_file: symbols/sources/man_made/planter_large.svg
 
   tourism=viewpoint:
     type: point
@@ -2288,6 +2855,7 @@ features:
         text_dy: 10
         label_size: 11
   railway=halt:
+    type: point
     symbol_file: symbols/sources/square.4.svg
     symbol_color: station-icon
     label_color: station-text
@@ -2302,6 +2870,7 @@ features:
         start_symbol: 15
         symbol_file: symbols/sources/square.6.svg
   railway=tram_stop:
+    type: point
     symbol_file: symbols/sources/square.4.svg
     symbol_color: station-icon
     label_color: station-text
@@ -2353,11 +2922,13 @@ features:
       - icao
       - iata
   aeroway=gate:
+    type: point
     style: ref-only
     start_symbol: 17
     label_color: aeroway-gate-text
 
   amenity=drinking_water:
+    type: point
     symbol_file: symbols/sources/water/drinking_water.svg
     symbol_color: water-icon
     label_color: water-text
@@ -2366,6 +2937,7 @@ features:
     text_dy: 10
     condition: (("natural" IS NULL OR "natural" NOT IN ('spring', 'hot_spring')) AND (man_made IS NULL OR man_made NOT IN ('water_well')))
   amenity=water_point:
+    type: point
     symbol_file: symbols/sources/water/water_tap.svg
     symbol_color: water-icon
     label_color: water-text
@@ -2379,6 +2951,7 @@ features:
     attributes:
       - drinking_water
   man_made=water_tap:
+    type: point
     symbol_file: symbols/sources/water/water_tap.svg
     symbol_color: water-icon
     label_color: water-text
@@ -2531,6 +3104,7 @@ features:
     attributes:
       - int_elevation
   natural=saddle:
+    type: point
     style: with-elevation
     symbol_file: symbols/sources/natural/saddle.svg
     symbol_color: landform-icon
@@ -2542,6 +3116,7 @@ features:
       - int_elevation
 
   natural=cave_entrance:
+    type: point
     symbol_file: symbols/sources/natural/cave.svg
     symbol_color: cave-icon
     label_color: cave-text
@@ -2554,7 +3129,7 @@ features:
     label_color: man-made-text
     start_symbol: 15
     start_label: 17
-    text_dy: 10
+    text_dy: 11
     condition: (tags->'generator:source' = 'wind')
     variants:
       roof:
@@ -2562,8 +3137,17 @@ features:
           "location" IN ('roof', 'rooftop')
         start_symbol: 19
         start_label: 19
+    variants:
+      offshore:
+        condition: >-
+          "offshore" = 'yes'
+        start_symbol: 13
+        start_label: 15
+        text_dy: 13
+        symbol_file: symbols/sources/man_made/generator_wind_offshore.svg
     attributes:
       - location
+      - offshore
 
   military=bunker:
     symbol_file: symbols/sources/man_made/bunker.svg
@@ -2578,6 +3162,14 @@ features:
     label_color: man-made-text
     start_symbol: 16
     start_label: 17
+  man_made=windpump:
+    type: point
+    symbol_file: symbols/sources/man_made/windpump.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 13
   man_made=windmill:
     symbol_file: symbols/sources/man_made/windmill.svg
     symbol_color: man-made-icon
@@ -2585,12 +3177,214 @@ features:
     start_symbol: 16
     start_label: 17
     text_dy: 12
+  man_made=watermill:
+    symbol_file: symbols/sources/man_made/watermill.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 18
+    text_dy: 12
   man_made=water_tower:
     symbol_file: symbols/sources/towers/water_tower.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 17
     start_label: 17
+  man_made=silo:
+    symbol_file: symbols/sources/man_made/silo.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 16
+    start_label: 18
+    way_pixels_min: 300
+    way_pixels_start_all: 18
+    modifications:
+      silage:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_silage
+        symbol_file: symbols/sources/man_made/silo_content.svg
+      gravel:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_gravel
+        symbol_file: symbols/sources/man_made/silo_content.svg
+      salt:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_salt
+        symbol_file: symbols/sources/man_made/silo_content.svg
+      grain:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_grain
+        symbol_file: symbols/sources/man_made/silo_content.svg
+      crop:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_grain
+        symbol_file: symbols/sources/man_made/silo_content.svg
+    attributes:
+      - content
+  man_made=bunker_silo:
+    symbol_file: symbols/sources/man_made/bunker_silo.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 16
+    start_label: 18
+    way_pixels_min: 300
+    way_pixels_start_all: 18
+    text_dy: 8
+    modifications:
+      manure:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_manure
+        symbol_file: symbols/sources/man_made/bunker_silo_content.svg
+      silage:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_silage
+        symbol_file: symbols/sources/man_made/bunker_silo_content.svg
+      coal:
+        attribute: content
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color: "#000000"
+        symbol_color2: content_coal
+        symbol_file: symbols/sources/man_made/bunker_silo_content.svg
+        text_dy: 9
+      gravel:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_gravel
+        symbol_file: symbols/sources/man_made/bunker_silo_content.svg
+      salt:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_salt
+        symbol_file: symbols/sources/man_made/bunker_silo_content.svg
+      grain:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_grain
+        symbol_file: symbols/sources/man_made/bunker_silo_content.svg
+    attributes:
+      - content
+  man_made=reservoir_covered:
+    symbol_file: symbols/sources/man_made/reservoir_covered.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 7
+  man_made=heap:
+    symbol_file: symbols/sources/man_made/heap_small.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 15
+    start_label: 17
+    way_pixels_min: 300
+    way_pixels_start_all: 17
+    text_dy: 8
+    modifications:
+      large:
+        style: standard-symbol-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/man_made/heap.svg
+        text_dy: 9
+      coal:
+        attribute: resource
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color: "#000000"
+        symbol_color2: content_coal
+        symbol_file: symbols/sources/man_made/heap_content.svg
+        text_dy: 9
+      gravel:
+        attribute: resource
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color2: content_gravel
+        symbol_file: symbols/sources/man_made/heap_content.svg
+        text_dy: 9
+      salt:
+        attribute: resource
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color2: content_salt
+        symbol_file: symbols/sources/man_made/heap_content.svg
+        text_dy: 9
+    attributes:
+      - resource
+  man_made=spoil_heap:
+    symbol_file: symbols/sources/man_made/spoil_heap_small.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 15
+    start_label: 17
+    way_pixels_min: 300
+    way_pixels_start_all: 17
+    text_dy: 8
+    modifications:
+      large:
+        style: standard-symbol-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/man_made/spoil_heap.svg
+        text_dy: 9
+  man_made=gasometer:
+    symbol_file: symbols/sources/man_made/gasometer.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 15
+    start_label: 17
+    way_pixels_min: 300
+    way_pixels_start_all: 17
+  man_made=storage_tank:
+    symbol_file: symbols/sources/man_made/storage_tank.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 16
+    start_label: 18
+    way_pixels_min: 300
+    way_pixels_start_all: 18
+    modifications:
+      water:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_water
+        symbol_file: symbols/sources/man_made/storage_tank_content.svg
+      oil:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_oil
+        symbol_file: symbols/sources/man_made/storage_tank_content.svg
+      fuel:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_oil
+        symbol_file: symbols/sources/man_made/storage_tank_content.svg
+      gas:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/storage_tank_gas.svg
+      sewage:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_sewage
+        symbol_file: symbols/sources/man_made/storage_tank_content.svg
+      slurry:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_sewage
+        symbol_file: symbols/sources/man_made/storage_tank_content.svg
+      silage:
+        attribute: content
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_silage
+        symbol_file: symbols/sources/man_made/storage_tank_content.svg
+    attributes:
+      - content
   man_made=lighthouse:
     symbol_file: symbols/sources/towers/lighthouse.svg
     symbol_color: man-made-icon
@@ -2598,22 +3392,161 @@ features:
     start_symbol: 15
     start_label: 15
     text_dy: 12
+    modifications:
+      active:
+        attribute: int_lighthouse_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/lighthouse_light.svg
+      active+variable:
+        attribute: int_lighthouse_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/lighthouse_light_variable.svg
+    attributes:
+      - int_lighthouse_type
+  man_made=telescope:
+    symbol_file: symbols/sources/man_made/telescope_optical.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 11
+    modifications:
+      radio:
+        attribute: "telescope:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/telescope_radio.svg
+    attributes:
+      - "telescope:type"
+  man_made=crane:
+    symbol_file: symbols/sources/man_made/crane.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+    modifications:
+      gantry_crane:
+        attribute: "crane:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/crane_gantry.svg
+      portal_crane:
+        attribute: "crane:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/crane_portal.svg
+      floor-mounted_crane:
+        attribute: "crane:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/crane_floormounted.svg
+      tower_crane:
+        attribute: "crane:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/crane_tower.svg
+    attributes:
+      - "crane:type"
   man_made=mast:
     symbol_file: symbols/sources/towers/mast.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 18
     start_label: 18
-    text_dy: 10
+    text_dy: 12
     modifications:
-      lighting:
-        attribute: "tower:type"
-        style: standard-symbol-attribute-variant
-        symbol_file: symbols/sources/towers/mast_lighting.svg
-      communication:
-        attribute: "tower:type"
+      unknown+communication:
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/mast_communication.svg
+      unknown+lighting:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_lighting.svg
+      unknown+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_siren.svg
+      unknown+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_radar.svg
+      freestanding:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_freestanding.svg
+      freestanding+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_freestanding_communication.svg
+      freestanding+lighting:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_freestanding_lighting.svg
+      freestanding+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_freestanding_siren.svg
+      freestanding+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_freestanding_radar.svg
+      lattice:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_lattice.svg
+      lattice+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_lattice_communication.svg
+      lattice+lighting:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_lattice_lighting.svg
+      lattice+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_lattice_siren.svg
+      lattice+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_lattice_radar.svg
+      guyed_lattice:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_lattice.svg
+      guyed_lattice+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_lattice_communication.svg
+      guyed_lattice+lighting:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_lattice_lighting.svg
+      guyed_lattice+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_lattice_siren.svg
+      guyed_lattice+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_lattice_radar.svg
+      guyed_tube:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_tube.svg
+      guyed_tube+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_tube_communication.svg
+      guyed_tube+lighting:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_tube_lighting.svg
+      guyed_tube+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_tube_siren.svg
+      guyed_tube+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/mast_guyed_tube_radar.svg
     variants:
       height=160:
         condition: (height >= 160) AND "tower:type" NOT IN ('lighting')
@@ -2630,48 +3563,162 @@ features:
     attributes:
       height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
       "tower:type":
+      int_tower_type:
   man_made=tower:
     symbol_file: symbols/sources/towers/tower_generic.svg
     symbol_color: man-made-icon
     label_color: man-made-text
     start_symbol: 17
     start_label: 18
-    text_dy: 10
+    text_dy: 13
     modifications:
+      cooling:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_cooling.svg
+        text_dy: 12
       defensive:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/tower_defensive.svg
-      observation:
+      minaret:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/sources/towers/tower_observation.svg
+        symbol_file: symbols/sources/towers/tower_minaret.svg
       bell_tower:
-        attribute: "tower:type"
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/bell_tower.svg
-      communication:
-        attribute: "tower:type"
+      bell_tower+lattice:
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
-        symbol_file: symbols/sources/towers/tower_cantilever_communication.svg
-      communication+lattice:
-        filters: >-
-          ["tower:type" = 'communication']["tower:construction" = 'lattice']
+        symbol_file: symbols/sources/towers/bell_tower_lattice.svg
+      bell_tower+flat:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_flat.svg
+      bell_tower+flat+lattice:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_flat_lattice.svg
+      bell_tower+gabled:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_gabled.svg
+      bell_tower+gabled+lattice:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_gabled_lattice.svg
+      bell_tower+hipped:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_hipped.svg
+      bell_tower+hipped+lattice:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_hipped_lattice.svg
+      bell_tower+pyramidal:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_pyramidal.svg
+      bell_tower+pyramidal+lattice:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/bell_tower_pyramidal_lattice.svg
+      unknown+observation:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_observation.svg
+      freestanding+observation:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_freestanding_observation.svg
+      lattice+observation:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_lattice_observation.svg
+      unknown+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_communication.svg
+      freestanding+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_freestanding_communication.svg
+      lattice+communication:
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/tower_lattice_communication.svg
-      lighting:
-        attribute: "tower:type"
+      dome+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_dome_communication.svg
+      dish+communication:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_dish_communication.svg
+      unknown+lighting:
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/tower_lighting.svg
-      lighting+lattice:
-        filters: >-
-          ["tower:type" = 'lighting']["tower:construction" = 'lattice']
+      freestanding+lighting:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_freestanding_lighting.svg
+      lattice+lighting:
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/tower_lattice_lighting.svg
+      unknown+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_siren.svg
+      freestanding+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_freestanding_siren.svg
+      lattice+siren:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_lattice_siren.svg
+      unknown+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_radar.svg
+      freestanding+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_freestanding_radar.svg
+      dome+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_dome_radar.svg
+      dish+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_dish_radar.svg
+      lattice+radar:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_lattice_radar.svg
+      freestanding:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_freestanding.svg
       lattice:
-        attribute: "tower:construction"
+        attribute: int_tower_type
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/tower_lattice.svg
+      dome:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_dome.svg
+        text_dy: 12
+      dish:
+        attribute: int_tower_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_dish.svg
+        text_dy: 12
     variants:
       height=160:
         condition: (height >= 160) AND "tower:type" NOT IN ('lighting', 'bell_tower')
@@ -2693,7 +3740,7 @@ features:
     attributes:
       height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
       "tower:type":
-      "tower:construction":
+      int_tower_type:
   man_made=communications_tower:
     symbol_file: symbols/sources/towers/communications_tower.svg
     symbol_color: man-made-icon
@@ -2701,6 +3748,80 @@ features:
     start_symbol: 14
     start_label: 17
     text_dy: 10
+  man_made=petroleum_well:
+    symbol_file: symbols/sources/man_made/petroleum_well_small.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 7
+    modifications:
+      large:
+        style: standard-symbol-zoom-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/man_made/petroleum_well.svg
+        text_dy: 8
+      disused:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/petroleum_well_disused_small.svg
+      large+disused:
+        filters: >-
+          [int_petroleum_well_type = 'disused']
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_file: symbols/sources/man_made/petroleum_well_disused.svg
+        text_dy: 8
+      oil:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color2: content_oil
+        symbol_file: symbols/sources/man_made/petroleum_well_substance.svg
+        text_dy: 8
+      gas:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color2: content_gas
+        symbol_file: symbols/sources/man_made/petroleum_well_substance.svg
+        text_dy: 8
+      disused+oil:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/petroleum_well_disused_small.svg
+      disused+gas:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/petroleum_well_disused_small.svg
+      large+disused+oil:
+        filters: >-
+          [int_petroleum_well_type = 'disused+oil']
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color2: content_oil
+        symbol_file: symbols/sources/man_made/petroleum_well_disused_substance.svg
+        text_dy: 8
+      large+disused+gas:
+        filters: >-
+          [int_petroleum_well_type = 'disused+gas']
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 18
+        symbol_color2: content_gas
+        symbol_file: symbols/sources/man_made/petroleum_well_disused_substance.svg
+        text_dy: 8
+      pump:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/petroleum_pump.svg
+        text_dy: 10
+      disused+pump:
+        attribute: int_petroleum_well_type
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/petroleum_pump_disused.svg
+        text_dy: 10
+    attributes:
+      - int_petroleum_well_type
   historic=city_gate:
     symbol_file: symbols/sources/historic/city_gate.svg
     symbol_color: man-made-icon

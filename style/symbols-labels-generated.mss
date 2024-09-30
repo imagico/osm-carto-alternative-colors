@@ -4877,6 +4877,103 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
+  [feature = 'amenity_ferry_terminal'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_ferry_terminal.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #6942b0;
+      shield-text-dy: 10;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_ferry_terminal.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_ferry_terminal.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #6942b0;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #6942b0;
+      text-dy: 10;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #6942b0;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #6942b0;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+  }
   [feature = 'amenity_car_rental'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
@@ -5474,19 +5571,28 @@
       marker-file: url('symbols/colored/amenity_lounger_large.svg');
     }
   }
-  [feature = 'amenity_waste_basket'] {
+  [feature = 'amenity_waste_basket'][variant = null] {
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_waste_basket.svg');
+  }
+  [feature = 'amenity_waste_basket'][variant = 'recycling'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_waste_basket_recycling.svg');
   }
   [feature = 'amenity_waste_disposal'] {
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_waste_disposal.svg');
+    [int_access = 'restricted'] {
+      marker-opacity: @private-opacity;
+    }
   }
-  [feature = 'amenity_recycling'] {
+  [feature = 'amenity_recycling'][variant = null] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
       marker-anchor-set: '[osm_id]';
@@ -5604,23 +5710,604 @@
       }
     }
   }
+  [feature = 'amenity_recycling'][variant = 'centre'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-placement: interior;
+        marker-clip: false;
+        marker-file: url('symbols/colored/amenity_recycling_centre.svg');
+        [int_access = 'restricted'] {
+          marker-opacity: @private-opacity;
+        }
+      }
+      [vis_type = 'symbol-label'] {
+        shield-placement: interior;
+        shield-clip: false;
+        shield-name: '[name]';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-halo-radius: @standard-halo-radius * 1.0;
+        shield-halo-fill: @standard-halo-fill;
+        shield-wrap-width: @standard-wrap-width;
+        shield-line-spacing: @standard-line-spacing-size;
+        shield-fill: #734a08;
+        shield-text-dy: 13;
+        shield-unlock-image: true;
+        shield-file: url('symbols/colored/amenity_recycling_centre.svg');
+        symbolonly/marker-placement: interior;
+        symbolonly/marker-clip: false;
+        symbolonly/marker-file: url('symbols/colored/amenity_recycling_centre.svg');
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #734a08;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+        [int_access = 'restricted'] {
+          shield-opacity: @private-opacity;
+          shield-text-opacity: @private-opacity;
+          shield-halo-radius: 0;
+          symbolonly/marker-opacity: @private-opacity;
+          textonly/text-opacity: @private-opacity;
+          textonly/text-halo-radius: 0;
+        }
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #734a08;
+        text-dy: 13;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #734a08;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+        [int_access = 'restricted'] {
+          text-opacity: @private-opacity;
+          text-halo-radius: 0;
+          textonly/text-opacity: @private-opacity;
+          textonly/text-halo-radius: 0;
+        }
+      }
+      [vis_type = 'label-only'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #734a08;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+        [int_access = 'restricted'] {
+          text-opacity: @private-opacity;
+          text-halo-radius: 0;
+        }
+      }
+  }
+  [feature = 'amenity_recycling'][variant = 'container'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_recycling_container.svg');
+      [int_access = 'restricted'] {
+        marker-opacity: @private-opacity;
+      }
+  }
   [feature = 'barrier_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_gate.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/barrier_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_gate+small+noaccess based on style symbol-only-halo-attribute-variant
+    [int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_gate_small+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_gate_small+noaccess.svg');
+    }
+    // modification barrier_gate+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 20] {
+      halo/marker-file: url('symbols/colored/barrier_gate_large.svg');
+      marker-file: url('symbols/colored/barrier_gate_large.svg');
+    }
+    // modification barrier_gate+large+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 20][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_gate_large+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_gate_large+noaccess.svg');
+    }
+    // modification barrier_gate+sliding based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 18][int_gate_type = 'sliding'] {
+      halo/marker-file: url('symbols/colored/barrier_gate_sliding.svg');
+      marker-file: url('symbols/colored/barrier_gate_sliding.svg');
+    }
+    // modification barrier_gate+sliding+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 18][int_gate_type = 'sliding'][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_gate_sliding+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_gate_sliding+noaccess.svg');
+    }
+    // modification barrier_gate+sliding+large based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 20][int_gate_type = 'sliding'] {
+      halo/marker-file: url('symbols/colored/barrier_gate_sliding+large.svg');
+      marker-file: url('symbols/colored/barrier_gate_sliding+large.svg');
+    }
+    // modification barrier_gate+sliding+large+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 20][int_gate_type = 'sliding'][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_gate_sliding+large+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_gate_sliding+large+noaccess.svg');
+    }
   }
   [feature = 'barrier_lift_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_lift_gate.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/barrier_lift_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_lift_gate+small+noaccess based on style symbol-only-halo-attribute-variant
+    [int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_lift_gate_small+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_lift_gate_small+noaccess.svg');
+    }
+    // modification barrier_lift_gate+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_lift_gate_large.svg');
+      marker-file: url('symbols/colored/barrier_lift_gate_large.svg');
+    }
+    // modification barrier_lift_gate+large+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 19][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_lift_gate_large+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_lift_gate_large+noaccess.svg');
+    }
   }
   [feature = 'barrier_swing_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_swing_gate.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/barrier_swing_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_swing_gate+small+noaccess based on style symbol-only-halo-attribute-variant
+    [int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_swing_gate_small+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_swing_gate_small+noaccess.svg');
+    }
+    // modification barrier_swing_gate+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_swing_gate_large.svg');
+      marker-file: url('symbols/colored/barrier_swing_gate_large.svg');
+    }
+    // modification barrier_swing_gate+large+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 19][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_swing_gate_large+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_swing_gate_large+noaccess.svg');
+    }
+  }
+  [feature = 'barrier_cycle_barrier'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_cycle_barrier.svg');
+    halo/marker-transform: 'rotate([int_barrier_orientation])';
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_cycle_barrier.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    marker-transform: 'rotate([int_barrier_orientation])';
+  }
+  [feature = 'barrier_stile'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_stile.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_stile.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_stile+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_stile_large.svg');
+      marker-file: url('symbols/colored/barrier_stile_large.svg');
+    }
+    // modification barrier_stile+large+squeezer based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 19][stile = 'squeezer'] {
+      halo/marker-file: url('symbols/colored/barrier_stile_large+squeezer.svg');
+      marker-file: url('symbols/colored/barrier_stile_large+squeezer.svg');
+    }
+  }
+  [feature = 'barrier_cattle_grid'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_cattle_grid.svg');
+    halo/marker-transform: 'rotate([int_barrier_orientation])';
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_cattle_grid.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    marker-transform: 'rotate([int_barrier_orientation])';
+    // modification barrier_cattle_grid+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_cattle_grid_large.svg');
+      marker-file: url('symbols/colored/barrier_cattle_grid_large.svg');
+    }
+  }
+  [feature = 'barrier_kissing_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_kissing_gate.svg');
+    halo/marker-transform: 'rotate([int_barrier_orientation])';
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_kissing_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    marker-transform: 'rotate([int_barrier_orientation])';
+    // modification barrier_kissing_gate+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_kissing_gate_large.svg');
+      marker-file: url('symbols/colored/barrier_kissing_gate_large.svg');
+    }
+    // modification barrier_kissing_gate+large+triangular based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 19][kissing_gate = 'triangular_profile'] {
+      halo/marker-file: url('symbols/colored/barrier_kissing_gate_large+triangular.svg');
+      marker-file: url('symbols/colored/barrier_kissing_gate_large+triangular.svg');
+    }
+    // modification barrier_kissing_gate+large+square based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 19][kissing_gate = 'square_profile'] {
+      halo/marker-file: url('symbols/colored/barrier_kissing_gate_large+square.svg');
+      marker-file: url('symbols/colored/barrier_kissing_gate_large+square.svg');
+    }
+  }
+  [feature = 'barrier_chain'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_chain.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_chain.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_chain+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_chain_large.svg');
+      marker-file: url('symbols/colored/barrier_chain_large.svg');
+    }
+  }
+  [feature = 'barrier_height_restrictor'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      halo/marker-anchor-set: "'halo_'+[osm_id]";
+      halo/marker-line-color: white;
+      halo/marker-line-width: 1.5;
+      halo/marker-placement: interior;
+      halo/marker-clip: false;
+      halo/marker-file: url('symbols/colored/barrier_height_restrictor.svg');
+      marker-anchor-cond: "'halo_'+[osm_id]";
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/barrier_height_restrictor.svg');
+      marker-allow-overlap: true;
+      marker-ignore-placement: true;
+    }
+    [vis_type = 'symbol-label'] {
+      halo/marker-anchor-set: "'halo_'+[osm_id]";
+      halo/marker-line-color: white;
+      halo/marker-line-width: 1.5;
+      halo/marker-placement: interior;
+      halo/marker-clip: false;
+      halo/marker-file: url('symbols/colored/barrier_height_restrictor.svg');
+      marker-anchor-cond: "'halo_'+[osm_id]";
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/barrier_height_restrictor.svg');
+      marker-allow-overlap: true;
+      marker-ignore-placement: true;
+    
+      sidelabel/text-anchor-cond: '[osm_id]';
+      sidelabel/text-allow-overlap-anchor: "'halo_'+[osm_id]";
+      sidelabel/text-placement: interior;
+      sidelabel/text-name: '[int_maxheight]';
+      sidelabel/text-size: 8;
+      sidelabel/text-wrap-width: @standard-wrap-width;
+      sidelabel/text-line-spacing: @standard-line-spacing-size;
+      sidelabel/text-fill: #000000;
+      sidelabel/text-dx: 8;
+      sidelabel/text-horizontal-alignment: right;
+      sidelabel/text-face-name: @book-fonts;
+      sidelabel/text-halo-radius: @standard-halo-radius * 1.0;
+      sidelabel/text-halo-fill: @standard-halo-fill;
+    }
+    [vis_type = 'label-for-symbol'] {
+      sidelabel/text-anchor-cond: '[osm_id]';
+      sidelabel/text-allow-overlap-anchor: "'halo_'+[osm_id]";
+      sidelabel/text-placement: interior;
+      sidelabel/text-name: '[int_maxheight]';
+      sidelabel/text-size: 8;
+      sidelabel/text-wrap-width: @standard-wrap-width;
+      sidelabel/text-line-spacing: @standard-line-spacing-size;
+      sidelabel/text-fill: #000000;
+      sidelabel/text-dx: 8;
+      sidelabel/text-horizontal-alignment: right;
+      sidelabel/text-face-name: @book-fonts;
+      sidelabel/text-halo-radius: @standard-halo-radius * 1.0;
+      sidelabel/text-halo-fill: @standard-halo-fill;
+    }
+    // modification barrier_height_restrictor+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 20] {
+      halo/marker-file: url('symbols/colored/barrier_height_restrictor_large.svg');
+      marker-file: url('symbols/colored/barrier_height_restrictor_large.svg');
+    }
+  }
+  [feature = 'barrier_sliding_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_sliding_gate.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_sliding_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_sliding_gate+small+noaccess based on style symbol-only-halo-attribute-variant
+    [int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_sliding_gate_small+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_sliding_gate_small+noaccess.svg');
+    }
+    // modification barrier_sliding_gate+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 18] {
+      halo/marker-file: url('symbols/colored/barrier_sliding_gate_large.svg');
+      marker-file: url('symbols/colored/barrier_sliding_gate_large.svg');
+    }
+    // modification barrier_sliding_gate+large+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 18][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_sliding_gate_large+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_sliding_gate_large+noaccess.svg');
+    }
+    // modification barrier_sliding_gate+xlarge based on style symbol-only-halo-zoom-variant
+    [zoom >= 20] {
+      halo/marker-file: url('symbols/colored/barrier_sliding_gate_xlarge.svg');
+      marker-file: url('symbols/colored/barrier_sliding_gate_xlarge.svg');
+    }
+    // modification barrier_sliding_gate+xlarge+noaccess based on style symbol-only-halo-zoom-attribute-variant
+    [zoom >= 20][int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_sliding_gate_xlarge+noaccess.svg');
+      marker-file: url('symbols/colored/barrier_sliding_gate_xlarge+noaccess.svg');
+    }
+  }
+  [feature = 'barrier_turnstile'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_turnstile.svg');
+    halo/marker-transform: 'rotate([int_barrier_orientation])';
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_turnstile.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    marker-transform: 'rotate([int_barrier_orientation])';
+    // modification barrier_turnstile+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 18] {
+      halo/marker-file: url('symbols/colored/barrier_turnstile_large.svg');
+      marker-file: url('symbols/colored/barrier_turnstile_large.svg');
+    }
+  }
+  [feature = 'barrier_full-height_turnstile'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_full-height_turnstile.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_full-height_turnstile.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_full-height_turnstile+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 18] {
+      halo/marker-file: url('symbols/colored/barrier_full-height_turnstile_large.svg');
+      marker-file: url('symbols/colored/barrier_full-height_turnstile_large.svg');
+    }
+    // modification barrier_full-height_turnstile+xlarge based on style symbol-only-halo-zoom-variant
+    [zoom >= 20] {
+      halo/marker-file: url('symbols/colored/barrier_full-height_turnstile_xlarge.svg');
+      marker-file: url('symbols/colored/barrier_full-height_turnstile_xlarge.svg');
+    }
+  }
+  [feature = 'barrier_wicket_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_wicket_gate.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_wicket_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_wicket_gate+noaccess based on style symbol-only-halo-attribute-variant
+    [int_access = 'restricted'] {
+      halo/marker-file: url('symbols/colored/barrier_wicket_gate_noaccess.svg');
+      marker-file: url('symbols/colored/barrier_wicket_gate_noaccess.svg');
+    }
+  }
+  [feature = 'barrier_hampshire_gate'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_hampshire_gate.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_hampshire_gate.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_hampshire_gate+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 19] {
+      halo/marker-file: url('symbols/colored/barrier_hampshire_gate_large.svg');
+      marker-file: url('symbols/colored/barrier_hampshire_gate_large.svg');
+    }
+  }
+  [feature = 'barrier_block'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_block.svg');
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_block.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification barrier_block+medium based on style symbol-only-halo-zoom-variant
+    [zoom >= 18] {
+      halo/marker-file: url('symbols/colored/barrier_block_medium.svg');
+      marker-file: url('symbols/colored/barrier_block_medium.svg');
+    }
+    // modification barrier_block+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 20] {
+      halo/marker-file: url('symbols/colored/barrier_block_large.svg');
+      marker-file: url('symbols/colored/barrier_block_large.svg');
+    }
+  }
+  [feature = 'barrier_log'] {
+    halo/marker-anchor-set: "'halo_'+[osm_id]";
+    halo/marker-line-color: white;
+    halo/marker-line-width: 1.5;
+    halo/marker-placement: interior;
+    halo/marker-clip: false;
+    halo/marker-file: url('symbols/colored/barrier_log.svg');
+    halo/marker-transform: 'rotate([int_barrier_orientation])';
+    marker-anchor-cond: "'halo_'+[osm_id]";
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/barrier_log.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    marker-transform: 'rotate([int_barrier_orientation])';
+    // modification barrier_log+medium based on style symbol-only-halo-zoom-variant
+    [zoom >= 18] {
+      halo/marker-file: url('symbols/colored/barrier_log_medium.svg');
+      marker-file: url('symbols/colored/barrier_log_medium.svg');
+    }
+    // modification barrier_log+large based on style symbol-only-halo-zoom-variant
+    [zoom >= 20] {
+      halo/marker-file: url('symbols/colored/barrier_log_large.svg');
+      marker-file: url('symbols/colored/barrier_log_large.svg');
+    }
   }
   [feature = 'barrier_bollard'] {
     marker-anchor-set: '[osm_id]';
@@ -5633,26 +6320,20 @@
       marker-width: 4;
     }
   }
-  [feature = 'barrier_block'] {
+  [feature = 'man_made_planter'] {
     marker-anchor-set: '[osm_id]';
-    marker-width: 3;
-    marker-line-width: 0;
-    marker-fill: #7d7c7c;
     marker-placement: interior;
-    // modification barrier_block+high_zoom based on style dot-only-zoom-size-variant
-    [zoom >= 18] {
-      marker-width: 4;
+    marker-clip: false;
+    marker-file: url('symbols/colored/man_made_planter.svg');
+    marker-allow-overlap: true;
+    marker-ignore-placement: true;
+    // modification man_made_planter+medium based on style symbol-only-zoom-variant
+    [zoom >= 19] {
+      marker-file: url('symbols/colored/man_made_planter_medium.svg');
     }
-  }
-  [feature = 'barrier_log'] {
-    marker-anchor-set: '[osm_id]';
-    marker-width: 3;
-    marker-line-width: 0;
-    marker-fill: #7d7c7c;
-    marker-placement: interior;
-    // modification barrier_log+high_zoom based on style dot-only-zoom-size-variant
-    [zoom >= 18] {
-      marker-width: 4;
+    // modification man_made_planter+large based on style symbol-only-zoom-variant
+    [zoom >= 20] {
+      marker-file: url('symbols/colored/man_made_planter_large.svg');
     }
   }
   [feature = 'tourism_viewpoint'] {
@@ -8656,7 +9337,7 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
-  [feature = 'power_generator/wind'] {
+  [feature = 'power_generator/wind'][variant = null] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
       marker-anchor-set: '[osm_id]';
@@ -8680,7 +9361,7 @@
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #000000;
-      shield-text-dy: 10;
+      shield-text-dy: 11;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/power_generator_wind.svg');
       symbolonly/marker-placement: interior;
@@ -8710,7 +9391,7 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #000000;
-      text-dy: 10;
+      text-dy: 11;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -8752,6 +9433,103 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
+  }
+  [feature = 'power_generator/wind'][variant = 'offshore'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-placement: interior;
+        marker-clip: false;
+        marker-file: url('symbols/colored/power_generator_wind_offshore.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-placement: interior;
+        shield-clip: false;
+        shield-name: '[name]';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-halo-radius: @standard-halo-radius * 1.0;
+        shield-halo-fill: @standard-halo-fill;
+        shield-wrap-width: @standard-wrap-width;
+        shield-line-spacing: @standard-line-spacing-size;
+        shield-fill: #000000;
+        shield-text-dy: 13;
+        shield-unlock-image: true;
+        shield-file: url('symbols/colored/power_generator_wind_offshore.svg');
+        symbolonly/marker-placement: interior;
+        symbolonly/marker-clip: false;
+        symbolonly/marker-file: url('symbols/colored/power_generator_wind_offshore.svg');
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #000000;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #000000;
+        text-dy: 13;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #000000;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-only'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #000000;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+      }
   }
   [feature = 'military_bunker'] {
     [vis_type = 'symbol-for-label'],
@@ -8947,6 +9725,103 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
+  [feature = 'man_made_windpump'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_windpump.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 13;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_windpump.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_windpump.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 13;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+  }
   [feature = 'man_made_windmill'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
@@ -8977,6 +9852,103 @@
       symbolonly/marker-placement: interior;
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/man_made_windmill.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 12;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+  }
+  [feature = 'man_made_watermill'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_watermill.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 12;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_watermill.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_watermill.svg');
       textonly/text-placement: interior;
       textonly/text-name: '[name]';
       textonly/text-size: 10;
@@ -9141,6 +10113,1065 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
+  [feature = 'man_made_silo'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_silo.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_silo.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_silo.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_silo+silage based on style standard-symbol-attribute-variant
+    ["content" = 'silage'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_silo_silage.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_silo_silage.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_silo_silage.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_silo+gravel based on style standard-symbol-attribute-variant
+    ["content" = 'gravel'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_silo_gravel.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_silo_gravel.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_silo_gravel.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_silo+salt based on style standard-symbol-attribute-variant
+    ["content" = 'salt'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_silo_salt.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_silo_salt.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_silo_salt.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_silo+grain based on style standard-symbol-attribute-variant
+    ["content" = 'grain'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_silo_grain.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_silo_grain.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_silo_grain.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_silo+crop based on style standard-symbol-attribute-variant
+    ["content" = 'crop'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_silo_crop.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_silo_crop.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_silo_crop.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'man_made_bunker_silo'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_bunker_silo.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 8;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_bunker_silo.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 8;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_bunker_silo+manure based on style standard-symbol-attribute-variant
+    ["content" = 'manure'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_bunker_silo_manure.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_bunker_silo_manure.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo_manure.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_bunker_silo+silage based on style standard-symbol-attribute-variant
+    ["content" = 'silage'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_bunker_silo_silage.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_bunker_silo_silage.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo_silage.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_bunker_silo+coal based on style standard-symbol-zoom-attribute-variant
+    ["content" = 'coal'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_bunker_silo_coal.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_bunker_silo_coal.svg');
+        shield-text-dy: 9;
+        symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo_coal.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 9;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_bunker_silo+gravel based on style standard-symbol-attribute-variant
+    ["content" = 'gravel'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_bunker_silo_gravel.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_bunker_silo_gravel.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo_gravel.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_bunker_silo+salt based on style standard-symbol-attribute-variant
+    ["content" = 'salt'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_bunker_silo_salt.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_bunker_silo_salt.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo_salt.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_bunker_silo+grain based on style standard-symbol-attribute-variant
+    ["content" = 'grain'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_bunker_silo_grain.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_bunker_silo_grain.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_bunker_silo_grain.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'man_made_reservoir_covered'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_reservoir_covered.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 7;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_reservoir_covered.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_reservoir_covered.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 7;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+  }
+  [feature = 'man_made_heap'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_heap.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 8;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_heap.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_heap.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 8;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_heap+large based on style standard-symbol-zoom-variant
+    [zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_heap_large.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_heap_large.svg');
+        shield-text-dy: 9;
+        symbolonly/marker-file: url('symbols/colored/man_made_heap_large.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 9;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_heap+coal based on style standard-symbol-zoom-attribute-variant
+    ["resource" = 'coal'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_heap_coal.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_heap_coal.svg');
+        shield-text-dy: 9;
+        symbolonly/marker-file: url('symbols/colored/man_made_heap_coal.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 9;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_heap+gravel based on style standard-symbol-zoom-attribute-variant
+    ["resource" = 'gravel'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_heap_gravel.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_heap_gravel.svg');
+        shield-text-dy: 9;
+        symbolonly/marker-file: url('symbols/colored/man_made_heap_gravel.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 9;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_heap+salt based on style standard-symbol-zoom-attribute-variant
+    ["resource" = 'salt'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_heap_salt.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_heap_salt.svg');
+        shield-text-dy: 9;
+        symbolonly/marker-file: url('symbols/colored/man_made_heap_salt.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 9;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'man_made_spoil_heap'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_spoil_heap.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 8;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_spoil_heap.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_spoil_heap.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 8;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_spoil_heap+large based on style standard-symbol-zoom-variant
+    [zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_spoil_heap_large.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_spoil_heap_large.svg');
+        shield-text-dy: 9;
+        symbolonly/marker-file: url('symbols/colored/man_made_spoil_heap_large.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 9;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'man_made_gasometer'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_gasometer.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_gasometer.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_gasometer.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+  }
+  [feature = 'man_made_storage_tank'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_storage_tank.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_storage_tank.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_storage_tank.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_storage_tank+water based on style standard-symbol-attribute-variant
+    ["content" = 'water'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_water.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_water.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_water.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_storage_tank+oil based on style standard-symbol-attribute-variant
+    ["content" = 'oil'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_oil.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_oil.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_oil.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_storage_tank+fuel based on style standard-symbol-attribute-variant
+    ["content" = 'fuel'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_fuel.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_fuel.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_fuel.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_storage_tank+gas based on style standard-symbol-attribute-variant
+    ["content" = 'gas'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_gas.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_gas.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_gas.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_storage_tank+sewage based on style standard-symbol-attribute-variant
+    ["content" = 'sewage'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_sewage.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_sewage.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_sewage.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_storage_tank+slurry based on style standard-symbol-attribute-variant
+    ["content" = 'slurry'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_slurry.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_slurry.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_slurry.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_storage_tank+silage based on style standard-symbol-attribute-variant
+    ["content" = 'silage'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_storage_tank_silage.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_storage_tank_silage.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_storage_tank_silage.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
   [feature = 'man_made_lighthouse'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
@@ -9237,14 +11268,46 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
+    // modification man_made_lighthouse+active based on style standard-symbol-attribute-variant
+    ["int_lighthouse_type" = 'active'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_lighthouse_active.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_lighthouse_active.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_lighthouse_active.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_lighthouse+active+variable based on style standard-symbol-attribute-variant
+    ["int_lighthouse_type" = 'active+variable'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_lighthouse_active+variable.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_lighthouse_active+variable.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_lighthouse_active+variable.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
   }
-  [feature = 'man_made_mast'] {
+  [feature = 'man_made_telescope'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
       marker-anchor-set: '[osm_id]';
       marker-placement: interior;
       marker-clip: false;
-      marker-file: url('symbols/colored/man_made_mast.svg');
+      marker-file: url('symbols/colored/man_made_telescope.svg');
     }
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
@@ -9262,12 +11325,12 @@
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #000000;
-      shield-text-dy: 10;
+      shield-text-dy: 11;
       shield-unlock-image: true;
-      shield-file: url('symbols/colored/man_made_mast.svg');
+      shield-file: url('symbols/colored/man_made_telescope.svg');
       symbolonly/marker-placement: interior;
       symbolonly/marker-clip: false;
-      symbolonly/marker-file: url('symbols/colored/man_made_mast.svg');
+      symbolonly/marker-file: url('symbols/colored/man_made_telescope.svg');
       textonly/text-placement: interior;
       textonly/text-name: '[name]';
       textonly/text-size: 10;
@@ -9292,7 +11355,7 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #000000;
-      text-dy: 10;
+      text-dy: 11;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -9334,32 +11397,658 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
-    // modification man_made_mast+lighting based on style standard-symbol-attribute-variant
-    ["tower:type" = 'lighting'] {
+    // modification man_made_telescope+radio based on style standard-symbol-attribute-variant
+    ["telescope:type" = 'radio'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_mast_lighting.svg');
+        marker-file: url('symbols/colored/man_made_telescope_radio.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_mast_lighting.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_mast_lighting.svg');
+        shield-file: url('symbols/colored/man_made_telescope_radio.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_telescope_radio.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
-    // modification man_made_mast+communication based on style standard-symbol-attribute-variant
-    ["tower:type" = 'communication'] {
+  }
+  [feature = 'man_made_crane'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_crane.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 12;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_crane.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_crane.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 12;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_crane+gantry_crane based on style standard-symbol-attribute-variant
+    ["crane:type" = 'gantry_crane'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_mast_communication.svg');
+        marker-file: url('symbols/colored/man_made_crane_gantry_crane.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_mast_communication.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_mast_communication.svg');
+        shield-file: url('symbols/colored/man_made_crane_gantry_crane.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_crane_gantry_crane.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_crane+portal_crane based on style standard-symbol-attribute-variant
+    ["crane:type" = 'portal_crane'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_crane_portal_crane.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_crane_portal_crane.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_crane_portal_crane.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_crane+floor-mounted_crane based on style standard-symbol-attribute-variant
+    ["crane:type" = 'floor-mounted_crane'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_crane_floor-mounted_crane.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_crane_floor-mounted_crane.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_crane_floor-mounted_crane.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_crane+tower_crane based on style standard-symbol-attribute-variant
+    ["crane:type" = 'tower_crane'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_crane_tower_crane.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_crane_tower_crane.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_crane_tower_crane.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'man_made_mast'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_mast.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 12;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_mast.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_mast.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 12;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_mast+unknown+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_unknown+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_unknown+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_unknown+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+unknown+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_unknown+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_unknown+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_unknown+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+unknown+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_unknown+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_unknown+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_unknown+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+unknown+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_unknown+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_unknown+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_unknown+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+freestanding based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_freestanding.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_freestanding.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_freestanding.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+freestanding+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_freestanding+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_freestanding+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_freestanding+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+freestanding+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_freestanding+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_freestanding+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_freestanding+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+freestanding+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_freestanding+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_freestanding+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_freestanding+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+freestanding+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_freestanding+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_freestanding+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_freestanding+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_lattice.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_lattice.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+lattice+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_lattice+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_lattice+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_lattice+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+lattice+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_lattice+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_lattice+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_lattice+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+lattice+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_lattice+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_lattice+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_lattice+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+lattice+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_lattice+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_lattice+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_lattice+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_lattice'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_lattice.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_lattice.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_lattice+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_lattice+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_lattice+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_lattice+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_lattice+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_lattice+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_lattice+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_lattice+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_lattice+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_lattice+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_lattice+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_lattice+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_lattice+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_lattice+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_lattice+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_lattice+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_lattice+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_lattice+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_lattice+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_lattice+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_tube based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_tube'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_tube.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_tube.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_tube.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_tube+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_tube+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_tube+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_tube+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_tube+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_tube+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_tube+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_tube+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_tube+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_tube+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_tube+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_tube+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_tube+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_tube+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_tube+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mast+guyed_tube+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'guyed_tube+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mast_guyed_tube+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mast_guyed_tube+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mast_guyed_tube+radar.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
@@ -9391,7 +12080,7 @@
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #000000;
-      shield-text-dy: 10;
+      shield-text-dy: 13;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/man_made_tower.svg');
       symbolonly/marker-placement: interior;
@@ -9421,7 +12110,7 @@
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #000000;
-      text-dy: 10;
+      text-dy: 13;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -9463,6 +12152,24 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
+    // modification man_made_tower+cooling based on style standard-symbol-attribute-variant
+    ["tower:type" = 'cooling'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_cooling.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_cooling.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_cooling.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
     // modification man_made_tower+defensive based on style standard-symbol-attribute-variant
     ["tower:type" = 'defensive'] {
       [vis_type = 'symbol-for-label'],
@@ -9479,16 +12186,16 @@
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
-    // modification man_made_tower+observation based on style standard-symbol-attribute-variant
-    ["tower:type" = 'observation'] {
+    // modification man_made_tower+minaret based on style standard-symbol-attribute-variant
+    ["tower:type" = 'minaret'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_tower_observation.svg');
+        marker-file: url('symbols/colored/man_made_tower_minaret.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_tower_observation.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_tower_observation.svg');
+        shield-file: url('symbols/colored/man_made_tower_minaret.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_minaret.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
@@ -9496,7 +12203,7 @@
       }
     }
     // modification man_made_tower+bell_tower based on style standard-symbol-attribute-variant
-    ["tower:type" = 'bell_tower'] {
+    ["int_tower_type" = 'bell_tower'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -9511,64 +12218,464 @@
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
-    // modification man_made_tower+communication based on style standard-symbol-attribute-variant
-    ["tower:type" = 'communication'] {
+    // modification man_made_tower+bell_tower+lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+lattice'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_tower_communication.svg');
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+lattice.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_tower_communication.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_tower_communication.svg');
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+lattice.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
-    // modification man_made_tower+communication+lattice based on style standard-symbol-attribute-variant
-    ["tower:type" = 'communication']["tower:construction" = 'lattice'] {
+    // modification man_made_tower+bell_tower+flat based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+flat'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_tower_communication+lattice.svg');
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+flat.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_tower_communication+lattice.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_tower_communication+lattice.svg');
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+flat.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+flat.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
-    // modification man_made_tower+lighting based on style standard-symbol-attribute-variant
-    ["tower:type" = 'lighting'] {
+    // modification man_made_tower+bell_tower+flat+lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+flat+lattice'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_tower_lighting.svg');
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+flat+lattice.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_tower_lighting.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_tower_lighting.svg');
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+flat+lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+flat+lattice.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
-    // modification man_made_tower+lighting+lattice based on style standard-symbol-attribute-variant
-    ["tower:type" = 'lighting']["tower:construction" = 'lattice'] {
+    // modification man_made_tower+bell_tower+gabled based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+gabled'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_tower_lighting+lattice.svg');
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+gabled.svg');
       }
       [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_tower_lighting+lattice.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_tower_lighting+lattice.svg');
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+gabled.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+gabled.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+bell_tower+gabled+lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+gabled+lattice'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+gabled+lattice.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+gabled+lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+gabled+lattice.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+bell_tower+hipped based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+hipped'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+hipped.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+hipped.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+hipped.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+bell_tower+hipped+lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+hipped+lattice'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+hipped+lattice.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+hipped+lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+hipped+lattice.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+bell_tower+pyramidal based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+pyramidal'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+pyramidal.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+pyramidal.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+pyramidal.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+bell_tower+pyramidal+lattice based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'bell_tower+pyramidal+lattice'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_bell_tower+pyramidal+lattice.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_bell_tower+pyramidal+lattice.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_bell_tower+pyramidal+lattice.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+unknown+observation based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+observation'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_unknown+observation.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_unknown+observation.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_unknown+observation.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+freestanding+observation based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+observation'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_freestanding+observation.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_freestanding+observation.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_freestanding+observation.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+lattice+observation based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+observation'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_lattice+observation.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_lattice+observation.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_lattice+observation.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+unknown+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_unknown+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_unknown+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_unknown+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+freestanding+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_freestanding+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_freestanding+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_freestanding+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+lattice+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_lattice+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_lattice+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_lattice+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+dome+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'dome+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_dome+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_dome+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_dome+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+dish+communication based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'dish+communication'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_dish+communication.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_dish+communication.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_dish+communication.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+unknown+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_unknown+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_unknown+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_unknown+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+freestanding+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_freestanding+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_freestanding+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_freestanding+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+lattice+lighting based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+lighting'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_lattice+lighting.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_lattice+lighting.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_lattice+lighting.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+unknown+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_unknown+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_unknown+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_unknown+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+freestanding+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_freestanding+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_freestanding+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_freestanding+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+lattice+siren based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+siren'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_lattice+siren.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_lattice+siren.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_lattice+siren.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+unknown+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'unknown+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_unknown+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_unknown+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_unknown+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+freestanding+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_freestanding+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_freestanding+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_freestanding+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+dome+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'dome+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_dome+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_dome+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_dome+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+dish+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'dish+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_dish+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_dish+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_dish+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+lattice+radar based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'lattice+radar'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_lattice+radar.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_lattice+radar.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_lattice+radar.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+freestanding based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'freestanding'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_freestanding.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_freestanding.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_freestanding.svg');
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
@@ -9576,7 +12683,7 @@
       }
     }
     // modification man_made_tower+lattice based on style standard-symbol-attribute-variant
-    ["tower:construction" = 'lattice'] {
+    ["int_tower_type" = 'lattice'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -9588,6 +12695,42 @@
       }
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+dome based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'dome'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_dome.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_dome.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_dome.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_tower+dish based on style standard-symbol-attribute-variant
+    ["int_tower_type" = 'dish'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_tower_dish.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_tower_dish.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_tower_dish.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
@@ -9687,6 +12830,295 @@
       [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
+    }
+  }
+  [feature = 'man_made_petroleum_well'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/man_made_petroleum_well.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #000000;
+      shield-text-dy: 7;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/man_made_petroleum_well.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-dy: 7;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #000000;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #000000;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification man_made_petroleum_well+large based on style standard-symbol-zoom-variant
+    [zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_large.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_large.svg');
+        shield-text-dy: 8;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_large.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 8;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+disused based on style standard-symbol-attribute-variant
+    ["int_petroleum_well_type" = 'disused'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_disused.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_disused.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_disused.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+large+disused based on style standard-symbol-zoom-attribute-variant
+    [int_petroleum_well_type = 'disused'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_large+disused.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_large+disused.svg');
+        shield-text-dy: 8;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_large+disused.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 8;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+oil based on style standard-symbol-zoom-attribute-variant
+    ["int_petroleum_well_type" = 'oil'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_oil.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_oil.svg');
+        shield-text-dy: 8;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_oil.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 8;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+gas based on style standard-symbol-zoom-attribute-variant
+    ["int_petroleum_well_type" = 'gas'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_gas.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_gas.svg');
+        shield-text-dy: 8;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_gas.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 8;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+disused+oil based on style standard-symbol-attribute-variant
+    ["int_petroleum_well_type" = 'disused+oil'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_disused+oil.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_disused+oil.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_disused+oil.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+disused+gas based on style standard-symbol-attribute-variant
+    ["int_petroleum_well_type" = 'disused+gas'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_disused+gas.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_disused+gas.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_disused+gas.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+large+disused+oil based on style standard-symbol-zoom-attribute-variant
+    [int_petroleum_well_type = 'disused+oil'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_large+disused+oil.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_large+disused+oil.svg');
+        shield-text-dy: 8;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_large+disused+oil.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 8;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+large+disused+gas based on style standard-symbol-zoom-attribute-variant
+    [int_petroleum_well_type = 'disused+gas'][zoom >= 18] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_large+disused+gas.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_large+disused+gas.svg');
+        shield-text-dy: 8;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_large+disused+gas.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 8;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+pump based on style standard-symbol-attribute-variant
+    ["int_petroleum_well_type" = 'pump'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_pump.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_pump.svg');
+        shield-text-dy: 10;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_pump.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 10;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_petroleum_well+disused+pump based on style standard-symbol-attribute-variant
+    ["int_petroleum_well_type" = 'disused+pump'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_petroleum_well_disused+pump.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_petroleum_well_disused+pump.svg');
+        shield-text-dy: 10;
+        symbolonly/marker-file: url('symbols/colored/man_made_petroleum_well_disused+pump.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 10;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
     }
   }
   [feature = 'historic_city_gate'] {

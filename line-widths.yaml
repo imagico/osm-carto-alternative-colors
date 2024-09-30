@@ -107,6 +107,9 @@ sql:
     - tree_row
     - gully
     - crevasse
+    - pier
+    - breakwater
+    - groyne
     - viewpoint
   pipeline:
     - pipe_length
@@ -561,3 +564,21 @@ classes:
     18: 1.2
     19: 1.4
     20: 1.4
+  pier:
+    12: 1.5
+    13: 2.5
+    14: 3.5
+    15: 5
+    16: 7
+  breakwater:
+    12: 1.5
+    13: 2
+    14: 3
+    15: 4
+    16: 5
+  groyne:
+    12: 1
+    13: 1.7
+    14: 2.4
+    15: 3.2
+    16: 4

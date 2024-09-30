@@ -687,6 +687,33 @@ select
         when $2 >= 20 then 14.0
         else 0.0
       end)
+    when $1 = 'pier' then
+      (case
+        when $2 = 12 then 1.5
+        when $2 = 13 then 2.5
+        when $2 = 14 then 3.5
+        when $2 = 15 then 5.0
+        when $2 >= 16 then 7.0
+        else 0.0
+      end)
+    when $1 = 'breakwater' then
+      (case
+        when $2 = 12 then 1.5
+        when $2 = 13 then 2.0
+        when $2 = 14 then 3.0
+        when $2 = 15 then 4.0
+        when $2 >= 16 then 5.0
+        else 0.0
+      end)
+    when $1 = 'groyne' then
+      (case
+        when $2 = 12 then 1.0
+        when $2 = 13 then 1.7
+        when $2 = 14 then 2.4
+        when $2 = 15 then 3.2
+        when $2 >= 16 then 4.0
+        else 0.0
+      end)
     when $1 = 'viewpoint' then
       (case
         when $2 = 16 then 14.0
