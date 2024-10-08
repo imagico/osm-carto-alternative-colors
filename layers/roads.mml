@@ -1208,4 +1208,5 @@
             osm_id
         ) AS roads_sql
     properties:
+      cache-features: true
       minzoom: 10

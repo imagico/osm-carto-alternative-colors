@@ -2,8 +2,8 @@
 @ferry-route-text: @ferry-route;
 
 #ferry-routes-lz[zoom >= 7],
-#roads[zoom >= 10][road_layer = 'ferry_routes'],
-#roads-noareas[zoom >= 10][road_layer = 'ferry_routes'] {
+#roads::main[zoom >= 10][road_layer = 'ferry_routes'],
+#roads::noareas[zoom >= 14][road_layer = 'ferry_routes'] {
   /* background prevents problems with overlapping ferry-routes, see #457 */
   background/line-color: @river-color;
   background/line-width: 1; /* Needs to be a bit wider than the route itself because of antialiasing */

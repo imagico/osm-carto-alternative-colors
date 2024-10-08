@@ -199,15 +199,6 @@ layers:
       - style/road-colors-generated.mss
       - style/line-widths-generated.mss
       - style/barriers.mss
-  roads-noareas:
-    source: layers/roads_noareas.mml
-    stylesheets:
-      - style/roads.mss
-      - style/road-colors-generated.mss
-      - style/line-widths-generated.mss
-      - style/barriers.mss
-    tags:
-      - "ac"
   roads-line-mask:
     source: layers/roads_line_mask.mml
     stylesheets:

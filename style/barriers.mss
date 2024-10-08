@@ -142,8 +142,8 @@
 }
 
 #roads-line-mask[ftype = 'barrier'],
-#roads[zoom >= 10][road_layer = 'line_barriers'],
-#roads-noareas[zoom >= 10][road_layer = 'line_barriers'] {
+#roads::main[zoom >= 10][road_layer = 'line_barriers'],
+#roads::noareas[zoom >= 14][road_layer = 'line_barriers'] {
   [zoom >= 16] {
     line-width: 0.4;
     line-color: #444;
@@ -225,8 +225,8 @@
   }
 }
 
-#roads[zoom >= 18][road_layer = 'line_barrier_areas'],
-#roads-noareas[zoom >= 18][road_layer = 'line_barrier_areas'] {
+#roads::main[zoom >= 18][road_layer = 'line_barrier_areas'],
+#roads::noareas[zoom >= 18][road_layer = 'line_barrier_areas'] {
   [feature = 'barrier_wall'] {
     line-color: #444;
     line-width: 0.25;

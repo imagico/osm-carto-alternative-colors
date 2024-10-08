@@ -147,7 +147,8 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 /* Practically this is z<12 only, higher zoom levels have separate casing rules below */
 
 #roads-low-zoom[zoom < 10],
-#roads[zoom >= 10] {
+#roads::main[zoom >= 10],
+#roads::noareas[zoom >= 14] {
 
   [road_layer = 'casing'] {
     [feature = 'highway_motorway'][link != 'yes'][int_tunnel = 'no'][int_bridge = 'no'][zoom >= 8][zoom < 12],
@@ -197,8 +198,8 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
 }
 
-#roads,
-#roads-noareas {
+#roads::main,
+#roads::noareas[zoom >= 14] {
 
   [road_layer = 'casing'][zoom >= 12] {
 
@@ -1175,21 +1176,21 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           line-width: [width_nominal] + 2 * @paths-background-width;
         }
       }
-      #roads {
-      [int_tunnel = 'no'][int_bridge = 'no'] {
-        [zoom >= 13][int_access != 'no'],
-        [zoom >= 15] {
-          [zoom < 18],
-          [width <= 4.0] {
-            line-color: @footway-casing;
-            line-cap: round;
-            line-join: round;
-            line-width: [width_nominal] + 2 * @paths-background-width*0.8;
-            line-opacity: 0.3;
-            [zoom >= 15] { line-opacity: 0.65; }
+      ::main {
+        [int_tunnel = 'no'][int_bridge = 'no'] {
+          [zoom >= 13][int_access != 'no'],
+          [zoom >= 15] {
+            [zoom < 18],
+            [width <= 4.0] {
+              line-color: @footway-casing;
+              line-cap: round;
+              line-join: round;
+              line-width: [width_nominal] + 2 * @paths-background-width*0.8;
+              line-opacity: 0.3;
+              [zoom >= 15] { line-opacity: 0.65; }
+            }
           }
         }
-      }
       }
     }
 
@@ -1212,21 +1213,21 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           line-width: [width_nominal] + 2 * @paths-background-width;
         }
       }
-      #roads {
-      [int_tunnel = 'no'][int_bridge = 'no'] {
-        [zoom >= 13][int_access != 'no'],
-        [zoom >= 15] {
-          [zoom < 18],
-          [width <= 4.0] {
-            line-color: @cycleway-casing;
-            line-cap: round;
-            line-join: round;
-            line-width: [width_nominal] + 2 * @paths-background-width*0.8;
-            line-opacity: 0.3;
-            [zoom >= 15] { line-opacity: 0.65; }
+      ::main {
+        [int_tunnel = 'no'][int_bridge = 'no'] {
+          [zoom >= 13][int_access != 'no'],
+          [zoom >= 15] {
+            [zoom < 18],
+            [width <= 4.0] {
+              line-color: @cycleway-casing;
+              line-cap: round;
+              line-join: round;
+              line-width: [width_nominal] + 2 * @paths-background-width*0.8;
+              line-opacity: 0.3;
+              [zoom >= 15] { line-opacity: 0.65; }
+            }
           }
         }
-      }
       }
     }
 
@@ -1272,21 +1273,21 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
       /* The white casing that you mainly see against forests and other dark features */
-      #roads {
-      [int_tunnel = 'no'][int_bridge = 'no'] {
-        [zoom >= 13][int_access != 'no'],
-        [zoom >= 15] {
-          [zoom < 18],
-          [width <= 4.0] {
-            line-opacity: 0.3;
-            [zoom >= 14] { line-opacity: 0.4; }
-            line-color: @track-casing;
-            line-join: round;
-            line-cap: round;
-            line-width: [width_nominal] + 2 * @paths-background-width;
+      ::main {
+        [int_tunnel = 'no'][int_bridge = 'no'] {
+          [zoom >= 13][int_access != 'no'],
+          [zoom >= 15] {
+            [zoom < 18],
+            [width <= 4.0] {
+              line-opacity: 0.3;
+              [zoom >= 14] { line-opacity: 0.4; }
+              line-color: @track-casing;
+              line-join: round;
+              line-cap: round;
+              line-width: [width_nominal] + 2 * @paths-background-width;
+            }
           }
         }
-      }
       }
     }
 
@@ -1405,8 +1406,8 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 }
 
 #roads-low-zoom[zoom < 10],
-#roads[zoom >= 10],
-#roads-noareas[zoom >= 14] {
+#roads::main[zoom >= 10],
+#roads::noareas[zoom >= 14] {
 
   [road_layer = 'fill'] {
 
@@ -1528,9 +1529,9 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
 
-      #roads,
-      #roads-noareas[int_tunnel != 'no'],
-      #roads-noareas[int_bridge != 'no'] {
+      ::main,
+      ::noareas[int_tunnel != 'no'],
+      ::noareas[int_bridge != 'no'] {
         [feature = 'highway_bridleway'],
         [feature = 'highway_path'][path_type = 'horse'] {
           [zoom >= 13][int_access != 'no'],
@@ -1635,7 +1636,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         [feature = 'highway_track'] {
           [zoom >= 13][int_access != 'no'],
           [zoom >= 15] {
-            /* Set the properties of the brown inside */
+            // Set the properties of the brown inside
             line-color: @track-fill;
             [int_access = 'no'] { line-color: @track-fill-noaccess; }
             [int_access = 'foot'] { line-color: @footway-fill; }
@@ -2306,8 +2307,8 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
 }
 
-#roads,
-#roads-noareas {
+#roads::main,
+#roads::noareas {
 
   [road_layer = 'tc_casing'][zoom >= 15] {
     line-width: [width];
@@ -2554,9 +2555,9 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
 
       // this is the normal road area casings, which are not rendered in the noareas layer except for junctions and bridges
-      #roads,
-      #roads-noareas[road_layer = 'junction_fill'],
-      #roads-noareas[int_bridge != 'no'] {
+      ::main,
+      ::noareas[road_layer = 'junction_fill'],
+      ::noareas[int_bridge != 'no'] {
 
         [feature = 'highway_residential'],
         [feature = 'highway_unclassified'],
@@ -2639,7 +2640,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
       // this is the outline only road area casings, which are rendered for tunnels in the noareas layer
       // for example to show subway platforms under pedestrian areas
-      #roads-noareas[road_layer = 'area_casing'][int_bridge = 'no'][int_tunnel != 'no'] {
+      ::noareas[road_layer = 'area_casing'][int_bridge = 'no'][int_tunnel != 'no'] {
 
         [feature = 'highway_residential'],
         [feature = 'highway_unclassified'],
@@ -2778,9 +2779,9 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
       }
 
-      #roads,
-      #roads-noareas[road_layer = 'junction_fill'],
-      #roads-noareas[int_bridge != 'no'] {
+      ::main,
+      ::noareas[road_layer = 'junction_fill'],
+      ::noareas[int_bridge != 'no'] {
 
         [feature = 'highway_residential'],
         [feature = 'highway_unclassified'] {
@@ -2877,10 +2878,10 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       }
     }
 
-    #roads,
-    #roads-noareas[road_layer = 'junction_fill'],
-    #roads-noareas[road_layer = 'junction_fill'],
-    #roads-noareas[int_bridge != 'no'] {
+    ::main,
+    ::noareas[road_layer = 'junction_fill'],
+    ::noareas[road_layer = 'junction_fill'],
+    ::noareas[int_bridge != 'no'] {
       [feature = 'aeroway_runway'][zoom >= 11] {
         [zoom < 14],
         [int_surface != 'unpaved'] {
@@ -3775,7 +3776,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
   }
 }
 
-#roads-noareas {
+#roads::noareas {
   gmic: '-to_rgba.';
 }
 

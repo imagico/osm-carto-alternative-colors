@@ -4970,15 +4970,8 @@ Layer:
             osm_id
         ) AS roads_sql
     properties:
+      cache-features: true
       minzoom: 10
-  - id: roads-noareas
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      geometry_table: planet_osm_line
-      table: *roads_sql
-    properties:
-      minzoom: 14
   - id: roads-line-mask
     <<: *extents
     Datasource:

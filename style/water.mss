@@ -200,8 +200,8 @@
   }
 }
 
-#roads[road_layer = 'waterway_bridges_casing'],
-#roads-noareas[road_layer = 'waterway_bridges_casing'] {
+#roads::main[road_layer = 'waterway_bridges_casing'],
+#roads::noareas[road_layer = 'waterway_bridges_casing'] {
   [feature = 'waterway_canal'],
   [feature = 'waterway_river'] {
     [int_bridge = 'yes'] {
@@ -241,9 +241,9 @@
 }
 
 #water-lines,
-#roads-noareas[road_layer = 'waterway_supplement'],
-#roads[road_layer = 'waterway_bridges_fill'],
-#roads-noareas[road_layer = 'waterway_bridges_fill'] {
+#roads::noareas[road_layer = 'waterway_supplement'],
+#roads::main[road_layer = 'waterway_bridges_fill'],
+#roads::noareas[road_layer = 'waterway_bridges_fill'] {
   [feature = 'waterway_canal'][zoom >= 12],
   [feature = 'waterway_river'][zoom >= 12] {
     // the additional line of land color is used to provide a background for dashed casings
