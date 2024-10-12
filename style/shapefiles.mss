@@ -20,6 +20,10 @@
   comp-op: dst-out;
 }
 
+#ocean {
+  gmic: '+to_rgba. -name. use';
+}
+
 .ocean-backdrop {
   polygon-fill: @ocean-color;
   comp-op: dst-over;

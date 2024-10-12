@@ -221,6 +221,14 @@
             (
               @@include(roads/tc.sql)
             ), -- end of tc_all CTE
+            piers_poly_all AS
+            (
+              @@include(roads/piers_poly.sql)
+            ), -- end of piers_poly_all CTE
+            piers_line_all AS
+            (
+              @@include(roads/piers_line.sql)
+            ), -- end of piers_line_all CTE
             line_barriers_all AS
             (
             @@if(ac)
@@ -1074,6 +1082,156 @@
                 z_order
               FROM pipelines_all
             UNION ALL
+            SELECT -- piers_poly_main
+                way,
+                'piers_poly_main' AS road_layer,
+                'pier' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                material AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                mooring AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                way_pixels AS width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM piers_poly_all
+            UNION ALL
+            SELECT -- piers_poly_backdrop
+                way,
+                'piers_poly_backdrop' AS road_layer,
+                'pier' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                material AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                mooring AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                way_pixels AS width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM piers_poly_all
+              WHERE mooring = 'yes'
+            UNION ALL
+            SELECT -- piers_line_main
+                way,
+                'piers_line_main' AS road_layer,
+                'pier' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                material AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                mooring AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM piers_line_all
+            UNION ALL
+            SELECT -- piers_line_backdrop
+                way,
+                'piers_line_backdrop' AS road_layer,
+                'pier' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                material AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                mooring AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM piers_line_all
+              WHERE width >= 10 AND mooring = 'yes'
+            UNION ALL
+            SELECT -- piers_line_symbols
+                (ST_Dump(
+                  CASE
+                    WHEN length < 3.0*width THEN ST_LineInterpolatePoint(way, 0.5)
+                    WHEN length < 5.0*width THEN ST_Collect(ST_LineInterpolatePoint(way, 0.25), ST_LineInterpolatePoint(way, 0.75))
+                    ELSE ST_Collect(ARRAY[ST_LineInterpolatePoint(way, 0.2), ST_LineInterpolatePoint(way, 0.5), ST_LineInterpolatePoint(way, 0.8)])
+                  END
+                )).geom AS way,
+                'piers_line_symbols' AS road_layer,
+                'pier' AS feature,
+                'null' AS path_type,
+                'null' AS intermittent,
+                'null' AS seasonal,
+                material AS int_surface,
+                'no' AS int_tunnel,
+                'no' AS int_bridge,
+                'null' AS int_lanes,
+                'null' AS int_access,
+                'null' AS construction,
+                mooring AS service,
+                'no' AS link,
+                'null' tc_type,
+                0 AS width_lane,
+                0 AS width_nominal,
+                0 AS width_max,
+                (CASE WHEN length < width THEN length ELSE width END) AS width,
+                0 AS casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM 
+                (SELECT
+                    way,
+                    ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length,
+                    width,
+                    mooring,
+                    material,
+                    layernotnull,
+                    osm_id,
+                    z_order
+                  FROM piers_line_all
+                  WHERE width >= 10 AND mooring = 'yes'
+                ) AS piers_wide_mooring
+            UNION ALL
             SELECT -- landuse_overlay
                 way,
                 'landuse_overlay' AS road_layer,
@@ -1144,13 +1302,18 @@
               WHEN road_layer = 'lanes' THEN 8
               WHEN road_layer = 'access' THEN 8
               WHEN road_layer = 'tc_fill' THEN 8
+              WHEN road_layer = 'piers_poly_main' THEN 8
+              WHEN road_layer = 'piers_line_main' THEN 8
+              WHEN road_layer = 'piers_line_symbols' THEN 8
+              WHEN road_layer = 'piers_poly_backdrop' THEN 8
+              WHEN road_layer = 'piers_line_backdrop' THEN 8
               WHEN road_layer = 'pipeline_casing' THEN 9
               WHEN road_layer = 'pipeline_fill' THEN 9
               WHEN road_layer = 'pipeline_flange' THEN 9
               WHEN road_layer = 'centerline_top' THEN 10
             END,
             layernotnull,
-            z_order,
+            z_order NULLS FIRST,
             CASE
               WHEN road_layer = 'waterway_supplement' THEN -1
               WHEN road_layer = 'waterway_bridges_casing' THEN 0
@@ -1166,19 +1329,24 @@
               WHEN road_layer = 'casing' THEN 10
               WHEN road_layer = 'background' THEN 11
               WHEN road_layer = 'background_unpaved' THEN 11
-              WHEN road_layer = 'area_fill' THEN 12
-              WHEN road_layer = 'junction_fill' THEN 13
-              WHEN road_layer = 'fill' THEN 14
-              WHEN road_layer = 'fill_unpaved' THEN 15
-              WHEN road_layer = 'fill_lanes' THEN 16
-              WHEN road_layer = 'parkings_lane' THEN 17
-              WHEN road_layer = 'centerline' THEN 18
-              WHEN road_layer = 'lanes' THEN 19
-              WHEN road_layer = 'access' THEN 20
-              WHEN road_layer = 'tc_fill' THEN 21
-              WHEN road_layer = 'pipeline_fill' THEN 22
-              WHEN road_layer = 'pipeline_flange' THEN 23
-              WHEN road_layer = 'centerline_top' THEN 24
+              WHEN road_layer = 'piers_poly_main' THEN 12
+              WHEN road_layer = 'piers_line_main' THEN 13
+              WHEN road_layer = 'piers_line_symbols' THEN 14
+              WHEN road_layer = 'piers_poly_backdrop' THEN 15
+              WHEN road_layer = 'piers_line_backdrop' THEN 16
+              WHEN road_layer = 'area_fill' THEN 17
+              WHEN road_layer = 'junction_fill' THEN 18
+              WHEN road_layer = 'fill' THEN 19
+              WHEN road_layer = 'fill_unpaved' THEN 20
+              WHEN road_layer = 'fill_lanes' THEN 21
+              WHEN road_layer = 'parkings_lane' THEN 22
+              WHEN road_layer = 'centerline' THEN 23
+              WHEN road_layer = 'lanes' THEN 24
+              WHEN road_layer = 'access' THEN 25
+              WHEN road_layer = 'tc_fill' THEN 26
+              WHEN road_layer = 'pipeline_fill' THEN 27
+              WHEN road_layer = 'pipeline_flange' THEN 28
+              WHEN road_layer = 'centerline_top' THEN 29
             END,
             CASE
               WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0

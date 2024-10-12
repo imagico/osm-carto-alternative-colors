@@ -1,12 +1,12 @@
 # ---------------------------------------------------------------------------
-#  piers.mml
+#  breakwaters.mml
 #
-#  piers layers
+#  breakwaters layers (including groyne)
 #
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -35,7 +35,7 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-  - id: piers-poly
+  - id: breakwaters-poly
     geometry: polygon
     <<: *extents
     Datasource:
@@ -53,11 +53,10 @@
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
           WHERE man_made IN ('pier', 'breakwater', 'groyne')
-        ) AS piers_poly
+        ) AS breakwaters_poly
     properties:
-      cache-features: true
       minzoom: 12
-  - id: piers-line
+  - id: breakwaters-line
     <<: *extents
     Datasource:
       <<: *osm2pgsql
@@ -104,6 +103,15 @@
               FROM piers_raw
             UNION ALL
             SELECT
+                way,
+                'pier_backdrop' AS man_made,
+                width,
+                mooring,
+                material
+              FROM piers_raw
+              WHERE man_made = 'pier' AND width >= 10 AND mooring = 'yes'
+            UNION ALL
+            SELECT
                 (ST_Dump(
                   CASE
                     WHEN length < 3.0*width THEN ST_LineInterpolatePoint(way, 0.5)
@@ -128,8 +136,11 @@
             ) AS _
           ORDER BY
             -- symbol nodes last so symbols are drawn above the line signatures
-            CASE WHEN man_made = 'pier_symbol' THEN 2 ELSE 1 END
-        ) AS piers_line
+            CASE 
+              WHEN man_made = 'pier_backdrop' THEN 3
+              WHEN man_made = 'pier_symbol' THEN 2
+              ELSE 1
+            END
+        ) AS breakwaters_line
     properties:
-      cache-features: true
       minzoom: 12

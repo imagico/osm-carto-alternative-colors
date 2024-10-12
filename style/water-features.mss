@@ -122,15 +122,7 @@
   }
 }
 
-#piers-poly[zoom >= 12] {
-  ::main {
-    [man_made = 'pier'] {
-      polygon-fill: @land-color;
-      [mooring = 'yes'][zoom >= 15][way_pixels > 240] {
-        polygon-comp-op: dst-out;
-      }
-    }
-
+#breakwaters-poly[zoom >= 12] {
     [man_made = 'breakwater'],
     [man_made = 'groyne'] {
       polygon-fill: @breakwater-color;
@@ -139,36 +131,9 @@
         polygon-pattern-alignment: global;
       }
     }
-  }
-  ::backdrop {
-    [man_made = 'pier']
-    [mooring = 'yes']
-    [zoom >= 15]
-    [way_pixels > 240] {
-      polygon-fill: @land-color;
-      marker-file: url('symbols/transport/anchor_small.svg');
-      marker-placement: interior;
-      marker-clip: false;
-      marker-fill: desaturate(darken(@land-color, 9%), 5%);
-      marker-ignore-placement: true;
-      marker-allow-overlap: true;
-      [way_pixels > 360] { marker-file: url('symbols/transport/anchor_medium.svg'); }
-      [way_pixels > 600] { marker-file: url('symbols/transport/anchor_large.svg'); }
-      comp-op: dst-over;
-    }
-  }
 }
 
-#piers-line[zoom >= 12] {
-  ::main {
-    [man_made = 'pier'] {
-      line-width: [width];
-      line-color: @land-color;
-      [mooring = 'yes'][zoom >= 15][width >= 10] {
-        line-comp-op: dst-out;
-      }
-    }
-
+#breakwaters-line[zoom >= 12] {
     [man_made = 'breakwater'],
     [man_made = 'groyne'] {
       line-width: [width];
@@ -180,31 +145,125 @@
         line-pattern-file: url('symbols/patterns/breakwater_stone.png');
       }
     }
+}
+
+#piers-casing[zoom >= 15] {
+  line-width: 2;
+  line-color: mix(@river-color, @water-icon, 50%);
+  comp-op: dst-over;
+}
+
+#quays[zoom >= 14] {
+  [feature = 'line'] {
+    line-width: 1.0;
+    line-color: #7b7b7b;
+    [zoom >= 15] {
+      line-width: 1.4;
+      [zoom >= 16] {
+        line-width: 1.8;
+        [zoom >= 17] {
+          side1/line-width: 0.35;
+          side1/line-color: #7b7b7b;
+          side1/line-offset: 2.05;
+          side1/line-dasharray: 3.5,1;
+          side2/line-width: 0.35;
+          side2/line-color: #7b7b7b;
+          side2/line-offset: -2.05;
+          side2/line-dasharray: 3.5,1;
+          [zoom >= 18] {
+            side1/line-offset: 2.65;
+            side2/line-offset: -2.65;
+          }
+        }
+      }
+    }
   }
-  ::backdrop {
-    [man_made = 'pier']
-    [mooring = 'yes']
-    [zoom >= 15]
-    [width >= 10] {
-      // backdrop is larger to avoid edge artefacts
-      line-width: [width]+1;
-      line-cap: round;
-      line-color: @land-color;
-      comp-op: dst-over;
+  [feature = 'polygon'] {
+    line-width: 0.5;
+    line-offset: -0.25;
+    line-color: #7b7b7b;
+    [zoom >= 15] {
+      line-width: 0.7;
+      line-offset: -0.35;
+      [zoom >= 16] {
+        line-width: 0.9;
+        line-offset: -0.45;
+        [zoom >= 17] {
+          backside/line-width: 0.35;
+          backside/line-color: #7b7b7b;
+          backside/line-offset: -2.05;
+          backside/line-dasharray: 3.5,1;
+          [zoom >= 18] {
+            backside/line-offset: -2.65;
+          }
+        }
+      }
     }
-    [man_made = 'pier_symbol']
-    [mooring = 'yes']
-    [zoom >= 15]
-    [width >= 10] {
-      marker-file: url('symbols/transport/anchor_small.svg');
-      marker-placement: interior;
-      marker-clip: false;
-      marker-fill: desaturate(darken(@land-color, 9%), 5%);
-      marker-ignore-placement: true;
-      marker-allow-overlap: true;
-      [width >= 12] { marker-file: url('symbols/transport/anchor_medium.svg'); }
-      [width >= 15] { marker-file: url('symbols/transport/anchor_large.svg'); }
-    }
+  }
+
+  gmic: "zoom={round(log2(559082264.028/$_mapnik_scale_denominator))} +channels[quays] 3 -name. quays_mask -channels[ocean] 3 -channels[water_areas_mask] 3 -max[ocean] [water_areas_mask] +dilate_circ[ocean] {1.0+if($zoom>=17,8.0,2.0)*$_mapnik_scale_factor} -name. water_mask_buffer -sub[water_mask_buffer] [ocean] -min[quays_mask] [water_mask_buffer] -to_rgb[quays] -append[quays] [quays_mask],c -keep[quays] -name. use";
+
+}
+
+#roads::main[zoom >= 12][road_layer = 'piers_poly_main'] {
+  polygon-fill: @land-color;
+  // width is way_pixels, service is mooring here
+  [service = 'yes'][zoom >= 15][width > 240] {
+    polygon-comp-op: dst-out;
+  }
+}
+
+
+#roads::main[zoom >= 15][road_layer = 'piers_poly_backdrop'] {
+  // width is way_pixels here
+  [width > 240] {
+    symbol/marker-file: url('symbols/transport/anchor_small.svg');
+    symbol/marker-placement: interior;
+    symbol/marker-clip: false;
+    symbol/marker-fill: desaturate(darken(@land-color, 9%), 5%);
+    symbol/marker-ignore-placement: true;
+    symbol/marker-allow-overlap: true;
+    [width > 360] { symbol/marker-file: url('symbols/transport/anchor_medium.svg'); }
+    [width > 600] { symbol/marker-file: url('symbols/transport/anchor_large.svg'); }
+    symbol/marker-comp-op: dst-over;
+    // backdrop is larger to avoid edge artefacts
+    outline/line-color: @land-color;
+    outline/line-comp-op: dst-over;
+    fill/polygon-fill: @land-color;
+    fill/polygon-comp-op: dst-over;
+  }
+}
+
+#roads::main[zoom >= 12][road_layer = 'piers_line_main'] {
+  line-width: [width];
+  line-color: @land-color;
+  // service is mooring here
+  [service = 'yes'][zoom >= 15][width >= 10] {
+    line-comp-op: dst-out;
+  }
+}
+
+#roads::main[zoom >= 15][road_layer = 'piers_line_symbols'] {
+  [width >= 10] {
+    marker-file: url('symbols/transport/anchor_small.svg');
+    marker-placement: interior;
+    marker-clip: false;
+    marker-fill: desaturate(darken(@land-color, 9%), 5%);
+    marker-ignore-placement: true;
+    marker-allow-overlap: true;
+    [width >= 12] { marker-file: url('symbols/transport/anchor_medium.svg'); }
+    [width >= 15] { marker-file: url('symbols/transport/anchor_large.svg'); }
+    marker-comp-op: dst-over;
+  }
+}
+
+#roads::main[zoom >= 15][road_layer = 'piers_line_backdrop'] {
+  [width >= 10] {
+    // backdrop is larger to avoid edge artefacts
+    line-width: [width]+1;
+    line-cap: round;
+    line-color: @land-color;
+    line-comp-op: dst-over;
   }
 }
 

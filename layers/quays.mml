@@ -1,12 +1,13 @@
 # ---------------------------------------------------------------------------
-#  water-areas.mml
+#  quays.mml
 #
-#  water polygon layer
+#  layer for rendering man_made=quay in a retaining_wall like fashion
+#  without relying on way orientation
 #
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -35,33 +36,24 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-  - id: water-areas
-    geometry: polygon
+  - id: quays
     <<: *extents
     Datasource:
       <<: *osm2pgsql
       table: |-
         (SELECT
             way,
-            "natural",
-            waterway,
-            water,
-            tags->'intermittent' as intermittent,
-            tags->'seasonal' as seasonal,
-            tags->'salt' as salt,
-            tags->'glacier:type' as glacier_type,
-            landuse,
-            way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
+            'polygon' AS feature
           FROM planet_osm_polygon
-          WHERE
-            (waterway IN ('dock', 'riverbank')
-              OR landuse IN ('reservoir', 'basin')
-              OR "natural" IN ('water', 'glacier'))
-            AND (landuse IS NULL OR landuse NOT IN ('salt_pond'))
-            AND building IS NULL
-            AND way_area > 0.01*!pixel_width!::real*!pixel_height!::real
-          ORDER BY COALESCE(layer,0), way_area DESC
-        ) AS water_areas
+          WHERE man_made = 'quay'
+            AND way && !bbox!
+        UNION ALL
+        SELECT
+            way,
+            'line' AS feature
+          FROM planet_osm_line
+          WHERE man_made = 'quay'
+            AND way && !bbox!
+        ) AS quays
     properties:
-      cache-features: true
-      minzoom: 7
+      minzoom: 14

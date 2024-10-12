@@ -24,7 +24,7 @@
 @stream-width-z18:             4;
 
 #water-areas-low-zoom,
-#water-areas {
+#water-areas::main {
   [natural = 'glacier'] {
     line-width: 0.75;
     line-color: @glacier-line;
@@ -71,6 +71,11 @@
       polygon-gamma: 0.6;
     }
   }
+}
+
+#water-areas::mask {
+  polygon-fill: @water-color;
+  gmic: '-to_rgba.';
 }
 
 #river-areas-backdrop {

@@ -7,7 +7,7 @@
 #  so they can assembled into a project.mml file according to tags
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -109,6 +109,12 @@ layers:
     source: layers/water-lines.mml
     stylesheets:
       - style/water.mss
+  piers-casing:
+    source: layers/piers-casing.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - "ac"
   water-backdrop:
     source: layers/water-backdrop.mml
     stylesheets:
@@ -164,12 +170,18 @@ layers:
       - style/water-features.mss
     tags:
       - "ac"
+  quays:
+    source: layers/quays.mml
+    stylesheets:
+      - style/water-features.mss
+    tags:
+      - "ac"
   springs-connected:
     source: layers/springs-connected.mml
     stylesheets:
       - style/water-features.mss
-  piers:
-    source: layers/piers.mml
+  breakwaters:
+    source: layers/breakwaters.mml
     stylesheets:
       - style/water-features.mss
   bridge:
@@ -199,6 +211,7 @@ layers:
       - style/road-colors-generated.mss
       - style/line-widths-generated.mss
       - style/barriers.mss
+      - style/water-features.mss
   roads-line-mask:
     source: layers/roads_line_mask.mml
     stylesheets:
