@@ -3752,7 +3752,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
     [service = 'hot_water'] { line-color: #feaca6; }
     [service = 'sewage'] { line-color: #c1c1c1; }
     [service = 'gas'] { line-color: #fbd186; }
-    [service = 'oil'] { line-color: #d7b68d; }
+    [service = 'oil'], [service = 'fuel'] { line-color: #d7b68d; }
     [tc_type != null] {
       caps/line-width: [width];
       caps/line-dasharray: [tc_type];
@@ -3764,7 +3764,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
       [service = 'hot_water'] { caps/line-color: #feaca6; }
       [service = 'sewage'] { caps/line-color: #c1c1c1; }
       [service = 'gas'] { caps/line-color: #fbd186; }
-      [service = 'oil'] { caps/line-color: #d7b68d; }
+      [service = 'oil'], [service = 'fuel'] { caps/line-color: #d7b68d; }
     }
   }
 
