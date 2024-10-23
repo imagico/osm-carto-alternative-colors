@@ -9,44 +9,18 @@
    width="32"
    height="32"
    version="1.1">
-  <metadata
-     id="metadata178">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:format>image/svg+xml</dc:format>
-        <dc:type
-           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
-  <defs
-     id="defs3">
-    <clipPath
-       id="clipPath">
-      <rect
-         x="0"
-         y="0"
-         width="32"
-         height="32"
-         id="rect6" />
-    </clipPath>
-    <g
-       transform="matrix(0.5,0,0,0.5,-4,-4)"
-       id="gSjo4f9c7nie">
-      <g
-         id="g9">
-        <path
-           d="m 1,7 14,0 c 0,0 0,0 0,0 l 0,2 c 0,0 0,0 0,0 l -14,0 c 0,0 0,0 0,0 l 0,-2 c 0,0 0,0 0,0 z"
-           id="path11" />
-      </g>
-    </g>
-  </defs>
   <path
-     style="fill:#000000;fill-opacity:1"
+     style="fill:#000000"
      id="path4866"
      d="M 0 0 L 0 5 L 1 5 L 1 0 L 0 0 z M 8 0 L 8 5 L 9 5 L 9 0 L 8 0 z M 16 0 L 16 5 L 17 5 L 17 0 L 16 0 z M 24 0 L 24 5 L 25 5 L 25 0 L 24 0 z M 4 5.5 L 4 10.5 L 5 10.5 L 5 5.5 L 4 5.5 z M 12 5.5 L 12 10.5 L 13 10.5 L 13 5.5 L 12 5.5 z M 20 5.5 L 20 10.5 L 21 10.5 L 21 5.5 L 20 5.5 z M 28 5.5 L 28 10.5 L 29 10.5 L 29 5.5 L 28 5.5 z M 0 11 L 0 16 L 1 16 L 1 11 L 0 11 z M 8 11 L 8 16 L 9 16 L 9 11 L 8 11 z M 16 11 L 16 16 L 17 16 L 17 11 L 16 11 z M 24 11 L 24 16 L 25 16 L 25 11 L 24 11 z M 4 16 L 4 21 L 5 21 L 5 16 L 4 16 z M 12 16 L 12 21 L 13 21 L 13 16 L 12 16 z M 20 16 L 20 21 L 21 21 L 21 16 L 20 16 z M 28 16 L 28 21 L 29 21 L 29 16 L 28 16 z M 0 21.5 L 0 26.5 L 1 26.5 L 1 21.5 L 0 21.5 z M 8 21.5 L 8 26.5 L 9 26.5 L 9 21.5 L 8 21.5 z M 16 21.5 L 16 26.5 L 17 26.5 L 17 21.5 L 16 21.5 z M 24 21.5 L 24 26.5 L 25 26.5 L 25 21.5 L 24 21.5 z M 4 27 L 4 32 L 5 32 L 5 27 L 4 27 z M 12 27 L 12 32 L 13 32 L 13 27 L 12 27 z M 20 27 L 20 32 L 21 32 L 21 27 L 20 27 z M 28 27 L 28 32 L 29 32 L 29 27 L 28 27 z " />
+  <rect
+     style="fill:none;fill-opacity:1;stroke:none"
+     id="rect8566"
+     y="0"
+     x="0"
+     rx="0"
+     height="32"
+     width="32" />
   <desc
      id="desc174">Created with Snap</desc>
 </svg>
