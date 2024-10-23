@@ -53,9 +53,9 @@
       [seasonal = 'yes'] {
         [zoom >= 8] {
           polygon-fill: transparent;
-          polygon-pattern-file: url('symbols/patterns/water_intermittent.png');
+          polygon-pattern-file: url('symbols/patterns/water_intermittent.svg');
           [salt = 'yes'] {
-            polygon-pattern-file: url('symbols/patterns/water_intermittent_salt.png');
+            polygon-pattern-file: url('symbols/patterns/water_intermittent_salt.svg');
           }
           polygon-pattern-alignment: global;
           [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
@@ -88,7 +88,7 @@
     [seasonal = 'yes'] {
       [zoom >= 15] {
         polygon-fill: @bare_ground;
-        polygon-pattern-file: url('symbols/patterns/river_intermittent.png');
+        polygon-pattern-file: url('symbols/patterns/river_intermittent.svg');
         polygon-pattern-alignment: global;
         [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
         [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
@@ -115,7 +115,7 @@
         [way_pixels >= 64] { polygon-gamma: 0.6; }
         [zoom >= 8] {
           polygon-fill: transparent;
-          polygon-pattern-file: url('symbols/patterns/water_intermittent_salt.png');
+          polygon-pattern-file: url('symbols/patterns/water_intermittent_salt.svg');
           polygon-pattern-alignment: global;
           [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
           [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
@@ -133,7 +133,7 @@
         [way_pixels >= 4] { polygon-gamma: 0.75; }
         [way_pixels >= 64] { polygon-gamma: 0.6; }
         [zoom >= 10] {
-          polygon-pattern-file: url('symbols/patterns/water_salt.png');
+          polygon-pattern-file: url('symbols/patterns/water_salt.svg');
           polygon-pattern-alignment: global;
           [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
           [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }

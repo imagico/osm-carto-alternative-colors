@@ -9,7 +9,7 @@ derived from https://github.com/cquest/osmfr-cartocss/blob/master/sports.mss
     polygon-fill: mix(@grass, @scrub, 70%);
     [way_pixels >= 4]  { polygon-gamma: 0.75; }
     [way_pixels >= 64] { polygon-gamma: 0.3;  }
-    polygon-pattern-file: url('symbols/patterns/golf_rough.png');
+    polygon-pattern-file: url('symbols/patterns/golf_rough.svg');
     polygon-pattern-alignment: global;
     [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
     [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }

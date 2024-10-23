@@ -37,6 +37,7 @@ mss:
   - style/golf.mss
   - style/landcover.mss
   - style/water.mss
+  - style/water-features.mss
 
 # This is the list of pattern names that are to be automatically processed
 

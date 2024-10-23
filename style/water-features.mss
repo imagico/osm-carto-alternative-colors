@@ -127,7 +127,7 @@
     [man_made = 'groyne'] {
       polygon-fill: @breakwater-color;
       [material = 'stone'][zoom >= 15] {
-        polygon-pattern-file: url('symbols/patterns/breakwater_stone.png');
+        polygon-pattern-file: url('symbols/patterns/breakwater_stone.svg');
         polygon-pattern-alignment: global;
       }
     }
@@ -142,7 +142,7 @@
         line-pattern-type: repeat;
         line-pattern-alignment: global;
         line-pattern-width: [width];
-        line-pattern-file: url('symbols/patterns/breakwater_stone.png');
+        line-pattern-file: url('symbols/patterns/breakwater_stone.svg');
       }
     }
 }
