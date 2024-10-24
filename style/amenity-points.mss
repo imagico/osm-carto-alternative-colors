@@ -611,6 +611,7 @@
         fee5/marker-clip: false;
       }
     }
+
     [zoom >= 18] {
       [addon = 'capacity'] {
         capacity/text-anchor-cond: "[osm_id]";
@@ -856,12 +857,11 @@
         shopping3/marker-file: url('symbols/transport/shopping2.svg');
         shopping3/marker-fill: @transportation-icon;
         shopping3/marker-transform: 'translate(9,-7)';
-        shopping2/marker-placement: interior;
-        shopping2/marker-clip: false;
+        shopping3/marker-placement: interior;
+        shopping3/marker-clip: false;
       }
     }
   }
-
   [feature = 'parking_minor'][zoom >= 18] {
     [addon = 'shopping'] {
       shopping/marker-anchor-cond: "[osm_id]";
@@ -927,7 +927,6 @@
       }
     }
   }
-
   [feature = 'bicycle_parking'],
   [feature = 'motorcycle_parking'] {
     [zoom >= 18] {
