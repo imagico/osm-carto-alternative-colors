@@ -156,6 +156,8 @@ def main():
 
     parser.add_argument("-t", "--tags", action="store", default="ac",
                         help="Tag to filter layers")
+    parser.add_argument("-n", "--names", action="store",
+                        help="Layer names to filter (for testing)")
     parser.add_argument("-v", "--verbose", action="store_true",
                         help="Be more verbose. Overrides -q")
     parser.add_argument("-q", "--quiet", action="store_true",
@@ -173,6 +175,10 @@ def main():
     config = load_settings(opts.config)
 
     tags = opts.tags.split(",")
+
+    names = None
+    if opts.names:
+        names = opts.names.split(",")
 
     project = dict()
 
@@ -192,7 +198,10 @@ def main():
             layers_active = set()
 
             for layer, params in config['layers'].items():
-                if 'tags' in params:
+                if opts.names:
+                    if layer not in names:
+                        continue
+                elif 'tags' in params:
                     skip = 0
                     for ftag in params['tags']:
                         if ftag.startswith("!"):
@@ -219,7 +228,10 @@ def main():
             for layer, params in config['layers'].items():
 
                 if layer not in layers_active:
-                    logging.info("  Skipping layer {layer} because of tags ({tags}).".format(layer=layer, tags=opts.tags))
+                    if opts.names:
+                        logging.info("  Skipping layer {layer} because of names ({names}).".format(layer=layer, names=opts.names))
+                    else:
+                        logging.info("  Skipping layer {layer} because of tags ({tags}).".format(layer=layer, tags=opts.tags))
                     continue
 
                 if first:

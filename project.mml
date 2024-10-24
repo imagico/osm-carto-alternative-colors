@@ -52,10 +52,10 @@ Stylesheet:
   - style/water-features.mss
   - style/barriers.mss
   - style/roads.mss
-  - style/buildings.mss
-  - style/ferry-routes.mss
   - style/road-colors-generated.mss
   - style/line-widths-generated.mss
+  - style/buildings.mss
+  - style/ferry-routes.mss
   - style/entrances.mss
   - style/amenity-points.mss
   - style/golf.mss

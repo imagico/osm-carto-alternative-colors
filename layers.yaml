@@ -151,6 +151,8 @@ layers:
     source: layers/highway-embankments.mml
     stylesheets:
       - style/roads.mss
+      - style/road-colors-generated.mss
+      - style/line-widths-generated.mss
     tags:
       - "ac"
   marinas-area:
@@ -204,6 +206,8 @@ layers:
     source: layers/roads-low-zoom.mml
     stylesheets:
       - style/roads.mss
+      - style/road-colors-generated.mss
+      - style/line-widths-generated.mss
   roads:
     source: layers/roads.mml
     stylesheets:
@@ -216,6 +220,7 @@ layers:
     source: layers/roads_line_mask.mml
     stylesheets:
       - style/roads.mss
+      - style/road-colors-generated.mss
       - style/line-widths-generated.mss
       - style/barriers.mss
     tags:
@@ -224,6 +229,8 @@ layers:
     source: layers/roads_area_mask.mml
     stylesheets:
       - style/roads.mss
+      - style/road-colors-generated.mss
+      - style/line-widths-generated.mss
     tags:
       - "ac"
   entrances-simple:
@@ -304,11 +311,15 @@ layers:
   amenity-points:
     source: layers/symbols-labels-generated.mml
     stylesheets:
+      - style/amenity-points.mss
+      - style/landcover.mss
+      - style/water.mss
       - style/symbols-labels-generated.mss
   addon-symbols:
     source: layers/addon-symbols.mml
     stylesheets:
       - style/amenity-points.mss
+      - style/water-features.mss
     tags:
       - "ac"
   viewpoints:
@@ -325,6 +336,8 @@ layers:
     source: layers/road-text.mml
     stylesheets:
       - style/roads.mss
+      - style/road-colors-generated.mss
+      - style/line-widths-generated.mss
   text-poly-low-zoom:
     source: layers/text-poly-low-zoom.mml
     stylesheets:
