@@ -2271,6 +2271,12 @@ features:
     start_symbol: 17
     start_label: 17
 
+  emergency=life_ring:
+    type: point
+    style: symbol-only
+    symbol_file: symbols/sources/health/life_ring.svg
+    symbol_color: health-icon
+    start_symbol: 19
   emergency=phone:
     type: point
     style: symbol-only

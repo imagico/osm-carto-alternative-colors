@@ -5459,6 +5459,12 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
+  [feature = 'emergency_life_ring'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/emergency_life_ring.svg');
+  }
   [feature = 'emergency_phone'] {
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;

@@ -913,7 +913,7 @@ def main():
 
         # record the overall starting zoom levels or pre-filtering
         if z_start < 100:
-            if have_points:
+            if do_point:
                 if z_start not in prefilters_points:
                     prefilters_points[z_start] = dict()
                 if fkey not in prefilters_points[z_start]:
@@ -921,7 +921,7 @@ def main():
                 if fval not in prefilters_points[z_start][fkey]:
                     prefilters_points[z_start][fkey].add(fval)
 
-            if have_lines:
+            if do_line:
                 if z_start not in prefilters_lines:
                     prefilters_lines[z_start] = dict()
                 if fkey not in prefilters_lines[z_start]:
@@ -929,7 +929,7 @@ def main():
                 if fval not in prefilters_lines[z_start][fkey]:
                     prefilters_lines[z_start][fkey].add(fval)
 
-            if have_polygons:
+            if do_polygon:
                 if z_start not in prefilters_polygons:
                     prefilters_polygons[z_start] = dict()
                 if fkey not in prefilters_polygons[z_start]:
@@ -1826,8 +1826,8 @@ def main():
                             if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_start_all'] > z:
                                 if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_min'] < wpmin:
                                     wpmin = way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_min']
-                                    vals_wp.add(fval)
-                                    has_wp = True
+                                vals_wp.add(fval)
+                                has_wp = True
                         if not(has_wp):
                             vals_nowp.add(fval)
 
