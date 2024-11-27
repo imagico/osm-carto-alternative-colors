@@ -20,7 +20,7 @@
                 tags->'material' AS material,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE man_made = 'pier'
                 AND way && !bbox!

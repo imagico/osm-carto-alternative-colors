@@ -1,0 +1,83 @@
+# ---------------------------------------------------------------------------
+#  z_order.yaml
+#
+#  input for scripts/z_order.py
+#
+#  defines z_order for the roads layer - to fill the z_order table in the 
+#  database, which is then referenced by the roads layer through a subquery
+#
+#  Copyright 2024 by Christoph Hormann <chris_hormann@gmx.de>
+# ---------------------------------------------------------------------------
+#  This file is part of the OSM-Carto alternative colors map style.
+#
+#  OSM-Carto alternative colors is an open design and free software project
+#  You can use, modify and/or redistribute it under the terms of the
+#  following licenses:
+#
+#  Design components of the project are subject to the Creative Commons
+#  Attribution ShareAlike 4.0 (CC BY-SA 4.0) License.
+#
+#  Software components of the project are subject to the GNU Affero General
+#  Public License published by the Free Software Foundation, either
+#  version 3 of the License, or (at your option) any later version.
+#
+#  OSM-Carto alternative colors is distributed in the hope that it will be
+#  useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero
+#  General Public License and the Creative Commons Attribution ShareAlike
+#  4.0 (CC BY-SA 4.0) License for more details.
+#
+#  You should have received a copy of the Creative Commons Attribution
+#  ShareAlike 4.0 (CC BY-SA 4.0) License along with OSM-Carto alternative
+#  colors. If not, see
+#  <https://creativecommons.org/licenses/by-sa/4.0/legalcode>.
+#
+#  You should have also received a copy of the GNU Affero General Public
+#  License. If not, see <https://www.gnu.org/licenses/>.
+# ---------------------------------------------------------------------------
+
+settings:
+  table: carto_z_order
+
+features:
+  highway_motorway: 380
+  highway_trunk: 370
+  highway_primary: 360
+  highway_secondary: 350
+  highway_tertiary: 340
+  highway_unclassified: 330
+  highway_residential: 330
+  highway_bus_guideway: 320
+  highway_busway: 320
+  highway_living_street: 310
+  highway_pedestrian: 300
+  highway_road: 290
+  highway_raceway: 280
+  highway_motorway_link: 270
+  highway_trunk_link: 260
+  highway_primary_link: 250
+  highway_secondary_link: 240
+  highway_tertiary_link: 230
+  highway_service: 190
+  highway_track: 110
+  highway_path: 100
+  highway_footway: 100
+  highway_cycleway: 100
+  highway_bridleway: 100
+  highway_steps: 90
+  highway_platform: 80
+  railway_rail: 440
+  railway_subway: 420
+  railway_narrow_gauge: 420
+  railway_light_rail: 420
+  railway_funicular: 420
+  railway_preserved: 420
+  railway_monorail: 420
+  railway_miniature: 420
+  railway_turntable: 420
+  railway_tram: 410
+  railway_disused: 400
+  railway_construction: 400
+  railway_platform: 80
+  aeroway_runway: 60
+  aeroway_taxiway: 50

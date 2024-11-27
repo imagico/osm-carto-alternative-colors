@@ -7,7 +7,7 @@
                 carto_pipeline_line_width('flange_width', z(!scale_denominator!)) AS flange_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE ((man_made = 'pipeline'
                      AND (tags-> 'location' IN ('overground', 'overhead', 'surface', 'outdoor')

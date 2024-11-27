@@ -17,7 +17,18 @@
                 carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
                 layernotnull,
                 osm_id,
-                z_order
+                (SELECT
+                    z_order
+                  FROM carto_z_order
+                  WHERE
+                    feature =
+                      CASE
+                        WHEN turning_circle_features.feature IN ('highway_construction') THEN 'highway_' || construction
+                        WHEN turning_circle_features.feature IN ('railway_construction') THEN 'railway_' || construction
+                        WHEN turning_circle_features.feature IN ('aeroway_construction') THEN 'aeroway_' || construction
+                        ELSE turning_circle_features.feature
+                      END
+                ) AS z_order
               FROM
                 (WITH tc_combos AS
                   (SELECT DISTINCT ON (p.way)

@@ -90,7 +90,18 @@
                 casing_width,
                 layernotnull,
                 osm_id,
-                z_order
+                (SELECT
+                    z_order
+                  FROM carto_z_order
+                  WHERE
+                    feature =
+                      CASE
+                        WHEN roads_features.feature IN ('highway_construction') THEN 'highway_' || construction
+                        WHEN roads_features.feature IN ('railway_construction') THEN 'railway_' || construction
+                        WHEN roads_features.feature IN ('aeroway_construction') THEN 'aeroway_' || construction
+                        ELSE roads_features.feature
+                      END
+                ) AS z_order
               FROM ( -- begin "features" subselect that contains both roads and rail/aero
                 WITH highways_raw AS
                 -- this queries all roads from the database together with the corresponding width values
@@ -513,7 +524,7 @@
                 0 AS casing_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_polygon
               WHERE amenity = 'parking' AND (tags->'parking') = 'lane'
                 AND building IS NULL
@@ -773,7 +784,7 @@
                 0 AS casing_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi')
                 AND bridge IN ('yes', 'aqueduct')
@@ -803,7 +814,7 @@
                 0 AS casing_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi')
                 AND bridge IN ('yes', 'aqueduct')
@@ -833,7 +844,7 @@
                 0 AS casing_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE waterway IN ('river', 'canal', 'stream', 'drain', 'ditch', 'wadi')
                 AND (bridge IS NULL OR bridge NOT IN ('yes', 'aqueduct'))
@@ -965,7 +976,7 @@
                 0 AS casing_width,
                 0 AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE route = 'ferry'
                 AND way && !bbox!
@@ -993,7 +1004,7 @@
                 0 AS casing_width,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_line
               WHERE man_made = 'goods_conveyor'
                 AND (tags->'location' NOT IN ('underground') OR (tags->'location') IS NULL)
@@ -1258,7 +1269,7 @@
                 0 AS casing_width,
                 0 AS layernotnull,
                 osm_id,
-                z_order
+                0 AS z_order
               FROM planet_osm_polygon
               WHERE (landuse = 'military' OR military = 'danger_area')
                 AND building IS NULL
@@ -1313,6 +1324,10 @@
               WHEN road_layer = 'centerline_top' THEN 10
             END,
             layernotnull,
+            CASE
+              WHEN feature IN ('highway_construction', 'railway_construction', 'aeroway_construction') THEN 0
+              ELSE 1
+            END,
             z_order NULLS FIRST,
             CASE
               WHEN road_layer = 'waterway_supplement' THEN -1
