@@ -134,6 +134,7 @@ patterns:
   - treerow_broadleaved
   - treerow_needleleaved
   - breakwater_stone
+  - aquaculture
 
 # These are the pattern colors - first is the background, second the pattern
 # "native" as a pattern color means the source SVG file already contains
@@ -234,5 +235,6 @@ colors:
   treerow_broadleaved: ["#f2efe9", "#419b3b", 0.6]
   treerow_needleleaved: ["#f2efe9", "#419b3b", 0.6]
   breakwater_stone: ["#bbbbbb", "#909090"]
+  aquaculture: ["#a2d1e0", "#549ccd"]
 
 

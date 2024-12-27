@@ -5464,6 +5464,10 @@
     marker-placement: interior;
     marker-clip: false;
     marker-file: url('symbols/colored/emergency_life_ring.svg');
+    // modification emergency_life_ring+high_zoom based on style symbol-only-zoom-variant
+    [zoom >= 20] {
+      marker-file: url('symbols/colored/emergency_life_ring_high_zoom.svg');
+    }
   }
   [feature = 'emergency_phone'] {
     marker-anchor-set: '[osm_id]';

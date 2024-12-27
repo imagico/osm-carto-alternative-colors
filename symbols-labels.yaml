@@ -2277,6 +2277,11 @@ features:
     symbol_file: symbols/sources/health/life_ring.svg
     symbol_color: health-icon
     start_symbol: 19
+    modifications:
+      high_zoom:
+        style: symbol-only-zoom-variant
+        symbol_file: symbols/sources/health/life_ring_large.svg
+        start_symbol: 20
   emergency=phone:
     type: point
     style: symbol-only

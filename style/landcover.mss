@@ -1181,6 +1181,65 @@
   comp-op: dst-over;
 }
 
+#aquaculture {
+  [way_pixels < 120] {
+    polygon-fill: @water-color;
+    [way_pixels >= 52] {
+      line-width: 0.4;
+      line-color: lighten(desaturate(@reef, 5%), 15%);
+      line-cap: round;
+      line-join: round;
+    }
+  }
+  [way_pixels >= 120] {
+    ::mask {
+      polygon-fill: @water-color;
+      gmic: '-channels. 3 +erode_circ[aquaculture_mask] {5.0*$_mapnik_scale_factor} -name. aq_mask_buffer +mul[aq_mask_buffer] 0 -name. aq_symbol_mask -remove[aquaculture_mask]';
+    }
+    ::symbol {
+      [way_pixels >= 240] {
+        [int_produce = 'shrimp'],
+        [int_produce = 'fish'],
+        [int_produce = 'mussels'],
+        [int_produce = 'oyster'],
+        [int_produce = 'oysters'],
+        [int_produce = 'seaweed'] {
+          [int_produce = 'shrimp'] { marker-file: url('symbols/aquaculture/shrimp.svg'); }
+          [int_produce = 'fish'] { marker-file: url('symbols/aquaculture/fish.svg'); }
+          [int_produce = 'mussels'] { marker-file: url('symbols/aquaculture/mussels.svg'); }
+          [int_produce = 'oyster'], [int_produce = 'oysters'] { marker-file: url('symbols/aquaculture/oyster.svg'); }
+          [int_produce = 'seaweed'] { marker-file: url('symbols/aquaculture/seaweed.svg'); }
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: lighten(desaturate(@reef, 5%), 7%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+          [way_pixels >= 3200] {
+            marker-transform: 'scale (2)'; 
+            marker-fill: lighten(desaturate(@reef, 5%), 10%);
+          }
+          gmic: "-remove[aq_symbol_mask] +channels[aquaculture_symbol] 3 -name. aq_symbol_mask -min[aq_symbol_mask] [aq_mask_buffer] +to_rgb[aquaculture_symbol] -name. aq_symbol_proc -append[aq_symbol_proc] [aq_symbol_mask],c -remove[aquaculture_symbol] -name. use";
+
+        }
+      }
+    }
+    ::pattern {
+      polygon-pattern-file: url('symbols/patterns/aquaculture.svg');
+      polygon-pattern-alignment: global;
+      [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+      [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+      gmic: "+channels[aquaculture_pattern] 3 -name. aq_pattern_mask -dilate_circ[aq_symbol_mask] {5.0*$_mapnik_scale_factor} -sub[aq_pattern_mask] [aq_symbol_mask] -max[aq_pattern_mask] 0 -min[aq_pattern_mask] [aq_mask_buffer] -to_rgb[aquaculture_pattern] -append[aquaculture_pattern] [aq_pattern_mask],c -remove[aq_symbol_mask] -remove[aq_pattern_mask] -remove[aq_mask_buffer] -name. use";
+    }
+    ::outline {
+      line-width: 1;
+      line-color: @reef;
+      line-dasharray: 0.2,3.2;
+      line-cap: round;
+      line-join: round;
+    }
+  }
+}
+
 #landcover-area-symbols {
   [natural = 'reef'] {
     [zoom < 10] {

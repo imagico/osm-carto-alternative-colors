@@ -105,6 +105,10 @@ layers:
     source: layers/landcover-water.mml
     stylesheets:
       - style/landcover.mss
+  aquaculture:
+    source: layers/aquaculture.mml
+    stylesheets:
+      - style/landcover.mss
   water-lines:
     source: layers/water-lines.mml
     stylesheets:

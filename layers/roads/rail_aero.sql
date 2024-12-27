@@ -12,7 +12,7 @@
                     construction,
                     service,
                     link,
-                    width_land,
+                    width_lane,
                     width_nominal,
                     width_tagged,
                     casing_width,
