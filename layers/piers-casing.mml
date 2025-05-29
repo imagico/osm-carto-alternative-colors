@@ -2,12 +2,12 @@
 #  piers-casing.mml
 #
 #  piers layer for drawing casing (over water only)
-#  includes also quays
+#  includes also quays (with 'floating=yes' set to simplify MSS code)
 #
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -37,47 +37,78 @@
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
   - id: piers-casing
-    geometry: polygon
     <<: *extents
     Datasource:
       <<: *osm2pgsql
+      geometry_table: planet_osm_polygon
       table: |-
         (SELECT
-            way
-          FROM planet_osm_polygon
-          WHERE
-            ((man_made = 'pier' AND
-              tags->'mooring' IN('yes', 'private', 'commercial', 'cruise', 'ferry', 'yacht', 'guest'))
-            OR man_made = 'quay')
-            AND way && !bbox!
-        UNION ALL
-        SELECT
-            ST_Buffer(way, width*NULLIF(!scale_denominator!*0.001*0.28,0)*0.5, 'endcap=flat join=mitre') AS way
+            way,
+            floating
           FROM
-            (SELECT
+            (WITH pier_quay_lines AS
+              (SELECT
+                  way,
+                  man_made,
+                  tags->'width' AS width,
+                  tags->'floating' AS floating
+                FROM planet_osm_line
+                WHERE 
+                  ((man_made = 'pier' AND tags->'floating' IN('yes', 'no')) OR 
+                   man_made = 'quay')
+                  AND way && !bbox!
+              ), 
+              pier_quay_polygons AS
+              (SELECT
+                  way,
+                  man_made,
+                  tags->'floating' AS floating
+                FROM planet_osm_polygon
+                WHERE 
+                  ((man_made = 'pier' AND tags->'floating' IN('yes', 'no')) OR 
+                   man_made = 'quay')
+                  AND way && !bbox!
+              )
+            SELECT
                 way,
-                GREATEST(
-                  carto_barrier_line_width(
-                    man_made,
-                    z(!scale_denominator!)
-                  ),
-                  carto_pier_line_width_mapped(
-                    man_made,
-                    tags->'width',
-                    !bbox!, !scale_denominator!
-                  )
-                ) AS width
-              FROM planet_osm_line
+                'yes' AS floating
+              FROM pier_quay_lines
+              WHERE man_made = 'quay'
+            UNION ALL
+            SELECT
+                ST_Buffer(way, width*NULLIF(!scale_denominator!*0.001*0.28,0)*0.5, 'endcap=flat join=mitre') AS way,
+                floating
+              FROM
+                (SELECT
+                    way,
+                    floating,
+                    GREATEST(
+                      carto_barrier_line_width(
+                        man_made,
+                        z(!scale_denominator!)
+                      ),
+                      carto_pier_line_width_mapped(
+                        man_made,
+                        width,
+                        !bbox!, !scale_denominator!
+                      )
+                    ) AS width
+                  FROM pier_quay_lines
+                  WHERE man_made = 'pier'
+                ) AS pier_lines
+            UNION ALL
+            SELECT
+                way,
+                floating
+              FROM pier_quay_polygons
               WHERE man_made = 'pier'
-                AND tags->'mooring' IN('yes', 'private', 'commercial', 'cruise', 'ferry', 'yacht', 'guest')
-                AND way && !bbox!
-            ) AS _
-        UNION ALL
-        SELECT
-            way
-          FROM planet_osm_line
-          WHERE man_made = 'quay'
-            AND way && !bbox!
+            UNION ALL
+            SELECT
+                way,
+                'yes' AS floating
+              FROM pier_quay_polygons
+              WHERE man_made = 'quay'
+          ) AS _
         ) AS piers_casing
     properties:
       minzoom: 15

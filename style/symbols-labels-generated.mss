@@ -4877,7 +4877,7 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
-  [feature = 'amenity_ferry_terminal'] {
+  [feature = 'amenity_ferry_terminal'][variant = null] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
       marker-anchor-set: '[osm_id]';
@@ -4973,6 +4973,103 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
+  }
+  [feature = 'amenity_ferry_terminal'][variant = 'point'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-placement: interior;
+        marker-clip: false;
+        marker-file: url('symbols/colored/amenity_ferry_terminal_point.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-placement: interior;
+        shield-clip: false;
+        shield-name: '[name]';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-halo-radius: @standard-halo-radius * 1.0;
+        shield-halo-fill: @standard-halo-fill;
+        shield-wrap-width: @standard-wrap-width;
+        shield-line-spacing: @standard-line-spacing-size;
+        shield-fill: #6942b0;
+        shield-text-dy: 10;
+        shield-unlock-image: true;
+        shield-file: url('symbols/colored/amenity_ferry_terminal_point.svg');
+        symbolonly/marker-placement: interior;
+        symbolonly/marker-clip: false;
+        symbolonly/marker-file: url('symbols/colored/amenity_ferry_terminal_point.svg');
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #6942b0;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #6942b0;
+        text-dy: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+        textonly/text-placement: interior;
+        textonly/text-name: '[name]';
+        textonly/text-size: 10;
+        textonly/text-wrap-width: @standard-wrap-width;
+        textonly/text-line-spacing: @standard-line-spacing-size;
+        textonly/text-fill: #6942b0;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+        textonly/text-halo-radius: @standard-halo-radius * 1.0;
+        textonly/text-halo-fill: @standard-halo-fill;
+        textonly/text-avoid-edges: true;
+      }
+      [vis_type = 'label-only'] {
+        text-placement: interior;
+        text-name: '[name]';
+        text-size: 10;
+        text-wrap-width: @standard-wrap-width;
+        text-line-spacing: @standard-line-spacing-size;
+        text-fill: #6942b0;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-halo-radius: @standard-halo-radius * 1.0;
+        text-halo-fill: @standard-halo-fill;
+      }
   }
   [feature = 'amenity_car_rental'] {
     [vis_type = 'symbol-for-label'],

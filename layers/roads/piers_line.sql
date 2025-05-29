@@ -1,6 +1,7 @@
             SELECT
                 way,
                 man_made,
+                tags->'floating' AS floating,
                 GREATEST(
                   carto_barrier_line_width(
                     man_made,
@@ -20,7 +21,7 @@
                 tags->'material' AS material,
                 COALESCE(layer,0) AS layernotnull,
                 osm_id,
-                0 AS z_order
+                CASE WHEN tags->'floating' = 'no' THEN 1000 ELSE 0 END AS z_order
               FROM planet_osm_line
               WHERE man_made = 'pier'
                 AND way && !bbox!

@@ -1182,148 +1182,159 @@
 }
 
 #aquaculture {
-  [way_pixels < 120] {
+  ::mask {
     polygon-fill: @water-color;
+    gmic: '-channels[aquaculture_mask] 3 -if $_mapnik_render_trivial +to_gray[aquaculture_mask] -name. aq_mask_eroded -else +erode_circ[aquaculture_mask] {5.0*$_mapnik_scale_factor} -name. aq_mask_eroded -fi';
+  }
+
+  ::symbol {
+    [way_pixels >= 240] {
+      [int_produce = 'shrimp'],
+      [int_produce = 'fish'],
+      [int_produce = 'mussels'],
+      [int_produce = 'oyster'],
+      [int_produce = 'oysters'],
+      [int_produce = 'seaweed'] {
+        [int_produce = 'shrimp'] { marker-file: url('symbols/aquaculture/shrimp.svg'); }
+        [int_produce = 'fish'] { marker-file: url('symbols/aquaculture/fish.svg'); }
+        [int_produce = 'mussels'] { marker-file: url('symbols/aquaculture/mussels.svg'); }
+        [int_produce = 'oyster'], [int_produce = 'oysters'] { marker-file: url('symbols/aquaculture/oyster.svg'); }
+        [int_produce = 'seaweed'] { marker-file: url('symbols/aquaculture/seaweed.svg'); }
+        marker-placement: interior;
+        marker-clip: false;
+        marker-fill: lighten(desaturate(@reef, 5%), 7%);
+        marker-ignore-placement: true;
+        marker-allow-overlap: true;
+        [way_pixels >= 3200] {
+          marker-transform: 'scale (2)'; 
+          marker-fill: lighten(desaturate(@reef, 5%), 10%);
+        }
+        gmic: "-if $_mapnik_render_trivial -channels[aquaculture_symbol] 3 -name. aq_symbol_mask -else +channels[aquaculture_symbol] 3 -name. aq_symbol_mask -min[aq_symbol_mask] [aq_mask_eroded] +to_rgb[aquaculture_symbol] -name. aq_symbol_proc -append[aq_symbol_proc] [aq_symbol_mask],c -remove[aquaculture_symbol] -name. use -fi";
+
+      }
+    }
+  }
+
+  ::pattern {
+    [way_pixels < 120] {
+      polygon-fill: @water-color;
+    }
+    [way_pixels >= 120] {
+      polygon-pattern-file: url('symbols/patterns/aquaculture.svg');
+      polygon-pattern-alignment: global;
+      [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+      [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+      gmic: "-if $_mapnik_render_trivial -remove[aq_symbol_mask] -remove[aq_mask_eroded] -else +channels[aquaculture_pattern] 3 -name. aq_pattern_mask -dilate_circ[aq_symbol_mask] {5.0*$_mapnik_scale_factor} -sub[aq_pattern_mask] [aq_symbol_mask] -min[aq_pattern_mask] [aq_mask_eroded] -to_rgb[aquaculture_pattern] -append[aquaculture_pattern] [aq_pattern_mask],c -remove[aq_symbol_mask] -remove[aq_pattern_mask] -remove[aq_mask_eroded] -name. use -fi";
+    }
+  }
+
+  ::outline {
     [way_pixels >= 52] {
       line-width: 0.4;
       line-color: lighten(desaturate(@reef, 5%), 15%);
       line-cap: round;
       line-join: round;
-    }
-  }
-  [way_pixels >= 120] {
-    ::mask {
-      polygon-fill: @water-color;
-      gmic: '-channels. 3 +erode_circ[aquaculture_mask] {5.0*$_mapnik_scale_factor} -name. aq_mask_buffer +mul[aq_mask_buffer] 0 -name. aq_symbol_mask -remove[aquaculture_mask]';
-    }
-    ::symbol {
-      [way_pixels >= 240] {
-        [int_produce = 'shrimp'],
-        [int_produce = 'fish'],
-        [int_produce = 'mussels'],
-        [int_produce = 'oyster'],
-        [int_produce = 'oysters'],
-        [int_produce = 'seaweed'] {
-          [int_produce = 'shrimp'] { marker-file: url('symbols/aquaculture/shrimp.svg'); }
-          [int_produce = 'fish'] { marker-file: url('symbols/aquaculture/fish.svg'); }
-          [int_produce = 'mussels'] { marker-file: url('symbols/aquaculture/mussels.svg'); }
-          [int_produce = 'oyster'], [int_produce = 'oysters'] { marker-file: url('symbols/aquaculture/oyster.svg'); }
-          [int_produce = 'seaweed'] { marker-file: url('symbols/aquaculture/seaweed.svg'); }
-          marker-placement: interior;
-          marker-clip: false;
-          marker-fill: lighten(desaturate(@reef, 5%), 7%);
-          marker-ignore-placement: true;
-          marker-allow-overlap: true;
-          [way_pixels >= 3200] {
-            marker-transform: 'scale (2)'; 
-            marker-fill: lighten(desaturate(@reef, 5%), 10%);
-          }
-          gmic: "-remove[aq_symbol_mask] +channels[aquaculture_symbol] 3 -name. aq_symbol_mask -min[aq_symbol_mask] [aq_mask_buffer] +to_rgb[aquaculture_symbol] -name. aq_symbol_proc -append[aq_symbol_proc] [aq_symbol_mask],c -remove[aquaculture_symbol] -name. use";
-
-        }
+      [way_pixels >= 120] {
+        line-width: 1;
+        line-color: darken(@reef, 6%);
+        line-dasharray: 0.2,3.2;
+        line-cap: round;
+        line-join: round;
       }
-    }
-    ::pattern {
-      polygon-pattern-file: url('symbols/patterns/aquaculture.svg');
-      polygon-pattern-alignment: global;
-      [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-      [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
-      gmic: "+channels[aquaculture_pattern] 3 -name. aq_pattern_mask -dilate_circ[aq_symbol_mask] {5.0*$_mapnik_scale_factor} -sub[aq_pattern_mask] [aq_symbol_mask] -max[aq_pattern_mask] 0 -min[aq_pattern_mask] [aq_mask_buffer] -to_rgb[aquaculture_pattern] -append[aquaculture_pattern] [aq_pattern_mask],c -remove[aq_symbol_mask] -remove[aq_pattern_mask] -remove[aq_mask_buffer] -name. use";
-    }
-    ::outline {
-      line-width: 1;
-      line-color: @reef;
-      line-dasharray: 0.2,3.2;
-      line-cap: round;
-      line-join: round;
     }
   }
 }
 
 #landcover-area-symbols {
-  [natural = 'reef'] {
-    [zoom < 10] {
-      polygon-fill: @reef;
-      polygon-opacity: 0.1;
-      [way_pixels >= 4]  { polygon-gamma: 0.75; }
-      [way_pixels >= 64] { polygon-gamma: 0.3;  }
-    }
-    [zoom >= 10] {
-      polygon-pattern-file: url('symbols/patterns/reef.svg');
-      polygon-pattern-alignment: global;
-      [zoom >= 13] {
-        [surface = 'sand'] {
-          polygon-pattern-file: url('symbols/patterns/reef_sand.svg');
-        }
-        [surface = 'rock'] {
-          polygon-pattern-file: url('symbols/patterns/reef_rock.svg');
-        }
-        [surface = 'coral'] {
-          polygon-pattern-file: url('symbols/patterns/reef_coral.svg');
-        }
+  ::water { // wetland and reefs get cutout from acquaculture
+    [natural = 'reef'] {
+      [zoom < 10] {
+        polygon-fill: @reef;
+        polygon-opacity: 0.1;
+        [way_pixels >= 4]  { polygon-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-gamma: 0.3;  }
       }
-      [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-      [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+      [zoom >= 10] {
+        polygon-pattern-file: url('symbols/patterns/reef.svg');
+        polygon-pattern-alignment: global;
+        [zoom >= 13] {
+          [surface = 'sand'] {
+            polygon-pattern-file: url('symbols/patterns/reef_sand.svg');
+          }
+          [surface = 'rock'] {
+            polygon-pattern-file: url('symbols/patterns/reef_rock.svg');
+          }
+          [surface = 'coral'] {
+            polygon-pattern-file: url('symbols/patterns/reef_coral.svg');
+          }
+        }
+        [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+      }
     }
-  }
 
-  [int_wetland = 'saltmarsh'][zoom >= 13] {
-    bkg/polygon-pattern-file: url('symbols/patterns/salt_dots.svg');
-    bkg/polygon-pattern-alignment: global;
-    [way_pixels >= 4]  { bkg/polygon-pattern-gamma: 0.75; }
-    [way_pixels >= 64] { bkg/polygon-pattern-gamma: 0.3;  }
-  }
+    [int_wetland = 'saltmarsh'][zoom >= 13] {
+      bkg/polygon-pattern-file: url('symbols/patterns/salt_dots.svg');
+      bkg/polygon-pattern-alignment: global;
+      [way_pixels >= 4]  { bkg/polygon-pattern-gamma: 0.75; }
+      [way_pixels >= 64] { bkg/polygon-pattern-gamma: 0.3;  }
+    }
 
-  [int_wetland != null][zoom >= 10] {
-    polygon-pattern-file: url('symbols/patterns/wetland.svg');
-    polygon-pattern-alignment: global;
-  }
-
-  [zoom >= 14] {
-    [int_wetland = 'marsh'],
-    [int_wetland = 'saltmarsh'],
-    [int_wetland = 'wet_meadow'] {
-      polygon-pattern-file: url('symbols/patterns/wetland_marsh.svg');
+    [int_wetland != null][zoom >= 10] {
+      polygon-pattern-file: url('symbols/patterns/wetland.svg');
       polygon-pattern-alignment: global;
     }
-    [int_wetland = 'reedbed'] {
-      polygon-pattern-file: url('symbols/patterns/wetland_reed.svg');
-      polygon-pattern-alignment: global;
-    }
-    [int_wetland = 'mangrove'] {
-      polygon-pattern-file: url('symbols/patterns/mangrove.svg');
-      polygon-pattern-alignment: global;
-    }
-    [int_wetland = 'swamp'] {
-      [leaf_type = "broadleaved"] {
-        polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_unknown.svg');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_evergreen.svg'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_deciduous.svg'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_mixed.svg'); }
+
+    [zoom >= 14] {
+      [int_wetland = 'marsh'],
+      [int_wetland = 'saltmarsh'],
+      [int_wetland = 'wet_meadow'] {
+        polygon-pattern-file: url('symbols/patterns/wetland_marsh.svg');
         polygon-pattern-alignment: global;
       }
-      [leaf_type = "needleleaved"] {
-        polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_unknown.svg');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_evergreen.svg'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_deciduous.svg'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_mixed.svg'); }
+      [int_wetland = 'reedbed'] {
+        polygon-pattern-file: url('symbols/patterns/wetland_reed.svg');
         polygon-pattern-alignment: global;
       }
-      [leaf_type = "mixed"] {
-        polygon-pattern-file: url('symbols/patterns/swamp_mixed_unknown.svg');
-        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_evergreen.svg'); }
-        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_deciduous.svg'); }
-        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_mixed.svg'); }
+      [int_wetland = 'mangrove'] {
+        polygon-pattern-file: url('symbols/patterns/mangrove.svg');
+        polygon-pattern-alignment: global;
+      }
+      [int_wetland = 'swamp'] {
+        [leaf_type = "broadleaved"] {
+          polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_unknown.svg');
+          [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_evergreen.svg'); }
+          [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_deciduous.svg'); }
+          [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_broadleaved_mixed.svg'); }
+          polygon-pattern-alignment: global;
+        }
+        [leaf_type = "needleleaved"] {
+          polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_unknown.svg');
+          [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_evergreen.svg'); }
+          [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_deciduous.svg'); }
+          [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_needleleaved_mixed.svg'); }
+          polygon-pattern-alignment: global;
+        }
+        [leaf_type = "mixed"] {
+          polygon-pattern-file: url('symbols/patterns/swamp_mixed_unknown.svg');
+          [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_evergreen.svg'); }
+          [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_deciduous.svg'); }
+          [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/swamp_mixed_mixed.svg'); }
+          polygon-pattern-alignment: global;
+        }
+      }
+      [int_wetland = 'bog'],
+      [int_wetland = 'fen'],
+      [int_wetland = 'string_bog'] {
+        polygon-pattern-file: url('symbols/patterns/wetland_bog.svg');
         polygon-pattern-alignment: global;
       }
     }
-    [int_wetland = 'bog'],
-    [int_wetland = 'fen'],
-    [int_wetland = 'string_bog'] {
-      polygon-pattern-file: url('symbols/patterns/wetland_bog.svg');
-      polygon-pattern-alignment: global;
-    }
-    [natural = 'scrub']::scrub {
+    // aquaculture is rendered starting z9 - so we need a conditional here in GMIC because aquaculture_mask is only available az z9+
+    gmic: "zoom={round(log2(559082264.028/$_mapnik_scale_denominator))} -if $zoom>=9 -if $_mapnik_render_trivial -remove[aquaculture_mask] -else +channels[landcover_area_symbols_water] 3 -name. las_mask -dilate_circ[aquaculture_mask] {5.0*$_mapnik_scale_factor} -sub[las_mask] [aquaculture_mask] -to_rgb[landcover_area_symbols_water] -append[landcover_area_symbols_water] [las_mask],c -remove[las_mask] -remove[aquaculture_mask] -fi -fi -name. use";
+  }
+  ::scrub {
+    [natural = 'scrub'][zoom >= 14] {
       polygon-pattern-file: url('symbols/patterns/scrub_unknown_unknown.svg');
       [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_evergreen.svg'); }
       [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/scrub_unknown_deciduous.svg'); }
@@ -1351,31 +1362,33 @@
     }
   }
 
-  //Also landuse = forest, converted in the SQL
-  [natural = 'wood'][zoom >= 13]::wood {
-    [leaf_type = "broadleaved"] {
-      polygon-pattern-file: url('symbols/patterns/forest_broadleaved_unknown.svg');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_evergreen.svg'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_deciduous.svg'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_mixed.svg'); }
-      polygon-pattern-alignment: global;
-      opacity: 0.8; // The entire layer has opacity to handle overlapping forests
-    }
-    [leaf_type = "needleleaved"] {
-      polygon-pattern-file: url('symbols/patterns/forest_needleleaved_unknown.svg');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_evergreen.svg'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_deciduous.svg'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_mixed.svg'); }
-      polygon-pattern-alignment: global;
-      opacity: 0.8; // The entire layer has opacity to handle overlapping forests
-    }
-    [leaf_type = "mixed"] {
-      polygon-pattern-file: url('symbols/patterns/forest_mixed_unknown.svg');
-      [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_evergreen.svg'); }
-      [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_deciduous.svg'); }
-      [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_mixed.svg'); }
-      polygon-pattern-alignment: global;
-      opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+  ::wood {
+    //Also landuse = forest, converted in the SQL
+    [natural = 'wood'][zoom >= 13] {
+      [leaf_type = "broadleaved"] {
+        polygon-pattern-file: url('symbols/patterns/forest_broadleaved_unknown.svg');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_evergreen.svg'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_deciduous.svg'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_broadleaved_mixed.svg'); }
+        polygon-pattern-alignment: global;
+        opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+      }
+      [leaf_type = "needleleaved"] {
+        polygon-pattern-file: url('symbols/patterns/forest_needleleaved_unknown.svg');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_evergreen.svg'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_deciduous.svg'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_needleleaved_mixed.svg'); }
+        polygon-pattern-alignment: global;
+        opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+      }
+      [leaf_type = "mixed"] {
+        polygon-pattern-file: url('symbols/patterns/forest_mixed_unknown.svg');
+        [leaf_cycle = "evergreen"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_evergreen.svg'); }
+        [leaf_cycle = "deciduous"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_deciduous.svg'); }
+        [leaf_cycle = "mixed"] { polygon-pattern-file: url('symbols/patterns/forest_mixed_mixed.svg'); }
+        polygon-pattern-alignment: global;
+        opacity: 0.8; // The entire layer has opacity to handle overlapping forests
+      }
     }
   }
 }

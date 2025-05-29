@@ -8,6 +8,7 @@
 @water-icon: saturate(darken(@water-color, 30%), 25%);  // #24a6cc - when changed here should be changed in SVGs too
 @water-hot: #ff4020;  // when changed here should be changed in SVGs too
 @whitewater-line: lighten(@water-color, 5%);
+@wateredge-line: mix(@river-color, @water-icon, 50%); // blue outlining around piers and in front of quays
 
 #water-barriers-line {
 
@@ -126,9 +127,14 @@
     [man_made = 'breakwater'],
     [man_made = 'groyne'] {
       polygon-fill: @breakwater-color;
-      [material = 'stone'][zoom >= 15] {
-        polygon-pattern-file: url('symbols/patterns/breakwater_stone.svg');
-        polygon-pattern-alignment: global;
+      [material = 'stone'],
+      [material = 'rock'],
+      [material = 'boulder'] {
+        [zoom >= 15][way_pixels > 120] {
+          line-color: lighten(@breakwater-color, 5%);
+          polygon-pattern-file: url('symbols/patterns/breakwater_stone.svg');
+          polygon-pattern-alignment: global;
+        }
       }
     }
 }
@@ -138,19 +144,76 @@
     [man_made = 'groyne'] {
       line-width: [width];
       line-color: @breakwater-color;
-      [material = 'stone'][zoom >= 15][width > 5] {
-        line-pattern-type: repeat;
-        line-pattern-alignment: global;
-        line-pattern-width: [width];
-        line-pattern-file: url('symbols/patterns/breakwater_stone.svg');
+      [material = 'stone'],
+      [material = 'rock'],
+      [material = 'boulder'] {
+        [zoom >= 15][width > 5] {
+          line-color: lighten(@breakwater-color, 5%);
+          line-pattern-type: repeat;
+          line-pattern-alignment: global;
+          line-pattern-width: [width];
+          line-pattern-file: url('symbols/patterns/breakwater_stone.svg');
+        }
+      }
+      [material = 'wood'][zoom >= 16] {
+        line-width: [width]-0.7;
+      }
+    }
+    [man_made = 'groyne_wood_point'] {
+      marker-fill: lighten(@breakwater-color, 16%);
+      marker-width: [width];
+      marker-height: [width];
+      marker-allow-overlap: true;
+      marker-line-width: 0;
+      marker-ignore-placement: true;
+    }
+    [man_made = 'groyne_wood_symbol'] {
+      [width < 6] {
+        polygon-fill: #404040;
+      }
+      [width >= 6][width < 8] {
+        polygon-fill: #555555;
+      }
+      [width >= 8][width < 10] {
+        polygon-fill: #606060;
+      }
+      [width >= 10][width < 12] {
+        polygon-fill: #707070;
+      }
+      [width >= 12][width < 14] {
+        polygon-fill: #808080;
+      }
+      [width >= 14][width < 16] {
+        polygon-fill: #888888;
+      }
+      [width >= 16] {
+        polygon-fill: #909090;
       }
     }
 }
 
 #piers-casing[zoom >= 15] {
-  line-width: 2;
-  line-color: mix(@river-color, @water-icon, 50%);
-  comp-op: dst-over;
+  [floating = 'yes'] {
+    line-width: 2;
+    line-color: @wateredge-line;
+    comp-op: dst-over;
+  }
+  [floating = 'no'] {
+    ::shadow {
+      line-color: @shadow-color;
+      line-width: 1.5;
+      line-clip: false;
+      line-opacity: 0.2;
+      line-geometry-transform: "translate(1.0, 1.0)";
+      comp-op: dst-over;
+    }
+    ::outline {
+      line-color: mix(@man-made-icon, @land-color, 50%);
+      line-width: 0.75;
+      line-clip: false;
+      comp-op: dst-over;
+    }
+  }
 }
 
 #quays[zoom >= 14] {
@@ -201,7 +264,7 @@
     }
   }
 
-  gmic: "zoom={round(log2(559082264.028/$_mapnik_scale_denominator))} +channels[quays] 3 -name. quays_mask -channels[ocean] 3 -channels[water_areas_mask] 3 -max[ocean] [water_areas_mask] +dilate_circ[ocean] {1.0+if($zoom>=17,8.0,2.0)*$_mapnik_scale_factor} -name. water_mask_buffer -sub[water_mask_buffer] [ocean] -min[quays_mask] [water_mask_buffer] -to_rgb[quays] -append[quays] [quays_mask],c -keep[quays] -name. use";
+  gmic: "-if !$_mapnik_render_trivial zoom={round(log2(559082264.028/$_mapnik_scale_denominator))} +channels[quays] 3 -name. quays_mask -channels[ocean] 3 -channels[water_areas_mask] 3 -max[ocean] [water_areas_mask] +dilate_circ[ocean] {1.0+if($zoom>=17,8.0,2.0)*$_mapnik_scale_factor} -name. water_mask_buffer -sub[water_mask_buffer] [ocean] -min[quays_mask] [water_mask_buffer] -to_rgb[quays] -append[quays] [quays_mask],c -keep[quays] -name. use -fi";
 
 }
 

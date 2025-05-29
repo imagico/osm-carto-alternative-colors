@@ -44,15 +44,10 @@
         (SELECT
             way,
             man_made,
-            CASE WHEN tags->'mooring' IN('yes', 'private', 'commercial', 'cruise', 'ferry', 'yacht', 'guest') THEN
-              'yes'
-            ELSE 
-              'no'
-            END AS mooring,
             tags->'material' AS material,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels
           FROM planet_osm_polygon
-          WHERE man_made IN ('pier', 'breakwater', 'groyne')
+          WHERE man_made IN ('breakwater', 'groyne')
         ) AS breakwaters_poly
     properties:
       minzoom: 12
@@ -65,11 +60,10 @@
         (SELECT
             way,
             man_made,
-            width,
-            mooring,
+            width_px AS width,
             material
           FROM
-            (WITH piers_raw AS
+            (WITH breakwaters_raw AS
               (SELECT
                   way,
                   man_made,
@@ -83,64 +77,103 @@
                       tags->'width',
                       !bbox!, !scale_denominator!
                     )
-                  ) AS width,
-                  CASE WHEN tags->'mooring' IN('yes', 'private', 'commercial', 'cruise', 'ferry', 'yacht', 'guest') THEN
-                    'yes'
-                  ELSE 
-                    'no'
-                  END AS mooring,
+                  ) AS width_px,
                   tags->'material' AS material
                 FROM planet_osm_line
-                WHERE man_made IN ('pier', 'breakwater', 'groyne')
+                WHERE man_made IN ('breakwater', 'groyne')
                   AND way && !bbox!
+              ),
+            groynes_wood_points AS
+              (SELECT
+                  point,
+                  man_made,
+                  width_px,
+                  length_px,
+                  material
+                FROM
+                  (SELECT
+                      (way_points).geom AS point,
+                      man_made,
+                      width_px,
+                      length_px,
+                      material
+                    FROM
+                      (SELECT
+                          ST_DumpPoints(way_seg) AS way_points,
+                          man_made,
+                          width_px,
+                          length_px,
+                          material
+                        FROM
+                          (SELECT
+                              ST_Segmentize(ST_LineSubstring(way, 0.5*width_px/length_px, 1.0-0.5*width_px/length_px), (width_px+0.5)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way_seg,
+                              man_made,
+                              width_px,
+                              length_px,
+                              material
+                            FROM
+                              (SELECT
+                                  way,
+                                  man_made,
+                                  width_px,
+                                  ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length_px,
+                                  material
+                                FROM breakwaters_raw
+                                WHERE
+                                  man_made = 'groyne' AND
+                                  width_px >= 3.5 AND
+                                  material = 'wood' AND
+                                  z(!scale_denominator!) > 16
+                              ) AS groynes_wood_raw
+                          ) AS groynes_wood_seg_raw
+                      ) AS groynes_wood_seg
+                  ) AS t1a
+                -- we can speed things up quite a bit at the higher zoom levels by dropping points outside the bounding box
+                -- for groynes much larger than the bounding box
+                WHERE point && ST_Expand(!bbox!,(width_px*0.5+1.0)*NULLIF(!scale_denominator!*0.001*0.28,0))
               )
             SELECT
                 way,
                 man_made,
-                width,
-                mooring,
+                width_px,
                 material
-              FROM piers_raw
+              FROM breakwaters_raw
+              WHERE
+                man_made != 'groyne' OR
+                width_px < 3.5 OR
+                material IS NULL OR
+                material != 'wood' OR
+                z(!scale_denominator!) <= 16
             UNION ALL
             SELECT
-                way,
-                'pier_backdrop' AS man_made,
-                width,
-                mooring,
+                point AS way,
+                'groyne_wood_point' AS man_made,
+                width_px,
                 material
-              FROM piers_raw
-              WHERE man_made = 'pier' AND width >= 10 AND mooring = 'yes'
+              FROM groynes_wood_points
             UNION ALL
             SELECT
-                (ST_Dump(
-                  CASE
-                    WHEN length < 3.0*width THEN ST_LineInterpolatePoint(way, 0.5)
-                    WHEN length < 5.0*width THEN ST_Collect(ST_LineInterpolatePoint(way, 0.25), ST_LineInterpolatePoint(way, 0.75))
-                    ELSE ST_Collect(ARRAY[ST_LineInterpolatePoint(way, 0.2), ST_LineInterpolatePoint(way, 0.5), ST_LineInterpolatePoint(way, 0.8)])
-                  END
-                )).geom AS way,
-                'pier_symbol' AS man_made,
-                (CASE WHEN length < width THEN length ELSE width END) AS width,
-                mooring,
+                ST_Translate(
+                  carto_groyne_symbol_from_db(
+                    'groyne_wood',
+                    (width_px+0.5)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                    width_px
+                  ),
+                  ST_X(point),
+                  ST_Y(point)
+                ) AS way,
+                'groyne_wood_symbol' AS man_made,
+                width_px,
                 material
-              FROM
-                (SELECT
-                    way,
-                    ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length,
-                    width,
-                    mooring,
-                    material
-                  FROM piers_raw
-                  WHERE man_made = 'pier' AND width >= 10 AND mooring = 'yes'
-                ) AS piers_wide_mooring
+              FROM groynes_wood_points
             ) AS _
-          ORDER BY
-            -- symbol nodes last so symbols are drawn above the line signatures
+          ORDER BY 
             CASE 
-              WHEN man_made = 'pier_backdrop' THEN 3
-              WHEN man_made = 'pier_symbol' THEN 2
-              ELSE 1
-            END
+               WHEN man_made = 'groyne_wood_point' THEN 1
+               WHEN man_made = 'groyne_wood_symbol' THEN 2
+               ELSE 3
+            END,
+            width_px DESC
         ) AS breakwaters_line
     properties:
       minzoom: 12

@@ -979,6 +979,7 @@
                 0 AS z_order
               FROM planet_osm_line
               WHERE route = 'ferry'
+                AND osm_id > 0 -- we do not want route relations here because they contain other geometries (ferry terminals as platforms etc.)
                 AND way && !bbox!
             UNION ALL
             SELECT -- goods_conveyor
@@ -1234,6 +1235,7 @@
                     way,
                     ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length,
                     width,
+                    floating,
                     mooring,
                     material,
                     layernotnull,
@@ -1293,35 +1295,35 @@
               WHEN road_layer = 'waterway_supplement' THEN -1
               WHEN road_layer = 'waterway_bridges_casing' THEN 0
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
-              WHEN road_layer = 'landuse_overlay' THEN 2
-              WHEN road_layer = 'line_barriers' THEN 3
-              WHEN road_layer = 'line_barrier_areas' THEN 4
-              WHEN road_layer = 'ferry_routes' THEN 5
-              WHEN road_layer = 'tc_casing' THEN 6
-              WHEN road_layer = 'area_casing' THEN 6
-              WHEN road_layer = 'junction_casing' THEN 6
-              WHEN road_layer = 'casing' THEN 6
-              WHEN road_layer = 'background' THEN 7
-              WHEN road_layer = 'background_unpaved' THEN 7
-              WHEN road_layer = 'area_fill' THEN 8
-              WHEN road_layer = 'junction_fill' THEN 8
-              WHEN road_layer = 'fill' THEN 8
-              WHEN road_layer = 'fill_unpaved' THEN 8
-              WHEN road_layer = 'fill_lanes' THEN 8
-              WHEN road_layer = 'parkings_lane' THEN 8
-              WHEN road_layer = 'centerline' THEN 8
-              WHEN road_layer = 'lanes' THEN 8
-              WHEN road_layer = 'access' THEN 8
-              WHEN road_layer = 'tc_fill' THEN 8
-              WHEN road_layer = 'piers_poly_main' THEN 8
-              WHEN road_layer = 'piers_line_main' THEN 8
-              WHEN road_layer = 'piers_line_symbols' THEN 8
-              WHEN road_layer = 'piers_poly_backdrop' THEN 8
-              WHEN road_layer = 'piers_line_backdrop' THEN 8
-              WHEN road_layer = 'pipeline_casing' THEN 9
-              WHEN road_layer = 'pipeline_fill' THEN 9
-              WHEN road_layer = 'pipeline_flange' THEN 9
-              WHEN road_layer = 'centerline_top' THEN 10
+              WHEN road_layer = 'piers_poly_main' THEN 2
+              WHEN road_layer = 'piers_line_main' THEN 2
+              WHEN road_layer = 'piers_line_symbols' THEN 2
+              WHEN road_layer = 'piers_poly_backdrop' THEN 2
+              WHEN road_layer = 'piers_line_backdrop' THEN 2
+              WHEN road_layer = 'landuse_overlay' THEN 3
+              WHEN road_layer = 'line_barriers' THEN 4
+              WHEN road_layer = 'line_barrier_areas' THEN 5
+              WHEN road_layer = 'ferry_routes' THEN 6
+              WHEN road_layer = 'tc_casing' THEN 7
+              WHEN road_layer = 'area_casing' THEN 7
+              WHEN road_layer = 'junction_casing' THEN 7
+              WHEN road_layer = 'casing' THEN 7
+              WHEN road_layer = 'background' THEN 8
+              WHEN road_layer = 'background_unpaved' THEN 8
+              WHEN road_layer = 'area_fill' THEN 9
+              WHEN road_layer = 'junction_fill' THEN 9
+              WHEN road_layer = 'fill' THEN 9
+              WHEN road_layer = 'fill_unpaved' THEN 9
+              WHEN road_layer = 'fill_lanes' THEN 9
+              WHEN road_layer = 'parkings_lane' THEN 9
+              WHEN road_layer = 'centerline' THEN 9
+              WHEN road_layer = 'lanes' THEN 9
+              WHEN road_layer = 'access' THEN 9
+              WHEN road_layer = 'tc_fill' THEN 9
+              WHEN road_layer = 'pipeline_casing' THEN 10
+              WHEN road_layer = 'pipeline_fill' THEN 10
+              WHEN road_layer = 'pipeline_flange' THEN 10
+              WHEN road_layer = 'centerline_top' THEN 11
             END,
             layernotnull,
             CASE
@@ -1333,22 +1335,22 @@
               WHEN road_layer = 'waterway_supplement' THEN -1
               WHEN road_layer = 'waterway_bridges_casing' THEN 0
               WHEN road_layer = 'waterway_bridges_fill' THEN 1
-              WHEN road_layer = 'landuse_overlay' THEN 2
-              WHEN road_layer = 'line_barriers' THEN 3
-              WHEN road_layer = 'line_barrier_areas' THEN 4
-              WHEN road_layer = 'ferry_routes' THEN 5
-              WHEN road_layer = 'pipeline_casing' THEN 6
-              WHEN road_layer = 'tc_casing' THEN 7
-              WHEN road_layer = 'area_casing' THEN 8
-              WHEN road_layer = 'junction_casing' THEN 9
-              WHEN road_layer = 'casing' THEN 10
-              WHEN road_layer = 'background' THEN 11
-              WHEN road_layer = 'background_unpaved' THEN 11
-              WHEN road_layer = 'piers_poly_main' THEN 12
-              WHEN road_layer = 'piers_line_main' THEN 13
-              WHEN road_layer = 'piers_line_symbols' THEN 14
-              WHEN road_layer = 'piers_poly_backdrop' THEN 15
-              WHEN road_layer = 'piers_line_backdrop' THEN 16
+              WHEN road_layer = 'piers_poly_main' THEN 2
+              WHEN road_layer = 'piers_line_main' THEN 3
+              WHEN road_layer = 'piers_line_symbols' THEN 4
+              WHEN road_layer = 'piers_poly_backdrop' THEN 5
+              WHEN road_layer = 'piers_line_backdrop' THEN 6
+              WHEN road_layer = 'landuse_overlay' THEN 7
+              WHEN road_layer = 'line_barriers' THEN 8
+              WHEN road_layer = 'line_barrier_areas' THEN 9
+              WHEN road_layer = 'ferry_routes' THEN 10
+              WHEN road_layer = 'pipeline_casing' THEN 11
+              WHEN road_layer = 'tc_casing' THEN 12
+              WHEN road_layer = 'area_casing' THEN 13
+              WHEN road_layer = 'junction_casing' THEN 14
+              WHEN road_layer = 'casing' THEN 15
+              WHEN road_layer = 'background' THEN 16
+              WHEN road_layer = 'background_unpaved' THEN 16
               WHEN road_layer = 'area_fill' THEN 17
               WHEN road_layer = 'junction_fill' THEN 18
               WHEN road_layer = 'fill' THEN 19

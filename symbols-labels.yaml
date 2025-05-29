@@ -7,7 +7,7 @@
 #  for file syntax see comments below
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -107,6 +107,8 @@ colors:
   wetland-text: "#0665bf"
   shop-icon: "#ac39ac"
   shop-text: "#939"
+  white: "#ffffff"
+  transportation: "#dedeee"
   transportation-icon: &transportation-icon "#8461C4"
   # darken(@transportation-icon, 10%);
   transportation-text: &transportation-text "#6942b0"
@@ -2228,6 +2230,7 @@ features:
   amenity=bus_station:
     symbol_file: symbols/sources/transport/bus_station.svg
     symbol_color: transportation-icon
+    symbol_color2: white
     label_color: transportation-text
     start_symbol: 16
     start_label: 17
@@ -2238,6 +2241,12 @@ features:
     start_symbol: 15
     start_label: 16
     text_dy: 10
+    variants:
+      point:
+        condition: way_area IS NULL
+        symbol_file: symbols/sources/transport/ferry_fill.svg
+        symbol_color: transportation-icon
+        symbol_color2: transportation
   amenity=car_rental:
     symbol_file: symbols/sources/transport/car_rental.svg
     symbol_color: transportation-icon

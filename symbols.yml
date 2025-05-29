@@ -5,7 +5,7 @@
 #
 #  defines symbols to be stored in and rendered from the database
 #
-#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -1335,3 +1335,53 @@ symbols:
           ]),
           ST_Buffer(ST_Point(0,0), 0.5*1.25)
         )
+  groyne_wood_5:
+    type: groyne_wood
+    size: 5
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_5.svg
+  groyne_wood_7:
+    type: groyne_wood
+    size: 7
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_7.svg
+  groyne_wood_9:
+    type: groyne_wood
+    size: 9
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_9.svg
+  groyne_wood_11:
+    type: groyne_wood
+    size: 11
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_11.svg
+  groyne_wood_13:
+    type: groyne_wood
+    size: 13
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_13.svg
+  groyne_wood_15:
+    type: groyne_wood
+    size: 15
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_15.svg
+  groyne_wood_17:
+    type: groyne_wood
+    size: 17
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_17.svg
+  groyne_wood_19:
+    type: groyne_wood
+    size: 19
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_19.svg
+  groyne_wood_21:
+    type: groyne_wood
+    size: 21
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_21.svg
+  groyne_wood_23:
+    type: groyne_wood
+    size: 23
+    leaf_type: needleleaved
+    file: groyne/groyne_wood_23.svg

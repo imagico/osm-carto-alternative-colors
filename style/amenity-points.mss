@@ -28,6 +28,9 @@
 @station-color: #7981b0;
 @station-text: darken(saturate(@station-color, 15%), 10%);
 
+// shadows of planters and piers
+@shadow-color: #505060;
+
 @landcover-font-size: 10;
 @landcover-wrap-width-size: 30; // 3 em
 @landcover-line-spacing-size: -1.5; // -0.15 em
@@ -48,11 +51,11 @@
 
 #planter-polygons [zoom >= 18] {
   ::shadow {
-    line-color: @man-made-icon;
+    line-color: @shadow-color;
     line-width: 1.0;
     line-clip: false;
     line-opacity: 0.2;
-    line-geometry-transform: "translate(1.0, 1.0)"
+    line-geometry-transform: "translate(1.0, 1.0)";
   }
   ::main {
     polygon-fill: @orchard;

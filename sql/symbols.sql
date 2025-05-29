@@ -100,6 +100,24 @@ SELECT
   LIMIT 1
 $func$;
 
+/* get a groyne symbol geometry from table, scaled/resized to target symbol_size */
+/* symbol choice is by best match in size */
+/* parameters:  feature_type, symbol_size, symbol_size_px */
+CREATE OR REPLACE FUNCTION carto_groyne_symbol_from_db (text, real, real)
+  returns geometry
+  language sql
+  immutable
+AS $func$
+SELECT
+    ST_TransScale(way, -width*0.5, -height*0.5, $2/symbol_size, $2/symbol_size) AS way
+  FROM carto_symbols
+  WHERE feature_type = $1
+  ORDER BY
+    -- slight offset to prefer smaller symbols to larger ones if size mismatch is the same
+    ABS($3-0.01 - symbol_size)
+  LIMIT 1
+$func$;
+
 /* convert cardinal to numerical direction */
 CREATE OR REPLACE FUNCTION carto_cardinal_direction (text)
   returns numeric
