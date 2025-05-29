@@ -51,16 +51,27 @@
                   e.way,
                   (COALESCE(
                     (SELECT
-                       GREATEST(
-                         carto_highway_line_width(highway, service, z(!scale_denominator!)),
-                         carto_highway_line_width_mapped(highway, tags->'width', tags->'lanes', !bbox!, !scale_denominator!))
-                       FROM planet_osm_line h 
-                       WHERE ST_Intersects(h.way, e.way) AND highway IN 
+                        GREATEST(
+                          carto_highway_line_width(h.highway, h.service, z(!scale_denominator!)),
+                          carto_highway_line_width_mapped(
+                            h.highway,
+                            h.tags->'width:carriageway',
+                            h.tags->'width',
+                            h.tags->'lanes',
+                            h.tags->'parking:both',
+                            h.tags->'parking:right',
+                            h.tags->'parking:left',
+                            !bbox!,
+                            !scale_denominator!
+                          )
+                        )
+                      FROM planet_osm_line h 
+                      WHERE ST_Intersects(h.way, e.way) AND highway IN 
                         ('motorway', 'motorway_link', 'trunk', 'trunk_link', 'primary', 'primary_link', 'secondary', 
                          'secondary_link', 'tertiary', 'tertiary_link', 'residential', 'unclassified', 'service', 
                          'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path', 'track',
                          'busway', 'bus_guideway')
-                        ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
+                       ORDER BY carto_highway_line_width(highway, service, z(!scale_denominator!)) DESC LIMIT 1
                     ),
                     carto_highway_line_width('footway', z(!scale_denominator!))
                   ) + 2.5 + carto_barrier_line_width(
