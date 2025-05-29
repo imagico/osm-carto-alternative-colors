@@ -86,7 +86,6 @@ sources:
     archive:
       format: zip
       files:
-        - language_regions/language_regions.cpg
         - language_regions/language_regions.dbf
         - language_regions/language_regions.prj
         - language_regions/language_regions.shp
