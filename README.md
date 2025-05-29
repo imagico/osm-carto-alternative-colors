@@ -16,17 +16,14 @@ and overall a different approach to cartographic design.
 
 The following are the major design differences of this style compared to OpenStreetMap Carto:
 
-* a different low to mid zoom color scheme that is used without algorithmic color fading and that therefore
-allows more conscious color design choices.
+* a different low to mid zoom color scheme that is used without algorithmic color fading and that therefore allows more conscious color design choices.
 * various changes in the landcover color scheme matching the cartographic principles (see below).
 * a three color system for waterbody rendering.
 * low zoom waterbody rendering based on preprocessed data.
-* extensive redesign of waterbody rendering in general including distinct rendering of intermittent and 
-saltwater waterbodies and waterways.
+* extensive redesign of waterbody rendering in general including distinct rendering of intermittent and saltwater waterbodies and waterways.
 * different color for administrative boundaries, distinct rendering of maritime boundaries.
 * changed road colors with purple motorways and yellow tertiary roads
-* different color scheme and different design of `path`/`footway`/`cycleway` rendering as well as `track` rendering 
-at mid zoom levels.
+* different color scheme and different design of `path`/`footway`/`cycleway` rendering as well as `track` rendering at mid zoom levels.
 * more sophisticated rendering of waterway barriers (dams, lock gates, weirs and waterfalls) as well as fords.
 * different rendering of springs and addition of rendering of other water related point features.
 * different color for transportation and accomodation related point symbols.
@@ -51,14 +48,10 @@ at mid zoom levels.
   - display of additional permissions on road classes with implicit access restrictions
 * rendering of `natural=tree`, `natural=shrub`, `natural=tree_row` and `natural=hedge` differentiated by `leaf_type`/`leaf_cycle`
 * embankment like illustration of `hedge=hedge_bank`
-* a modular style definition with different layers in separate files and the possibility to define style variants
-like with simplified versions of specific high complexity layers.
-* script generated MSS/SQL code for the POI symbol and label rendering making the style scale better
-with a large number of POI types.
-* regionally differentiated font lists for label rendering to better conform with different regional typographic 
-conventions (using preprocessed administrative area polygons for lookup).
-* rendering of compound name labels in multilingual regions based on matching `name:<lang>` tags with
-parts of the `name` tag and interpreting `default_language` tags.
+* a modular style definition with different layers in separate files and the possibility to define style variants like with simplified versions of specific high complexity layers.
+* script generated MSS/SQL code for the POI symbol and label rendering making the style scale better with a large number of POI types.
+* regionally differentiated font lists for label rendering to better conform with different regional typographic conventions (using preprocessed administrative area polygons for lookup).
+* rendering of compound name labels in multilingual regions based on matching `name:<lang>` tags with parts of the `name` tag and interpreting `default_language` tags.
 * rendering of `natural=earth_bank`, `natural=gully` and `natural=crevasse`
 * differentiated rendering of `natural=earth_bank` with `earth_bank=grassy_steep_slope` and `natural=cliff` with `surface=ice`
 * rendering of `man_made=dyke` with line signature parametrized according to `width` tagging
@@ -70,7 +63,20 @@ parts of the `name` tag and interpreting `default_language` tags.
 * symbol augmentation for parkings illustrating secondary tags
 * symbol augmentation for bus/tram stops with a shelter
 * rendering some types of buildings with a distinct design at high zoom levels (`building=roof`, `building=greenhouse`, `building=garages`, `building=garage`, `building=carport`)
-* rendering of street lights with a design derived from the french style
+* rendering of street lights with a design derived from the French style
+* new rendering of pipelines with context adjusted dashing
+* new dynamic rendering of viewpoints taking into account direction tagging
+* re-designed rendering of point barriers using a common symbol design concept, adding various new barrier types
+* adding symbols for various human structures with more differentiation by secondary tags
+* new symbol designs with 3d shading for various human structures
+* unified symbol design for waste/recycling infrastructure
+* differentiated rendering of benches
+* new symbols for `amenity=ferry_terminal`
+* differentiated rendering of piers, breakwaters and groynes based on secondary tags and taking into account `width=*`
+* rendering of `landuse=aquaculture` with differenciation by `produce=*`/`aquaculture=*`
+* rendering of `man_made=quay`
+* rendering of `emergency=life_ring`
+
 
 # Samples
 
@@ -92,6 +98,7 @@ See [INSTALL.md](INSTALL.md) for the generic OSM-Carto installation instructions
 install the a number of functions in PostGIS supplied in:
 
 * `sql/z.sql`
+* `sql/z_order.sql`
 * `sql/line-widths-generated.sql`
 * `sql/map_functions.sql`
 * `sql/roads.sql`
@@ -107,7 +114,7 @@ but you will loose the features that depend on that of course.  How you can modi
 version of carto can be found [here](https://github.com/imagico/kosmtik).
 
 Symbol augmentation used for rendering some symbols depends on a 
-[custom extension of Mapnik](https://github.com/imagico/mapnik/tree/anchors).  You can use the style without it,
+[custom extension of Mapnik](https://github.com/imagico/mapnik/tree/anchors-v4).  You can use the style without it,
 but will get some warnings and will not be able to use the symbol augmentation.
 
 For rendering all languages as intended you also need to download custom fonts - for which i adapted the
