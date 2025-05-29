@@ -8,7 +8,7 @@
 #  levels.
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -52,52 +52,9 @@ from shutil import copyfile
 
 import logging
 
+from ac_functions import *
+
 indent_base = "        "
-
-def load_settings(config_file):
-    """Read the settings from YAML."""
-    return yaml.safe_load(open(config_file, 'r'))
-
-def svg_convert(fin, fout, inkscape, dpi):
-
-    sys.stdout.flush()
-
-    if inkscape:
-        if dpi > 0:
-            params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, fin]
-        else:
-            params = ["inkscape", "-z", "--export-png="+fout, fin]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            logging.warning("inkscape' error: SVG conversion failed")
-
-        if not(os.path.exists(fout)):
-            logging.warning("inkscape' error: SVG conversion failed")
-    else:
-        if int(dpi) > 0:
-            params = ["convert", "-background", "none", "-density", dpi, fin, fout]
-        else:
-            params = ["convert", "-background", "none", fin, fout]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            logging.warning("convert' error: SVG conversion failed")
-
-        if not(os.path.exists(fout)):
-            logging.warning("convert' error: SVG conversion failed")
-
-    sys.stdout.flush()
-
-def colorize_svg(source, basedir, symbol_name, color, color2):
-    with open(source, 'rt') as fin:
-        with open(basedir + "/colored/" + symbol_name + '.svg', 'wt') as fout:
-            if color2 is None:
-                logging.info("Colorizing symbol for {name} ({col})...".format(name=symbol_name, col=color))
-                for line in fin:
-                    fout.write(line.replace('#000000', color))
-            else:
-                logging.info("Colorizing symbol for {name} ({col}, {col2})...".format(name=symbol_name, col=color, col2=color2))
-                for line in fin:
-                    fout.write(line.replace('#000000', color).replace('#ff0000', color2))
 
 def resolve_color(cn, colors):
     if cn in colors:
@@ -113,6 +70,7 @@ def main():
 
     parser.add_argument('-b', '--basedir', dest='basedir', help='Base directory for symbols', action='store')
     parser.add_argument('-i', '--inkscape', dest='inkscape', help='Use inkscape for SVG rasterization', action='store_true', default=False)
+    parser.add_argument('-r', '--rsvg', dest='rsvg', help='Instrukt ImageMagick to use RSVG for SVG rasterization', action='store_true', default=False)
     parser.add_argument("-D", "--dpi", dest="dpi", help="Set SVG rasterizing resolution (default is 72, 90 or 96 dpi depending on RSVG/inkscape version)", default=0)
 
     parser.add_argument('-N', '--nopreviews', dest='nopreviews', help='Do not generate previews (to run faster)', action='store_true', default=False)
@@ -666,7 +624,7 @@ def main():
                 zooms[fn][None]['symbol_file'] = basedir+"/colored/"+fnn+".svg"
 
                 if not(opts.nopreviews):
-                    svg_convert(basedir+"/colored/"+fnn+".svg", basedir+"/previews/"+fnn+'.png', opts.inkscape, opts.dpi)
+                    svg_convert(basedir+"/colored/"+fnn+".svg", basedir+"/previews/"+fnn+'.png', True, opts.inkscape, opts.rsvg, opts.dpi)
                     contactsheet_files.append(basedir+"/previews/"+fnn+".png")
 
             zooms[fn][None]['symbol_color'] = symbol_color
@@ -758,7 +716,7 @@ def main():
                                 modifications[fn][modification]['symbol_file'] = basedir+"/colored/"+fnn+"_"+modification+".svg"
 
                                 if not(opts.nopreviews):
-                                    svg_convert(basedir+"/colored/"+fnn+"_"+modification+".svg", basedir+"/previews/"+fnn+"_"+modification+'.png', opts.inkscape, opts.dpi)
+                                    svg_convert(basedir+"/colored/"+fnn+"_"+modification+".svg", basedir+"/previews/"+fnn+"_"+modification+'.png', True, opts.inkscape, opts.rsvg, opts.dpi)
                                     contactsheet_files.append(basedir+"/previews/"+fnn+"_"+modification+".png")
 
                             else:
@@ -892,7 +850,7 @@ def main():
                             zooms[fn][variant]['symbol_file'] = basedir+"/colored/"+fnn+"_"+variant+".svg"
 
                             if not(opts.nopreviews):
-                                svg_convert(basedir+"/colored/"+fnn+"_"+variant+".svg", basedir+"/previews/"+fnn+"_"+variant+'.png', opts.inkscape, opts.dpi)
+                                svg_convert(basedir+"/colored/"+fnn+"_"+variant+".svg", basedir+"/previews/"+fnn+"_"+variant+'.png', True, opts.inkscape, opts.rsvg, opts.dpi)
                                 contactsheet_files.append(basedir+"/previews/"+fnn+"_"+variant+".png")
 
                         else:
@@ -2042,7 +2000,7 @@ def main():
                             if os.path.exists(fnm):
                                 if not(fnm_preview in contactsheet_files_all):
                                     logging.info("Rasterizing preview of "+fnm_base)
-                                    svg_convert(fnm, fnm_preview, opts.inkscape, opts.dpi)
+                                    svg_convert(fnm, fnm_preview, True, opts.inkscape, opts.rsvg, opts.dpi)
                                     if os.path.exists(fnm_preview):
                                         contactsheet_files2.append(fnm_preview)
                                         contactsheet_files_all.append(fnm_preview)
@@ -2074,7 +2032,7 @@ def main():
                     fnm_preview = basedir+"/previews/currency_"+fnm_base+'.png'
                     if not(fnm_preview in contactsheet_files2):
                         logging.info("Rasterizing preview of "+fnm_base)
-                        svg_convert(fnm, fnm_preview, opts.inkscape, opts.dpi)
+                        svg_convert(fnm, fnm_preview, True, opts.inkscape, opts.rsvg, opts.dpi)
                         if os.path.exists(fnm_preview):
                             contactsheet_files2.append(fnm_preview)
 

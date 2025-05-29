@@ -6,7 +6,7 @@
 #  used by the style based on definition in a YAML file (line_patterns.yaml)
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2023-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -50,48 +50,9 @@ from shutil import copyfile
 
 import logging
 
+from ac_functions import *
+
 indent_base = "        "
-
-def load_settings(config_file):
-    """Read the settings from YAML."""
-    return yaml.safe_load(open(config_file, 'r'))
-
-def svg_convert(fin, fout, inkscape, dpi):
-
-    sys.stdout.flush()
-
-    if inkscape:
-        if dpi > 0:
-            params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, fin]
-        else:
-            params = ["inkscape", "-z", "--export-png="+fout, fin]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            logging.warning("inkscape' error: SVG conversion failed")
-
-        if not(os.path.exists(fout)):
-            logging.warning("inkscape' error: SVG conversion failed")
-    else:
-        if int(dpi) > 0:
-            params = ["convert", "-background", "none", "-density", dpi, fin, fout]
-        else:
-            params = ["convert", "-background", "none", fin, fout]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            logging.warning("convert' error: SVG conversion failed")
-
-        if not(os.path.exists(fout)):
-            logging.warning("convert' error: SVG conversion failed")
-
-    sys.stdout.flush()
-
-def colorize_svg(source, basedir, symbol_name, color):
-    with open(source, 'rt') as fin:
-        with open(basedir + "/colored/" + symbol_name + '.svg', 'wt') as fout:
-            logging.info("Colorizing symbol for {name} ({col})...".format(name=symbol_name, col=color))
-            for line in fin:
-                fout.write(line.replace('#000000', color))
-
 
 def svg_from_sql(conn, basedir, symbol_name, sql, sql_width, sql_height, line_width, color):
     with conn.cursor() as cur:
@@ -123,7 +84,7 @@ def svg_from_sql(conn, basedir, symbol_name, sql, sql_width, sql_height, line_wi
 
 def generate_preview(basedir, symbol_name, opts):
 
-    svg_convert(basedir+"/colored/"+symbol_name + '.svg', basedir+"/previews/"+symbol_name + '.tmp.png', opts.inkscape, opts.dpi)
+    svg_convert(basedir+"/colored/"+symbol_name + '.svg', basedir+"/previews/"+symbol_name + '.tmp.png', True, opts.inkscape, opts.rsvg, opts.dpi)
 
     if os.path.exists(basedir+"/previews/"+symbol_name + '.tmp.png'):
 
@@ -143,11 +104,11 @@ def generate_preview(basedir, symbol_name, opts):
             logging.warning("'montage' error: preview generation failed")
 
         if subprocess.call(
-            ["convert", basedir+"/previews/"+symbol_name + ".tmp2.png",
+            ["magick", basedir+"/previews/"+symbol_name + ".tmp2.png",
              "-gravity", "center", "-background", "#f2efe9", "-extent", "180x32",
              basedir+"/previews/"+symbol_name + ".png"],
              stderr=subprocess.STDOUT) != 0:
-            logging.warning("'convert' error: preview generation failed")
+            logging.warning("'magick' error: preview generation failed")
 
         os.remove(basedir+"/previews/"+symbol_name + ".tmp.png")
         os.remove(basedir+"/previews/"+symbol_name + ".tmp2.png")
@@ -173,6 +134,7 @@ def main():
 
     parser.add_argument('-b', '--basedir', dest='basedir', help='Base directory for symbols', action='store')
     parser.add_argument('-i', '--inkscape', dest='inkscape', help='Use inkscape for SVG rasterization', action='store_true', default=False)
+    parser.add_argument('-r', '--rsvg', dest='rsvg', help='Instrukt ImageMagick to use RSVG for SVG rasterization', action='store_true', default=False)
     parser.add_argument("-D", "--dpi", dest="dpi", help="Set SVG rasterizing resolution (default is 72, 90 or 96 dpi depending on RSVG/inkscape version)", default=0)
 
     parser.add_argument('-N', '--nopreviews', dest='nopreviews', help='Do not generate previews (to run faster)', action='store_true', default=False)
@@ -190,6 +152,9 @@ def main():
         logging.basicConfig(level=logging.WARNING)
     else:
         logging.basicConfig(level=logging.INFO)
+
+    if opts.inkscape:
+            logging.warning("using inkscape")
 
     config = load_settings(opts.config)
 

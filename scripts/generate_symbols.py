@@ -433,7 +433,6 @@ def main():
                                   '--config', 'GDAL_PDF_DPI', '96',
                                   '--config', 'OGR_PDF_READ_NON_STRUCTURED', 'YES',
                                   '-f', 'PostgreSQL',
-                                  '-f', 'PostgreSQL',
                                   '-lco', 'GEOMETRY_NAME=way',
                                   '-lco', 'SPATIAL_INDEX=FALSE',
                                   '-lco', 'EXTRACT_SCHEMA_FROM_LAYER_NAME=YES',

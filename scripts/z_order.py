@@ -4,7 +4,7 @@
 #
 #  Generates syl code for z_order table.
 #
-#  Copyright 2024 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2024-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -41,11 +41,7 @@ import os
 
 from collections import OrderedDict, namedtuple
 
-
-def load_settings(config_file):
-    """Read the settings from YAML."""
-    return yaml.safe_load(open(config_file, 'r'))
-
+from ac_functions import *
 
 def main():
     parser = argparse.ArgumentParser(description='Generates z_order table')

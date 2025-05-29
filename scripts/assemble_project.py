@@ -7,7 +7,7 @@
 #  Style variants can be chosen based on tags in layers.yaml.
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -45,10 +45,7 @@ import re
 
 import logging
 
-def load_settings(config_file):
-    """Read the settings from YAML."""
-    return yaml.safe_load(open(config_file, 'r'))
-
+from ac_functions import *
 
 def cmd_params(cmd):
     return cmd.split("(", 1)[1].split(")", 1)[0].split(",")

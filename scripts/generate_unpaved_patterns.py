@@ -33,6 +33,8 @@ import math
 
 from PIL import ImageColor
 
+from ac_functions import *
+
 # color space conversion functions
 # from https://github.com/antimatter15/rgb-lab
 # MIT License
@@ -75,52 +77,6 @@ def srgb2lab(rgb):
     z = math.pow(z, 1.0/3.0) if (z > 0.008856) else (7.787 * z) + 16.0/116.0;
 
     return [(116.0 * y) - 16.0, 500.0 * (x - y), 200.0 * (y - z)]
-
-
-def load_settings(config_file):
-    """Read the settings from YAML."""
-    return yaml.safe_load(open(config_file, 'r'))
-
-def svg_convert(fin, fout, transparent, inkscape, dpi):
-
-    sys.stdout.flush()
-
-    if inkscape:
-        if transparent:
-            if dpi > 0:
-                params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, fin]
-            else:
-                params = ["inkscape", "-z", "--export-png="+fout, fin]
-        else:
-            if dpi > 0:
-                params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, "--export-background=white", fin]
-            else:
-                params = ["inkscape", "-z", "--export-png="+fout, "--export-background=white", fin]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            sys.exit("\n\n   'inkscape' error: SVG conversion failed.\n")
-
-        if not(os.path.exists(fout)):
-            sys.exit("\n\n   'inkscape' error: SVG conversion failed.\n")
-    else:
-        if transparent:
-            if int(dpi) > 0:
-                params = ["convert", "-background", "none", "-density", dpi, fin, fout]
-            else:
-                params = ["convert", "-background", "none", fin, fout]
-        else:
-            if int(dpi) > 0:
-                params = ["convert", "-density", dpi, fin, fout]
-            else:
-                params = ["convert", fin, fout]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            sys.exit("\n\n   'convert' error: SVG conversion failed.\n")
-
-        if not(os.path.exists(fout)):
-            sys.exit("\n\n   'convert' error: SVG conversion failed.\n")
-
-    sys.stdout.flush()
 
 # def get_color_value_by_name(variable_name, file_names):
 #
@@ -231,21 +187,21 @@ def process_color_pattern(pattern, color_name, darken, brighten_darken_ratio, co
             if not os.path.exists(basedir+"/png/"+pattern):
                 os.makedirs(basedir+"/png/"+pattern)
 
-            svg_convert(basedir+'/'+pattern+'_' + color_name + '.svg', basedir+'/png/'+pattern+"/" + color_name + '.png', True, opts.inkscape, opts.dpi)
+            svg_convert(basedir+'/'+pattern+'_' + color_name + '.svg', basedir+'/png/'+pattern+"/" + color_name + '.png', True, opts.inkscape, opts.rsvg, opts.dpi)
 
             sys.stdout.flush()
 
             if subprocess.call(
-                ["convert", "-depth", "8", basedir+'/png/'+pattern+"/" + color_name + '.png',
+                ["magick", basedir+'/png/'+pattern+"/" + color_name + '.png',
                  "-gravity", "center", "-crop", "64x64+0+0", "+repage", "-fill", original_color_value, "-draw", "rectangle 24,24 40,40",
-                 "-bordercolor", original_color_value, "-border", "16x16", basedir+'/previews/'+pattern+"/" + color_name + '.png' ],
+                 "-bordercolor", original_color_value, "-border", "16x16", "-depth", "8", basedir+'/previews/'+pattern+"/" + color_name + '.png' ],
                     stderr=subprocess.STDOUT) != 0:
-                sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
             sys.stdout.flush()
 
             if not(os.path.exists(basedir+'/previews/'+pattern+"/" + color_name + '.png')):
-                sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
             contactsheet_files.append(basedir+'/previews/'+pattern+"/" + color_name + '.png')
 
@@ -260,6 +216,7 @@ def main():
 
     parser.add_argument('-b', '--basedir', dest='basedir', help='Base directory for pattern files', action='store')
     parser.add_argument('-i', '--inkscape', dest='inkscape', help='Use inkscape for SVG rasterization', action='store_true', default=False)
+    parser.add_argument('-r', '--rsvg', dest='rsvg', help='Instrukt ImageMagick to use RSVG for SVG rasterization', action='store_true', default=False)
     parser.add_argument("-d", "--dpi", dest="dpi", help="Set SVG rasterizing resolution (default is 72, 90 or 96 dpi depending on RSVG/inkscape version)", default=0)
 
     parser.add_argument('-N', '--nopreviews', dest='nopreviews', help='Do not generate previews (to run faster)', action='store_true', default=False)
@@ -347,21 +304,21 @@ def main():
                     if not os.path.exists(basedir+"/png/"+pattern):
                         os.makedirs(basedir+"/png/"+pattern)
 
-                    svg_convert(basedir+'/'+pattern+'_' + color_name + '.svg', basedir+'/png/'+pattern+"/" + color_name + '.png', True, opts.inkscape, opts.dpi)
+                    svg_convert(basedir+'/'+pattern+'_' + color_name + '.svg', basedir+'/png/'+pattern+"/" + color_name + '.png', True, opts.inkscape, opts.rsvg, opts.dpi)
 
                     sys.stdout.flush()
 
                     if subprocess.call(
-                        ["convert", "-depth", "8", basedir+'/png/'+pattern+"/" + color_name + '.png',
+                        ["magick", basedir+'/png/'+pattern+"/" + color_name + '.png',
                          "-gravity", "center", "-crop", "64x64+0+0", "+repage", "-fill", original_color_value, "-draw", "rectangle 24,24 40,40",
-                         "-bordercolor", original_color_value, "-border", "16x16", basedir+'/previews/'+pattern+"/" + color_name + '.png' ],
+                         "-bordercolor", original_color_value, "-border", "16x16", "-depth", "8", basedir+'/previews/'+pattern+"/" + color_name + '.png' ],
                             stderr=subprocess.STDOUT) != 0:
-                        sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                        sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
                     sys.stdout.flush()
 
                     if not(os.path.exists(basedir+'/previews/'+pattern+"/" + color_name + '.png')):
-                        sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                        sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
                     contactsheet_files.append(basedir+'/previews/'+pattern+"/" + color_name + '.png')
 

@@ -6,7 +6,7 @@
 #  SVG and PNG.
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2018-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2018-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -49,53 +49,9 @@ from collections import OrderedDict, namedtuple
 
 from shutil import copyfile
 
-def load_settings(config_file):
-    """Read the settings from YAML."""
-    return yaml.safe_load(open(config_file, 'r'))
+from ac_functions import *
 
-def svg_convert(fin, fout, transparent, inkscape, dpi):
-
-    sys.stdout.flush()
-
-    if inkscape:
-        if transparent:
-            if dpi > 0:
-                params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, fin]
-            else:
-                params = ["inkscape", "-z", "--export-png="+fout, fin]
-        else:
-            if dpi > 0:
-                params = ["inkscape", "-z", "--export-png="+fout, "--export-dpi="+dpi, "--export-background=white", fin]
-            else:
-                params = ["inkscape", "-z", "--export-png="+fout, "--export-background=white", fin]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            sys.exit("\n\n   'inkscape' error: SVG conversion failed.\n")
-
-        if not(os.path.exists(fout)):
-            sys.exit("\n\n   'inkscape' error: SVG conversion failed.\n")
-    else:
-        if transparent:
-            if int(dpi) > 0:
-                params = ["convert", "-background", "none", "-density", dpi, fin, fout]
-            else:
-                params = ["convert", "-background", "none", fin, fout]
-        else:
-            if int(dpi) > 0:
-                params = ["convert", "-density", dpi, fin, fout]
-            else:
-                params = ["convert", fin, fout]
-
-        if subprocess.call(params, stderr=subprocess.STDOUT) != 0:
-            sys.exit("\n\n   'convert' error: SVG conversion failed.\n")
-
-        if not(os.path.exists(fout)):
-            sys.exit("\n\n   'convert' error: SVG conversion failed.\n")
-
-    sys.stdout.flush()
-
-
-def generate_pattern(basedir, pattern, colors, inkscape, dpi, nopreviews):
+def generate_pattern(basedir, pattern, colors, inkscape, rsvg, dpi, nopreviews):
 
     source_name = os.path.join(basedir+"/sources", pattern + ".svg")
 
@@ -125,7 +81,7 @@ def generate_pattern(basedir, pattern, colors, inkscape, dpi, nopreviews):
 
             copyfile(source_name, svg_name)
 
-            svg_convert(source_name, png_name, True, inkscape, dpi)
+            svg_convert(source_name, png_name, True, inkscape, rsvg, dpi)
 
             im = Image.open(png_name)
             (width, height) = im.size
@@ -134,15 +90,15 @@ def generate_pattern(basedir, pattern, colors, inkscape, dpi, nopreviews):
                 sys.stdout.flush()
 
                 if subprocess.call(
-                    ["convert", "-depth", "8", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][0], 
-                        png_name, "-composite", preview_name ],
+                    ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][0], 
+                        png_name, "-composite", "-depth", "8", preview_name ],
                         stderr=subprocess.STDOUT) != 0:
-                    sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                    sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
                 sys.stdout.flush()
 
                 if not(os.path.exists(preview_name)):
-                    sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                    sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
         else:
             print (pattern+" (colorized)...")
@@ -164,7 +120,7 @@ def generate_pattern(basedir, pattern, colors, inkscape, dpi, nopreviews):
 
             sys.stdout.flush()
 
-            svg_convert(svg_bw_name, png_bw_name, False, inkscape, dpi)
+            svg_convert(svg_bw_name, png_bw_name, False, inkscape, rsvg, dpi)
 
             im = Image.open(png_bw_name)
             (width, height) = im.size
@@ -172,9 +128,9 @@ def generate_pattern(basedir, pattern, colors, inkscape, dpi, nopreviews):
             sys.stdout.flush()
 
             if subprocess.call(
-                ["convert", "-depth", "8", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][1], 
+                ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][1], 
                     "(", png_bw_name, "-negate", ")", "-alpha", "Off", 
-                    "-compose", "CopyOpacity", "-composite", "+gamma", "-", 
+                    "-compose", "CopyOpacity", "-composite", "-depth", "8", 
                     png_name ],
                     stderr=subprocess.STDOUT) != 0:
                 sys.exit("\n\n   'convert' error: PNG colorization failed.\n")
@@ -188,15 +144,15 @@ def generate_pattern(basedir, pattern, colors, inkscape, dpi, nopreviews):
                 sys.stdout.flush()
 
                 if subprocess.call(
-                    ["convert", "-depth", "8", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][0], 
-                        png_name, "-composite", "-flatten", "+gamma", "-", preview_name ],
+                    ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][0], 
+                        png_name, "-composite", "-flatten", "-depth", "8", preview_name ],
                         stderr=subprocess.STDOUT) != 0:
-                    sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                    sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
                 sys.stdout.flush()
 
                 if not(os.path.exists(preview_name)):
-                    sys.exit("\n\n   'convert' error: preview generation failed.\n")
+                    sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
 
 def main():
@@ -211,6 +167,7 @@ def main():
 
     parser.add_argument('-b', '--basedir', dest='basedir', help='Base directory for symbols', action='store')
     parser.add_argument('-i', '--inkscape', dest='inkscape', help='Use inkscape for SVG rasterization', action='store_true', default=False)
+    parser.add_argument('-r', '--rsvg', dest='rsvg', help='Instrukt ImageMagick to use RSVG for SVG rasterization', action='store_true', default=False)
     parser.add_argument("-d", "--dpi", dest="dpi", help="Set SVG rasterizing resolution (default is 72, 90 or 96 dpi depending on RSVG/inkscape version)", default=0)
 
     parser.add_argument('-N', '--nopreviews', dest='nopreviews', help='Do not generate previews (to run faster)', action='store_true', default=False)
@@ -230,7 +187,7 @@ def main():
     if opts.gen:
         print ("Generating pattern images...")
         for pattern in patterns:
-            generate_pattern(basedir, pattern, colors, opts.inkscape, opts.dpi, opts.nopreviews)
+            generate_pattern(basedir, pattern, colors, opts.inkscape, opts.rsvg, opts.dpi, opts.nopreviews)
 
             if os.path.exists(os.path.join(basedir+"/previews", pattern + ".png")):
                 contactsheet_files.append("tile:"+os.path.join(basedir+"/previews", pattern + ".png"))
@@ -246,7 +203,7 @@ def main():
             for line in fin:
                 line_out = line
                 for pattern in patterns:
-                    (line_out, cnt) = re.subn(basedir+'/'+pattern+'\.png', basedir+'/'+pattern+'.svg', line_out)
+                    (line_out, cnt) = re.subn(basedir+'/'+pattern+'\\.png', basedir+'/'+pattern+'.svg', line_out)
                     sub_count += cnt
 
                 fout.write(line_out)
@@ -266,7 +223,7 @@ def main():
             for line in fin:
                 line_out = line
                 for pattern in patterns:
-                    (line_out, cnt) = re.subn(basedir+'/'+pattern+'\.svg', basedir+'/'+pattern+'.png', line_out)
+                    (line_out, cnt) = re.subn(basedir+'/'+pattern+'\\.svg', basedir+'/'+pattern+'.png', line_out)
                     sub_count += cnt
 
                 fout.write(line_out)
