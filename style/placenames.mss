@@ -446,7 +446,7 @@
   }
 }
 
-#placenames-small::ac {
+#placenames-ac {
   [place = 'ac_test_label_right'],
   [place = 'ac_test_label_left'],
   [place = 'ac_test_label_small'],
@@ -486,4 +486,3 @@
     }
   }
 }
-
