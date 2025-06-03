@@ -1209,22 +1209,24 @@
           marker-transform: 'scale (2)'; 
           marker-fill: lighten(desaturate(@reef, 5%), 10%);
         }
-        gmic: "-if $_mapnik_render_trivial -channels[aquaculture_symbol] 3 -name. aq_symbol_mask -else +channels[aquaculture_symbol] 3 -name. aq_symbol_mask -min[aq_symbol_mask] [aq_mask_eroded] +to_rgb[aquaculture_symbol] -name. aq_symbol_proc -append[aq_symbol_proc] [aq_symbol_mask],c -remove[aquaculture_symbol] -name. use -fi";
-
       }
     }
+    gmic: "-if $_mapnik_render_trivial -channels[aquaculture_symbol] 3 -name. aq_symbol_mask -else +channels[aquaculture_symbol] 3 -name. aq_symbol_mask -min[aq_symbol_mask] [aq_mask_eroded] +to_rgb[aquaculture_symbol] -name. aq_symbol_proc -append[aq_symbol_proc] [aq_symbol_mask],c -remove[aquaculture_symbol] -name. use -fi";
   }
 
   ::pattern {
-    [way_pixels < 120] {
-      polygon-fill: @water-color;
-    }
     [way_pixels >= 120] {
       polygon-pattern-file: url('symbols/patterns/aquaculture.svg');
       polygon-pattern-alignment: global;
       [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
       [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
-      gmic: "-if $_mapnik_render_trivial -remove[aq_symbol_mask] -remove[aq_mask_eroded] -else +channels[aquaculture_pattern] 3 -name. aq_pattern_mask -dilate_circ[aq_symbol_mask] {5.0*$_mapnik_scale_factor} -sub[aq_pattern_mask] [aq_symbol_mask] -min[aq_pattern_mask] [aq_mask_eroded] -to_rgb[aquaculture_pattern] -append[aquaculture_pattern] [aq_pattern_mask],c -remove[aq_symbol_mask] -remove[aq_pattern_mask] -remove[aq_mask_eroded] -name. use -fi";
+    }
+    gmic: "-if $_mapnik_render_trivial -remove[aq_symbol_mask] -remove[aq_mask_eroded] -else +channels[aquaculture_pattern] 3 -name. aq_pattern_mask -dilate_circ[aq_symbol_mask] {5.0*$_mapnik_scale_factor} -sub[aq_pattern_mask] [aq_symbol_mask] -min[aq_pattern_mask] [aq_mask_eroded] -to_rgb[aquaculture_pattern] -append[aquaculture_pattern] [aq_pattern_mask],c -remove[aq_symbol_mask] -remove[aq_pattern_mask] -remove[aq_mask_eroded] -name. use -fi";
+  }
+
+  ::fill {
+    [way_pixels < 120] {
+      polygon-fill: @water-color;
     }
   }
 
