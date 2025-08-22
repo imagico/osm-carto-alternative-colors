@@ -1,6 +1,6 @@
                 SELECT -- begin of lanes select
                     line AS way,
-                    ('highway_lane_' || int_lane) AS feature,
+                    feature,
                     int_lane AS path_type,
                     int_surface,
                     int_tunnel,

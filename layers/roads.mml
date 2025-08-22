@@ -474,7 +474,7 @@
             SELECT -- fill_lanes
                 way,
                 'fill_lanes' AS road_layer,
-                feature,
+                ('highway_lane_' || int_lane) AS feature,
                 path_type,
                 'no' AS intermittent,
                 'no' AS seasonal,
