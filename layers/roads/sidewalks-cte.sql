@@ -51,6 +51,7 @@
                         )
                       ELSE ST_Boundary(buffer)
                     END AS line,
+                    clip,
                     way,
                     way_orig,
                     feature,
@@ -111,6 +112,15 @@
                         ELSE
                           NULL
                         END AS line,
+                        -- for clipping the sidewalks of flat end segments later
+                        CASE WHEN path_type = 'flat_end_fill' THEN
+                           ST_Buffer(
+                             way_orig,
+                             (0.5*width_max + casing_width*2.0 + sidewalk_width*2.0)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                             'endcap=flat join=round'
+                           )
+                        ELSE NULL
+                        END AS clip,
                         way,
                         way_orig,
                         ('highway_side_' || COALESCE(int_side_right,int_side_left)) AS feature,
@@ -169,6 +179,7 @@
                             FROM highways_all
                             WHERE (int_side_right IS NOT NULL OR int_side_left IS NOT NULL)
                               AND width_nominal > 0.0
+                              AND path_type != 'flat_end_casing'
                               AND z(!scale_denominator!) >= 18
                           ),
                         -- this are all other roads without sidewalks the sidewalks need to be clipped with
@@ -199,6 +210,7 @@
                             FROM highways_all
                             WHERE (int_side_right IS NULL AND int_side_left IS NULL)
                               AND width_nominal > 0.0
+                              AND path_type != 'flat_end_casing'
                               AND z(!scale_denominator!) >= 18
                           ),
                         -- roads_sidewalk are the roads with sidewalks

@@ -35,8 +35,8 @@
                          ELSE
                            ARRAY[NULL, NULL, NULL, NULL]
                          END AS lanes_sides,
-                         ('highway_' || highway) AS feature, -- only motorway to tertiary links are accepted later on
-                         highway,
+                         COALESCE('highway_' || highway, 'railway_' || railway) AS feature, -- only motorway to tertiary links are accepted later on
+                         COALESCE(highway, railway) AS highway,
                          carto_path_type(foot, bicycle, horse) AS path_type,
                          CASE
                            WHEN surface IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
@@ -83,7 +83,7 @@
                            0
                          END AS lanes_parking,
                          CASE WHEN (tags @> 'lane_markings=>no') THEN 'u'::text ELSE ''::text END AS lane_markings,
-                         carto_road_access(highway, access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
+                         carto_road_access(COALESCE(highway, railway), access, tags->'vehicle', tags->'motor_vehicle', tags->'motorcar', bicycle, horse, foot, tags->'bus', tags->'psv') AS int_access,
                          construction,
                          CASE
                            WHEN service IN ('parking_aisle', 'drive-through', 'driveway') OR leisure IN ('slipway') THEN 'INT-minor'::text
@@ -103,12 +103,12 @@
                          ELSE
                            0.0
                          END AS width_lane_cycle,
-                         carto_highway_line_width(highway, service, z(!scale_denominator!)) AS width_nominal,
+                         carto_highway_line_width(COALESCE(highway, railway), service, z(!scale_denominator!)) AS width_nominal,
                          CASE WHEN man_made = 'pier' AND highway IN ('track', 'path', 'footway', 'cycleway', 'bridleway') THEN
                            0.0  -- no ground unit rendering for thin highways double tagged as man_made=pier
                          ELSE
                            carto_highway_line_width_mapped(
-                             highway,
+                             COALESCE(highway, railway),
                              tags->'width:carriageway',
                              tags->'width',
                              tags->'lanes',
@@ -134,6 +134,7 @@
                             highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway')
                           WHEN z(!scale_denominator!) <= 13 THEN
                             highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps')
-                          ELSE highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps', 'platform')
+                          ELSE -- we include railway=platform here because this gets the highway end cap treatment while other railway=* do not
+                            (highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'track', 'path', 'footway', 'cycleway', 'bridleway', 'steps', 'platform') OR railway = 'platform')
                         END
                     ) AS _

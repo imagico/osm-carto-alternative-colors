@@ -25,6 +25,7 @@
                       (SELECT
                           way,
                           way_orig,
+                          way_ext,
                           clip,
                           feature,
                           path_type,
@@ -50,6 +51,7 @@
                           z_order
                         FROM highways_all
                         WHERE (int_lane_right IS NOT NULL OR int_lane_left IS NOT NULL)
+                          AND (path_type IS NULL OR path_type NOT IN ('flat_end_casing'))
                           AND width_nominal > 0.0
                       ),
                     -- all roads the lanes need to be clipped with
@@ -81,12 +83,14 @@
                           z_order
                         FROM highways_all
                         WHERE width_nominal > 0.0
+                          AND (path_type IS NULL OR path_type NOT IN ('flat_end_casing'))
                       ),
                     -- this are the roads with parking lane - either on one or both sides
                     roads_parking AS
                       (SELECT
                           way,
                           way_orig,
+                          way_ext,
                           clip,
                           buffer,
                           ST_Difference(
@@ -120,7 +124,7 @@
                                      ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
                                   )
-                                  AND o.osm_id != l.osm_id
+                                  AND (o.osm_id != l.osm_id OR o.path_type != l.path_type)
                               )
                             ),
                             -- this clips the lane outlines with a possible junction clip polygon
@@ -160,6 +164,7 @@
                           (SELECT
                               way,
                               way_orig,
+                              way_ext,
                               clip,
                               ST_Difference(
                                 ST_Buffer(
@@ -210,6 +215,7 @@
                               (SELECT
                                   way,
                                   way_orig,
+                                  way_ext,
                                   clip,
                                   feature,
                                   path_type,
@@ -240,6 +246,7 @@
                       (SELECT
                           way,
                           way_orig,
+                          way_ext,
                           clip,
                           buffer,
                           ST_Difference(
@@ -278,7 +285,7 @@
                                      ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
                                   )
-                                  AND o.osm_id != l.osm_id
+                                  AND (o.osm_id != l.osm_id OR o.path_type != l.path_type)
                               )
                             ),
                             -- this clips the lane outlines with a possible junction clip polygon
@@ -318,6 +325,7 @@
                           (SELECT
                               way,
                               way_orig,
+                              way_ext,
                               clip,
                               ST_Difference(
                                 ST_Difference(
@@ -372,6 +380,7 @@
                               (SELECT
                                   way,
                                   way_orig,
+                                  way_ext,
                                   clip,
                                   (SELECT
                                       COALESCE(
@@ -416,6 +425,7 @@
                       (SELECT
                           way,
                           way_orig,
+                          way_ext,
                           clip,
                           buffer,
                           ST_Difference(
@@ -430,8 +440,6 @@
                                   lane_clip
                                 )
                               END,
-
-
                               -- this clips the lane outlines with all adjacent roads
                               -- using a compound buffer of flat and round end caps
                               -- with the round caps minus the parkings/cyclelanes (to avoid gaps in bus lane display)
@@ -456,7 +464,7 @@
                                      ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
                                   )
-                                  AND o.osm_id != l.osm_id
+                                  AND (o.osm_id != l.osm_id OR o.path_type != l.path_type)
                               )
                             ),
                             -- this clips the lane outlines with a possible junction clip polygon
@@ -496,6 +504,7 @@
                           (SELECT
                               way,
                               way_orig,
+                              way_ext,
                               clip,
 
                               ST_Difference(
@@ -551,6 +560,7 @@
                               (SELECT
                                   way,
                                   way_orig,
+                                  way_ext,
                                   clip,
                                   ST_Union(
                                     (SELECT
@@ -609,7 +619,21 @@
                     SELECT
                         'parking' AS lane_type,
                         buffer,
-                        line,
+                        CASE WHEN path_type IN ('flat_end_fill') THEN
+                          ST_Intersection(
+                            line,
+                            ST_Buffer(
+                              ST_Buffer(
+                                way_ext,
+                                (0.5*width_max + 0.5*width_lane)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                                'endcap=flat join=round'
+                              ),
+                              -(0.5*width_lane)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        ELSE
+                          line
+                        END AS line,
                         way,
                         way_orig,
                         clip,
@@ -638,10 +662,27 @@
                     SELECT
                         'cycle' AS lane_type,
                         buffer,
-                        ST_Difference(
-                          line,
-                          (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1)) FROM roads_cycle)
-                        ) AS line,
+                        CASE WHEN path_type IN ('flat_end_fill') THEN
+                          ST_Intersection(
+                            ST_Difference(
+                              line,
+                              (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1*NULLIF(!scale_denominator!*0.001*0.28,0))) FROM roads_cycle)
+                            ),
+                            ST_Buffer(
+                              ST_Buffer(
+                                way_ext,
+                                (0.5*width_max + 0.5*width_lane)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                                'endcap=flat join=round'
+                              ),
+                              -(0.5*width_lane)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        ELSE
+                          ST_Difference(
+                            line,
+                            (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1*NULLIF(!scale_denominator!*0.001*0.28,0))) FROM roads_cycle)
+                          )
+                        END AS line,
                         way,
                         way_orig,
                         clip,
@@ -670,10 +711,27 @@
                     SELECT
                         'bus' AS lane_type,
                         buffer,
-                        ST_Difference(
-                          line,
-                          (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1)) FROM roads_bus)
-                        ) AS line,
+                        CASE WHEN path_type IN ('flat_end_fill') THEN
+                          ST_Intersection(
+                            ST_Difference(
+                              line,
+                              (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1*NULLIF(!scale_denominator!*0.001*0.28,0))) FROM roads_bus)
+                            ),
+                            ST_Buffer(
+                              ST_Buffer(
+                                way_ext,
+                                (0.5*width_max + 0.5*width_lane)*NULLIF(!scale_denominator!*0.001*0.28,0),
+                                'endcap=flat join=round'
+                              ),
+                              -(0.5*width_lane)*NULLIF(!scale_denominator!*0.001*0.28,0)
+                            )
+                          )
+                        ELSE
+                          ST_Difference(
+                            line,
+                            (SELECT ST_Union(ST_Buffer(buffer, -width_lane*0.1*NULLIF(!scale_denominator!*0.001*0.28,0))) FROM roads_bus)
+                          )
+                        END AS line,
                         way,
                         way_orig,
                         clip,

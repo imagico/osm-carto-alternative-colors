@@ -51,12 +51,16 @@
                                      ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
                                   )
-                                  AND o.osm_id != l.osm_id
+                                  AND (o.osm_id != l.osm_id OR o.path_type != l.path_type)
                               )
                             )
                           ELSE
                             ST_Difference(
-                              line,
+                              CASE WHEN path_type = 'flat_end_fill' THEN
+                                ST_Intersection(l.line, l.clip)
+                              ELSE
+                                line
+                              END,
                               -- this clips the sidewalk outlines with all adjacent roads
                               (SELECT
                                   COALESCE(
@@ -81,7 +85,7 @@
                                      ST_Collect(ST_StartPoint(l.way_orig), ST_EndPoint(l.way_orig)),
                                      ST_Collect(ST_StartPoint(o.way_orig), ST_EndPoint(o.way_orig)), 0.1)
                                   )
-                                  AND o.osm_id != l.osm_id
+                                  AND (o.osm_id != l.osm_id OR o.path_type != l.path_type)
                               )
                             )
                           END,

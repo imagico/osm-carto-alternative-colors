@@ -266,7 +266,6 @@ local ignore_keys = {
     'source_ref',
     'attribution',
     'comment',
-    'fixme',
 
     -- Tags generally dropped by editors, not otherwise covered
     'created_by',

@@ -6,7 +6,7 @@
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2024 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -114,50 +114,7 @@
               @@else
                 @@include(roads/junctions.sql)
               @@end
-                highways_all AS
-                (SELECT
-                    ST_Difference(
-                      h.way,
-                      COALESCE(
-                        j.bounds,
-                        ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                      )
-                    ) AS way,
-                    h.way AS way_orig,
-                    j.clip AS clip,
-                    h.feature AS feature,
-                    h.highway AS highway,
-                    h.path_type AS path_type,
-                    h.int_surface AS int_surface,
-                    h.int_tunnel AS int_tunnel,
-                    h.int_bridge AS int_bridge,
-                    h.int_lane_right AS int_lane_right,
-                    h.int_lane_left AS int_lane_left,
-                    h.int_lanes AS int_lanes,
-                    h.int_side_right AS int_side_right,
-                    h.int_side_left AS int_side_left,
-                    h.int_access AS int_access,
-                    h.construction AS construction,
-                    h.service AS service,
-                    h.link AS link,
-                    h.width_lane AS width_lane,
-                    h.width_lane_cycle AS width_lane_cycle,
-                    h.width_nominal AS width_nominal,
-                    h.width_tagged AS width_tagged,
-                    carto_casing_line_width(h.highway, h.int_bridge, z(!scale_denominator!)) AS casing_width,
-                    h.layernotnull AS layernotnull,
-                    h.osm_id AS osm_id,
-                    h.z_order AS z_order
-                  FROM highways_raw h
-                  LEFT JOIN
-                    (SELECT
-                        ST_Union(bounds) AS bounds,
-                        ST_Union(clip) AS clip,
-                        osm_id
-                      FROM junctions GROUP BY osm_id
-                    ) AS j
-                    ON j.osm_id = h.osm_id
-                ), -- end highways_all CTE
+              @@include(roads/highways_all.sql)
               @@if(ac)
                 @@include(roads/sidewalks-cte.sql)
                 @@include(roads/sidewalks.sql)
@@ -282,6 +239,7 @@
                 z_order
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
+                AND path_type != 'flat_end_fill'
             UNION ALL
             SELECT -- background
                 way,
@@ -309,6 +267,7 @@
                 z_order
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
+                AND path_type != 'flat_end_casing'
             UNION ALL
             SELECT -- background_unpaved
                 ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
@@ -371,6 +330,7 @@
                 z_order
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
+                AND path_type != 'flat_end_casing'
             UNION ALL
             SELECT -- fill_unpaved
                 CASE
@@ -378,6 +338,8 @@
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
                   WHEN feature IN ('highway_raceway') THEN
                     ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
+                  WHEN path_type = 'flat_end_fill' THEN
+                    ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
                   ELSE
                     ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
                 END AS way,
@@ -408,6 +370,7 @@
                 AND int_tunnel = 'no'
                 AND int_surface = 'unpaved'
                 AND int_lane = 'no'
+                AND path_type != 'flat_end_casing'
                 AND
                   -- this is all the roads with a fill that is patterened for unpaved roads
                   feature IN (
@@ -499,6 +462,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_lane != 'no'
+                AND path_type != 'flat_end_casing'
                 AND z(!scale_denominator!) >= 18
             UNION ALL
             SELECT -- parkings_lane
@@ -559,6 +523,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_lane = 'no'
+                AND path_type != 'flat_end_casing'
                 AND
                   feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
@@ -591,6 +556,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_lane = 'no'
+                AND path_type != 'flat_end_casing'
                 AND int_lanes IS NOT NULL
                 AND z(!scale_denominator!) >= 18
             UNION ALL
@@ -623,6 +589,7 @@
                 AND int_tunnel = 'no'
                 AND int_access IS NOT NULL
                 AND int_lane = 'no'
+                AND path_type NOT IN ('flat_end_fill', 'flat_end_casing')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- centerline_top
@@ -654,6 +621,7 @@
                 AND int_tunnel = 'no'
                 AND int_bridge IN ('ford', 'ford_node',  'mountain_pass')
                 AND int_lane = 'no'
+                AND path_type != 'flat_end_casing'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- area_casing

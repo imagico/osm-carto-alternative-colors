@@ -87,6 +87,6 @@
                         osm_id,
                         z_order
                       FROM planet_osm_line
-                      WHERE (railway IS NOT NULL OR aeroway IS NOT NULL)
+                      WHERE (((railway IS NOT NULL) AND (railway != 'platform')) OR aeroway IS NOT NULL)
                         AND way && !bbox!
                     ) AS rail_aero_features -- end of rail/aero select
