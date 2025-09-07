@@ -171,6 +171,9 @@ colors:
   content_gravel: "#c1c1c1"
   content_coal: "#777777"
   content_salt: "#ffffff"
+  content_iron_ore: "#a13f33"
+  content_gold: "#ecbc00"
+  content_copper: "#d86212"
 
 # styling types for symbols and labels
 
@@ -1650,6 +1653,15 @@ attributes:
     sql: CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(E'\n', REPLACE(ROUND((tags->'ele')::NUMERIC)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') END
   int_maxheight:
     sql: CASE WHEN (tags ? 'maxheight') AND tags->'maxheight' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(TO_CHAR((tags->'maxheight')::NUMERIC, 'FM90.0'), 'm') END
+  int_lifecycle:
+    sql: >-
+      (CASE
+        WHEN abandoned = 'yes' THEN 'abandoned'
+        WHEN disused = 'yes' THEN 'disused'
+      END)
+    attributes:
+      - disused
+      - abandoned
   shop:
     sql: >-
       CASE WHEN shop IN ('supermarket', 'bag', 'bakery', 'beauty', 'bed', 'bookmaker', 'books', 'butcher', 'carpet', 'clothes', 'computer',
@@ -3298,6 +3310,99 @@ features:
     start_symbol: 17
     start_label: 17
     text_dy: 7
+  man_made=adit:
+    symbol_file: symbols/sources/man_made/adit.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 12
+    modifications:
+      abandoned:
+        attribute: int_lifecycle
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/adit_abandoned.svg
+      disused:
+        attribute: int_lifecycle
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/adit_disused.svg
+      coal:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_coal
+        symbol_file: symbols/sources/man_made/adit_resource.svg
+      iron_ore:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_iron_ore
+        symbol_file: symbols/sources/man_made/adit_resource.svg
+      gold:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_gold
+        symbol_file: symbols/sources/man_made/adit_resource.svg
+      copper:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_copper
+        symbol_file: symbols/sources/man_made/adit_resource.svg
+      salt:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_salt
+        symbol_file: symbols/sources/man_made/adit_resource.svg
+    attributes:
+      - int_lifecycle
+      - resource
+  man_made=mineshaft:
+    symbol_file: symbols/sources/man_made/mineshaft.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    text_dy: 9
+    modifications:
+      abandoned:
+        attribute: int_lifecycle
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/mineshaft_abandoned.svg
+      disused:
+        attribute: int_lifecycle
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/mineshaft_disused.svg
+      coal:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_coal
+        symbol_file: symbols/sources/man_made/mineshaft_resource.svg
+        text_dy: 10
+      iron_ore:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_iron_ore
+        symbol_file: symbols/sources/man_made/mineshaft_resource.svg
+        text_dy: 10
+      gold:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_gold
+        symbol_file: symbols/sources/man_made/mineshaft_resource.svg
+        text_dy: 10
+      copper:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_copper
+        symbol_file: symbols/sources/man_made/mineshaft_resource.svg
+        text_dy: 10
+      salt:
+        attribute: resource
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_salt
+        symbol_file: symbols/sources/man_made/mineshaft_resource.svg
+        text_dy: 10
+    attributes:
+      - int_lifecycle
+      - resource
   man_made=heap:
     symbol_file: symbols/sources/man_made/heap_small.svg
     symbol_color: man-made-icon
