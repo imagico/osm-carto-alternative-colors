@@ -45,31 +45,31 @@
                         -- these are modified way geometries for the different types of start and end
                         CASE
                           WHEN start_open = 1 AND end_open = 1 THEN
-                            ST_LineSubstring(way, casing_width_px/length_px, 1.0-casing_width_px/length_px)
+                            ST_LineSubstring(way, casing_width/length_px, 1.0-casing_width/length_px)
                           WHEN start_open = 2 AND end_open = 1 THEN
-                            ST_LineSubstring(way, 3.0*casing_width_px/length_px, 1.0-casing_width_px/length_px)
+                            ST_LineSubstring(way, 2.5*casing_width/length_px, 1.0-casing_width/length_px)
                           WHEN start_open = 1 AND end_open = 2 THEN
-                            ST_LineSubstring(way, casing_width_px/length_px, 1.0-3.0*casing_width_px/length_px)
+                            ST_LineSubstring(way, casing_width/length_px, 1.0-2.5*casing_width/length_px)
                           WHEN start_open = 2 AND end_open = 2 THEN
-                            ST_LineSubstring(way, 3.0*casing_width_px/length_px, 1.0-3.0*casing_width_px/length_px)
+                            ST_LineSubstring(way, 2.5*casing_width/length_px, 1.0-2.5*casing_width/length_px)
                           WHEN start_open = 2 THEN
-                            ST_LineSubstring(way, 3.0*casing_width_px/length_px, 1.0)
+                            ST_LineSubstring(way, 2.5*casing_width/length_px, 1.0)
                           WHEN end_open = 2 THEN
-                            ST_LineSubstring(way, 0.0, 1.0-3.0*casing_width_px/length_px)
+                            ST_LineSubstring(way, 0.0, 1.0-2.5*casing_width/length_px)
                           WHEN start_open = 1 THEN
-                            ST_LineSubstring(way, casing_width_px/length_px, 1.0)
+                            ST_LineSubstring(way, casing_width/length_px, 1.0)
                           WHEN end_open = 1 THEN
-                            ST_LineSubstring(way, 0.0, 1.0-casing_width_px/length_px)
+                            ST_LineSubstring(way, 0.0, 1.0-casing_width/length_px)
                         ELSE
                           way
                         END AS way_fill,
                         CASE
                           WHEN start_open = 3 AND end_open = 3 THEN
-                            ST_LineSubstring(way, casing_width_px/length_px, 1.0-casing_width_px/length_px)
+                            ST_LineSubstring(way, casing_width/length_px, 1.0-casing_width/length_px)
                           WHEN start_open = 3 THEN
-                            ST_LineSubstring(way, casing_width_px/length_px, 1.0)
+                            ST_LineSubstring(way, casing_width/length_px, 1.0)
                           WHEN end_open = 3 THEN
-                            ST_LineSubstring(way, 0.0, 1.0-casing_width_px/length_px)
+                            ST_LineSubstring(way, 0.0, 1.0-casing_width/length_px)
                         ELSE
                           way
                         END AS way_casing,
@@ -96,7 +96,6 @@
                         width_tagged,
                         casing_width,
                         length_px,
-                        casing_width_px,
                         layernotnull,
                         osm_id,
                         z_order
@@ -106,6 +105,10 @@
                         way_orig,
                         CASE
                           WHEN highway NOT IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service')
+                            THEN  0
+                          WHEN (width_max < 4.0) AND (z(!scale_denominator!) < 15)  -- skip very narrow roads at low zooms
+                            THEN  0
+                          WHEN length_px < 3.0*casing_width -- too short for splitting
                             THEN  0
                           WHEN EXISTS
                             (SELECT 1 FROM planet_osm_line h2
@@ -137,6 +140,10 @@
                         CASE
                           WHEN highway NOT IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'platform')
                             THEN 0
+                          WHEN (width_max < 4.0) AND (z(!scale_denominator!) < 15)  -- skip very narrow roads at low zooms
+                            THEN  0
+                          WHEN length_px < 3.0*casing_width -- too short for splitting
+                            THEN  0
                           WHEN EXISTS
                             (SELECT 1 FROM planet_osm_line h2
                               WHERE ST_DWithin(h2.way, ST_EndPoint(hwj.way), 0.1) AND hwj.osm_id != h2.osm_id
@@ -186,55 +193,85 @@
                         width_tagged,
                         width_max,
                         casing_width,
-                        ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length_px,
-                        casing_width*NULLIF(!scale_denominator!*0.001*0.28,0) AS casing_width_px,
+                        length_px,
                         layernotnull,
                         osm_id,
                         z_order
                       FROM
                         (SELECT
-                            ST_Difference(
-                              h.way,
-                              COALESCE(
-                                j.bounds,
-                                ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
-                              )
-                            ) AS way,
-                            h.way AS way_orig,
-                            j.clip AS clip,
-                            h.feature AS feature,
-                            h.highway AS highway,
-                            h.path_type AS path_type,
-                            h.int_surface AS int_surface,
-                            h.int_tunnel AS int_tunnel,
-                            h.int_bridge AS int_bridge,
-                            h.int_lane_right AS int_lane_right,
-                            h.int_lane_left AS int_lane_left,
-                            h.int_lanes AS int_lanes,
-                            h.int_side_right AS int_side_right,
-                            h.int_side_left AS int_side_left,
-                            h.int_access AS int_access,
-                            h.construction AS construction,
-                            h.service AS service,
-                            h.link AS link,
-                            h.width_lane AS width_lane,
-                            h.width_lane_cycle AS width_lane_cycle,
-                            h.width_nominal AS width_nominal,
-                            h.width_tagged AS width_tagged,
-                            GREATEST(h.width_nominal, h.width_tagged) AS width_max,
-                            carto_casing_line_width(h.highway, h.int_bridge, z(!scale_denominator!)) AS casing_width,
-                            h.layernotnull AS layernotnull,
-                            h.osm_id AS osm_id,
-                            h.z_order AS z_order
-                          FROM highways_raw h
-                          LEFT JOIN
+                            way,
+                            way_orig,
+                            clip,
+                            feature,
+                            highway,
+                            path_type,
+                            int_surface,
+                            int_tunnel,
+                            int_bridge,
+                            int_lane_right,
+                            int_lane_left,
+                            int_lanes,
+                            int_side_right,
+                            int_side_left,
+                            int_access,
+                            construction,
+                            service,
+                            link,
+                            width_lane,
+                            width_lane_cycle,
+                            width_nominal,
+                            width_tagged,
+                            width_max,
+                            casing_width,
+                            ST_Length(way)/NULLIF(!scale_denominator!*0.001*0.28,0) AS length_px,
+                            layernotnull,
+                            osm_id,
+                            z_order
+                          FROM
                             (SELECT
-                                ST_Union(bounds) AS bounds,
-                                ST_Union(clip) AS clip,
-                                osm_id
-                              FROM junctions GROUP BY osm_id
-                            ) AS j
-                            ON j.osm_id = h.osm_id
+                                ST_Difference(
+                                  h.way,
+                                  COALESCE(
+                                    j.bounds,
+                                    ST_SetSRID('GEOMETRYCOLLECTION EMPTY'::geometry, 3857)
+                                  )
+                                ) AS way,
+                                h.way AS way_orig,
+                                j.clip AS clip,
+                                h.feature AS feature,
+                                h.highway AS highway,
+                                h.path_type AS path_type,
+                                h.int_surface AS int_surface,
+                                h.int_tunnel AS int_tunnel,
+                                h.int_bridge AS int_bridge,
+                                h.int_lane_right AS int_lane_right,
+                                h.int_lane_left AS int_lane_left,
+                                h.int_lanes AS int_lanes,
+                                h.int_side_right AS int_side_right,
+                                h.int_side_left AS int_side_left,
+                                h.int_access AS int_access,
+                                h.construction AS construction,
+                                h.service AS service,
+                                h.link AS link,
+                                h.width_lane AS width_lane,
+                                h.width_lane_cycle AS width_lane_cycle,
+                                h.width_nominal AS width_nominal,
+                                h.width_tagged AS width_tagged,
+                                GREATEST(h.width_nominal, h.width_tagged) AS width_max,
+                                carto_casing_line_width(h.highway, h.int_bridge, z(!scale_denominator!)) AS casing_width,
+                                h.layernotnull AS layernotnull,
+                                h.osm_id AS osm_id,
+                                h.z_order AS z_order
+                              FROM highways_raw h
+                              LEFT JOIN
+                                (SELECT
+                                    ST_Union(bounds) AS bounds,
+                                    ST_Union(clip) AS clip,
+                                    osm_id
+                                  FROM junctions GROUP BY osm_id
+                                ) AS j
+                                ON j.osm_id = h.osm_id
+                            ) AS hwj2
                         ) AS hwj
                     ) AS _
                   )

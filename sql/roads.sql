@@ -5,6 +5,25 @@
 /*  depends on line-widths-generated.sql                                    */
 /* ======================================================================== */
 
+/* determine z_order from table based on a feature string and construction value */
+CREATE OR REPLACE FUNCTION carto_z_order_from_feature(text, text)
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+    SELECT
+        z_order
+      FROM carto_z_order
+      WHERE
+        feature =
+          CASE
+            WHEN $1 IN ('highway_construction') THEN 'highway_' || $2
+            WHEN $1 IN ('railway_construction') THEN 'railway_' || $2
+            WHEN $1 IN ('aeroway_construction') THEN 'aeroway_' || $2
+            ELSE $1
+          END
+$func$;
+
 /* query the language_regions polygon set to determine the driving side for a certain geometry */
 CREATE OR REPLACE FUNCTION carto_driving_side(geom geometry)
   RETURNS text

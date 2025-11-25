@@ -90,18 +90,7 @@
                 casing_width,
                 layernotnull,
                 osm_id,
-                (SELECT
-                    z_order
-                  FROM carto_z_order
-                  WHERE
-                    feature =
-                      CASE
-                        WHEN roads_features.feature IN ('highway_construction') THEN 'highway_' || construction
-                        WHEN roads_features.feature IN ('railway_construction') THEN 'railway_' || construction
-                        WHEN roads_features.feature IN ('aeroway_construction') THEN 'aeroway_' || construction
-                        ELSE roads_features.feature
-                      END
-                ) AS z_order
+                carto_z_order_from_feature(feature, construction) AS z_order
               FROM ( -- begin "features" subselect that contains both roads and rail/aero
                 WITH highways_raw AS
                 -- this queries all roads from the database together with the corresponding width values
@@ -114,7 +103,11 @@
               @@else
                 @@include(roads/junctions.sql)
               @@end
-              @@include(roads/highways_all.sql)
+              @@if(road_basic)
+                @@include(roads/highways_all.sql)
+              @@else
+                @@include(roads/highways_all-simple.sql)
+              @@end
               @@if(ac)
                 @@include(roads/sidewalks-cte.sql)
                 @@include(roads/sidewalks.sql)
@@ -178,6 +171,12 @@
                 @@include(roads/fords.sql)
               @@end
                 UNION ALL
+              @@if(road_basic)
+                @@include(roads/crossings-dummy.sql)
+              @@else
+                @@include(roads/crossings.sql)
+              @@end
+                UNION ALL
                 @@include(roads/rail_aero.sql)
               ) AS roads_features
             ), -- end of roads_all CTE
@@ -239,7 +238,7 @@
                 z_order
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type != 'flat_end_fill'
+                AND path_type NOT IN ('flat_end_fill', 'crossing')
             UNION ALL
             SELECT -- background
                 way,
@@ -267,7 +266,7 @@
                 z_order
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
             UNION ALL
             SELECT -- background_unpaved
                 ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
@@ -330,7 +329,7 @@
                 z_order
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
             UNION ALL
             SELECT -- fill_unpaved
                 CASE
@@ -370,7 +369,7 @@
                 AND int_tunnel = 'no'
                 AND int_surface = 'unpaved'
                 AND int_lane = 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
                 AND
                   -- this is all the roads with a fill that is patterened for unpaved roads
                   feature IN (
@@ -462,7 +461,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_lane != 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
                 AND z(!scale_denominator!) >= 18
             UNION ALL
             SELECT -- parkings_lane
@@ -523,7 +522,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_lane = 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
                 AND
                   feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
@@ -556,7 +555,7 @@
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
                 AND int_lane = 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
                 AND int_lanes IS NOT NULL
                 AND z(!scale_denominator!) >= 18
             UNION ALL
@@ -589,7 +588,7 @@
                 AND int_tunnel = 'no'
                 AND int_access IS NOT NULL
                 AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_fill', 'flat_end_casing')
+                AND path_type NOT IN ('flat_end_fill', 'flat_end_casing', 'crossing')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- centerline_top
@@ -621,7 +620,35 @@
                 AND int_tunnel = 'no'
                 AND int_bridge IN ('ford', 'ford_node',  'mountain_pass')
                 AND int_lane = 'no'
-                AND path_type != 'flat_end_casing'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND z(!scale_denominator!) >= 15
+            UNION ALL
+            SELECT -- crossings
+                way,
+                'crossings' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_lane,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE path_type = 'crossing'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- area_casing
@@ -1288,6 +1315,7 @@
               WHEN road_layer = 'lanes' THEN 9
               WHEN road_layer = 'access' THEN 9
               WHEN road_layer = 'tc_fill' THEN 9
+              WHEN road_layer = 'crossings' THEN 9
               WHEN road_layer = 'pipeline_casing' THEN 10
               WHEN road_layer = 'pipeline_fill' THEN 10
               WHEN road_layer = 'pipeline_flange' THEN 10
@@ -1332,6 +1360,7 @@
               WHEN road_layer = 'pipeline_fill' THEN 27
               WHEN road_layer = 'pipeline_flange' THEN 28
               WHEN road_layer = 'centerline_top' THEN 29
+              WHEN road_layer = 'crossings' THEN 30
             END,
             CASE
               WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0
