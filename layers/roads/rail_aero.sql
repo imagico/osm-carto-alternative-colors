@@ -15,24 +15,19 @@
                     width_lane,
                     width_nominal,
                     width_tagged,
-                    casing_width,
+                    carto_casing_line_width(
+                       COALESCE(railway, aeroway),
+                       CASE WHEN aeroway = 'taxiway' AND int_bridge = 'no' THEN int_tunnel ELSE int_bridge END, -- taxiways have tunnel casing, everything else only bridge
+                       z(!scale_denominator!)
+                    ) AS casing_width,
                     layernotnull,
                     osm_id,
-                    (SELECT
-                        z_order
-                      FROM carto_z_order
-                      WHERE
-                        feature =
-                          CASE
-                            WHEN rail_aero_features.feature IN ('highway_construction') THEN 'highway_' || construction
-                            WHEN rail_aero_features.feature IN ('railway_construction') THEN 'railway_' || construction
-                            WHEN rail_aero_features.feature IN ('aeroway_construction') THEN 'aeroway_' || construction
-                            ELSE rail_aero_features.feature
-                          END
-                    ) AS z_order
+                    z_order
                   FROM
                     (SELECT -- begin of rail/aero select
                         way,
+                        railway,
+                        aeroway,
                         COALESCE(
                           ('railway_' || (CASE WHEN railway = 'preserved' AND service IN ('spur', 'siding', 'yard') THEN 'INT-preserved-ssy'::text 
                                                WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-spur-siding-yard'  
@@ -75,14 +70,6 @@
                           ELSE
                             carto_railway_line_width_mapped(railway, tags->'width', !bbox!, !scale_denominator!)
                         END AS width_tagged,
-                        carto_casing_line_width(
-                           COALESCE(railway, aeroway),
-                           CASE
-                             WHEN (bridge IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct')) THEN 'yes'::text
-                             WHEN (tags @> 'ford=>yes' OR tags @> 'ford=>stepping_stones') THEN 'ford'::text
-                             ELSE 'no'::text
-                           END,
-                           z(!scale_denominator!)) AS casing_width,
                         COALESCE(layer,0) AS layernotnull,
                         osm_id,
                         z_order

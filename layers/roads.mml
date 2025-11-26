@@ -104,9 +104,9 @@
                 @@include(roads/junctions.sql)
               @@end
               @@if(road_basic)
-                @@include(roads/highways_all.sql)
-              @@else
                 @@include(roads/highways_all-simple.sql)
+              @@else
+                @@include(roads/highways_all.sql)
               @@end
               @@if(ac)
                 @@include(roads/sidewalks-cte.sql)
@@ -303,7 +303,7 @@
                   feature IN ('highway_bridleway', 'highway_footway', 'highway_cycleway', 'highway_path', 'highway_track')
                 AND z(!scale_denominator!) >= 18
             UNION ALL
-            SELECT -- fill
+            SELECT -- fill (non-bridge)
                 way,
                 'fill' AS road_layer,
                 feature,
@@ -330,19 +330,76 @@
               FROM roads_all
               WHERE int_junction = 'no' AND int_lane = 'no'
                 AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND (
+                  int_bridge = 'no' OR
+                  z(!scale_denominator!) < 12 OR
+                  feature NOT IN (
+                    'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
+                    'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street', 'highway_raceway',
+                    'highway_busway', 'highway_bus_guideway',
+                    'highway_platform', 'railway_platform', 'aeroway_runway', 'aeroway_taxiway')
+                )
             UNION ALL
-            SELECT -- fill_unpaved
+            SELECT -- bridge_fill_fallback
+                way,
+                'bridge_fill_fallback' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                'no' AS int_bridge, -- there is a separate bridge fill with modified line ends at the right position in the layer stack
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS tc_type,
+                width_lane,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE int_junction = 'no' AND int_lane = 'no'
+                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND int_bridge != 'no'
+                AND
+                  -- this is all the roads with a casing+fill design at z12+
+                  feature IN (
+                    'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
+                    'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street', 'highway_raceway',
+                    'highway_busway', 'highway_bus_guideway',
+                    'highway_platform', 'railway_platform', 'aeroway_runway', 'aeroway_taxiway')
+                AND z(!scale_denominator!) >= 12
+            UNION ALL
+            SELECT -- fill_bridge
                 CASE
                   WHEN feature IN ('aeroway_runway', 'aeroway_taxiway') THEN
-                    ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
+                    ST_Buffer(ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round'), casing_width*NULLIF(!scale_denominator!*0.001*0.28,0))
                   WHEN feature IN ('highway_raceway') THEN
-                    ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    CASE WHEN width_max > 2.0*casing_width THEN
+                      ST_Buffer(ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round'), casing_width*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    ELSE
+                      ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    END
                   WHEN path_type = 'flat_end_fill' THEN
                     ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
                   ELSE
-                    ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    CASE
+                      WHEN width_max > 4.0*casing_width THEN
+                        ST_Buffer(ST_Buffer(way, 0.5*(width_max - 4.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round'), casing_width*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      WHEN z(!scale_denominator!) < 14 THEN
+                        ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    ELSE -- enlarge the fill if line width is very small to prevent the heavy bridge casing drowning the fill line
+                      ST_Buffer(way, 0.5*(width_max - 1.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    END
                 END AS way,
-                'fill_unpaved' AS road_layer,
+                'fill_bridge' AS road_layer,
                 feature,
                 path_type,
                 'no' AS intermittent,
@@ -367,11 +424,11 @@
               FROM roads_all
               WHERE int_junction = 'no'
                 AND int_tunnel = 'no'
-                AND int_surface = 'unpaved'
                 AND int_lane = 'no'
+                AND int_bridge != 'no'
                 AND path_type NOT IN ('flat_end_casing', 'crossing')
                 AND
-                  -- this is all the roads with a fill that is patterened for unpaved roads
+                  -- this is all the roads with a casing+fill design at z12+
                   feature IN (
                     'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
                     'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street', 'highway_raceway',
@@ -1305,10 +1362,11 @@
               WHEN road_layer = 'casing' THEN 7
               WHEN road_layer = 'background' THEN 8
               WHEN road_layer = 'background_unpaved' THEN 8
+              WHEN road_layer = 'bridge_fill_fallback' THEN 8
               WHEN road_layer = 'area_fill' THEN 9
               WHEN road_layer = 'junction_fill' THEN 9
               WHEN road_layer = 'fill' THEN 9
-              WHEN road_layer = 'fill_unpaved' THEN 9
+              WHEN road_layer = 'fill_bridge' THEN 9
               WHEN road_layer = 'fill_lanes' THEN 9
               WHEN road_layer = 'parkings_lane' THEN 9
               WHEN road_layer = 'centerline' THEN 9
@@ -1347,20 +1405,21 @@
               WHEN road_layer = 'casing' THEN 15
               WHEN road_layer = 'background' THEN 16
               WHEN road_layer = 'background_unpaved' THEN 16
-              WHEN road_layer = 'area_fill' THEN 17
-              WHEN road_layer = 'junction_fill' THEN 18
-              WHEN road_layer = 'fill' THEN 19
-              WHEN road_layer = 'fill_unpaved' THEN 20
-              WHEN road_layer = 'fill_lanes' THEN 21
-              WHEN road_layer = 'parkings_lane' THEN 22
-              WHEN road_layer = 'centerline' THEN 23
-              WHEN road_layer = 'lanes' THEN 24
-              WHEN road_layer = 'access' THEN 25
-              WHEN road_layer = 'tc_fill' THEN 26
-              WHEN road_layer = 'pipeline_fill' THEN 27
-              WHEN road_layer = 'pipeline_flange' THEN 28
-              WHEN road_layer = 'centerline_top' THEN 29
-              WHEN road_layer = 'crossings' THEN 30
+              WHEN road_layer = 'bridge_fill_fallback' THEN 17
+              WHEN road_layer = 'area_fill' THEN 18
+              WHEN road_layer = 'junction_fill' THEN 19
+              WHEN road_layer = 'fill' THEN 20
+              WHEN road_layer = 'fill_bridge' THEN 21
+              WHEN road_layer = 'fill_lanes' THEN 22
+              WHEN road_layer = 'parkings_lane' THEN 23
+              WHEN road_layer = 'centerline' THEN 24
+              WHEN road_layer = 'lanes' THEN 25
+              WHEN road_layer = 'access' THEN 26
+              WHEN road_layer = 'tc_fill' THEN 27
+              WHEN road_layer = 'pipeline_fill' THEN 28
+              WHEN road_layer = 'pipeline_flange' THEN 29
+              WHEN road_layer = 'centerline_top' THEN 30
+              WHEN road_layer = 'crossings' THEN 31
             END,
             CASE
               WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0

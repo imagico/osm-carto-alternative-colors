@@ -18,18 +18,7 @@
                 casing_width,
                 layernotnull,
                 osm_id,
-                (SELECT
-                    z_order
-                  FROM carto_z_order
-                  WHERE
-                    feature =
-                      CASE
-                        WHEN roads_features.feature IN ('highway_construction') THEN 'highway_' || construction
-                        WHEN roads_features.feature IN ('railway_construction') THEN 'railway_' || construction
-                        WHEN roads_features.feature IN ('aeroway_construction') THEN 'aeroway_' || construction
-                        ELSE roads_features.feature
-                      END
-                ) AS z_order
+                carto_z_order_from_feature(feature, construction) AS z_order
               FROM
                 (SELECT
                     way,
