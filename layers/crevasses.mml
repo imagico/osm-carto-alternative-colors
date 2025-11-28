@@ -115,34 +115,46 @@
             (SELECT -- the outlines of the constructed polygons
                 osm_id,
                 MAX(crevasse_class) AS crevasse_class,
-                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), f)) AS line1,
-                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, -carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), f)) AS line2
+                ST_MakeLine(ST_LineInterpolatePoint(oline1, f)) AS line1,
+                ST_MakeLine(ST_LineInterpolatePoint(oline2, f)) AS line2
               FROM
                 (SELECT
-                    way,
                     osm_id,
-                    ST_LineLocatePoint(way, (way_points).geom) AS f,
+                    -- the line merge is needed here because of some bug in ST_OffsetCurve() implementation producing discontinuous lines.
+                    -- actual multilinestrings get filtered out in the WHERE condition afterwards
+                    ST_LineMerge(ST_OffsetCurve(way, carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), TRUE) AS oline1,
+                    ST_LineMerge(ST_OffsetCurve(way, -carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), TRUE) AS oline2,
+                    f,
                     crevasse_class,
                     width
                   FROM
                     (SELECT
                         way,
                         osm_id,
-                        ST_DumpPoints(way) AS way_points,
+                        ST_LineLocatePoint(way, (way_points).geom) AS f,
                         crevasse_class,
                         width
                       FROM
                         (SELECT
-                            ST_Segmentize(way, seg_len*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                            way,
                             osm_id,
+                            ST_DumpPoints(way) AS way_points,
                             crevasse_class,
                             width
-                          FROM lines_raw
-                          WHERE crevasse_class != 'tiny'
-                        ) AS line_resampled
-                    ) AS line_mod
-                    ORDER BY osm_id, f
-                ) AS line_points
+                          FROM
+                            (SELECT
+                                ST_Segmentize(way, seg_len*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                                osm_id,
+                                crevasse_class,
+                                width
+                              FROM lines_raw
+                              WHERE crevasse_class != 'tiny'
+                            ) AS line_resampled
+                        ) AS line_mod
+                        ORDER BY osm_id, f
+                    ) AS line_points
+                ) AS line_points_offset
+              WHERE NOT(ST_IsCollection(oline1)) AND NOT(ST_IsCollection(oline2))
               GROUP BY osm_id
             ), -- end points_offset
             crevasse_polygons_raw AS

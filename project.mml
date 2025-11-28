@@ -719,34 +719,46 @@ Layer:
             (SELECT -- the outlines of the constructed polygons
                 osm_id,
                 MAX(crevasse_class) AS crevasse_class,
-                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), f)) AS line1,
-                ST_MakeLine(ST_LineInterpolatePoint(ST_OffsetCurve(way, -carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), f)) AS line2
+                ST_MakeLine(ST_LineInterpolatePoint(oline1, f)) AS line1,
+                ST_MakeLine(ST_LineInterpolatePoint(oline2, f)) AS line2
               FROM
                 (SELECT
-                    way,
                     osm_id,
-                    ST_LineLocatePoint(way, (way_points).geom) AS f,
+                    -- the line merge is needed here because of some bug in ST_OffsetCurve() implementation producing discontinuous lines.
+                    -- actual multilinestrings get filtered out in the WHERE condition afterwards
+                    ST_LineMerge(ST_OffsetCurve(way, carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), TRUE) AS oline1,
+                    ST_LineMerge(ST_OffsetCurve(way, -carto_crevasse_profile_curve((CASE WHEN f <= 0.5 THEN 1.0-(f*2.0) ELSE f*2.0-1.0 END)::numeric)*width*0.5), TRUE) AS oline2,
+                    f,
                     crevasse_class,
                     width
                   FROM
                     (SELECT
                         way,
                         osm_id,
-                        ST_DumpPoints(way) AS way_points,
+                        ST_LineLocatePoint(way, (way_points).geom) AS f,
                         crevasse_class,
                         width
                       FROM
                         (SELECT
-                            ST_Segmentize(way, seg_len*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                            way,
                             osm_id,
+                            ST_DumpPoints(way) AS way_points,
                             crevasse_class,
                             width
-                          FROM lines_raw
-                          WHERE crevasse_class != 'tiny'
-                        ) AS line_resampled
-                    ) AS line_mod
-                    ORDER BY osm_id, f
-                ) AS line_points
+                          FROM
+                            (SELECT
+                                ST_Segmentize(way, seg_len*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                                osm_id,
+                                crevasse_class,
+                                width
+                              FROM lines_raw
+                              WHERE crevasse_class != 'tiny'
+                            ) AS line_resampled
+                        ) AS line_mod
+                        ORDER BY osm_id, f
+                    ) AS line_points
+                ) AS line_points_offset
+              WHERE NOT(ST_IsCollection(oline1)) AND NOT(ST_IsCollection(oline2))
               GROUP BY osm_id
             ), -- end points_offset
             crevasse_polygons_raw AS
@@ -7659,9 +7671,7 @@ Layer:
                         CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(E'\n', REPLACE(ROUND((tags->'ele')::NUMERIC)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') END
                     END AS "int_elevation",
                     "shelter_type",
-                    CASE
-                      WHEN (("tourism" IN ('information')) AND (tags->'information' IN ('audioguide', 'board', 'guidepost', 'map', 'office', 'sign', 'tactile_map', 'terminal', 'visitor_centre'))) THEN "information"
-                    END AS "information",
+                    "information",
                     CASE
                       WHEN "amenity" IN ('bicycle_parking', 'motorcycle_parking', 'recycling', 'toilets', 'waste_disposal') OR "barrier" IN ('gate', 'lift_gate', 'sliding_gate', 'swing_gate', 'wicket_gate') OR "leisure" IN ('playground') OR
                             (("amenity" IN ('parking')) AND ("parking" IS NULL OR "parking" NOT IN ('underground'))) OR
@@ -7674,11 +7684,7 @@ Layer:
                           CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
                         END
                     END AS "int_access",
-                    CASE
-                      WHEN (("amenity" IN ('parking')) AND ("parking" IS NULL OR "parking" NOT IN ('underground'))) OR
-                            (("amenity" IN ('parking_entrance')) AND ("parking" IN ('multi-storey') AND ("access" IS NULL OR "access" NOT IN ('private', 'no', 'permit', 'delivery')))) OR
-                            (("amenity" IN ('parking_entrance')) AND ("parking" IN ('underground') AND ("access" IS NULL OR "access" NOT IN ('private', 'no', 'permit', 'delivery')))) THEN "parking"
-                    END AS "parking",
+                    "parking",
                     CASE
                       WHEN "amenity" IN ('bench') THEN
                         (CASE
@@ -7812,12 +7818,8 @@ Layer:
                           LEAST(carto_tree_diameter_mapped('tree', diameter_crown, height, circumference, diameter, !bbox!, !scale_denominator!), 60)
                         )*0.5)+2.0
                     END AS "int_text_offset_tree",
-                    CASE
-                      WHEN (("power" IN ('generator')) AND (tags->'generator:source' = 'wind')) THEN "location"
-                    END AS "location",
-                    CASE
-                      WHEN (("power" IN ('generator')) AND (tags->'generator:source' = 'wind')) THEN "offshore"
-                    END AS "offshore",
+                    "location",
+                    "offshore",
                     "content",
                     CASE
                       WHEN "man_made" IN ('adit', 'mineshaft') THEN
@@ -7900,7 +7902,7 @@ Layer:
                         CASE WHEN religion IN ('christian') AND tags->'denomination' IN ('jehovahs_witness', 'la_luz_del_mundo', 'iglesia_ni_cristo', 'mormon') THEN NULL ELSE religion END
                     END AS "religion",
                     CASE
-                      WHEN (("shop" IN ('massage')) AND (shop IS NOT NULL AND shop NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty', 'mall', 'massage'))) THEN
+                      WHEN ((shop IS NOT NULL AND shop NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty', 'mall', 'massage'))) THEN
                         CASE WHEN shop IN ('supermarket', 'bag', 'bakery', 'beauty', 'bed', 'bookmaker', 'books', 'butcher', 'carpet', 'clothes', 'computer',
                                            'confectionery', 'fashion', 'convenience', 'department_store', 'doityourself', 'hardware', 'fabric', 'fishmonger', 'florist',
                                            'garden_centre', 'hairdresser', 'hifi', 'car', 'car_repair', 'bicycle', 'mall', 'pet',
@@ -7913,16 +7915,9 @@ Layer:
                                            'interior_decoration', 'video', 'paint', 'massage', 'trade', 'wholesale') THEN shop
                           ELSE 'other' END
                     END AS "shop",
-                    CASE
-                      WHEN (("office" IN ('column')) AND (office IS NOT NULL AND office NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty'))) THEN "office"
-                    END AS "office",
-                    CASE
-                      WHEN (("office" IN ('column')) AND (office IS NOT NULL AND office NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty'))) THEN "diplomatic"
-                    END AS "diplomatic",
-                    CASE
-                      WHEN (("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'marina', 'park', 'sport_centre', 'stadium', 'swimming_pool') OR "landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green') OR "military" IN ('danger_area') OR "highway" IN ('rest_area', 'services') OR "man_made" IN ('works') OR "amenity" IN ('college', 'grave_yard', 'kindergarten', 'school', 'university') OR "natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'water', 'wetland', 'wood') OR "tourism" IN ('theme_park', 'zoo') OR "power" IN ('plant', 'substation') OR "aeroway" IN ('apron')) AND (building IS NULL OR building = 'no')) OR
-                            (("power" IN ('generator')) AND (tags->'generator:type' IS NULL OR tags->'generator:type' NOT IN ('wind'))) THEN "building"
-                    END AS "building",
+                    "office",
+                    "diplomatic",
+                    "building",
                     way_length,
                     way_area,
                     COALESCE(way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0), 0) AS way_pixels

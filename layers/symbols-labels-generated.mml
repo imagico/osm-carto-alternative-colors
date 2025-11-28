@@ -451,9 +451,7 @@
                         CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(E'\n', REPLACE(ROUND((tags->'ele')::NUMERIC)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') END
                     END AS "int_elevation",
                     "shelter_type",
-                    CASE
-                      WHEN (("tourism" IN ('information')) AND (tags->'information' IN ('audioguide', 'board', 'guidepost', 'map', 'office', 'sign', 'tactile_map', 'terminal', 'visitor_centre'))) THEN "information"
-                    END AS "information",
+                    "information",
                     CASE
                       WHEN "amenity" IN ('bicycle_parking', 'motorcycle_parking', 'recycling', 'toilets', 'waste_disposal') OR "barrier" IN ('gate', 'lift_gate', 'sliding_gate', 'swing_gate', 'wicket_gate') OR "leisure" IN ('playground') OR
                             (("amenity" IN ('parking')) AND ("parking" IS NULL OR "parking" NOT IN ('underground'))) OR
@@ -466,11 +464,7 @@
                           CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
                         END
                     END AS "int_access",
-                    CASE
-                      WHEN (("amenity" IN ('parking')) AND ("parking" IS NULL OR "parking" NOT IN ('underground'))) OR
-                            (("amenity" IN ('parking_entrance')) AND ("parking" IN ('multi-storey') AND ("access" IS NULL OR "access" NOT IN ('private', 'no', 'permit', 'delivery')))) OR
-                            (("amenity" IN ('parking_entrance')) AND ("parking" IN ('underground') AND ("access" IS NULL OR "access" NOT IN ('private', 'no', 'permit', 'delivery')))) THEN "parking"
-                    END AS "parking",
+                    "parking",
                     CASE
                       WHEN "amenity" IN ('bench') THEN
                         (CASE
@@ -604,12 +598,8 @@
                           LEAST(carto_tree_diameter_mapped('tree', diameter_crown, height, circumference, diameter, !bbox!, !scale_denominator!), 60)
                         )*0.5)+2.0
                     END AS "int_text_offset_tree",
-                    CASE
-                      WHEN (("power" IN ('generator')) AND (tags->'generator:source' = 'wind')) THEN "location"
-                    END AS "location",
-                    CASE
-                      WHEN (("power" IN ('generator')) AND (tags->'generator:source' = 'wind')) THEN "offshore"
-                    END AS "offshore",
+                    "location",
+                    "offshore",
                     "content",
                     CASE
                       WHEN "man_made" IN ('adit', 'mineshaft') THEN
@@ -692,7 +682,7 @@
                         CASE WHEN religion IN ('christian') AND tags->'denomination' IN ('jehovahs_witness', 'la_luz_del_mundo', 'iglesia_ni_cristo', 'mormon') THEN NULL ELSE religion END
                     END AS "religion",
                     CASE
-                      WHEN (("shop" IN ('massage')) AND (shop IS NOT NULL AND shop NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty', 'mall', 'massage'))) THEN
+                      WHEN ((shop IS NOT NULL AND shop NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty', 'mall', 'massage'))) THEN
                         CASE WHEN shop IN ('supermarket', 'bag', 'bakery', 'beauty', 'bed', 'bookmaker', 'books', 'butcher', 'carpet', 'clothes', 'computer',
                                            'confectionery', 'fashion', 'convenience', 'department_store', 'doityourself', 'hardware', 'fabric', 'fishmonger', 'florist',
                                            'garden_centre', 'hairdresser', 'hifi', 'car', 'car_repair', 'bicycle', 'mall', 'pet',
@@ -705,16 +695,9 @@
                                            'interior_decoration', 'video', 'paint', 'massage', 'trade', 'wholesale') THEN shop
                           ELSE 'other' END
                     END AS "shop",
-                    CASE
-                      WHEN (("office" IN ('column')) AND (office IS NOT NULL AND office NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty'))) THEN "office"
-                    END AS "office",
-                    CASE
-                      WHEN (("office" IN ('column')) AND (office IS NOT NULL AND office NOT IN ('yes', 'no', 'vacant', 'closed', 'disused', 'empty'))) THEN "diplomatic"
-                    END AS "diplomatic",
-                    CASE
-                      WHEN (("leisure" IN ('common', 'dog_park', 'fitness_centre', 'fitness_station', 'garden', 'marina', 'park', 'sport_centre', 'stadium', 'swimming_pool') OR "landuse" IN ('allotments', 'basin', 'brownfield', 'cemetery', 'commercial', 'construction', 'farmland', 'farmyard', 'forest', 'garages', 'grass', 'greenhouse_horticulture', 'industrial', 'landfill', 'meadow', 'military', 'quarry', 'railway', 'recreation_ground', 'reservoir', 'residential', 'retail', 'village_green') OR "military" IN ('danger_area') OR "highway" IN ('rest_area', 'services') OR "man_made" IN ('works') OR "amenity" IN ('college', 'grave_yard', 'kindergarten', 'school', 'university') OR "natural" IN ('bare_rock', 'beach', 'glacier', 'grassland', 'heath', 'mud', 'reef', 'sand', 'scree', 'scrub', 'shingle', 'shoal', 'water', 'wetland', 'wood') OR "tourism" IN ('theme_park', 'zoo') OR "power" IN ('plant', 'substation') OR "aeroway" IN ('apron')) AND (building IS NULL OR building = 'no')) OR
-                            (("power" IN ('generator')) AND (tags->'generator:type' IS NULL OR tags->'generator:type' NOT IN ('wind'))) THEN "building"
-                    END AS "building",
+                    "office",
+                    "diplomatic",
+                    "building",
                     way_length,
                     way_area,
                     COALESCE(way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0), 0) AS way_pixels

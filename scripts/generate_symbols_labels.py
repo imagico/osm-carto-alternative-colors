@@ -315,6 +315,7 @@ def main():
             fkey = fn
             fval = None
             fvaln = None
+            fval_base = None
 
         fnn = fn.replace("/", "_")
 
@@ -1545,26 +1546,38 @@ def main():
                             fconds = fcond
                         else:
                             fconds = fconds+" OR "+fcond
-                if fconds_all is None:
-                    if (cond is not None) and (cond != ''):
-                        fconds_all = "(("+fconds+") AND "+cond+")"
-                        have_cond = True
+                if fconds is None:
+                    if fconds_all is None:
+                        if (cond is not None) and (cond != ''):
+                            fconds_all = "("+cond+")"
+                            have_cond = True
                     else:
-                        fconds_all = fconds
+                        if (cond is not None) and (cond != ''):
+                            fconds_all += " OR\n"+indent_base+"                    ("+cond+")"
+                            have_cond = True
                 else:
-                    if (cond is not None) and (cond != ''):
-                        fconds_all += " OR\n"+indent_base+"                    (("+fconds+") AND "+cond+")"
-                        have_cond = True
+                    if fconds_all is None:
+                        if (cond is not None) and (cond != ''):
+                            fconds_all = "(("+fconds+") AND "+cond+")"
+                            have_cond = True
+                        else:
+                            fconds_all = fconds
                     else:
-                        fconds_all += " OR\n"+indent_base+"                    ("+fconds+")"
+                        if (cond is not None) and (cond != ''):
+                            fconds_all += " OR\n"+indent_base+"                    (("+fconds+") AND "+cond+")"
+                            have_cond = True
+                        else:
+                            fconds_all += " OR\n"+indent_base+"                    ("+fconds+")"
 
             if (sql is None) or (sql == ''):
-                if not(have_cond):
-                    print (indent_base+"            \""+attr+"\",", file=file_mml)
-                else:
-                    print (indent_base+"            CASE", file=file_mml)
-                    print (indent_base+"              WHEN "+fconds_all+" THEN \""+attr+"\"", file=file_mml)
-                    print (indent_base+"            END AS \""+attr+"\",", file=file_mml)
+                print (indent_base+"            \""+attr+"\",", file=file_mml)
+                # do not make attributes conditional unless they are customized with an SQL expression
+                #if not(have_cond):
+                #    print (indent_base+"            \""+attr+"\",", file=file_mml)
+                #else:
+                #    print (indent_base+"            CASE", file=file_mml)
+                #    print (indent_base+"              WHEN "+fconds_all+" THEN \""+attr+"\"", file=file_mml)
+                #    print (indent_base+"            END AS \""+attr+"\",", file=file_mml)
             else:
 
                 if not(have_cond):

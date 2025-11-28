@@ -4198,6 +4198,7 @@ features:
     label_color: leisure-text
     start_symbol: 17
     start_label: 17
+
   shop:
     symbol_file: symbols/sources/circle.4.svg
     symbol_color: shop-icon
