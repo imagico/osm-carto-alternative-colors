@@ -35,19 +35,6 @@
 #  You should have also received a copy of the GNU Affero General Public
 #  License. If not, see <https://www.gnu.org/licenses/>.
 # ---------------------------------------------------------------------------
-  - id: necountries
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way
-          FROM ne_110m_admin_0_boundary_lines_land
-        ) AS necountries
-    properties:
-      minzoom: 1
-      maxzoom: 3
   - id: admin-low-zoom
     geometry: linestring
     <<: *extents

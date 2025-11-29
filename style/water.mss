@@ -47,7 +47,17 @@
   [landuse = 'reservoir'],
   [waterway = 'riverbank'] {
     polygon-fill: @water-color;
-    polygon-comp-op: dst-out;
+    #water-areas::main { polygon-comp-op: dst-out; }
+    #water-areas-low-zoom {
+      [water = 'river'],
+      [water = 'canal'],
+      [waterway = 'riverbank'] {
+        polygon-fill: @river-color;
+      }
+      [water = 'ocean'] {
+        polygon-fill: @ocean-color;
+      }
+    }
     [water != 'river'][water != 'canal'][waterway != 'riverbank'] {
       [intermittent = 'yes'],
       [seasonal = 'yes'] {
@@ -61,7 +71,7 @@
           [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
           [way_pixels >= 64] { polygon-pattern-gamma: 0.6;  }
         }
-        polygon-comp-op: src-over;
+        #water-areas::main { polygon-comp-op: src-over; }
       }
     }
     [way_pixels >= 4] {

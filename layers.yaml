@@ -270,10 +270,6 @@ layers:
     source: layers/admin.mml
     stylesheets:
       - style/admin.mss
-  admin:
-    source: layers/admin.mml
-    stylesheets:
-      - style/admin.mss
   street-lamps:
     source: layers/street-lamps.mml
     stylesheets:

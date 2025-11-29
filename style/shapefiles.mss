@@ -15,6 +15,7 @@
   polygon-fill: @ocean-color;
 }
 
+#ocean-low-zoom,
 #ocean-lz,
 #ocean {
   comp-op: dst-out;

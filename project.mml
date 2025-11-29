@@ -265,7 +265,7 @@ Layer:
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS water_areas_low_zoom
     properties:
-      minzoom: 5
+      minzoom: 0
       maxzoom: 6
   - id: water-areas
     geometry: polygon
@@ -309,7 +309,7 @@ Layer:
           FROM simplified_water_polygons
         ) AS ocean_low_zoom
     properties:
-      minzoom: 5
+      minzoom: 0
       maxzoom: 6
   - id: ocean-lz
     class: "ocean"
@@ -6299,19 +6299,6 @@ Layer:
         ) AS aerialways
     properties:
       minzoom: 12
-  - id: necountries
-    geometry: linestring
-    <<: *extents
-    Datasource:
-      <<: *osm2pgsql
-      table: |-
-        (SELECT
-            way
-          FROM ne_110m_admin_0_boundary_lines_land
-        ) AS necountries
-    properties:
-      minzoom: 1
-      maxzoom: 3
   - id: admin-low-zoom
     geometry: linestring
     <<: *extents

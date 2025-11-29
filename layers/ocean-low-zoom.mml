@@ -47,5 +47,5 @@
           FROM simplified_water_polygons
         ) AS ocean_low_zoom
     properties:
-      minzoom: 5
+      minzoom: 0
       maxzoom: 6

@@ -62,5 +62,5 @@
           ORDER BY COALESCE(layer,0), way_area DESC
         ) AS water_areas_low_zoom
     properties:
-      minzoom: 5
+      minzoom: 0
       maxzoom: 6
