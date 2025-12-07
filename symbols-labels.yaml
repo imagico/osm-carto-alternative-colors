@@ -683,20 +683,26 @@ styles:
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: [[label_size]];
-      shield-face-name: @[[font_type]]-fonts;
-      [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: [[text_dy]] - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: [[label_size]];
+        shield-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { shield-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @[[font_type]]-fonts-bg; }
+        shield-text-dy: [[text_dy]];
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: [[label_color]];
-      shield-text-dy: [[text_dy]];
       shield-unlock-image: true;
       shield-file: url('[[symbol_file]]');
       symbolnameonly/shield-placement: interior;
@@ -721,17 +727,22 @@ styles:
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('[[symbol_file]]');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: [[label_size]];
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: [[label_size]];
+        textonly/text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: [[label_color]];
-      textonly/text-face-name: @[[font_type]]-fonts;
-      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -755,18 +766,25 @@ styles:
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: [[label_size]];
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: [[text_dy]] - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: [[label_size]];
+        text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
+        text-dy: [[text_dy]];
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: [[label_color]];
-      text-dy: [[text_dy]];
-      text-face-name: @[[font_type]]-fonts;
-      [font = 'jp'] { text-face-name: @[[font_type]]-fonts-jp; }
-      [font = 'tc'] { text-face-name: @[[font_type]]-fonts-tc; }
-      [font = 'kr'] { text-face-name: @[[font_type]]-fonts-kr; }
-      [font = 'ur'] { text-face-name: @[[font_type]]-fonts-ur; }
-      [font = 'bg'] { text-face-name: @[[font_type]]-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -777,6 +795,7 @@ styles:
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: [[label_color]];
       symbolnameonly/text-dy: [[text_dy]];
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @[[font_type]]-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @[[font_type]]-fonts-tc; }
@@ -787,17 +806,22 @@ styles:
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: [[label_size]];
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: [[label_size]];
+        textonly/text-face-name: @[[font_type]]-fonts;
+        [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: [[label_color]];
-      textonly/text-face-name: @[[font_type]]-fonts;
-      [font = 'jp'] { textonly/text-face-name: @[[font_type]]-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @[[font_type]]-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @[[font_type]]-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @[[font_type]]-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @[[font_type]]-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -3127,7 +3151,7 @@ features:
     label_color: landform-text
     start_symbol: 13
     start_label: 15
-    text_dy: 11
+    text_dy: 9
     modifications:
       large:
         style: large-symbol-variant

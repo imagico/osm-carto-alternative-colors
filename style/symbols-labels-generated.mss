@@ -19,20 +19,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 11 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 11;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #734a08;
-      shield-text-dy: 11;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/amenity_shelter.svg');
       symbolnameonly/shield-placement: interior;
@@ -57,17 +63,22 @@
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/amenity_shelter.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #734a08;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -91,18 +102,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 11 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 11;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #734a08;
-      text-dy: 11;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -113,6 +131,7 @@
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #734a08;
       symbolnameonly/text-dy: 11;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -123,17 +142,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #734a08;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -185,20 +209,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 11 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 11;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #6942b0;
-      shield-text-dy: 11;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/tourism_alpine_hut.svg');
       symbolnameonly/shield-placement: interior;
@@ -223,17 +253,22 @@
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/tourism_alpine_hut.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -257,18 +292,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 11 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 11;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #6942b0;
-      text-dy: 11;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -279,6 +321,7 @@
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #6942b0;
       symbolnameonly/text-dy: 11;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -289,17 +332,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -333,20 +381,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 11 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 11;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #6942b0;
-      shield-text-dy: 11;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/tourism_wilderness_hut.svg');
       symbolnameonly/shield-placement: interior;
@@ -371,17 +425,22 @@
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/tourism_wilderness_hut.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -405,18 +464,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 11 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 11;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #6942b0;
-      text-dy: 11;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -427,6 +493,7 @@
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #6942b0;
       symbolnameonly/text-dy: 11;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -437,17 +504,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -8691,20 +8763,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 7 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 7;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #6e441e;
-      shield-text-dy: 7;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/natural_peak_viewpoint.svg');
       symbolnameonly/shield-placement: interior;
@@ -8729,17 +8807,22 @@
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/natural_peak_viewpoint.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -8763,18 +8846,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 7 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 7;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #6e441e;
-      text-dy: 7;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -8785,6 +8875,7 @@
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #6e441e;
       symbolnameonly/text-dy: 7;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -8795,17 +8886,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -8882,20 +8978,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 7 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 7;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #6e441e;
-      shield-text-dy: 7;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/natural_peak.svg');
       symbolnameonly/shield-placement: interior;
@@ -8920,17 +9022,22 @@
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/natural_peak.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -8954,18 +9061,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 7 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 7;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #6e441e;
-      text-dy: 7;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -8976,6 +9090,7 @@
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #6e441e;
       symbolnameonly/text-dy: 7;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -8986,17 +9101,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -9046,20 +9166,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 9 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 9;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #6e441e;
-      shield-text-dy: 11;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/natural_volcano.svg');
       symbolnameonly/shield-placement: interior;
@@ -9077,24 +9203,29 @@
       symbolnameonly/shield-wrap-width: 100;
       symbolnameonly/shield-line-spacing: @standard-line-spacing-size;
       symbolnameonly/shield-fill: #6e441e;
-      symbolnameonly/shield-text-dy: 11;
+      symbolnameonly/shield-text-dy: 9;
       symbolnameonly/shield-unlock-image: true;
       symbolnameonly/shield-file: url('symbols/colored/natural_volcano.svg');
       symbolonly/marker-placement: interior;
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/natural_volcano.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -9118,18 +9249,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 9 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 9;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #6e441e;
-      text-dy: 11;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -9139,7 +9277,8 @@
       symbolnameonly/text-wrap-width: @standard-wrap-width;
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #6e441e;
-      symbolnameonly/text-dy: 11;
+      symbolnameonly/text-dy: 9;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -9150,17 +9289,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -9210,20 +9354,26 @@
     [vis_type = 'symbol-label'] {
       shield-placement: interior;
       shield-clip: false;
-      shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-name: '[int_elevation]';
+      shield-size: 9;
+      shield-face-name: @oblique-fonts;
+      shield-text-dy: 7 - 3;
+      [name != ''] {
+        shield-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        shield-size: 10;
+        shield-face-name: @book-fonts;
+        [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+        [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+        [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+        [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+        [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+        shield-text-dy: 7;
+      }
       shield-halo-radius: @standard-halo-radius;
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
       shield-fill: #6e441e;
-      shield-text-dy: 7;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/natural_saddle.svg');
       symbolnameonly/shield-placement: interior;
@@ -9248,17 +9398,22 @@
       symbolonly/marker-clip: false;
       symbolonly/marker-file: url('symbols/colored/natural_saddle.svg');
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
@@ -9282,18 +9437,25 @@
     [vis_type = 'label-for-symbol'] {
       text-anchor-cond: '[osm_id]';
       text-placement: interior;
-      text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      text-size: 10;
+      text-name: '[int_elevation]';
+      text-size: 9;
+      text-face-name: @oblique-fonts;
+      text-dy: 7 - 3;
+      text-allow-overlap-anchor: '[osm_id]';
+      [name != ''] {
+        text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        text-size: 10;
+        text-face-name: @book-fonts;
+        [font = 'jp'] { text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { text-face-name: @book-fonts-bg; }
+        text-dy: 7;
+      }
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
       text-fill: #6e441e;
-      text-dy: 7;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius;
       text-halo-fill: @standard-halo-fill;
       symbolnameonly/text-anchor-cond: '[osm_id]';
@@ -9304,6 +9466,7 @@
       symbolnameonly/text-line-spacing: @standard-line-spacing-size;
       symbolnameonly/text-fill: #6e441e;
       symbolnameonly/text-dy: 7;
+      symbolnameonly/text-allow-overlap-anchor: '[osm_id]';
       symbolnameonly/text-face-name: @book-fonts;
       [font = 'jp'] { symbolnameonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { symbolnameonly/text-face-name: @book-fonts-tc; }
@@ -9314,17 +9477,22 @@
       symbolnameonly/text-halo-fill: @standard-halo-fill;
       textonly/text-anchor-cond: "'!'+[osm_id]";
       textonly/text-placement: interior;
-      textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
-      textonly/text-size: 10;
+      textonly/text-name: '[int_elevation]';
+      textonly/text-size: 9;
+      textonly/text-face-name: @oblique-fonts;
+      [name != ''] {
+        textonly/text-name: '[name]<Format face-name="Noto Sans Italic" size="9">[int_elevation]</Format>';
+        textonly/text-size: 10;
+        textonly/text-face-name: @book-fonts;
+        [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+        [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+        [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+        [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+        [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      }
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
       textonly/text-fill: #6e441e;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
       textonly/text-halo-radius: @standard-halo-radius;
       textonly/text-halo-fill: @standard-halo-fill;
       textonly/text-vertical-alignment: bottom;
