@@ -2375,7 +2375,7 @@ Layer:
                         way,
                         way_orig,
                         CASE
-                          WHEN highway NOT IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service')
+                          WHEN highway NOT IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'platform')
                             THEN  0
                           WHEN (width_max < 4.0) AND (z(!scale_denominator!) < 15)  -- skip very narrow roads at low zooms
                             THEN  0
@@ -2384,7 +2384,7 @@ Layer:
                           WHEN EXISTS
                             (SELECT 1 FROM planet_osm_line h2
                               WHERE ST_DWithin(h2.way, ST_StartPoint(hwj.way), 0.1) AND hwj.osm_id != h2.osm_id
-                                AND h2.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service'))
+                                AND (h2.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'platform') OR h2.railway IN ('platform')))
                             THEN 0
                           WHEN EXISTS
                             (SELECT 1 FROM planet_osm_polygon p
@@ -2418,7 +2418,7 @@ Layer:
                           WHEN EXISTS
                             (SELECT 1 FROM planet_osm_line h2
                               WHERE ST_DWithin(h2.way, ST_EndPoint(hwj.way), 0.1) AND hwj.osm_id != h2.osm_id
-                                AND h2.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service'))
+                                AND (h2.highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary', 'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link', 'road', 'construction', 'unclassified', 'residential', 'busway', 'bus_guideway', 'raceway', 'pedestrian', 'living_street', 'service', 'platform') OR h2.railway IN ('platform')))
                             THEN 0
                           WHEN EXISTS
                             (SELECT 1 FROM planet_osm_polygon p
