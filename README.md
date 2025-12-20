@@ -46,6 +46,10 @@ The following are the major design differences of this style compared to OpenStr
   - differentiation of unpaved roads
   - new access restriction semantics based on primary mode of transport and additional permissions
   - display of additional permissions on road classes with implicit access restrictions
+  - flat line ends of open end roads with differentiation based on `noexit=yes` and `fixme=continue`
+  - rendering of bridges with minimal overlap with connecting non-bridge roads
+  - casing continuity between bridges connected at an angle
+  - context adjusted rendering of `highway=crossing` on roads with correct layering
 * rendering of `natural=tree`, `natural=shrub`, `natural=tree_row` and `natural=hedge` differentiated by `leaf_type`/`leaf_cycle`
 * embankment like illustration of `hedge=hedge_bank`
 * a modular style definition with different layers in separate files and the possibility to define style variants like with simplified versions of specific high complexity layers.
@@ -76,6 +80,7 @@ The following are the major design differences of this style compared to OpenStr
 * rendering of `landuse=aquaculture` with differenciation by `produce=*`/`aquaculture=*`
 * rendering of `man_made=quay`
 * rendering of `emergency=life_ring`
+* rendering of `man_made=adit`/`man_made=mineshaft` with differentiation of disused/abandoned and `resource=*`
 
 
 # Samples
