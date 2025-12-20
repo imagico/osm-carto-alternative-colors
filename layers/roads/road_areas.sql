@@ -12,6 +12,7 @@
                 construction,
                 service,
                 link,
+                'null' AS connect_type,
                 width_nominal,
                 width_max,
                 width,

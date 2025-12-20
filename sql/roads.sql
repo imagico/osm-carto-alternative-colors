@@ -33,6 +33,55 @@ AS $func$
     SELECT COALESCE(driving, 'right') FROM language_regions WHERE ST_Intersects(ST_PointOnSurface($1), way) AND driving IS NOT NULL  ORDER BY level DESC LIMIT 1
 $func$;
 
+/* tunnel tag interpretation for roads */
+/* parameters: tunnel, covered */
+/* returns: 'yes' or 'no' */
+CREATE OR REPLACE FUNCTION carto_road_tunnel (text, text)
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT
+  CASE
+    WHEN $1 IN ('yes', 'building_passage', 'avalanche_protector') OR $2 = 'yes' THEN 'yes'::text
+    ELSE 'no'::text
+  END
+$func$;
+
+/* bridge tag interpretation for roads */
+/* parameters: bridge, ford */
+/* returns: 'yes', 'ford' or 'no' */
+CREATE OR REPLACE FUNCTION carto_road_bridge (text, text)
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT
+  CASE
+    WHEN $1 IN ('yes', 'boardwalk', 'cantilever', 'covered', 'low_water_crossing', 'movable', 'trestle', 'viaduct') THEN 'yes'::text
+    WHEN $2 IN ('yes', 'stepping_stones') THEN 'ford'::text
+    ELSE 'no'::text
+  END
+$func$;
+
+/* surface tag interpretation for roads */
+/* parameters: surface */
+/* returns: 'paved', 'unpaved' or NULL */
+CREATE OR REPLACE FUNCTION carto_road_surface (text)
+  RETURNS text
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT
+   CASE
+     WHEN $1 IN ('unpaved', 'compacted', 'dirt', 'earth', 'fine_gravel', 'grass', 'grass_paver', 'gravel', 'ground',
+                  'mud', 'pebblestone', 'salt', 'sand', 'woodchips', 'clay') THEN 'unpaved'::text
+     WHEN $1 IN ('paved', 'asphalt', 'cobblestone', 'cobblestone:flattened', 'sett', 'concrete', 'concrete:lanes',
+                  'concrete:plates', 'paving_stones', 'metal', 'wood') THEN 'paved'::text
+     ELSE NULL
+   END
+$func$;
+
 /* classifying highway=path into foot/bicycle/horse */
 /* based on access tags foot/bicycle/horse */
 /* parameters: foot, bicycle, horse */

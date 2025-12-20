@@ -61,7 +61,7 @@
             construction,
             service,
             link,
-            tc_type,
+            connect_type,
             width_lane,
             width_nominal,
             width_max,
@@ -69,116 +69,159 @@
             casing_width
           FROM ( -- this wraps all the different road sublayers, most of which are mostly sourced from the same CTEs (roads_all, road_areas_all, tc_all)
             WITH roads_all AS -- roads_all is based on the classic roads-casing/roads-fill/bridges layers + junction polygons
-            (SELECT
-                way,
-                (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
-                path_type,
-                int_surface,
-                int_tunnel,
-                int_bridge,
-                int_lane,
-                int_lanes,
-                int_junction,
-                int_access,
-                construction,
-                service,
-                link,
-                width_lane,
-                width_nominal,
-                GREATEST(width_nominal, width_tagged) AS width_max,
-                CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
-                casing_width,
-                layernotnull,
-                osm_id,
-                carto_z_order_from_feature(feature, construction) AS z_order
-              FROM ( -- begin "features" subselect that contains both roads and rail/aero
-                WITH highways_raw AS
-                -- this queries all roads from the database together with the corresponding width values
-                -- to be used both directly and for the sidewalk geometries
-                (
-                  @@include(roads/highways_raw.sql)
-                ), -- end highways_raw CTE
-              @@if(road_basic)
-                @@include(roads/junctions-dummy.sql)
-              @@else
-                @@include(roads/junctions.sql)
-              @@end
-              @@if(road_basic)
-                @@include(roads/highways_all-simple.sql)
-              @@else
-                @@include(roads/highways_all.sql)
-              @@end
-              @@if(ac)
-                @@include(roads/sidewalks-cte.sql)
-                @@include(roads/sidewalks.sql)
-                UNION ALL
-                @@include(roads/lanes.sql)
-              @@else
-                @@include(roads/sidewalks-dummy.sql)
-              @@end
-                UNION ALL
-                SELECT -- begin of main road select
-                    way,
-                    feature,
-                    path_type,
-                    int_surface,
-                    int_tunnel,
-                    int_bridge,
-                    'no' AS int_lane,
-                    int_lanes,
-                    'no' AS int_junction,
-                    int_access,
-                    construction,
-                    service,
-                    link,
-                    width_lane,
-                    width_nominal,
-                    width_tagged,
-                    casing_width,
-                    layernotnull,
-                    osm_id,
-                    z_order
-                  FROM highways_all
-                  -- end of main road select
-                UNION ALL
-                SELECT -- begin of junction polygons select
-                    way,
-                    feature,
-                    path_type,
-                    int_surface,
-                    int_tunnel,
-                    int_bridge,
-                    'no' AS int_lane,
-                    int_lanes,
-                    'yes' AS int_junction,
-                    int_access,
-                    construction,
-                    service,
-                    link,
-                    0 AS width_lane,
-                    width_nominal,
-                    width_tagged,
-                    casing_width,
-                    layernotnull,
-                    osm_id,
-                    z_order
-                  FROM junctions
-                  -- end of junction polygons select
-                UNION ALL
-              @@if(road_basic)
-                @@include(roads/fords-dummy.sql)
-              @@else
-                @@include(roads/fords.sql)
-              @@end
-                UNION ALL
-              @@if(road_basic)
-                @@include(roads/crossings-dummy.sql)
-              @@else
-                @@include(roads/crossings.sql)
-              @@end
-                UNION ALL
-                @@include(roads/rail_aero.sql)
-              ) AS roads_features
+            (
+              WITH roads_prepared AS -- roads_prepared is all roads, preprocessed including junctions, sidewalks, lanes and line cap splits but with no bridge connects yet
+              (SELECT
+                  way,
+                  (CASE WHEN substr(feature, length(feature)-4, 5) = '_link' THEN substr(feature, 0, length(feature)-4) ELSE feature END) AS feature,
+                  path_type,
+                  int_surface,
+                  int_tunnel,
+                  int_bridge,
+                  int_lane,
+                  int_lanes,
+                  int_access,
+                  construction,
+                  service,
+                  link,
+                  connect_type,
+                  width_lane,
+                  width_nominal,
+                  CASE WHEN int_tunnel = 'no' THEN GREATEST(width_nominal, width_tagged) ELSE width_nominal END AS width_max,
+                  CASE WHEN (width_tagged > width_nominal) THEN width_tagged ELSE 0.0 END AS width,
+                  casing_width,
+                  layernotnull,
+                  osm_id,
+                  carto_z_order_from_feature(feature, construction) AS z_order
+                FROM ( -- begin "features" subselect that contains both roads and rail/aero
+                  WITH highways_raw AS
+                  -- this queries all roads from the database together with the corresponding width values
+                  -- to be used both directly and for the sidewalk geometries
+                  (
+                    @@include(roads/highways_raw.sql)
+                  ), -- end highways_raw CTE
+                  aeroways_raw AS
+                  (
+                    @@include(roads/aeroways_raw.sql)
+                  ), -- end aeroways_raw CTE
+                  junctions AS
+                  (
+                  @@if(road_basic)
+                    @@include(roads/junctions-dummy.sql)
+                  @@else
+                    @@include(roads/junctions.sql)
+                  @@end
+                  ), -- end junctions CTE
+                  highways_all AS
+                  (
+                  @@if(road_basic)
+                    @@include(roads/highways_all-simple.sql)
+                  @@else
+                    @@include(roads/highways_all.sql)
+                  @@end
+                  ), -- end highways_all CTE
+                @@if(ac)
+                  sidewalks_raw AS
+                  (
+                    @@include(roads/sidewalks-cte.sql)
+                  )  -- end sidewalks_raw CTE
+                  @@include(roads/sidewalks.sql)
+                  UNION ALL
+                  @@include(roads/lanes.sql)
+                @@else
+                  @@include(roads/sidewalks-dummy.sql)
+                @@end
+                  UNION ALL
+                  SELECT -- begin of main road select
+                      way,
+                      feature,
+                      path_type,
+                      int_surface,
+                      int_tunnel,
+                      int_bridge,
+                      'no' AS int_lane,
+                      int_lanes,
+                      int_access,
+                      construction,
+                      service,
+                      link,
+                      connect_type,
+                      width_lane,
+                      width_nominal,
+                      width_tagged,
+                      casing_width,
+                      layernotnull,
+                      osm_id,
+                      z_order
+                    FROM highways_all
+                    -- end of main road select
+                  UNION ALL
+                  SELECT -- begin of junction polygons select
+                      way,
+                      feature,
+                      path_type,
+                      int_surface,
+                      int_tunnel,
+                      int_bridge,
+                      'no' AS int_lane,
+                      int_lanes,
+                      int_access,
+                      construction,
+                      service,
+                      link,
+                      'junction' AS connect_type,
+                      0 AS width_lane,
+                      width_nominal,
+                      width_tagged,
+                      casing_width,
+                      layernotnull,
+                      osm_id,
+                      z_order
+                    FROM junctions
+                    -- end of junction polygons select
+                  UNION ALL
+                @@if(road_basic)
+                  @@include(roads/fords-dummy.sql)
+                @@else
+                  @@include(roads/fords.sql)
+                @@end
+                  UNION ALL
+                @@if(road_basic)
+                  @@include(roads/crossings-dummy.sql)
+                @@else
+                  @@include(roads/crossings.sql)
+                @@end
+                  UNION ALL
+                  @@include(roads/railways_all.sql)
+                ) AS roads_features
+              ) -- end of roads_prepared CTE
+              SELECT
+                  way,
+                  feature,
+                  path_type,
+                  int_surface,
+                  int_tunnel,
+                  int_bridge,
+                  int_lane,
+                  int_lanes,
+                  int_access,
+                  construction,
+                  service,
+                  link,
+                  connect_type,
+                  width_lane,
+                  width_nominal,
+                  width_max,
+                  width,
+                  casing_width,
+                  layernotnull,
+                  osm_id,
+                  z_order
+                FROM roads_prepared
+            @@if(ac)
+              UNION ALL
+              @@include(roads/bridge-connects.sql)
+            @@end
             ), -- end of roads_all CTE
             road_areas_all AS
             (
@@ -227,7 +270,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -237,8 +280,12 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_fill', 'crossing')
+              WHERE int_lane = 'no'
+                AND connect_type NOT IN ('flat_end_fill', 'flat_end_fill_background', 'crossing', 'junction')
+                AND (
+                  int_bridge = 'no' OR
+                  connect_type NOT IN ('line_separate')
+                )
             UNION ALL
             SELECT -- background
                 way,
@@ -255,7 +302,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -265,12 +312,31 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+              WHERE int_lane = 'no'
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'crossing', 'junction')
+                AND (
+                  int_bridge = 'no' OR
+                  connect_type IN ('bridge_connect') OR
+                  feature NOT IN ('highway_track', 'highway_path', 'highway_footway', 'highway_cycleway', 'highway_bridleway') OR
+                  width = 0.0 OR
+                  z(!scale_denominator!) < 18
+                )
             UNION ALL
-            SELECT -- background_unpaved
-                ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
-                'background_unpaved' AS road_layer,
+            SELECT -- background_bridge
+                CASE
+                  WHEN connect_type = 'flat_end_fill' THEN
+                    ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
+                  ELSE
+                    CASE
+                      WHEN width_max > 4.0*casing_width THEN
+                        ST_Buffer(ST_Buffer(way, 0.5*(width_max - 4.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round'), casing_width*NULLIF(!scale_denominator!*0.001*0.28,0))
+                      WHEN z(!scale_denominator!) < 14 THEN
+                        ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    ELSE -- enlarge the fill if line width is very small to prevent the heavy bridge casing drowning the fill line
+                      ST_Buffer(way, 0.5*(width_max - 1.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0))
+                    END
+                END AS way,
+                'background_bridge' AS road_layer,
                 feature,
                 path_type,
                 'no' AS intermittent,
@@ -283,7 +349,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -293,17 +359,15 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
-                AND int_surface = 'unpaved'
+              WHERE int_tunnel = 'no'
                 AND int_lane = 'no'
-                AND width >= 0.0
-                AND
-                  -- this is all the roads with a fill that is patterened for unpaved roads - only at high zoom and rendered as background
-                  feature IN ('highway_bridleway', 'highway_footway', 'highway_cycleway', 'highway_path', 'highway_track')
+                AND int_bridge != 'no'
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'crossing', 'junction', 'bridge_connect')
+                AND feature IN ('highway_track', 'highway_path', 'highway_footway', 'highway_cycleway', 'highway_bridleway')
+                AND width > 0.0
                 AND z(!scale_denominator!) >= 18
             UNION ALL
-            SELECT -- fill (non-bridge)
+            SELECT -- fill (non-bridge, bridge_connect)
                 way,
                 'fill' AS road_layer,
                 feature,
@@ -318,7 +382,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -328,10 +392,11 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+              WHERE int_lane = 'no'
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND (
                   int_bridge = 'no' OR
+                  connect_type IN ('bridge_connect') OR
                   z(!scale_denominator!) < 12 OR
                   feature NOT IN (
                     'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
@@ -339,43 +404,6 @@
                     'highway_busway', 'highway_bus_guideway',
                     'highway_platform', 'railway_platform', 'aeroway_runway', 'aeroway_taxiway')
                 )
-            UNION ALL
-            SELECT -- bridge_fill_fallback
-                way,
-                'bridge_fill_fallback' AS road_layer,
-                feature,
-                path_type,
-                'no' AS intermittent,
-                'no' AS seasonal,
-                int_surface,
-                int_tunnel,
-                'no' AS int_bridge, -- there is a separate bridge fill with modified line ends at the right position in the layer stack
-                int_lanes,
-                int_access,
-                construction,
-                service,
-                link,
-                'null' AS tc_type,
-                width_lane,
-                width_nominal,
-                width_max,
-                width,
-                casing_width,
-                layernotnull,
-                osm_id,
-                z_order
-              FROM roads_all
-              WHERE int_junction = 'no' AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
-                AND int_bridge != 'no'
-                AND
-                  -- this is all the roads with a casing+fill design at z12+
-                  feature IN (
-                    'highway_motorway', 'highway_trunk', 'highway_primary', 'highway_secondary', 'highway_tertiary', 'highway_unclassified',
-                    'highway_residential', 'highway_service', 'highway_road', 'highway_pedestrian', 'highway_living_street', 'highway_raceway',
-                    'highway_busway', 'highway_bus_guideway',
-                    'highway_platform', 'railway_platform', 'aeroway_runway', 'aeroway_taxiway')
-                AND z(!scale_denominator!) >= 12
             UNION ALL
             SELECT -- fill_bridge
                 CASE
@@ -387,7 +415,7 @@
                     ELSE
                       ST_Buffer(way, 0.5*width_max*NULLIF(!scale_denominator!*0.001*0.28,0))
                     END
-                  WHEN path_type = 'flat_end_fill' THEN
+                  WHEN connect_type = 'flat_end_fill' THEN
                     ST_Buffer(way, 0.5*(width_max - 2.0*casing_width)*NULLIF(!scale_denominator!*0.001*0.28,0), 'endcap=flat join=round')
                   ELSE
                     CASE
@@ -412,7 +440,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -422,11 +450,10 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
+              WHERE int_tunnel = 'no'
                 AND int_lane = 'no'
                 AND int_bridge != 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction', 'bridge_connect')
                 AND
                   -- this is all the roads with a casing+fill design at z12+
                   feature IN (
@@ -451,7 +478,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -461,7 +488,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction != 'no' AND int_lane = 'no'
+              WHERE connect_type IN ('junction') AND int_lane = 'no'
             UNION ALL
             SELECT -- junction_fill
                 way,
@@ -478,7 +505,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -488,7 +515,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction != 'no' AND int_lane = 'no'
+              WHERE connect_type IN ('junction') AND int_lane = 'no'
             UNION ALL
             SELECT -- fill_lanes
                 way,
@@ -505,7 +532,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -515,10 +542,9 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
+              WHERE int_tunnel = 'no'
                 AND int_lane != 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND z(!scale_denominator!) >= 18
             UNION ALL
             SELECT -- parkings_lane
@@ -536,7 +562,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -566,7 +592,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -576,10 +602,9 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
+              WHERE int_tunnel = 'no'
                 AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND
                   feature IN ('highway_living_street', 'highway_pedestrian', 'highway_busway', 'highway_bus_guideway', 'aeroway_runway', 'aeroway_taxiway')
                 AND z(!scale_denominator!) >= 15
@@ -599,7 +624,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -609,10 +634,9 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
+              WHERE int_tunnel = 'no'
                 AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND int_lanes IS NOT NULL
                 AND z(!scale_denominator!) >= 18
             UNION ALL
@@ -631,7 +655,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -641,11 +665,10 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
+              WHERE int_tunnel = 'no'
                 AND int_access IS NOT NULL
                 AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_fill', 'flat_end_casing', 'crossing')
+                AND connect_type NOT IN ('flat_end_fill', 'flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- centerline_top
@@ -663,7 +686,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -673,11 +696,10 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE int_junction = 'no'
-                AND int_tunnel = 'no'
+              WHERE int_tunnel = 'no'
                 AND int_bridge IN ('ford', 'ford_node',  'mountain_pass')
                 AND int_lane = 'no'
-                AND path_type NOT IN ('flat_end_casing', 'crossing')
+                AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- crossings
@@ -695,7 +717,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 width_lane,
                 width_nominal,
                 width_max,
@@ -705,7 +727,7 @@
                 osm_id,
                 z_order
               FROM roads_all
-              WHERE path_type = 'crossing'
+              WHERE connect_type = 'crossing'
                 AND z(!scale_denominator!) >= 15
             UNION ALL
             SELECT -- area_casing
@@ -723,7 +745,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 0 AS width_lane,
                 width_nominal,
                 width_max,
@@ -750,7 +772,7 @@
                 construction,
                 service,
                 link,
-                'null' AS tc_type,
+                'null' AS connect_type,
                 0 AS width_lane,
                 width_nominal,
                 width_max,
@@ -776,7 +798,7 @@
                 construction,
                 service,
                 link,
-                tc_type,
+                connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -802,7 +824,7 @@
                 construction,
                 service,
                 link,
-                tc_type,
+                connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -828,7 +850,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -858,7 +880,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -888,7 +910,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -918,7 +940,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -955,7 +977,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -993,7 +1015,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1020,7 +1042,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1049,7 +1071,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1081,7 +1103,7 @@
                 dasharrays[1] AS construction,
                 substance AS service,
                 'no' AS link,
-                dasharrays[4] AS tc_type,
+                dasharrays[4] AS connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1108,7 +1130,7 @@
                 dasharrays[2] AS construction,
                 substance AS service,
                 'no' AS link,
-                dasharrays[4] AS tc_type,
+                dasharrays[4] AS connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1135,7 +1157,7 @@
                 dasharrays[3] AS construction,
                 substance AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1161,7 +1183,7 @@
                 'null' AS construction,
                 mooring AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1187,7 +1209,7 @@
                 'null' AS construction,
                 mooring AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1214,7 +1236,7 @@
                 'null' AS construction,
                 mooring AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1240,7 +1262,7 @@
                 'null' AS construction,
                 mooring AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1273,7 +1295,7 @@
                 'null' AS construction,
                 mooring AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1315,7 +1337,7 @@
                 'null' AS construction,
                 'null' AS service,
                 'no' AS link,
-                'null' tc_type,
+                'null' connect_type,
                 0 AS width_lane,
                 0 AS width_nominal,
                 0 AS width_max,
@@ -1361,8 +1383,7 @@
               WHEN road_layer = 'junction_casing' THEN 7
               WHEN road_layer = 'casing' THEN 7
               WHEN road_layer = 'background' THEN 8
-              WHEN road_layer = 'background_unpaved' THEN 8
-              WHEN road_layer = 'bridge_fill_fallback' THEN 8
+              WHEN road_layer = 'background_bridge' THEN 8
               WHEN road_layer = 'area_fill' THEN 9
               WHEN road_layer = 'junction_fill' THEN 9
               WHEN road_layer = 'fill' THEN 9
@@ -1382,6 +1403,10 @@
             layernotnull,
             CASE
               WHEN feature IN ('highway_construction', 'railway_construction', 'aeroway_construction') THEN 0
+              ELSE 1
+            END,
+            CASE
+              WHEN connect_type IN ('bridge_connect') THEN 0
               ELSE 1
             END,
             z_order NULLS FIRST,
@@ -1404,8 +1429,7 @@
               WHEN road_layer = 'junction_casing' THEN 14
               WHEN road_layer = 'casing' THEN 15
               WHEN road_layer = 'background' THEN 16
-              WHEN road_layer = 'background_unpaved' THEN 16
-              WHEN road_layer = 'bridge_fill_fallback' THEN 17
+              WHEN road_layer = 'background_bridge' THEN 17
               WHEN road_layer = 'area_fill' THEN 18
               WHEN road_layer = 'junction_fill' THEN 19
               WHEN road_layer = 'fill' THEN 20

@@ -156,6 +156,7 @@
                     construction,
                     service,
                     link,
+                    NULL as connect_type,
                     width_lane,
                     width_lane_cycle,
                     width_nominal,

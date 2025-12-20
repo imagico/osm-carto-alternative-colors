@@ -12,7 +12,7 @@
                 construction,
                 service,
                 link,
-                tc_type,
+                connect_type,
                 width,
                 carto_casing_line_width(highway, int_bridge, z(!scale_denominator!)) AS casing_width,
                 layernotnull,
@@ -22,7 +22,7 @@
                 (WITH tc_combos AS
                   (SELECT DISTINCT ON (p.way)
                       p.way AS way,
-                      p.highway AS tc_type,
+                      p.highway AS connect_type,
                       l.way AS lway,
                       ('highway_' || l.highway) AS feature,
                       l.highway AS highway,
@@ -110,13 +110,13 @@
                     construction,
                     service,
                     link,
-                    tc_type,
+                    connect_type,
                     width,
                     layernotnull,
                     osm_id,
                     z_order
                   FROM tc_combos
-                  WHERE tc_type IN ('turning_circle', 'turning_loop', 'mini_roundabout')
+                  WHERE connect_type IN ('turning_circle', 'turning_loop', 'mini_roundabout')
                 UNION ALL
                 SELECT
                     ST_LineSubstring(way, GREATEST(0, position-length*0.25*width), LEAST(1, position+length*0.25*width)) AS way,
@@ -133,7 +133,7 @@
                     construction,
                     service,
                     link,
-                    tc_type,
+                    connect_type,
                     width,
                     layernotnull,
                     osm_id,
@@ -156,11 +156,11 @@
                         construction,
                         service,
                         link,
-                        tc_type,
+                        connect_type,
                         width,
                         layernotnull,
                         osm_id,
                         z_order
                       FROM tc_combos
-                      WHERE tc_type IN ('passing_place')) AS pp_combos
+                      WHERE connect_type IN ('passing_place')) AS pp_combos
                 ) AS turning_circle_features

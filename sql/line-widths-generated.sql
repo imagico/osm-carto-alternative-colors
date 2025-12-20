@@ -512,7 +512,7 @@ select
         when $2 >= 19 then 1.0
         else 0.0
       end)
-    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway', 'platform') then
+    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway', 'platform') then
       (case
         when $2 = 12 then 0.1
         when $2 = 13 then 0.5
@@ -549,7 +549,7 @@ select
         when $2 >= 19 then 1.0
         else 0.0
       end)
-    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway') then
+    when $1 IN ('motorway_link', 'tertiary', 'tertiary_link', 'unclassified', 'bus_guideway', 'busway', 'residential', 'pedestrian', 'living_street', 'service', 'road', 'runway', 'taxiway', 'sidewalk', 'bridleway', 'footway', 'cycleway', 'path', 'track', 'steps', 'raceway', 'platform') then
       (case
         when $2 = 12 then 0.1
         when $2 = 13 then 0.5
