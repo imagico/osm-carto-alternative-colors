@@ -6671,7 +6671,8 @@ Layer:
             tags->'maritime' as maritime
           FROM planet_osm_roads
           WHERE boundary = 'administrative'
-            AND admin_level IN ('0', '1', '2', '3', '4')
+            -- AND admin_level IN ('0', '1', '2', '3', '4')
+            AND admin_level = '2'
             AND (osm_id < 0 OR (osm_id > 0 AND tags @> 'maritime=>yes'))
           ORDER BY admin_level DESC,
             CASE
@@ -6694,7 +6695,8 @@ Layer:
             tags->'maritime' as maritime
           FROM planet_osm_roads
           WHERE boundary = 'administrative'
-            AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8')
+            -- AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8')
+            AND admin_level = '2'
             AND (osm_id < 0 OR (osm_id > 0 AND tags @> 'maritime=>yes'))
           ORDER BY admin_level DESC,
             CASE
@@ -6717,7 +6719,8 @@ Layer:
             tags->'maritime' as maritime
           FROM planet_osm_roads
           WHERE boundary = 'administrative'
-            AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
+            -- AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
+            AND admin_level = '2'
             AND (osm_id < 0 OR (osm_id > 0 AND tags @> 'maritime=>yes'))
           ORDER BY admin_level::integer DESC, -- With 10 as a valid value, we need to do a numeric ordering, not a text ordering
             CASE
@@ -10490,7 +10493,9 @@ Layer:
                 way_area
               FROM planet_osm_polygon
               WHERE boundary = 'administrative'
-                AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')) AS _
+                -- AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
+                AND admin_level = '2'
+            ) AS _
           WHERE name_label[1] IS NOT NULL
           ORDER BY admin_level::integer ASC, way_area DESC
         ) AS admin_text

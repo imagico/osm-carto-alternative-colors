@@ -107,7 +107,9 @@
                 way_area
               FROM planet_osm_polygon
               WHERE boundary = 'administrative'
-                AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')) AS _
+                -- AND admin_level IN ('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10')
+                AND admin_level = '2'
+            ) AS _
           WHERE name_label[1] IS NOT NULL
           ORDER BY admin_level::integer ASC, way_area DESC
         ) AS admin_text

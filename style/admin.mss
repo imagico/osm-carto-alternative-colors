@@ -47,7 +47,7 @@ overlapping borders correctly.
       line-width: 6;
     }
   }
-
+/*
   [admin_level = '3'] {
     [zoom >= 4] {
       background/line-join: bevel;
@@ -135,6 +135,7 @@ overlapping borders correctly.
       line-width: 3;
     }
   }
+*/
   /*
   The following code prevents admin boundaries from being rendered on top of
   each other. Comp-op works on the entire attachment, not on the individual
@@ -149,7 +150,7 @@ overlapping borders correctly.
   opacity: 0.4;
   comp-op: darken;
 }
-
+/*
 #admin-mid-zoom[zoom >= 11][zoom < 13],
 #admin-high-zoom[zoom >= 13] {
   [admin_level = '5'][zoom >= 11] {
@@ -218,6 +219,7 @@ overlapping borders correctly.
   opacity: 0.5;
   comp-op: darken;
 }
+*/
 
 #admin-text[zoom >= 16] {
   text-name: "[name]";
