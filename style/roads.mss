@@ -2330,6 +2330,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           [connect_type = 'bridge_connect'] { dark/line-cap: round; }
           light/line-color: white;
           light/line-join: round;
+          light/line-clip: false;
           [feature = 'railway_rail'] {
             dark/line-color: #707070;
             dark/line-width: 3;
@@ -2386,6 +2387,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         [zoom >= 13] { line-width: 2; }
         [int_tunnel != 'no'] {
           line-dasharray: 5,3;
+          line-clip: false;
         }
       }
     }
@@ -2397,14 +2399,17 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         dashes/line-width: 3;
         dashes/line-color: #999;
         dashes/line-dasharray: 1,10;
+        dashes/line-clip: false;
       }
     }
 
     [feature = 'railway_tram'],
     [feature = 'railway_tram-service'][zoom >= 15] {
-      [zoom >= 12] {
+      [connect_type != 'bridge_connect'][zoom >= 12] { // no bridge connects for trams because they have generally round line caps
         line-color: #6E6E6E;
         line-width: 0.75;
+        line-join: round;
+        line-cap: round;
         [zoom >= 13] {
           line-color: #444;
         }
@@ -2435,6 +2440,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         }
         [int_tunnel != 'no'] {
           line-dasharray: 5,3;
+          line-cap: butt;
         }
       }
     }
@@ -2445,6 +2451,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line-color: #999;
         [int_tunnel != 'no'] {
           line-dasharray: 5,3;
+          line-clip: false;
         }
       }
       [int_bridge != 'no'] {
@@ -2497,6 +2504,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line/line-width: 3;
         line/line-color: #777;
         line/line-dasharray: 2,3;
+        line/line-clip: false;
         line/line-cap: round;
         line/line-join: round;
       }
@@ -2508,6 +2516,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line-width: 2;
         line-dasharray: 2,4;
         line-join: round;
+        line-clip: false;
         [zoom >= 14] {
           line-dasharray: 2,3;
         }
@@ -2524,6 +2533,7 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         line-width: 2;
         line-dasharray: 2,4;
         line-join: round;
+        line-clip: false;
       }
     }
 
