@@ -4039,26 +4039,22 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
 
   } // == end centerline_top ==
 
-  [road_layer = 'crossings'] {
+  [road_layer = 'crossings_background'] {
     [zoom >= 15] {
       line-width: (0.4 + @crossing-casing-width)*[width_max];
       line-join: round;
       line-cap: round;
       line-color: @residential-fill;
 
-      marking/line-width: 0.4*[width_max];
-      marking/line-join: round;
-      marking/line-color: @crossing-marking;
-
       [feature = 'highway_motorway'] { line-color: @motorway-fill; }
       [feature = 'highway_trunk'] { line-color: @trunk-fill; }
       [feature = 'highway_primary'] { line-color: @primary-fill; }
-      [feature = 'highway_secondary'] { line-color: @secondary-fill; marking/line-color: @crossing-marking-secondary; }
-      [feature = 'highway_tertiary'] { line-color: @tertiary-fill; marking/line-color: @crossing-marking-tertiary; }
+      [feature = 'highway_secondary'] { line-color: @secondary-fill; }
+      [feature = 'highway_tertiary'] { line-color: @tertiary-fill; }
       [feature = 'highway_busway'], [feature = 'highway_bus_guideway'] { line-color: @busway-fill; }
-      [feature = 'highway_living_street'] { line-color: @living-street-fill; marking/line-color: @crossing-marking-living-street; }
-      [feature = 'highway_pedestrian'] { line-color: @pedestrian-fill; marking/line-color: @crossing-marking-pedestrian; }
-      [feature = 'highway_road'] { line-color: @road-fill; marking/line-color: @crossing-marking-road; }
+      [feature = 'highway_living_street'] { line-color: @living-street-fill; }
+      [feature = 'highway_pedestrian'] { line-color: @pedestrian-fill; }
+      [feature = 'highway_road'] { line-color: @road-fill; }
       [feature = 'highway_service'] { line-color: @service-fill; }
 
       // no even dash counts with crossing islands
@@ -4078,45 +4074,18 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
         bkg1/line-color: @residential-fill;
         bkg2/line-color: @residential-fill;
 
-        marking1/line-color: @crossing-marking;
-        marking2/line-color: @crossing-marking;
-
         [feature = 'highway_motorway'] { bkg1/line-color: @motorway-fill; bkg2/line-color: @motorway-fill; }
         [feature = 'highway_trunk'] { bkg1/line-color: @trunk-fill; bkg2/line-color: @trunk-fill; }
         [feature = 'highway_primary'] { bkg1/line-color: @primary-fill; bkg2/line-color: @primary-fill; }
-        [feature = 'highway_secondary'] { bkg1/line-color: @secondary-fill; bkg2/line-color: @secondary-fill; marking1/line-color: @crossing-marking-secondary; marking2/line-color: @crossing-marking-secondary; }
-        [feature = 'highway_tertiary'] { bkg1/line-color: @tertiary-fill; bkg2/line-color: @tertiary-fill; marking1/line-color: @crossing-marking-tertiary; marking2/line-color: @crossing-marking-tertiary; }
+        [feature = 'highway_secondary'] { bkg1/line-color: @secondary-fill; bkg2/line-color: @secondary-fill; }
+        [feature = 'highway_tertiary'] { bkg1/line-color: @tertiary-fill; bkg2/line-color: @tertiary-fill; }
         [feature = 'highway_busway'], [feature = 'highway_bus_guideway'] { bkg1/line-color: @busway-fill; bkg2/line-color: @busway-fill; }
-        [feature = 'highway_living_street'] { bkg1/line-color: @living-street-fill; bkg2/line-color: @living-street-fill; marking1/line-color: @crossing-marking-living-street; marking2/line-color: @crossing-marking-living-street; }
-        [feature = 'highway_pedestrian'] { bkg1/line-color: @pedestrian-fill; bkg2/line-color: @pedestrian-fill; marking1/line-color: @crossing-marking-pedestrian; marking2/line-color: @crossing-marking-pedestrian; }
-        [feature = 'highway_road'] { bkg1/line-color: @road-fill; bkg2/line-color: @road-fill; marking1/line-color: @crossing-marking-road; marking2/line-color: @crossing-marking-road; }
+        [feature = 'highway_living_street'] { bkg1/line-color: @living-street-fill; bkg2/line-color: @living-street-fill; }
+        [feature = 'highway_pedestrian'] { bkg1/line-color: @pedestrian-fill; bkg2/line-color: @pedestrian-fill; }
+        [feature = 'highway_road'] { bkg1/line-color: @road-fill; bkg2/line-color: @road-fill; }
         [feature = 'highway_service'] { bkg1/line-color: @service-fill; bkg2/line-color: @service-fill; }
 
-        marking/line-width: 0.0;
-
-        marking1/line-join: round;
-        marking2/line-join: round;
-        marking1/line-width: 0.175*[width_max];
-        marking1/line-offset: 0.175*[width_max];
-        marking2/line-width: 0.175*[width_max];
-        marking2/line-offset: -0.175*[width_max];
-
         [width_max > 9.0] {
-
-          [int_lanes = 'yes'] { // crossing island
-            marking/line-color: @residential-casing;
-            marking/line-cap: round;
-            [feature = 'highway_motorway'] { marking/line-color: @motorway-casing; }
-            [feature = 'highway_trunk'] { marking/line-color: @trunk-casing; }
-            [feature = 'highway_primary'] { marking/line-color: @primary-casing; }
-            [feature = 'highway_secondary'] { marking/line-color: @secondary-casing; }
-            [feature = 'highway_tertiary'] { marking/line-color: @tertiary-casing; }
-            [feature = 'highway_busway'], [feature = 'highway_bus_guideway'] { marking/line-color: @residential-casing; }
-            [feature = 'highway_living_street'] { marking/line-color: @living-street-casing;  }
-            [feature = 'highway_pedestrian'] { marking/line-color: @pedestrian-casing; }
-            [feature = 'highway_road'] { marking/line-color: @road-casing; }
-            [feature = 'highway_service'] { marking/line-color: @service-casing; }
-          }
 
           line-width: 0.5*[width_max];
           line-cap: square;
@@ -4126,12 +4095,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
           bkg1/line-offset: 0.27*[width_max];
           bkg2/line-width: (0.135 + @crossing-casing-width)*[width_max];
           bkg2/line-offset: -0.27*[width_max];
-
-          marking/line-width: 0.135*[width_max];
-          marking1/line-width: 0.135*[width_max];
-          marking1/line-offset: 0.27*[width_max];
-          marking2/line-width: 0.135*[width_max];
-          marking2/line-offset: -0.27*[width_max];
 
           // no even dash counts with crossing islands
           [width_max > 14.0][int_lanes != 'yes'],
@@ -4153,32 +4116,16 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
             bkg11/line-color: @residential-fill;
             bkg22/line-color: @residential-fill;
 
-            marking11/line-color: @crossing-marking;
-            marking22/line-color: @crossing-marking;
-
             [feature = 'highway_motorway'] { bkg11/line-color: @motorway-fill; bkg22/line-color: @motorway-fill; }
             [feature = 'highway_trunk'] { bkg11/line-color: @trunk-fill; bkg22/line-color: @trunk-fill; }
             [feature = 'highway_primary'] { bkg11/line-color: @primary-fill; bkg22/line-color: @primary-fill; }
-            [feature = 'highway_secondary'] { bkg11/line-color: @secondary-fill; bkg22/line-color: @secondary-fill; marking11/line-color: @crossing-marking-secondary; marking22/line-color: @crossing-marking-secondary; }
-            [feature = 'highway_tertiary'] { bkg11/line-color: @tertiary-fill; bkg22/line-color: @tertiary-fill; marking11/line-color: @crossing-marking-tertiary; marking22/line-color: @crossing-marking-tertiary;  }
+            [feature = 'highway_secondary'] { bkg11/line-color: @secondary-fill; bkg22/line-color: @secondary-fill; }
+            [feature = 'highway_tertiary'] { bkg11/line-color: @tertiary-fill; bkg22/line-color: @tertiary-fill; }
             [feature = 'highway_busway'], [feature = 'highway_bus_guideway'] { bkg11/line-color: @busway-fill; bkg22/line-color: @busway-fill; }
-            [feature = 'highway_living_street'] { bkg11/line-color: @living-street-fill; bkg22/line-color: @living-street-fill; marking11/line-color: @crossing-marking-living-street; marking22/line-color: @crossing-marking-living-street; }
-            [feature = 'highway_pedestrian'] { bkg11/line-color: @pedestrian-fill; bkg22/line-color: @pedestrian-fill; marking11/line-color: @crossing-marking-pedestrian; marking22/line-color: @crossing-marking-pedestrian; }
-            [feature = 'highway_road'] { bkg11/line-color: @road-fill; bkg22/line-color: @road-fill; marking11/line-color: @crossing-marking-road; marking22/line-color: @crossing-marking-road; }
+            [feature = 'highway_living_street'] { bkg11/line-color: @living-street-fill; bkg22/line-color: @living-street-fill; }
+            [feature = 'highway_pedestrian'] { bkg11/line-color: @pedestrian-fill; bkg22/line-color: @pedestrian-fill; }
+            [feature = 'highway_road'] { bkg11/line-color: @road-fill; bkg22/line-color: @road-fill; }
             [feature = 'highway_service'] { bkg11/line-color: @service-fill; bkg22/line-color: @service-fill; }
-
-            marking/line-width: 0.0;
-            marking1/line-width: 0.1*[width_max];
-            marking1/line-offset: 0.1*[width_max];
-            marking2/line-width: 0.1*[width_max];
-            marking2/line-offset: -0.1*[width_max];
-
-            marking11/line-join: round;
-            marking22/line-join: round;
-            marking11/line-width: 0.1*[width_max];
-            marking11/line-offset: 0.3*[width_max];
-            marking22/line-width: 0.1*[width_max];
-            marking22/line-offset: -0.3*[width_max];
 
             [width_max > 18.0] {
               [int_access = null] { line-width: (0.082 + @crossing-casing-width)*[width_max]; }
@@ -4190,17 +4137,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
               bkg11/line-offset: 0.328*[width_max];
               bkg22/line-width: (0.082 + @crossing-casing-width)*[width_max];
               bkg22/line-offset: -0.328*[width_max];
-
-              marking/line-width: 0.082*[width_max];
-              marking1/line-width: 0.082*[width_max];
-              marking1/line-offset: 0.164*[width_max];
-              marking2/line-width: 0.082*[width_max];
-              marking2/line-offset: -0.164*[width_max];
-              marking11/line-width: 0.082*[width_max];
-              marking11/line-offset: 0.328*[width_max];
-              marking22/line-width: 0.082*[width_max];
-              marking22/line-offset: -0.328*[width_max];
-
 
               // no even dash counts with crossing islands
               [width_max > 22.0][int_lanes != 'yes'],
@@ -4228,19 +4164,149 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
                 bkg111/line-color: @residential-fill;
                 bkg222/line-color: @residential-fill;
 
-                marking111/line-color: @crossing-marking;
-                marking222/line-color: @crossing-marking;
-
                 [feature = 'highway_motorway'] { bkg111/line-color: @motorway-fill; bkg222/line-color: @motorway-fill; }
                 [feature = 'highway_trunk'] { bkg111/line-color: @trunk-fill; bkg222/line-color: @trunk-fill; }
                 [feature = 'highway_primary'] { bkg111/line-color: @primary-fill; bkg222/line-color: @primary-fill; }
-                [feature = 'highway_secondary'] { bkg111/line-color: @secondary-fill; bkg222/line-color: @secondary-fill; marking111/line-color: @crossing-marking-secondary; marking222/line-color: @crossing-marking-secondary; }
-                [feature = 'highway_tertiary'] { bkg111/line-color: @tertiary-fill; bkg222/line-color: @tertiary-fill; marking111/line-color: @crossing-marking-tertiary; marking222/line-color: @crossing-marking-tertiary;  }
+                [feature = 'highway_secondary'] { bkg111/line-color: @secondary-fill; bkg222/line-color: @secondary-fill; }
+                [feature = 'highway_tertiary'] { bkg111/line-color: @tertiary-fill; bkg222/line-color: @tertiary-fill;  }
                 [feature = 'highway_busway'], [feature = 'highway_bus_guideway'] { bkg111/line-color: @busway-fill; bkg222/line-color: @busway-fill; }
-                [feature = 'highway_living_street'] { bkg111/line-color: @living-street-fill; bkg222/line-color: @living-street-fill; marking111/line-color: @crossing-marking-living-street; marking222/line-color: @crossing-marking-living-street; }
-                [feature = 'highway_pedestrian'] { bkg111/line-color: @pedestrian-fill; bkg222/line-color: @pedestrian-fill; marking111/line-color: @crossing-marking-pedestrian; marking222/line-color: @crossing-marking-pedestrian; }
-                [feature = 'highway_road'] { bkg111/line-color: @road-fill; bkg222/line-color: @road-fill; marking111/line-color: @crossing-marking-road; marking222/line-color: @crossing-marking-road; }
+                [feature = 'highway_living_street'] { bkg111/line-color: @living-street-fill; bkg222/line-color: @living-street-fill; }
+                [feature = 'highway_pedestrian'] { bkg111/line-color: @pedestrian-fill; bkg222/line-color: @pedestrian-fill; }
+                [feature = 'highway_road'] { bkg111/line-color: @road-fill; bkg222/line-color: @road-fill; }
                 [feature = 'highway_service'] { bkg111/line-color: @service-fill; bkg222/line-color: @service-fill; }
+
+                [width_max > 28.0] {
+                  [int_access = null] { line-width: (0.062 + @crossing-casing-width)*[width_max]; }
+                  bkg1/line-width: (0.062 + @crossing-casing-width)*[width_max];
+                  bkg1/line-offset: 0.124*[width_max];
+                  bkg2/line-width: (0.062 + @crossing-casing-width)*[width_max];
+                  bkg2/line-offset: -0.124*[width_max];
+                  bkg11/line-width: (0.062 + @crossing-casing-width)*[width_max];
+                  bkg11/line-offset: 0.248*[width_max];
+                  bkg22/line-width: (0.062 + @crossing-casing-width)*[width_max];
+                  bkg22/line-offset: -0.248*[width_max];
+                  bkg111/line-width: (0.062 + @crossing-casing-width)*[width_max];
+                  bkg111/line-offset: 0.372*[width_max];
+                  bkg222/line-width: (0.062 + @crossing-casing-width)*[width_max];
+                  bkg222/line-offset: -0.372*[width_max];
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  } // == end crossings_background ==
+
+  [road_layer = 'crossings'] {
+    [zoom >= 15] {
+
+      marking/line-width: 0.4*[width_max];
+      marking/line-join: round;
+      marking/line-color: @crossing-marking;
+
+      [feature = 'highway_secondary'] { marking/line-color: @crossing-marking-secondary; }
+      [feature = 'highway_tertiary'] { marking/line-color: @crossing-marking-tertiary; }
+      [feature = 'highway_living_street'] { marking/line-color: @crossing-marking-living-street; }
+      [feature = 'highway_pedestrian'] { marking/line-color: @crossing-marking-pedestrian; }
+      [feature = 'highway_road'] { marking/line-color: @crossing-marking-road; }
+
+      // no even dash counts with crossing islands
+      [width_max > 6.0][int_lanes != 'yes'],
+      [width_max > 9.0] {
+
+        marking1/line-color: @crossing-marking;
+        marking2/line-color: @crossing-marking;
+
+        [feature = 'highway_secondary'] { marking1/line-color: @crossing-marking-secondary; marking2/line-color: @crossing-marking-secondary; }
+        [feature = 'highway_tertiary'] { marking1/line-color: @crossing-marking-tertiary; marking2/line-color: @crossing-marking-tertiary; }
+        [feature = 'highway_living_street'] { marking1/line-color: @crossing-marking-living-street; marking2/line-color: @crossing-marking-living-street; }
+        [feature = 'highway_pedestrian'] { marking1/line-color: @crossing-marking-pedestrian; marking2/line-color: @crossing-marking-pedestrian; }
+        [feature = 'highway_road'] { marking1/line-color: @crossing-marking-road; marking2/line-color: @crossing-marking-road; }
+
+        marking/line-width: 0.0;
+
+        marking1/line-join: round;
+        marking2/line-join: round;
+        marking1/line-width: 0.175*[width_max];
+        marking1/line-offset: 0.175*[width_max];
+        marking2/line-width: 0.175*[width_max];
+        marking2/line-offset: -0.175*[width_max];
+
+        [width_max > 9.0] {
+
+          [int_lanes = 'yes'] { // crossing island
+            marking/line-color: @residential-casing;
+            marking/line-cap: round;
+            [feature = 'highway_motorway'] { marking/line-color: @motorway-casing; }
+            [feature = 'highway_trunk'] { marking/line-color: @trunk-casing; }
+            [feature = 'highway_primary'] { marking/line-color: @primary-casing; }
+            [feature = 'highway_secondary'] { marking/line-color: @secondary-casing; }
+            [feature = 'highway_tertiary'] { marking/line-color: @tertiary-casing; }
+            [feature = 'highway_busway'], [feature = 'highway_bus_guideway'] { marking/line-color: @residential-casing; }
+            [feature = 'highway_living_street'] { marking/line-color: @living-street-casing;  }
+            [feature = 'highway_pedestrian'] { marking/line-color: @pedestrian-casing; }
+            [feature = 'highway_road'] { marking/line-color: @road-casing; }
+            [feature = 'highway_service'] { marking/line-color: @service-casing; }
+          }
+
+          marking/line-width: 0.135*[width_max];
+          marking1/line-width: 0.135*[width_max];
+          marking1/line-offset: 0.27*[width_max];
+          marking2/line-width: 0.135*[width_max];
+          marking2/line-offset: -0.27*[width_max];
+
+          // no even dash counts with crossing islands
+          [width_max > 14.0][int_lanes != 'yes'],
+          [width_max > 18.0] {
+
+            marking11/line-color: @crossing-marking;
+            marking22/line-color: @crossing-marking;
+
+            [feature = 'highway_secondary'] { marking11/line-color: @crossing-marking-secondary; marking22/line-color: @crossing-marking-secondary; }
+            [feature = 'highway_tertiary'] { marking11/line-color: @crossing-marking-tertiary; marking22/line-color: @crossing-marking-tertiary;  }
+            [feature = 'highway_living_street'] { marking11/line-color: @crossing-marking-living-street; marking22/line-color: @crossing-marking-living-street; }
+            [feature = 'highway_pedestrian'] { marking11/line-color: @crossing-marking-pedestrian; marking22/line-color: @crossing-marking-pedestrian; }
+            [feature = 'highway_road'] { marking11/line-color: @crossing-marking-road; marking22/line-color: @crossing-marking-road; }
+
+            marking/line-width: 0.0;
+            marking1/line-width: 0.1*[width_max];
+            marking1/line-offset: 0.1*[width_max];
+            marking2/line-width: 0.1*[width_max];
+            marking2/line-offset: -0.1*[width_max];
+
+            marking11/line-join: round;
+            marking22/line-join: round;
+            marking11/line-width: 0.1*[width_max];
+            marking11/line-offset: 0.3*[width_max];
+            marking22/line-width: 0.1*[width_max];
+            marking22/line-offset: -0.3*[width_max];
+
+            [width_max > 18.0] {
+
+              marking/line-width: 0.082*[width_max];
+              marking1/line-width: 0.082*[width_max];
+              marking1/line-offset: 0.164*[width_max];
+              marking2/line-width: 0.082*[width_max];
+              marking2/line-offset: -0.164*[width_max];
+              marking11/line-width: 0.082*[width_max];
+              marking11/line-offset: 0.328*[width_max];
+              marking22/line-width: 0.082*[width_max];
+              marking22/line-offset: -0.328*[width_max];
+
+
+              // no even dash counts with crossing islands
+              [width_max > 22.0][int_lanes != 'yes'],
+              [width_max > 28.0] {
+
+                marking111/line-color: @crossing-marking;
+                marking222/line-color: @crossing-marking;
+
+                [feature = 'highway_secondary'] { marking111/line-color: @crossing-marking-secondary; marking222/line-color: @crossing-marking-secondary; }
+                [feature = 'highway_tertiary'] { marking111/line-color: @crossing-marking-tertiary; marking222/line-color: @crossing-marking-tertiary;  }
+                [feature = 'highway_living_street'] { marking111/line-color: @crossing-marking-living-street; marking222/line-color: @crossing-marking-living-street; }
+                [feature = 'highway_pedestrian'] { marking111/line-color: @crossing-marking-pedestrian; marking222/line-color: @crossing-marking-pedestrian; }
+                [feature = 'highway_road'] { marking111/line-color: @crossing-marking-road; marking222/line-color: @crossing-marking-road; }
 
                 marking/line-width: 0.0;
                 marking1/line-width: 0.07*[width_max];
@@ -4261,19 +4327,6 @@ tertiary is rendered from z10 and is not included in osm_planet_roads. */
                 marking222/line-offset: -0.35*[width_max];
 
                 [width_max > 28.0] {
-                  [int_access = null] { line-width: (0.062 + @crossing-casing-width)*[width_max]; }
-                  bkg1/line-width: (0.062 + @crossing-casing-width)*[width_max];
-                  bkg1/line-offset: 0.124*[width_max];
-                  bkg2/line-width: (0.062 + @crossing-casing-width)*[width_max];
-                  bkg2/line-offset: -0.124*[width_max];
-                  bkg11/line-width: (0.062 + @crossing-casing-width)*[width_max];
-                  bkg11/line-offset: 0.248*[width_max];
-                  bkg22/line-width: (0.062 + @crossing-casing-width)*[width_max];
-                  bkg22/line-offset: -0.248*[width_max];
-                  bkg111/line-width: (0.062 + @crossing-casing-width)*[width_max];
-                  bkg111/line-offset: 0.372*[width_max];
-                  bkg222/line-width: (0.062 + @crossing-casing-width)*[width_max];
-                  bkg222/line-offset: -0.372*[width_max];
 
                   marking/line-width: 0.062*[width_max];
                   marking1/line-width: 0.062*[width_max];

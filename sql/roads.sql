@@ -447,6 +447,26 @@ SELECT (CASE
 END)
 $func$;
 
+/* number of lanes based on lanes tagging or alternative road class based default */
+/* parameters: highway tag, lanes tag, oneway tag */
+CREATE OR REPLACE FUNCTION carto_highway_lane_count (text, text, text)
+  RETURNS numeric
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $func$
+SELECT (CASE
+  WHEN ($2) IN ('1', '2', '3', '4', '5', '6') THEN 
+    ($2)::numeric
+  ELSE
+    CASE
+      WHEN $1 IN ('motorway', 'trunk') THEN 2
+      WHEN $3 IN ('yes', '-1') THEN 1
+      WHEN $1 IN ('residential', 'tertiary', 'secondary', 'primary') THEN 2
+      ELSE 1
+    END
+END)
+$func$;
+
 /* tagged width or width estimated from lanes */
 /* parameters: highway tag, width:carriageway tag, width tag, lanes tag, parking:both tag, parking:right tag, parking:left tag, way, scale_denominator */
 CREATE OR REPLACE FUNCTION carto_highway_line_width_mapped (text, text, text, text, text, text, text, geometry, numeric)

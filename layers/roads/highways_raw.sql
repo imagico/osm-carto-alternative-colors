@@ -56,17 +56,7 @@
                             ELSE
                               NULL
                           END AS steps_type,
-                          CASE
-                            WHEN (tags->'lanes') IN ('1', '2', '3', '4', '5', '6') THEN 
-                              (tags->'lanes')::numeric
-                            ELSE
-                              CASE
-                                WHEN highway IN ('motorway', 'trunk') THEN 2
-                                WHEN oneway IN ('yes', '-1') THEN 1
-                                WHEN highway IN ('residential', 'tertiary', 'secondary', 'primary') THEN 2
-                                ELSE 1
-                              END
-                          END AS lanes_num,
+                          carto_highway_lane_count (highway, tags->'lanes', oneway) AS lanes_num,
                           CASE WHEN z(!scale_denominator!) >= 18
                                  AND highway IN ('motorway', 'trunk', 'primary', 'secondary', 'tertiary',
                                                   'motorway_link', 'trunk_link', 'primary_link', 'secondary_link', 'tertiary_link', 'unclassified_link',

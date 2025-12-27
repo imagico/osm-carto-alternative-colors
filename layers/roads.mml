@@ -702,6 +702,34 @@
                 AND connect_type NOT IN ('flat_end_casing', 'flat_end_casing_background', 'flat_end_fill_background', 'background', 'crossing', 'junction')
                 AND z(!scale_denominator!) >= 15
             UNION ALL
+            SELECT -- crossings_background
+                way,
+                'crossings_background' AS road_layer,
+                feature,
+                path_type,
+                'no' AS intermittent,
+                'no' AS seasonal,
+                int_surface,
+                int_tunnel,
+                int_bridge,
+                int_lanes,
+                int_access,
+                construction,
+                service,
+                link,
+                'null' AS connect_type,
+                width_lane,
+                width_nominal,
+                width_max,
+                width,
+                casing_width,
+                layernotnull,
+                osm_id,
+                z_order
+              FROM roads_all
+              WHERE connect_type = 'crossing'
+                AND z(!scale_denominator!) >= 15
+            UNION ALL
             SELECT -- crossings
                 way,
                 'crossings' AS road_layer,
@@ -1394,6 +1422,7 @@
               WHEN road_layer = 'lanes' THEN 9
               WHEN road_layer = 'access' THEN 9
               WHEN road_layer = 'tc_fill' THEN 9
+              WHEN road_layer = 'crossings_background' THEN 9
               WHEN road_layer = 'crossings' THEN 9
               WHEN road_layer = 'pipeline_casing' THEN 10
               WHEN road_layer = 'pipeline_fill' THEN 10
@@ -1443,7 +1472,8 @@
               WHEN road_layer = 'pipeline_fill' THEN 28
               WHEN road_layer = 'pipeline_flange' THEN 29
               WHEN road_layer = 'centerline_top' THEN 30
-              WHEN road_layer = 'crossings' THEN 31
+              WHEN road_layer = 'crossings_background' THEN 31
+              WHEN road_layer = 'crossings' THEN 32
             END,
             CASE
               WHEN substr(feature, 1, 16) = 'highway_sidewalk' THEN 0
