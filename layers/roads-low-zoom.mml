@@ -50,6 +50,7 @@
             int_tunnel,
             int_bridge,
             link,
+            'null' AS connect_type,
             width_nominal,
             width
           FROM
