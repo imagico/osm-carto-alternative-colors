@@ -101,7 +101,38 @@ CREATE OR REPLACE FUNCTION carto_default_language(geom geometry)
   LANGUAGE SQL
   IMMUTABLE PARALLEL SAFE
 AS $func$
+    -- this is the simple version
     SELECT lang FROM language_regions WHERE ST_Intersects(ST_PointOnSurface($1), way) ORDER BY level DESC LIMIT 1
+    -- this is the more complex version which creates a 100 mercator meter multilingual zone on both sides of the language borders
+    -- within which languages from both sides of the borders are combined.  The query de-duplicates the language codes while maintaining the order.
+    -- SELECT
+    --     string_agg(lang, ';')
+    --   FROM
+    --     (SELECT
+    --         lang
+    --       FROM
+    --         (SELECT
+    --             DISTINCT ON (lang)
+    --             lang,
+    --             nr
+    --           FROM
+    --             (SELECT
+    --                 o.lang, o.nr
+    --               FROM
+    --                 (SELECT
+    --                     string_agg(lang, ';') AS lang
+    --                   FROM language_regions
+    --                   WHERE ST_DWithin(ST_PointOnSurface($1), way, 100)
+    --                   GROUP BY level
+    --                   ORDER BY level DESC
+    --                   LIMIT 1
+    --                 ) AS langs_str
+    --               LEFT JOIN LATERAL string_to_table(lang, ';') WITH ORDINALITY AS o(lang, nr) ON true
+    --             ) AS numbered
+    --           ORDER BY lang, nr
+    --         ) AS deduplicated
+    --       ORDER BY nr
+    --     ) AS sorted
 $func$;
 
 /*
@@ -419,7 +450,14 @@ CREATE OR REPLACE FUNCTION carto_label_name(geom geometry, name text, tags hstor
          -- RAISE NOTICE 'checking name:%', lcode;
          IF (name = tags->tag) THEN
            -- name matching a single name:<lang>
-           return carto_sanitize_single_name(geom, name, tags, lcode);
+           -- only use this match if it produces a valid name (i.e. is no compound name itself)
+           -- because a compound name in a name:<lang> is quite clearly wrong.
+           IF (array_length(labels, 1) IS NULL) THEN
+             res = carto_sanitize_single_name(geom, name, tags, lcode);
+             IF (res != '{"","",""}') THEN
+               return res;
+             END IF;
+           END IF;
            -- return carto_sanitize_single_name(geom, 'testB', tags, lcode);
          ELSE
            -- name:<lang> is part of name
