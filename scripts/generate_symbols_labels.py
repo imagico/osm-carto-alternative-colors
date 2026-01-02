@@ -514,6 +514,12 @@ def main():
                     if fval_base not in attributes_expanded[attr][sql][acond][fkey]:
                         attributes_expanded[attr][sql][acond][fkey][fval_base] = set()
                     attributes_expanded[attr][sql][acond][fkey][fval_base].add(variant)
+
+                    if attr in config['attributes']:
+                        if 'score' in config['attributes'][attr]:
+                            if config['attributes'][attr]['score']:
+                                if attr not in score_attributes:
+                                    score_attributes.append(attr)
             else:
                 for attr in params['attributes']:
                     acond = ''
@@ -556,10 +562,11 @@ def main():
                         attributes_expanded[attr][sql][acond][fkey][fval_base] = set()
                     attributes_expanded[attr][sql][acond][fkey][fval_base].add(variant)
 
-            if attr in config['attributes']:
-                if 'score' in config['attributes'][attr]:
-                    if config['attributes'][attr]['score']:
-                        score_attributes.append(attr)
+                    if attr in config['attributes']:
+                        if 'score' in config['attributes'][attr]:
+                            if config['attributes'][attr]['score']:
+                                if attr not in score_attributes:
+                                    score_attributes.append(attr)
 
         if fn not in zooms:
             zooms[fn] = dict()
@@ -1065,7 +1072,6 @@ def main():
     cols_generated.add("start_label")
     cols_generated.add("vis_type")
     cols_generated.add("prio")
-    cols_generated.add("score")
     cols_generated.add("way_area")
     cols_generated.add("way_length")
     cols_generated.add("way_pixels")
@@ -1308,12 +1314,12 @@ def main():
         cols_final_addon[sname].append("\'"+sname+"\' AS vis_type")
 
     cols_zoom_thresholds.append("f.prio AS prio")
-    if (len(score_attributes) == 0):
-        cols_zoom_thresholds.append("NULL AS score")
-    elif (len(score_attributes) == 1):
-        cols_zoom_thresholds.append("\""+score_attributes[0]+"\" AS score")
-    else:
-        cols_zoom_thresholds.append("COALESCE(\""+("\",\"".join(score_attributes))+"\") AS score")
+    #if (len(score_attributes) == 0):
+    #    cols_zoom_thresholds.append("NULL AS score")
+    #elif (len(score_attributes) == 1):
+    #    cols_zoom_thresholds.append("\""+score_attributes[0]+"\" AS score")
+    #else:
+    #    cols_zoom_thresholds.append("COALESCE(\""+("\",\"".join(score_attributes))+"\") AS score")
 
     # attributes
     for attr in attributes_expanded:
@@ -1938,6 +1944,8 @@ def main():
     print (indent_base+"      ELSE 0.5*(start_symbol+start_label)", file=file_mml)
     print (indent_base+"    END) ASC NULLS LAST,", file=file_mml)
     print (indent_base+"    prio ASC NULLS LAST,", file=file_mml)
+    for attr in score_attributes:
+        print (indent_base+"    \""+attr+"\" ASC NULLS LAST,", file=file_mml)
     print (indent_base+"    way_pixels DESC NULLS LAST,", file=file_mml)
     print (indent_base+"    way_length DESC NULLS LAST,", file=file_mml)
     print (indent_base+"    char_length(name) DESC NULLS LAST,", file=file_mml)

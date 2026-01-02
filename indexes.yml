@@ -12,6 +12,8 @@ point:
     where: barrier IN ('entrance')
   trees:
     where: ("natural" IN ('tree', 'shrub'))
+  peaks:
+    where: ("natural" = 'peak') AND (tags ? 'ele') AND (tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$')
 line:
   name:
     where: name IS NOT NULL

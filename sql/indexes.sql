@@ -6,7 +6,8 @@ CREATE INDEX planet_osm_line_river ON planet_osm_line USING GIST (way) WHERE wat
 CREATE INDEX planet_osm_line_tree_rows ON planet_osm_line USING GIST (way) WHERE ("natural" = 'tree_row' OR barrier = 'hedge');
 CREATE INDEX planet_osm_line_water_barrier ON planet_osm_line USING GIST (way) WHERE waterway IN ('dam', 'weir', 'lock_gate');
 CREATE INDEX planet_osm_point_barrier_entrance ON planet_osm_point USING GIST (way) WHERE barrier IN ('entrance');
-CREATE INDEX planet_osm_point_place ON planet_osm_point USING GIST (way) WHERE place IS NOT NULL AND name IS NOT NULL;
+CREATE INDEX planet_osm_point_peaks ON planet_osm_point USING GIST (way) WHERE ("natural" = 'peak') AND (tags ? 'ele') AND (tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$');
+CREATE INDEX planet_osm_point_place ON planet_osm_point USING GIST (way) WHERE place IS NOT NULL;
 CREATE INDEX planet_osm_point_trees ON planet_osm_point USING GIST (way) WHERE ("natural" IN ('tree', 'shrub'));
 CREATE INDEX planet_osm_point_water_barrier ON planet_osm_point USING GIST (way) WHERE waterway IN ('dam', 'weir', 'lock_gate', 'waterfall');
 CREATE INDEX planet_osm_polygon_military ON planet_osm_polygon USING GIST (way) WHERE landuse = 'military';

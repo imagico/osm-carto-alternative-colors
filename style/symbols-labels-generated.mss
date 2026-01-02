@@ -9612,7 +9612,7 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
-  [feature = 'power_generator/wind'][variant = null] {
+  [feature = 'power_generator/wind'][variant != 'offshore'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
       marker-anchor-set: '[osm_id]';

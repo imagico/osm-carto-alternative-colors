@@ -51,7 +51,7 @@ settings:
   dir: symbols
   database: gis
   layer: amenity-points
-  min_zoom: 10
+  min_zoom: 9
   mml: layers/symbols-labels-generated.mml
   mss: style/symbols-labels-generated.mss
   # mss files with addon symbols for contact sheet
@@ -1675,6 +1675,27 @@ attributes:
       - religion
   int_elevation:
     sql: CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(E'\n', REPLACE(ROUND((tags->'ele')::NUMERIC)::TEXT, '-', U&'\2212'), U&'\00A0', 'm') END
+  int_peak_isolation:
+    sql: >-
+      (CASE
+        WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN
+          (SELECT
+              way <-> points_all.way AS dist
+            FROM
+              planet_osm_point others
+            WHERE
+              ("natural" = 'peak') AND
+              (tags ? 'ele') AND
+              (tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' ) AND
+              (tags->'ele')::NUMERIC > (points_all.tags->'ele')::NUMERIC
+            ORDER BY dist
+            LIMIT 1)
+      ELSE
+        0.0
+      END)
+  ele:
+    sql: CASE WHEN (tags ? 'ele') AND tags->'ele' ~ '^-?\d{1,4}(\.\d+)?$' THEN (tags->'ele')::NUMERIC END
+    score: true
   int_maxheight:
     sql: CASE WHEN (tags ? 'maxheight') AND tags->'maxheight' ~ '^-?\d{1,4}(\.\d+)?$' THEN CONCAT(TO_CHAR((tags->'maxheight')::NUMERIC, 'FM90.0'), 'm') END
   int_lifecycle:
@@ -3105,10 +3126,36 @@ features:
     symbol_color: landform-icon
     label_color: landform-text
     condition: (tourism = 'viewpoint')
-    start_symbol: 11
-    start_label: 13
+    start_symbol: 14
+    start_label: 15
     text_dy: 7
     snap: even
+    variants:
+      xlarge_isolation:
+        condition: >-
+          int_peak_isolation > 32000
+        start_symbol: 9
+        start_label: 10
+      large_isolation:
+        condition: >-
+          int_peak_isolation > 16000
+        start_symbol: 10
+        start_label: 11
+      medium_isolation:
+        condition: >-
+          int_peak_isolation > 7500
+        start_symbol: 11
+        start_label: 12
+      low_isolation:
+        condition: >-
+          int_peak_isolation > 3000
+        start_symbol: 12
+        start_label: 13
+      xlow_isolation:
+        condition: >-
+          int_peak_isolation > 1000
+        start_symbol: 13
+        start_label: 14
     modifications:
       large:
         style: large-symbol-variant-peak-viewpoint
@@ -3118,7 +3165,9 @@ features:
         style: peak-variant-with-viewpoint
         start_symbol: 16
     attributes:
+      - ele
       - int_elevation
+      - int_peak_isolation
       - int_text_dy_viewpoint
       - int_offset_x_viewpoint
       - int_offset_y_viewpoint
@@ -3131,18 +3180,47 @@ features:
     symbol_file: symbols/sources/natural/peak_small.svg
     symbol_color: landform-icon
     label_color: landform-text
-    condition: (tourism IS NULL OR tourism NOT IN ('viewpoint'))
-    start_symbol: 11
-    start_label: 13
+    condition: >-
+      (tourism IS NULL OR tourism NOT IN ('viewpoint'))
+    start_symbol: 14
+    start_label: 15
     text_dy: 7
     snap: even
+    variants:
+      xlarge_isolation:
+        condition: >-
+          int_peak_isolation > 32000
+        start_symbol: 9
+        start_label: 10
+      large_isolation:
+        condition: >-
+          int_peak_isolation > 16000
+        start_symbol: 10
+        start_label: 11
+      medium_isolation:
+        condition: >-
+          int_peak_isolation > 7500
+        start_symbol: 11
+        start_label: 12
+      low_isolation:
+        condition: >-
+          int_peak_isolation > 3000
+        start_symbol: 12
+        start_label: 13
+      xlow_isolation:
+        condition: >-
+          int_peak_isolation > 1000
+        start_symbol: 13
+        start_label: 14
     modifications:
       large:
         style: large-symbol-variant-peak
         start_symbol: 12
         symbol_file: symbols/sources/natural/peak.svg
     attributes:
+      - ele
       - int_elevation
+      - int_peak_isolation
 
   natural=volcano:
     style: with-elevation
@@ -3193,7 +3271,6 @@ features:
           "location" IN ('roof', 'rooftop')
         start_symbol: 19
         start_label: 19
-    variants:
       offshore:
         condition: >-
           "offshore" = 'yes'
