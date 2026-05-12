@@ -78,6 +78,7 @@
 @place_of_worship: @societal_amenities;
 @tourism: #660033;
 @military: #f55;
+@animal: @farmyard;
 
 // --- low zoom colors ---
 
@@ -195,6 +196,9 @@
           [crop = 'almond_trees'] {
             polygon-pattern-file: url('symbols/patterns/orchard_tree.svg');
           }
+          [meadow = 'meadow_orchard'] {
+            polygon-pattern-file: url('symbols/patterns/orchard_meadow.svg');
+          }
         }
         polygon-pattern-alignment: global;
         [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
@@ -300,16 +304,21 @@
       [zoom >= 10] {
         polygon-fill: @vegetation-low-lowzoom;
         [zoom >= 12] {
-          polygon-fill: @park;
+          polygon-fill: @animal;
         }
         [way_pixels >= 4]  { polygon-gamma: 0.75; }
         [way_pixels >= 64] { polygon-gamma: 0.3;  }
       }
       [zoom >= 16] {
-        polygon-pattern-file: url('symbols/dog_park.png');
-        polygon-pattern-alignment: global;
-        [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-        [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        [way_pixels >= 480][way_pixels < 3200] {
+          polygon-comp-op: dst-out;
+        }
+        [way_pixels >= 3200] {
+          polygon-pattern-file: url('symbols/patterns/dog_park.svg');
+          polygon-pattern-alignment: global;
+          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+          [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+        }
       }
     }
 
@@ -444,6 +453,31 @@
             polygon-pattern-alignment: global;
             [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
             [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+          }
+        }
+        [feature = 'landuse_meadow'] {
+          [zoom >= 14] {
+            [meadow = 'agricultural'] {
+              polygon-pattern-file: url('symbols/patterns/meadow_agricultural.svg');
+              polygon-pattern-alignment: global;
+              [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+              [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+            }
+            [meadow = 'meadow_orchard'],
+            [meadow = 'pasture'],
+            [meadow = 'paddock'] {
+              [way_pixels >= 480][way_pixels < 3200] {
+                polygon-comp-op: dst-out;
+              }
+              [way_pixels >= 3200] {
+                [meadow = 'meadow_orchard'] { polygon-pattern-file: url('symbols/patterns/meadow_orchard.svg'); }
+                [meadow = 'pasture'] { polygon-pattern-file: url('symbols/patterns/meadow_pasture.svg'); }
+                [meadow = 'paddock'] { polygon-pattern-file: url('symbols/patterns/meadow_paddock.svg'); }
+                polygon-pattern-alignment: global;
+                [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+                [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+              }
+            }
           }
         }
       }
@@ -875,8 +909,7 @@
   }
 
   ::backdrop {
-    [zoom >= 13] {
-    [feature = 'leisure_pitch'] {
+    [feature = 'leisure_pitch'][zoom >= 13] {
       polygon-fill: @pitch;
       [zoom >= 15][way_pixels >= 480] {
         [sport = 'soccer'] {
@@ -965,9 +998,56 @@
       }
       comp-op: dst-over;
     }
+
+    [feature = 'landuse_meadow'][zoom >= 14] {
+      [way_pixels >= 480][way_pixels < 3200] {
+        line-width: 2;
+        line-color: @grass;
+        polygon-fill: @grass;
+        [meadow = 'meadow_orchard'] {
+          marker-file: url('symbols/landcover/tree.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@grass, 20%), 18%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [meadow = 'pasture'] {
+          marker-file: url('symbols/landcover/animal.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@grass, 10%), 18%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+        [meadow = 'paddock'] {
+          marker-file: url('symbols/landcover/horse.svg');
+          marker-placement: interior;
+          marker-clip: false;
+          marker-fill: desaturate(darken(@grass, 10%), 18%);
+          marker-ignore-placement: true;
+          marker-allow-overlap: true;
+        }
+      }
+      comp-op: dst-over;
     }
-    [zoom >= 19] {
-    [feature = 'amenity_parking_space'] {
+
+    [feature = 'leisure_dog_park'][zoom >= 16] {
+      [way_pixels >= 480][way_pixels < 3200] {
+        line-width: 2;
+        line-color: @animal;
+        polygon-fill: @animal;
+        marker-file: url('symbols/landcover/dog.svg');
+        marker-placement: interior;
+        marker-clip: false;
+        marker-fill: desaturate(darken(@animal, 9%), 32%);
+        marker-ignore-placement: true;
+        marker-allow-overlap: true;
+      }
+      comp-op: dst-over;
+    }
+
+    [feature = 'amenity_parking_space'][zoom >= 19] {
       polygon-fill: @parking;
       [surface = 'unpaved'] {
         polygon-pattern-file: url('symbols/unpaved/unpaved_parking.svg');
@@ -1078,7 +1158,6 @@
         }
       }
       comp-op: dst-over;
-    }
     }
   }
 }
@@ -1195,11 +1274,11 @@
       [int_produce = 'oyster'],
       [int_produce = 'oysters'],
       [int_produce = 'seaweed'] {
-        [int_produce = 'shrimp'] { marker-file: url('symbols/aquaculture/shrimp.svg'); }
-        [int_produce = 'fish'] { marker-file: url('symbols/aquaculture/fish.svg'); }
-        [int_produce = 'mussels'] { marker-file: url('symbols/aquaculture/mussels.svg'); }
-        [int_produce = 'oyster'], [int_produce = 'oysters'] { marker-file: url('symbols/aquaculture/oyster.svg'); }
-        [int_produce = 'seaweed'] { marker-file: url('symbols/aquaculture/seaweed.svg'); }
+        [int_produce = 'shrimp'] { marker-file: url('symbols/landcover/shrimp.svg'); }
+        [int_produce = 'fish'] { marker-file: url('symbols/landcover/fish.svg'); }
+        [int_produce = 'mussels'] { marker-file: url('symbols/landcover/mussels.svg'); }
+        [int_produce = 'oyster'], [int_produce = 'oysters'] { marker-file: url('symbols/landcover/oyster.svg'); }
+        [int_produce = 'seaweed'] { marker-file: url('symbols/landcover/seaweed.svg'); }
         marker-placement: interior;
         marker-clip: false;
         marker-fill: lighten(desaturate(@reef, 5%), 7%);

@@ -19046,7 +19046,7 @@
     text-size: @landcover-font-size;
     text-wrap-width: @landcover-wrap-width-size;
     text-line-spacing: @landcover-line-spacing-size;
-    text-fill: darken(@park, 60%);
+    text-fill: darken(@farmyard, 50%);
     text-face-name: @oblique-fonts;
     [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
     [font = 'tc'] { text-face-name: @oblique-fonts-tc; }

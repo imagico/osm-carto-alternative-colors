@@ -4702,7 +4702,7 @@ features:
 
   leisure=dog_park:
     style: label-variable-size
-    label_color: darken(@park, 60%)
+    label_color: darken(@farmyard, 50%)
     start_label: 10
     font_type: oblique
     halo_radius: 1.5

@@ -46,6 +46,8 @@
             crop,
             surface,
             sport,
+            meadow,
+            int_animal,
             int_parking_space,
             CASE WHEN int_parking_space = 'private' THEN '🛇' ELSE capacity END AS int_parking_label,
             way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0) AS way_pixels,
@@ -66,6 +68,8 @@
                 surface
               END AS surface,
               sport,
+              meadow,
+              int_animal,
               int_parking_space,
               capacity,
               way_area,
@@ -81,7 +85,7 @@
                 ('landuse_' || (CASE WHEN landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
                                                       'allotments', 'forest', 'farmyard', 'farmland', 'flowerbed', 'greenhouse_horticulture',
                                                       'recreation_ground', 'village_green', 'retail', 'industrial', 'railway', 'commercial',
-                                                      'brownfield', 'landfill', 'construction', 'plant_nursery', 'salt_pond') THEN landuse ELSE NULL END)) AS landuse,
+                                                      'brownfield', 'landfill', 'construction', 'plant_nursery', 'salt_pond', 'animal_keeping', 'apiary') THEN landuse ELSE NULL END)) AS landuse,
                 ('leisure_' || (CASE WHEN leisure IN ('swimming_pool', 'playground', 'park', 'recreation_ground', 'common', 'garden',
                                                       'golf_course', 'miniature_golf', 'picnic_table', 'fitness_centre', 'sports_centre', 'stadium', 'pitch',
                                                       'track', 'dog_park') THEN leisure ELSE NULL END)) AS leisure,
@@ -99,6 +103,8 @@
                 ELSE surface
                 END AS surface,
                 (tags->'sport') AS sport,
+                CASE WHEN landuse IN ('orchard') THEN tags->'orchard' ELSE tags->'meadow' END AS meadow,
+                CASE WHEN landuse IN ('animal_keeping') THEN tags->'animal_keeping' ELSE NULL END AS int_animal,
                 (tags->'parking') AS parking,
                 CASE WHEN amenity IN ('parking_space') AND z(!scale_denominator!) >= 19 THEN
                   CASE 
@@ -115,9 +121,15 @@
                 (tags->'capacity') AS capacity,
                 way_area, layer
               FROM planet_osm_polygon AS p1
-              WHERE way && !bbox! AND (landuse IS NOT NULL
-                OR leisure IS NOT NULL
-                OR (tags->'golf') IS NOT NULL
+              WHERE way && !bbox! AND (
+                landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
+                            'allotments', 'forest', 'farmyard', 'farmland', 'flowerbed', 'greenhouse_horticulture',
+                            'recreation_ground', 'village_green', 'retail', 'industrial', 'railway', 'commercial',
+                            'brownfield', 'landfill', 'construction', 'plant_nursery', 'salt_pond', 'animal_keeping', 'apiary')
+                OR leisure IN ('swimming_pool', 'playground', 'park', 'recreation_ground', 'common', 'garden',
+                               'golf_course', 'miniature_golf', 'picnic_table', 'fitness_centre', 'sports_centre', 'stadium', 'pitch',
+                               'track', 'dog_park')
+                OR (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker')
                 OR aeroway IN ('apron', 'aerodrome')
                 OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
                                'hospital', 'kindergarten', 'grave_yard', 'place_of_worship', 'prison', 'clinic', 'ferry_terminal')

@@ -62,6 +62,7 @@ patterns:
   - orchard_olive
   - orchard_tree
   - orchard_tea
+  - orchard_meadow
   - vineyard
   - plant_nursery
   - garden
@@ -135,6 +136,11 @@ patterns:
   - treerow_needleleaved
   - breakwater_stone
   - aquaculture
+  - dog_park
+  - meadow_agricultural
+  - meadow_orchard
+  - meadow_pasture
+  - meadow_paddock
 
 # These are the pattern colors - first is the background, second the pattern
 # "native" as a pattern color means the source SVG file already contains
@@ -163,6 +169,7 @@ colors:
   orchard_olive: ["#aedea3", "#96cc8b"]
   orchard_tree: ["#aedea3", "#8bc181"]
   orchard_tea: ["#aedea3", "#8bc181"]
+  orchard_meadow: ["#aedea3", "#8bc181"]
   vineyard: ["#aedea3", "#9bc991"]
   plant_nursery: ["#aedea3", "#749d6c"]
   garden: ["#d1efb4", "#95b973"]
@@ -236,5 +243,10 @@ colors:
   treerow_needleleaved: ["#f2efe9", "#419b3b", 0.6]
   breakwater_stone: ["#bbbbbb", "#909090"]
   aquaculture: ["#a2d1e0", "#549ccd"]
+  meadow_agricultural: ["#d1efb4", "#a4cd7d", 0.6]
+  meadow_orchard: ["#d1efb4", "#a4cd7d"]
+  meadow_pasture: ["#d1efb4", "#a4cd7d", 0.6]
+  meadow_paddock: ["#d1efb4", "#a4cd7d", 0.6]
+  dog_park: ["#f5dcba", "#e1c9a3"]
 
 
