@@ -6,7 +6,7 @@
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2026 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -457,48 +457,74 @@
         (SELECT
             way,
             feature,
-            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 7 ELSE 9 END) AS xdist,
-            (CASE WHEN az BETWEEN 60 AND 300 THEN -5 ELSE 0 END) AS ydist,
-            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 9 ELSE 7 END) AS xdist2,
-            (CASE WHEN az BETWEEN 60 AND 300 THEN 0 ELSE -5 END) AS ydist2,
+            drinking_water,
+            watering_place,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 7 ELSE 9 END)*dist_scale AS dwxdist,
+            (CASE WHEN az BETWEEN 60 AND 300 THEN -5 ELSE 0 END)*dist_scale AS dwydist,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 9 ELSE 7 END)*dist_scale AS dwxdist2,
+            (CASE WHEN az BETWEEN 60 AND 300 THEN 0 ELSE -5 END)*dist_scale AS dwydist2,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 9 ELSE 3.5 END)*dist_scale AS wpxdist,
+            (CASE WHEN az BETWEEN 60 AND 300 THEN -3 ELSE 7.2 END)*dist_scale AS wpydist,
+            (CASE WHEN az < 180 THEN -1.0 ELSE 1.0 END)*(CASE WHEN az BETWEEN 60 AND 300 THEN 3.5 ELSE 9 END)*dist_scale AS wpxdist2,
+            (CASE WHEN az BETWEEN 60 AND 300 THEN 7.2 ELSE -3 END)*dist_scale AS wpydist2,
             osm_id
           FROM
             (SELECT
                 way,
-                'drinking_water' AS feature,
-                COALESCE(
-                  (SELECT
-                      -- this determines the direction of a point on the waterway(s) intersecting the node with a 1 pixel circle around the node
-                      -- which approximates the direction of the waterway, hence where best not to place the addon symbol
-                      degrees(ST_Azimuth(p.way, ST_PointOnSurface(ST_Intersection(ST_Boundary(ST_Buffer(p.way, 1.0*NULLIF(!scale_denominator!*0.001*0.28,0))), ST_Collect(l.way)))))
-                    FROM planet_osm_line l
-                    WHERE ST_DWithin(p.way, l.way, 0.1) AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
-                  ),
-                  120.0
-                ) AS az,
+                feature,
+                drinking_water,
+                watering_place,
+                COALESCE(dir_width[1], CASE WHEN feature = 'watering_place' THEN 240 ELSE 120 END) AS az,
+                GREATEST(COALESCE(dir_width[2], 7.5), 7.5)/7.5 AS dist_scale,
                 osm_id
               FROM
                 (SELECT
                     way,
-                    "natural",
-                    man_made,
-                    amenity,
-                    tags->'drinking_water' AS drinking_water,
+                    CASE
+                      WHEN ("natural" IN ('spring', 'hot_spring')) THEN "natural"
+                      WHEN (man_made IN ('water_well')) THEN man_made
+                      ELSE amenity
+                    END AS feature,
+                    CASE WHEN (amenity = 'drinking_water' OR drinking_water = 'yes') THEN 'yes' ELSE 'no' END AS drinking_water,
+                    CASE WHEN ("natural" IN ('spring', 'hot_spring') OR man_made IN ('water_well')) AND (amenity = 'watering_place') THEN 'yes' ELSE 'no' END AS watering_place,
+                    CASE WHEN "natural" IN ('spring', 'hot_spring') THEN
+                      (SELECT
+                          ARRAY[
+                            -- this determines the direction of a point on the waterway(s) intersecting the node with a 1 pixel circle around the node
+                            -- which approximates the direction of the waterway, hence where best not to place the addon symbol
+                            degrees(ST_Azimuth(p.way, ST_PointOnSurface(ST_Intersection(ST_Boundary(ST_Buffer(p.way, 1.0*NULLIF(!scale_denominator!*0.001*0.28,0))), ST_Collect(l.way))))),
+                            MAX(carto_waterway_line_width(l.waterway, z(!scale_denominator!)))
+                          ]
+                        FROM planet_osm_line l
+                        WHERE ST_DWithin(p.way, l.way, 0.1) AND l.waterway IN ('river', 'canal', 'stream', 'ditch', 'drain')
+                      )
+                    ELSE
+                      ARRAY[NULL::numeric, NULL::numeric]
+                    END AS dir_width,
                     osm_id
-                  FROM planet_osm_point
-                  WHERE way && !bbox!
-                UNION ALL
-                SELECT
-                    ST_PointOnSurface(way) AS way,
-                    "natural",
-                    man_made,
-                    amenity,
-                    tags->'drinking_water' AS drinking_water,
-                    osm_id
-                  FROM planet_osm_polygon
-                  WHERE way && !bbox!) AS p
-              WHERE ("natural" IN ('spring', 'hot_spring') OR man_made IN ('water_well') OR amenity IN ('fountain'))
-                AND (amenity = 'drinking_water' OR drinking_water = 'yes')
+                  FROM
+                    (SELECT
+                        way,
+                        "natural",
+                        man_made,
+                        amenity,
+                        tags->'drinking_water' AS drinking_water,
+                        osm_id
+                      FROM planet_osm_point
+                      WHERE way && !bbox!
+                    UNION ALL
+                    SELECT
+                        ST_PointOnSurface(way) AS way,
+                        "natural",
+                        man_made,
+                        amenity,
+                        tags->'drinking_water' AS drinking_water,
+                        osm_id
+                      FROM planet_osm_polygon
+                      WHERE way && !bbox!) AS p
+                  WHERE ("natural" IN ('spring', 'hot_spring') OR man_made IN ('water_well') OR amenity IN ('fountain', 'watering_place'))
+                    AND (amenity IN ('drinking_water', 'watering_place') OR drinking_water = 'yes')
+                ) AS raw
             ) AS _
         ) AS addon_symbols_water
     properties:

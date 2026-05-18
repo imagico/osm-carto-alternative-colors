@@ -5650,6 +5650,1567 @@
     marker-clip: false;
     marker-file: url('symbols/colored/amenity_phone.svg');
   }
+  [feature = 'landuse_animal_keeping/small'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/landuse_animal_keeping_small.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/landuse_animal_keeping_small.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification landuse_animal_keeping/small+dog based on style standard-symbol-attribute-variant
+    ["int_animal" = 'dog'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_small_dog.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_small_dog.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small_dog.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/small+cat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_small_cat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_small_cat.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small_cat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/small+chicken based on style standard-symbol-attribute-variant
+    ["int_animal" = 'chicken'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_small_chicken.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_small_chicken.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small_chicken.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/small+poultry based on style standard-symbol-attribute-variant
+    ["int_animal" = 'poultry'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_small_poultry.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_small_poultry.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small_poultry.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/small+bird based on style standard-symbol-attribute-variant
+    ["int_animal" = 'bird'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_small_bird.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_small_bird.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small_bird.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/small+rabbit based on style standard-symbol-attribute-variant
+    ["int_animal" = 'rabbit'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_small_rabbit.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_small_rabbit.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_small_rabbit.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'landuse_animal_keeping/large'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/landuse_animal_keeping_large.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/landuse_animal_keeping_large.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification landuse_animal_keeping/large+horse based on style standard-symbol-attribute-variant
+    ["int_animal" = 'horse'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_horse.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_horse.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_horse.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/large+cow based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cow'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_cow.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_cow.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_cow.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/large+goat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'goat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_goat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_goat.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_goat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/large+sheep based on style standard-symbol-attribute-variant
+    ["int_animal" = 'sheep'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_sheep.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_sheep.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_sheep.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/large+pig based on style standard-symbol-attribute-variant
+    ["int_animal" = 'pig'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_pig.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_pig.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_pig.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/large+wildlife based on style standard-symbol-attribute-variant
+    ["int_animal" = 'wildlife'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_wildlife.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_wildlife.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_wildlife.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification landuse_animal_keeping/large+game based on style standard-symbol-attribute-variant
+    ["int_animal" = 'game'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/landuse_animal_keeping_large_game.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/landuse_animal_keeping_large_game.svg');
+        symbolonly/marker-file: url('symbols/colored/landuse_animal_keeping_large_game.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'amenity_animal_breeding/small'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_animal_breeding_small.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_animal_breeding_small.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification amenity_animal_breeding/small+dog based on style standard-symbol-attribute-variant
+    ["int_animal" = 'dog'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_small_dog.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_small_dog.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small_dog.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/small+cat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_small_cat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_small_cat.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small_cat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/small+chicken based on style standard-symbol-attribute-variant
+    ["int_animal" = 'chicken'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_small_chicken.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_small_chicken.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small_chicken.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/small+poultry based on style standard-symbol-attribute-variant
+    ["int_animal" = 'poultry'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_small_poultry.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_small_poultry.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small_poultry.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/small+bird based on style standard-symbol-attribute-variant
+    ["int_animal" = 'bird'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_small_bird.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_small_bird.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small_bird.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/small+rabbit based on style standard-symbol-attribute-variant
+    ["int_animal" = 'rabbit'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_small_rabbit.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_small_rabbit.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_small_rabbit.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'amenity_animal_breeding/large'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_animal_breeding_large.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_animal_breeding_large.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification amenity_animal_breeding/large+horse based on style standard-symbol-attribute-variant
+    ["int_animal" = 'horse'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_horse.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_horse.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_horse.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/large+cow based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cow'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_cow.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_cow.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_cow.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/large+goat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'goat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_goat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_goat.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_goat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/large+sheep based on style standard-symbol-attribute-variant
+    ["int_animal" = 'sheep'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_sheep.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_sheep.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_sheep.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/large+pig based on style standard-symbol-attribute-variant
+    ["int_animal" = 'pig'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_pig.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_pig.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_pig.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/large+wildlife based on style standard-symbol-attribute-variant
+    ["int_animal" = 'wildlife'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_wildlife.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_wildlife.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_wildlife.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_breeding/large+game based on style standard-symbol-attribute-variant
+    ["int_animal" = 'game'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_breeding_large_game.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_breeding_large_game.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_breeding_large_game.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'amenity_animal_shelter/small'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_animal_shelter_small.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_animal_shelter_small.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification amenity_animal_shelter/small+dog based on style standard-symbol-attribute-variant
+    ["int_animal" = 'dog'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_small_dog.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_small_dog.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small_dog.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/small+cat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_small_cat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_small_cat.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small_cat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/small+chicken based on style standard-symbol-attribute-variant
+    ["int_animal" = 'chicken'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_small_chicken.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_small_chicken.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small_chicken.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/small+poultry based on style standard-symbol-attribute-variant
+    ["int_animal" = 'poultry'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_small_poultry.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_small_poultry.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small_poultry.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/small+bird based on style standard-symbol-attribute-variant
+    ["int_animal" = 'bird'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_small_bird.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_small_bird.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small_bird.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/small+rabbit based on style standard-symbol-attribute-variant
+    ["int_animal" = 'rabbit'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_small_rabbit.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_small_rabbit.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_small_rabbit.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'amenity_animal_shelter/large'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_animal_shelter_large.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_animal_shelter_large.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification amenity_animal_shelter/large+horse based on style standard-symbol-attribute-variant
+    ["int_animal" = 'horse'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_horse.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_horse.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_horse.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/large+cow based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cow'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_cow.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_cow.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_cow.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/large+goat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'goat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_goat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_goat.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_goat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/large+sheep based on style standard-symbol-attribute-variant
+    ["int_animal" = 'sheep'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_sheep.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_sheep.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_sheep.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/large+pig based on style standard-symbol-attribute-variant
+    ["int_animal" = 'pig'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_pig.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_pig.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_pig.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/large+wildlife based on style standard-symbol-attribute-variant
+    ["int_animal" = 'wildlife'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_wildlife.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_wildlife.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_wildlife.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_shelter/large+game based on style standard-symbol-attribute-variant
+    ["int_animal" = 'game'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_shelter_large_game.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_shelter_large_game.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_shelter_large_game.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'amenity_animal_boarding'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_animal_boarding.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 11;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_animal_boarding.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_animal_boarding.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 11;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification amenity_animal_boarding+horse based on style standard-symbol-attribute-variant
+    ["int_animal" = 'horse'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_boarding_horse.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_boarding_horse.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_boarding_horse.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_boarding+cat based on style standard-symbol-attribute-variant
+    ["int_animal" = 'cat'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_boarding_cat.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_boarding_cat.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_boarding_cat.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_boarding+dog based on style standard-symbol-attribute-variant
+    ["int_animal" = 'dog'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_boarding_dog.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_boarding_dog.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_boarding_dog.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_animal_boarding+bird based on style standard-symbol-attribute-variant
+    ["int_animal" = 'bird'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_animal_boarding_bird.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_animal_boarding_bird.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_animal_boarding_bird.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
+  [feature = 'amenity_watering_place'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_watering_place.svg');
+  }
+  [feature = 'amenity_game_feeding'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_game_feeding.svg');
+  }
+  [feature = 'amenity_feeding_place'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_feeding_place.svg');
+    // modification amenity_feeding_place+hay based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay.svg');
+    }
+    // modification amenity_feeding_place+salt based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt.svg');
+    }
+    // modification amenity_feeding_place+grain based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain.svg');
+    }
+    // modification amenity_feeding_place+horse based on style symbol-only-attribute-variant
+    ["int_animal" = 'horse'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_horse.svg');
+    }
+    // modification amenity_feeding_place+hay+horse based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+horse'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+horse.svg');
+    }
+    // modification amenity_feeding_place+salt+horse based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+horse'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+horse.svg');
+    }
+    // modification amenity_feeding_place+grain+horse based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+horse'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+horse.svg');
+    }
+    // modification amenity_feeding_place+cow based on style symbol-only-attribute-variant
+    ["int_animal" = 'cow'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_cow.svg');
+    }
+    // modification amenity_feeding_place+hay+cow based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+cow'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+cow.svg');
+    }
+    // modification amenity_feeding_place+salt+cow based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+cow'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+cow.svg');
+    }
+    // modification amenity_feeding_place+grain+cow based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+cow'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+cow.svg');
+    }
+    // modification amenity_feeding_place+goat based on style symbol-only-attribute-variant
+    ["int_animal" = 'goat'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_goat.svg');
+    }
+    // modification amenity_feeding_place+hay+goat based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+goat'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+goat.svg');
+    }
+    // modification amenity_feeding_place+salt+goat based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+goat'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+goat.svg');
+    }
+    // modification amenity_feeding_place+grain+goat based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+goat'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+goat.svg');
+    }
+    // modification amenity_feeding_place+sheep based on style symbol-only-attribute-variant
+    ["int_animal" = 'sheep'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_sheep.svg');
+    }
+    // modification amenity_feeding_place+hay+sheep based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+sheep'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+sheep.svg');
+    }
+    // modification amenity_feeding_place+salt+sheep based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+sheep'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+sheep.svg');
+    }
+    // modification amenity_feeding_place+grain+sheep based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+sheep'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+sheep.svg');
+    }
+    // modification amenity_feeding_place+pig based on style symbol-only-attribute-variant
+    ["int_animal" = 'pig'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_pig.svg');
+    }
+    // modification amenity_feeding_place+hay+pig based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+pig'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+pig.svg');
+    }
+    // modification amenity_feeding_place+salt+pig based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+pig'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+pig.svg');
+    }
+    // modification amenity_feeding_place+grain+pig based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+pig'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+pig.svg');
+    }
+    // modification amenity_feeding_place+dog based on style symbol-only-attribute-variant
+    ["int_animal" = 'dog'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_dog.svg');
+    }
+    // modification amenity_feeding_place+cat based on style symbol-only-attribute-variant
+    ["int_animal" = 'cat'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_cat.svg');
+    }
+    // modification amenity_feeding_place+chicken based on style symbol-only-attribute-variant
+    ["int_animal" = 'chicken'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_chicken.svg');
+    }
+    // modification amenity_feeding_place+grain+chicken based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+chicken'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+chicken.svg');
+    }
+    // modification amenity_feeding_place+bird based on style symbol-only-attribute-variant
+    ["int_animal" = 'bird'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_bird.svg');
+    }
+    // modification amenity_feeding_place+grain+bird based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+bird'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+bird.svg');
+    }
+    // modification amenity_feeding_place+rabbit based on style symbol-only-attribute-variant
+    ["int_animal" = 'rabbit'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_rabbit.svg');
+    }
+    // modification amenity_feeding_place+hay+rabbit based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+rabbit'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+rabbit.svg');
+    }
+    // modification amenity_feeding_place+salt+rabbit based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+rabbit'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+rabbit.svg');
+    }
+    // modification amenity_feeding_place+grain+rabbit based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+rabbit'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+rabbit.svg');
+    }
+    // modification amenity_feeding_place+wildlife based on style symbol-only-attribute-variant
+    ["int_animal" = 'wildlife'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_wildlife.svg');
+    }
+    // modification amenity_feeding_place+hay+wildlife based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+wildlife'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+wildlife.svg');
+    }
+    // modification amenity_feeding_place+salt+wildlife based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+wildlife'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+wildlife.svg');
+    }
+    // modification amenity_feeding_place+grain+wildlife based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+wildlife'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+wildlife.svg');
+    }
+    // modification amenity_feeding_place+game based on style symbol-only-attribute-variant
+    ["int_animal" = 'game'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_game.svg');
+    }
+    // modification amenity_feeding_place+hay+game based on style symbol-only-attribute-variant
+    ["int_animal" = 'hay+game'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_hay+game.svg');
+    }
+    // modification amenity_feeding_place+salt+game based on style symbol-only-attribute-variant
+    ["int_animal" = 'salt+game'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_salt+game.svg');
+    }
+    // modification amenity_feeding_place+grain+game based on style symbol-only-attribute-variant
+    ["int_animal" = 'grain+game'] {
+      marker-file: url('symbols/colored/amenity_feeding_place_grain+game.svg');
+    }
+  }
+  [feature = 'man_made_insect_hotel'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/man_made_insect_hotel.svg');
+  }
+  [feature = 'man_made_beehive'] {
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/man_made_beehive.svg');
+  }
   [feature = 'highway_elevator'] {
     marker-anchor-set: '[osm_id]';
     marker-placement: interior;
@@ -19040,32 +20601,6 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
-  [feature = 'leisure_dog_park'] {
-    text-placement: interior;
-    text-name: '[name]';
-    text-size: @landcover-font-size;
-    text-wrap-width: @landcover-wrap-width-size;
-    text-line-spacing: @landcover-line-spacing-size;
-    text-fill: darken(@farmyard, 50%);
-    text-face-name: @oblique-fonts;
-    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
-    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
-    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
-    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
-    [font = 'bg'] { text-face-name: @oblique-fonts-bg; }
-    text-halo-radius: @standard-halo-radius * 1.5;
-    text-halo-fill: @standard-halo-fill;
-    [way_pixels > 12000] {
-      text-size: @landcover-font-size-big;
-      text-wrap-width: @landcover-wrap-width-size-big;
-      text-line-spacing: @landcover-line-spacing-size-big;
-    }
-    [way_pixels > 48000] {
-      text-size: @landcover-font-size-bigger;
-      text-wrap-width: @landcover-wrap-width-size-bigger;
-      text-line-spacing: @landcover-line-spacing-size-bigger;
-    }
-  }
   [feature = 'leisure_swimming_pool'] {
     text-placement: interior;
     text-name: '[name]';
@@ -19821,6 +21356,58 @@
     }
   }
   [feature = 'landuse_farmyard'] {
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: @landcover-font-size;
+    text-wrap-width: @landcover-wrap-width-size;
+    text-line-spacing: @landcover-line-spacing-size;
+    text-fill: darken(@farmyard, 50%);
+    text-face-name: @oblique-fonts;
+    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
+    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
+    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
+    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
+    [font = 'bg'] { text-face-name: @oblique-fonts-bg; }
+    text-halo-radius: @standard-halo-radius * 1.0;
+    text-halo-fill: @standard-halo-fill;
+    [way_pixels > 12000] {
+      text-size: @landcover-font-size-big;
+      text-wrap-width: @landcover-wrap-width-size-big;
+      text-line-spacing: @landcover-line-spacing-size-big;
+    }
+    [way_pixels > 48000] {
+      text-size: @landcover-font-size-bigger;
+      text-wrap-width: @landcover-wrap-width-size-bigger;
+      text-line-spacing: @landcover-line-spacing-size-bigger;
+    }
+  }
+  [feature = 'landuse_apiary'] {
+    text-placement: interior;
+    text-name: '[name]';
+    text-size: @landcover-font-size;
+    text-wrap-width: @landcover-wrap-width-size;
+    text-line-spacing: @landcover-line-spacing-size;
+    text-fill: darken(@farmyard, 50%);
+    text-face-name: @oblique-fonts;
+    [font = 'jp'] { text-face-name: @oblique-fonts-jp; }
+    [font = 'tc'] { text-face-name: @oblique-fonts-tc; }
+    [font = 'kr'] { text-face-name: @oblique-fonts-kr; }
+    [font = 'ur'] { text-face-name: @oblique-fonts-ur; }
+    [font = 'bg'] { text-face-name: @oblique-fonts-bg; }
+    text-halo-radius: @standard-halo-radius * 1.0;
+    text-halo-fill: @standard-halo-fill;
+    [way_pixels > 12000] {
+      text-size: @landcover-font-size-big;
+      text-wrap-width: @landcover-wrap-width-size-big;
+      text-line-spacing: @landcover-line-spacing-size-big;
+    }
+    [way_pixels > 48000] {
+      text-size: @landcover-font-size-bigger;
+      text-wrap-width: @landcover-wrap-width-size-bigger;
+      text-line-spacing: @landcover-line-spacing-size-bigger;
+    }
+  }
+  [feature = 'leisure_dog_park'] {
     text-placement: interior;
     text-name: '[name]';
     text-size: @landcover-font-size;

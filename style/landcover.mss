@@ -9,7 +9,7 @@
 @allotments: #c9e1bf;     // Lch(87,20,135)
 @park: #c8facc;           // Lch(94,30,145) also recreation_ground
 @farmland: #eef0d5;       // Lch(94,14,112)
-@farmland-line: #c7c9ae;  // Lch(80,14,112)
+@farmland-line: #ccceb4;  // Lch(82,14,112)
 @hedge: @forest;
 
 @campsite: #def6c0;       // also caravan_site, picnic_site
@@ -46,7 +46,7 @@
 @industrial: #ebdbe8;       // Lch(89,9,330) (Also used for railway)
 @industrial-line: #c6b3c3;  // Lch(75,11,330) (Also used for railway-line)
 @farmyard: #f5dcba;         // Lch(89,20,80)
-@farmyard-line: #d1b48c;    // Lch(75,25,80)
+@farmyard-line: #d7ba91;    // Lch(77,25,80)
 
 // --- Transport ----
 
@@ -79,6 +79,7 @@
 @tourism: #660033;
 @military: #f55;
 @animal: @farmyard;
+@animal-line: @farmyard-line;
 
 // --- low zoom colors ---
 
@@ -171,38 +172,63 @@
       [way_pixels >= 4]  { polygon-gamma: 0.75; }
       [way_pixels >= 64] { polygon-gamma: 0.3;  }
       [zoom >= 14] {
-        polygon-pattern-file: url('symbols/patterns/orchard.svg');
+        [int_meadow != 'meadow_orchard'] {
+          polygon-pattern-file: url('symbols/patterns/orchard.svg');
+        }
         [zoom >= 15] {
           [crop = 'olive_trees'] {
             polygon-pattern-file: url('symbols/patterns/orchard_olive.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'banana_plants'] {
             polygon-pattern-file: url('symbols/patterns/orchard_banana.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'pineapple_plants'] {
             polygon-pattern-file: url('symbols/patterns/orchard_pineapple.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'tea_plants'],
           [crop = 'coffea_plants'] {
             polygon-pattern-file: url('symbols/patterns/orchard_tea.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'oil_palms'],
           [crop = 'coconut_palms'],
           [crop = 'date_palms'] {
             polygon-pattern-file: url('symbols/patterns/orchard_oilpalm.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
           [crop = 'apple_trees'],
           [crop = 'orange_trees'],
           [crop = 'almond_trees'] {
             polygon-pattern-file: url('symbols/patterns/orchard_tree.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
           }
-          [meadow = 'meadow_orchard'] {
-            polygon-pattern-file: url('symbols/patterns/orchard_meadow.svg');
+          [int_meadow = 'meadow_orchard'] {
+            [way_pixels >= 480][way_pixels < 3200] {
+              polygon-comp-op: dst-out;
+            }
+            [way_pixels >= 3200] {
+              polygon-pattern-file: url('symbols/patterns/orchard_meadow.svg');
+              polygon-pattern-alignment: global;
+              [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+              [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+            }
           }
         }
-        polygon-pattern-alignment: global;
-        [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-        [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
       }
     }
 
@@ -300,6 +326,38 @@
       }
     }
 
+    [feature = 'amenity_animal_boarding'],
+    [feature = 'amenity_animal_shelter'] {
+      [zoom >= 10] {
+        polygon-fill: @built-up-lowzoom;
+        [zoom >= 12] {
+          polygon-fill: @animal;
+        }
+        [zoom >= 16] {
+          line-width: 0.5;
+          line-color: @animal-line;
+        }
+        [way_pixels >= 4]  { polygon-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-gamma: 0.3;  }
+      }
+    }
+
+    [feature = 'landuse_animal_keeping'],
+    [feature = 'amenity_animal_breeding'] {
+      [zoom >= 10] {
+        polygon-fill: @vegetation-low-lowzoom;
+        [zoom >= 12] {
+          polygon-fill: @animal;
+        }
+        [zoom >= 16] {
+          line-width: 0.5;
+          line-color: @animal-line;
+        }
+        [way_pixels >= 4]  { polygon-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-gamma: 0.3;  }
+      }
+    }
+
     [feature = 'leisure_dog_park'] {
       [zoom >= 10] {
         polygon-fill: @vegetation-low-lowzoom;
@@ -308,16 +366,42 @@
         }
         [way_pixels >= 4]  { polygon-gamma: 0.75; }
         [way_pixels >= 64] { polygon-gamma: 0.3;  }
-      }
-      [zoom >= 16] {
-        [way_pixels >= 480][way_pixels < 3200] {
-          polygon-comp-op: dst-out;
+        [zoom >= 16] {
+          line-width: 0.5;
+          line-color: @animal-line;
+          [way_pixels >= 480][way_pixels < 3200] {
+            polygon-comp-op: dst-out;
+          }
+          [way_pixels >= 3200] {
+            polygon-pattern-file: url('symbols/patterns/dog_park.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+          }
         }
-        [way_pixels >= 3200] {
-          polygon-pattern-file: url('symbols/patterns/dog_park.svg');
-          polygon-pattern-alignment: global;
-          [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
-          [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+      }
+    }
+
+    [feature = 'landuse_apiary'] {
+      [zoom >= 10] {
+        polygon-fill: @vegetation-low-lowzoom;
+        [zoom >= 12] {
+          polygon-fill: @animal;
+        }
+        [way_pixels >= 4]  { polygon-gamma: 0.75; }
+        [way_pixels >= 64] { polygon-gamma: 0.3;  }
+        [zoom >= 16] {
+          line-width: 0.5;
+          line-color: @animal-line;
+          [way_pixels >= 480][way_pixels < 3200] {
+            polygon-comp-op: dst-out;
+          }
+          [way_pixels >= 3200] {
+            polygon-pattern-file: url('symbols/patterns/apiary.svg');
+            polygon-pattern-alignment: global;
+            [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
+            [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
+          }
         }
       }
     }
@@ -457,22 +541,22 @@
         }
         [feature = 'landuse_meadow'] {
           [zoom >= 14] {
-            [meadow = 'agricultural'] {
+            [int_meadow = 'agricultural'] {
               polygon-pattern-file: url('symbols/patterns/meadow_agricultural.svg');
               polygon-pattern-alignment: global;
               [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
               [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
             }
-            [meadow = 'meadow_orchard'],
-            [meadow = 'pasture'],
-            [meadow = 'paddock'] {
+            [int_meadow = 'meadow_orchard'],
+            [int_meadow = 'pasture'],
+            [int_meadow = 'paddock'] {
               [way_pixels >= 480][way_pixels < 3200] {
                 polygon-comp-op: dst-out;
               }
               [way_pixels >= 3200] {
-                [meadow = 'meadow_orchard'] { polygon-pattern-file: url('symbols/patterns/meadow_orchard.svg'); }
-                [meadow = 'pasture'] { polygon-pattern-file: url('symbols/patterns/meadow_pasture.svg'); }
-                [meadow = 'paddock'] { polygon-pattern-file: url('symbols/patterns/meadow_paddock.svg'); }
+                [int_meadow = 'meadow_orchard'] { polygon-pattern-file: url('symbols/patterns/meadow_orchard.svg'); }
+                [int_meadow = 'pasture'] { polygon-pattern-file: url('symbols/patterns/meadow_pasture.svg'); }
+                [int_meadow = 'paddock'] { polygon-pattern-file: url('symbols/patterns/meadow_paddock.svg'); }
                 polygon-pattern-alignment: global;
                 [way_pixels >= 4]  { polygon-pattern-gamma: 0.75; }
                 [way_pixels >= 64] { polygon-pattern-gamma: 0.3;  }
@@ -999,37 +1083,80 @@
       comp-op: dst-over;
     }
 
-    [feature = 'landuse_meadow'][zoom >= 14] {
+    [feature = 'landuse_orchard'][int_meadow = 'meadow_orchard'][zoom >= 15] {
       [way_pixels >= 480][way_pixels < 3200] {
         line-width: 2;
-        line-color: @grass;
-        polygon-fill: @grass;
-        [meadow = 'meadow_orchard'] {
-          marker-file: url('symbols/landcover/tree.svg');
-          marker-placement: interior;
-          marker-clip: false;
-          marker-fill: desaturate(darken(@grass, 20%), 18%);
-          marker-ignore-placement: true;
-          marker-allow-overlap: true;
+        line-color: @orchard;
+        polygon-fill: @orchard;
+        tree/marker-file: url('symbols/landcover/tree.svg');
+        tree/marker-placement: interior;
+        tree/marker-clip: false;
+        tree/marker-fill: desaturate(darken(@orchard, 15%), 18%);
+        tree/marker-ignore-placement: true;
+        tree/marker-allow-overlap: true;
+        [way_pixels < 1200] {
+          tree/marker-transform: 'translate(-6.0, 0.0)';
         }
-        [meadow = 'pasture'] {
-          marker-file: url('symbols/landcover/animal.svg');
-          marker-placement: interior;
-          marker-clip: false;
-          marker-fill: desaturate(darken(@grass, 10%), 18%);
-          marker-ignore-placement: true;
-          marker-allow-overlap: true;
+
+        grass/marker-file: url('symbols/landcover/grass.svg');
+        grass/marker-placement: interior;
+        grass/marker-clip: false;
+        grass/marker-fill: @grass;
+        grass/marker-ignore-placement: true;
+        grass/marker-allow-overlap: true;
+        grass/marker-transform: 'translate(12.0, 0.0)';
+        [way_pixels < 1200] {
+          grass/marker-transform: 'translate(6.0, 0.0)';
         }
-        [meadow = 'paddock'] {
-          marker-file: url('symbols/landcover/horse.svg');
-          marker-placement: interior;
-          marker-clip: false;
-          marker-fill: desaturate(darken(@grass, 10%), 18%);
-          marker-ignore-placement: true;
-          marker-allow-overlap: true;
+
+        [way_pixels >= 1200] {
+          grass2/marker-file: url('symbols/landcover/grass.svg');
+          grass2/marker-placement: interior;
+          grass2/marker-clip: false;
+          grass2/marker-fill: @grass;
+          grass2/marker-ignore-placement: true;
+          grass2/marker-allow-overlap: true;
+          grass2/marker-transform: 'translate(-12.0, 0.0)';
         }
       }
       comp-op: dst-over;
+    }
+
+    [feature = 'landuse_meadow'][zoom >= 14] {
+      [int_meadow = 'meadow_orchard'],
+      [int_meadow = 'pasture'],
+      [int_meadow = 'paddock'] {
+        [way_pixels >= 480][way_pixels < 3200] {
+          line-width: 2;
+          line-color: @grass;
+          polygon-fill: @grass;
+          [int_meadow = 'meadow_orchard'] {
+            marker-file: url('symbols/landcover/tree.svg');
+            marker-placement: interior;
+            marker-clip: false;
+            marker-fill: desaturate(darken(@grass, 20%), 18%);
+            marker-ignore-placement: true;
+            marker-allow-overlap: true;
+          }
+          [int_meadow = 'pasture'] {
+            marker-file: url('symbols/landcover/animal.svg');
+            marker-placement: interior;
+            marker-clip: false;
+            marker-fill: desaturate(darken(@grass, 10%), 18%);
+            marker-ignore-placement: true;
+            marker-allow-overlap: true;
+          }
+          [int_meadow = 'paddock'] {
+            marker-file: url('symbols/landcover/horse.svg');
+            marker-placement: interior;
+            marker-clip: false;
+            marker-fill: desaturate(darken(@grass, 10%), 18%);
+            marker-ignore-placement: true;
+            marker-allow-overlap: true;
+          }
+        }
+        comp-op: dst-over;
+      }
     }
 
     [feature = 'leisure_dog_park'][zoom >= 16] {
@@ -1043,6 +1170,22 @@
         marker-fill: desaturate(darken(@animal, 9%), 32%);
         marker-ignore-placement: true;
         marker-allow-overlap: true;
+      }
+      comp-op: dst-over;
+    }
+
+    [feature = 'landuse_apiary'][zoom >= 16] {
+      [way_pixels >= 480][way_pixels < 3200] {
+        line-width: 2;
+        line-color: @animal;
+        polygon-fill: @animal;
+        marker-file: url('symbols/landcover/apiary.svg');
+        marker-placement: interior;
+        marker-clip: false;
+        marker-fill: desaturate(darken(@animal, 20%), 25%);
+        marker-ignore-placement: true;
+        marker-allow-overlap: true;
+        [way_pixels >= 1200] { marker-transform: 'scale (1.5)'; marker-fill: desaturate(darken(@animal, 15%), 23%); }
       }
       comp-op: dst-over;
     }

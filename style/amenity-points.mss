@@ -1042,41 +1042,112 @@
 }
 
 #addon-symbols-water[zoom >= 17] {
-  [feature = 'drinking_water'] {
-    marker-anchor-cond: '[osm_id]';
-    marker-allow-overlap-anchor: '[osm_id]';
-    marker-anchor-set: "'dw_'+[osm_id]";
-    marker-file: url('symbols/water/drinking.svg');
-    marker-fill: @water-icon;
-    marker-transform: 'translate([xdist],[ydist])';
-    marker-placement: interior;
-    marker-clip: false;
+  [drinking_water = 'yes'] {
+    dwdir1/marker-anchor-cond: '[osm_id]';
+    dwdir1/marker-allow-overlap-anchor: '[osm_id]';
+    dwdir1/marker-anchor-set: "'dw_'+[osm_id]";
+    dwdir1/marker-file: url('symbols/water/drinking.svg');
+    dwdir1/marker-fill: @water-icon;
+    dwdir1/marker-transform: 'translate([dwxdist],[dwydist])';
+    dwdir1/marker-placement: interior;
+    dwdir1/marker-clip: false;
 
-    dir2/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
-    dir2/marker-allow-overlap-anchor: '[osm_id]';
-    dir2/marker-anchor-set: "'dw_'+[osm_id]";
-    dir2/marker-file: url('symbols/water/drinking.svg');
-    dir2/marker-fill: @water-icon;
-    dir2/marker-transform: 'translate(-1*[xdist],[ydist])';
-    dir2/marker-placement: interior;
-    dir2/marker-clip: false;
+    dwdir2/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
+    dwdir2/marker-allow-overlap-anchor: '[osm_id]';
+    dwdir2/marker-anchor-set: "'dw_'+[osm_id]";
+    dwdir2/marker-file: url('symbols/water/drinking.svg');
+    dwdir2/marker-fill: @water-icon;
+    dwdir2/marker-transform: 'translate(-1*[dwxdist],[dwydist])';
+    dwdir2/marker-placement: interior;
+    dwdir2/marker-clip: false;
 
-    dir3/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
-    dir3/marker-allow-overlap-anchor: '[osm_id]';
-    dir3/marker-anchor-set: "'dw_'+[osm_id]";
-    dir3/marker-file: url('symbols/water/drinking.svg');
-    dir3/marker-fill: @water-icon;
-    dir3/marker-transform: 'translate([xdist2],[ydist2])';
-    dir3/marker-placement: interior;
-    dir3/marker-clip: false;
+    dwdir3/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
+    dwdir3/marker-allow-overlap-anchor: '[osm_id]';
+    dwdir3/marker-anchor-set: "'dw_'+[osm_id]";
+    dwdir3/marker-file: url('symbols/water/drinking.svg');
+    dwdir3/marker-fill: @water-icon;
+    dwdir3/marker-transform: 'translate([dwxdist2],[dwydist2])';
+    dwdir3/marker-placement: interior;
+    dwdir3/marker-clip: false;
 
-    dir4/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
-    dir4/marker-allow-overlap-anchor: '[osm_id]';
-    dir4/marker-anchor-set: "'dw_'+[osm_id]";
-    dir4/marker-file: url('symbols/water/drinking.svg');
-    dir4/marker-fill: @water-icon;
-    dir4/marker-transform: 'translate(-1*[xdist2],[ydist2])';
-    dir4/marker-placement: interior;
-    dir4/marker-clip: false;
+    dwdir4/marker-anchor-cond: "[osm_id]+',!dw_'+[osm_id]";
+    dwdir4/marker-allow-overlap-anchor: '[osm_id]';
+    dwdir4/marker-anchor-set: "'dw_'+[osm_id]";
+    dwdir4/marker-file: url('symbols/water/drinking.svg');
+    dwdir4/marker-fill: @water-icon;
+    dwdir4/marker-transform: 'translate(-1*[dwxdist2],[dwydist2])';
+    dwdir4/marker-placement: interior;
+    dwdir4/marker-clip: false;
+  }
+  [watering_place = 'yes'] {
+    wpdir1/marker-anchor-cond: '[osm_id]';
+    wpdir1/marker-allow-overlap-anchor: '[osm_id]';
+    wpdir1/marker-anchor-set: "'wp_'+[osm_id]";
+    wpdir1/marker-file: url('symbols/landcover/animal.svg');
+    wpdir1/marker-fill: @water-icon;
+    wpdir1/marker-transform: 'translate([wpxdist],[wpydist])';
+    [wpxdist < 0.0][wpydist2 < 2.0],
+    [wpxdist >= 0.0][wpydist2 >= 2.0] {
+      wpdir1/marker-transform: 'scale(-1.0,1.0) translate(-1*[wpxdist],[wpydist])';
+    }
+    wpdir1/marker-placement: interior;
+    wpdir1/marker-clip: false;
+
+    wpdir2/marker-anchor-cond: "[osm_id]+',!wp_'+[osm_id]";
+    wpdir2/marker-allow-overlap-anchor: '[osm_id]';
+    wpdir2/marker-anchor-set: "'wp_'+[osm_id]";
+    wpdir2/marker-file: url('symbols/landcover/animal.svg');
+    wpdir2/marker-fill: @water-icon;
+    wpdir2/marker-transform: 'translate(-1*[wpxdist],[wpydist])';
+    [wpxdist < 0.0][wpydist2 >= 0.0],
+    [wpxdist >= 0.0][wpydist2 < 0.0] {
+      wpdir2/marker-transform: 'scale(-1.0,1.0) translate([wpxdist],[wpydist])';
+    }
+    wpdir2/marker-placement: interior;
+    wpdir2/marker-clip: false;
+
+    wpdir3/marker-anchor-cond: "[osm_id]+',!wp_'+[osm_id]";
+    wpdir3/marker-allow-overlap-anchor: '[osm_id]';
+    wpdir3/marker-anchor-set: "'wp_'+[osm_id]";
+    wpdir3/marker-file: url('symbols/landcover/animal.svg');
+    wpdir3/marker-fill: @water-icon;
+    wpdir3/marker-transform: 'translate([wpxdist2],[wpydist2])';
+    [wpxdist < 0.0][wpydist2 >= 0.0],
+    [wpxdist2 >= 0.0][wpydist2 < 0.0] {
+      wpdir3/marker-transform: 'scale(-1.0,1.0) translate(-1*[wpxdist2],[wpydist2])';
+    }
+    wpdir3/marker-placement: interior;
+    wpdir3/marker-clip: false;
+
+    wpdir4/marker-anchor-cond: "[osm_id]+',!wp_'+[osm_id]";
+    wpdir4/marker-allow-overlap-anchor: '[osm_id]';
+    wpdir4/marker-anchor-set: "'wp_'+[osm_id]";
+    wpdir4/marker-file: url('symbols/landcover/animal.svg');
+    wpdir4/marker-fill: @water-icon;
+    wpdir4/marker-transform: 'translate(-1*[wpxdist2],[wpydist2])';
+    [wpxdist2 < 0.0][wpydist2 < 0.0],
+    [wpxdist2 >= 0.0][wpydist2 >= 0.0] {
+      wpdir4/marker-transform: 'scale(-1.0,1.0) translate([wpxdist2],[wpydist2])';
+    }
+    wpdir4/marker-placement: interior;
+    wpdir4/marker-clip: false;
+
+    wpdir5/marker-anchor-cond: "[osm_id]+',!wp_'+[osm_id]";
+    wpdir5/marker-allow-overlap-anchor: '[osm_id]';
+    wpdir5/marker-anchor-set: "'wp_'+[osm_id]";
+    wpdir5/marker-file: url('symbols/landcover/animal.svg');
+    wpdir5/marker-fill: @water-icon;
+    wpdir5/marker-transform: 'translate(0.0,9)';
+    wpdir5/marker-placement: interior;
+    wpdir5/marker-clip: false;
+
+    wpdir6/marker-anchor-cond: "[osm_id]+',!wp_'+[osm_id]";
+    wpdir6/marker-allow-overlap-anchor: '[osm_id]';
+    wpdir6/marker-anchor-set: "'wp_'+[osm_id]";
+    wpdir6/marker-file: url('symbols/landcover/animal.svg');
+    wpdir6/marker-fill: @water-icon;
+    wpdir6/marker-transform: 'translate(0.0,-10)';
+    wpdir6/marker-placement: interior;
+    wpdir6/marker-clip: false;
   }
 }

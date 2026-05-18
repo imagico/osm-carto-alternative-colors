@@ -6,7 +6,7 @@
 #  to be processed with assemble_project.py
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2023 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2026 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -46,7 +46,7 @@
             crop,
             surface,
             sport,
-            meadow,
+            int_meadow,
             int_animal,
             int_parking_space,
             CASE WHEN int_parking_space = 'private' THEN '🛇' ELSE capacity END AS int_parking_label,
@@ -68,7 +68,7 @@
                 surface
               END AS surface,
               sport,
-              meadow,
+              int_meadow,
               int_animal,
               int_parking_space,
               capacity,
@@ -80,7 +80,7 @@
                 ('aeroway_' || (CASE WHEN aeroway IN ('apron', 'aerodrome') THEN aeroway ELSE NULL END)) AS aeroway,
                 ('golf_' || (CASE WHEN (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker') THEN tags->'golf' ELSE NULL END)) AS golf,
                 ('amenity_' || (CASE WHEN amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
-                                                      'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic', 'ferry_terminal')
+                                                      'hospital', 'kindergarten', 'grave_yard', 'prison', 'place_of_worship', 'clinic', 'ferry_terminal', 'animal_breeding', 'animal_boarding', 'animal_shelter')
                                                       THEN amenity ELSE NULL END)) AS amenity,
                 ('landuse_' || (CASE WHEN landuse IN ('quarry', 'vineyard', 'orchard', 'cemetery', 'residential', 'garages', 'meadow', 'grass',
                                                       'allotments', 'forest', 'farmyard', 'farmland', 'flowerbed', 'greenhouse_horticulture',
@@ -103,7 +103,7 @@
                 ELSE surface
                 END AS surface,
                 (tags->'sport') AS sport,
-                CASE WHEN landuse IN ('orchard') THEN tags->'orchard' ELSE tags->'meadow' END AS meadow,
+                CASE WHEN landuse IN ('orchard') THEN tags->'orchard' ELSE tags->'meadow' END AS int_meadow,
                 CASE WHEN landuse IN ('animal_keeping') THEN tags->'animal_keeping' ELSE NULL END AS int_animal,
                 (tags->'parking') AS parking,
                 CASE WHEN amenity IN ('parking_space') AND z(!scale_denominator!) >= 19 THEN
@@ -132,7 +132,7 @@
                 OR (tags->'golf') IN ('rough', 'fairway', 'driving_range', 'water_hazard', 'green', 'bunker')
                 OR aeroway IN ('apron', 'aerodrome')
                 OR amenity IN ('parking', 'bicycle_parking', 'motorcycle_parking', 'parking_space', 'university', 'college', 'school',
-                               'hospital', 'kindergarten', 'grave_yard', 'place_of_worship', 'prison', 'clinic', 'ferry_terminal')
+                               'hospital', 'kindergarten', 'grave_yard', 'place_of_worship', 'prison', 'clinic', 'ferry_terminal', 'animal_breeding', 'animal_boarding', 'animal_shelter')
                 OR "natural" IN ('beach', 'shoal', 'heath', 'mud', 'wetland', 'grassland', 'wood', 'sand', 'scree', 'shingle', 'bare_rock', 'scrub')
                 OR power IN ('station', 'sub_station', 'substation', 'generator')
                 OR tourism IN ('attraction', 'camp_site', 'caravan_site', 'picnic_site')

@@ -42,7 +42,6 @@ mss:
 # This is the list of pattern names that are to be automatically processed
 
 patterns:
-  - allotments
   - beach
   - beach_coarse
   - brownfield
@@ -65,14 +64,15 @@ patterns:
   - orchard_meadow
   - vineyard
   - plant_nursery
+  - golf_rough
   - garden
   - flowerbed_structure
   - flowerbed_symbol
-  - golf_rough
   - grave_yard_generic
   - grave_yard_christian
   - grave_yard_jewish
   - grave_yard_muslim
+  - allotments
   - forest_broadleaved_deciduous
   - forest_broadleaved_evergreen
   - forest_broadleaved_mixed
@@ -101,6 +101,7 @@ patterns:
   - scrub_unknown_evergreen
   - scrub_unknown_mixed
   - scrub_unknown_unknown
+  - aquaculture
   - reef
   - reef_coral
   - reef_rock
@@ -134,22 +135,24 @@ patterns:
   - treerow
   - treerow_broadleaved
   - treerow_needleleaved
-  - breakwater_stone
-  - aquaculture
-  - dog_park
   - meadow_agricultural
   - meadow_orchard
   - meadow_pasture
   - meadow_paddock
+  - dog_park
+  - apiary
+  - breakwater_stone
 
 # These are the pattern colors - first is the background, second the pattern
+# (substituted from #000000 in source SVG), third optionally a second pattern
+# color (substituted from #ff0000 in source SVG) and fourth is opacity
+# (optional as well).
+#
 # "native" as a pattern color means the source SVG file already contains
 # coloring, usually with multiple colors like with the wetland patterns so
 # it is not automatically colorized by the script.
-# Third optional value is opacity
 
 colors:
-  allotments: ["#c9e1bf", "#f2efe9"]
   beach_coarse: ["#fceeb6", "#969696"]
   beach: ["#fceeb6", "#685d45", 0.61]
   brownfield: ["#c5bea6", "#b5ae96"]
@@ -169,17 +172,18 @@ colors:
   orchard_olive: ["#aedea3", "#96cc8b"]
   orchard_tree: ["#aedea3", "#8bc181"]
   orchard_tea: ["#aedea3", "#8bc181"]
-  orchard_meadow: ["#aedea3", "#8bc181"]
+  orchard_meadow: ["#aedea3", "#8bc181", "#d1efb4"]
   vineyard: ["#aedea3", "#9bc991"]
   plant_nursery: ["#aedea3", "#749d6c"]
+  golf_rough: ["#cde9b0", "#fdfae6"]
   garden: ["#d1efb4", "#95b973"]
   flowerbed_structure: ["#c8ebb0", "#fff5d1"]
   flowerbed_symbol: ["#c8ebb0", "#f7f6c9"]
-  golf_rough: ["#cde9b0", "#fdfae6"]
   grave_yard_generic: ["#abccb0", "#8fbb97"]
   grave_yard_christian: ["#abccb0", "#8fbb97"]
   grave_yard_jewish: ["#abccb0", "#8fbb97"]
   grave_yard_muslim: ["#abccb0", "#8fbb97"]
+  allotments: ["#c9e1bf", "#f2efe9"]
   forest_broadleaved_deciduous: ["#add19e", "#a1ae79"]
   forest_broadleaved_evergreen: ["#add19e", "#82b762"]
   forest_broadleaved_mixed: ["#add19e", "#8bb37c"]
@@ -208,45 +212,44 @@ colors:
   scrub_unknown_evergreen: ["#c4daa5", "#7fd181"]
   scrub_unknown_mixed: ["#c4daa5", "#99c671"]
   scrub_unknown_unknown: ["#c4daa5", "#a0c1a0"]
+  aquaculture: ["#a2d1e0", "#549ccd"]
   reef: ["#a2d1e0", "#549ccd"]
   reef_rock: ["#a2d1e0", "#549ccd", 0.35]
   reef_sand: ["#a2d1e0", "#549ccd"]
   reef_coral: ["#a2d1e0", "#549ccd", 0.6]
   rock_overlay: ["#eee5dc", "#8a99a5", 0.3]
   scree_overlay: ["#eee5dc", "#7e8d99", 0.3]
-  river_intermittent: ["#f2efe9", "native"]
-  water_intermittent: ["#f2efe9", "native"]
-  water_intermittent_salt: ["#f2efe9", "native"]
-  water_salt: ["#a2d1e0", "native"]
+  river_intermittent: ["#f2efe9", "#97c9d8"]
+  water_intermittent: ["#f2efe9", "#aad3df"]
+  water_intermittent_salt: ["#f2efe9", "#b9d3dc"]
+  water_salt: ["#a2d1e0", "#c9dee5"]
   salt_pond: ["#a2d1e0", "#ffffff"]
   salt_dots: ["#d1efb4", "#ffffff", 0.85]
   wetland: ["#f2efe9", "#4aa5fa", 0.8]
-  swamp_broadleaved_deciduous: ["#add19e", "native"]
-  swamp_broadleaved_evergreen: ["#add19e", "native"]
-  swamp_broadleaved_mixed: ["#add19e", "native"]
-  swamp_broadleaved_unknown: ["#add19e", "native"]
-  swamp_mixed_deciduous: ["#add19e", "native"]
-  swamp_mixed_evergreen: ["#add19e", "native"]
-  swamp_mixed_mixed: ["#add19e", "native"]
-  swamp_mixed_unknown: ["#add19e", "native"]
-  swamp_needleleaved_deciduous: ["#add19e", "native"]
-  swamp_needleleaved_evergreen: ["#add19e", "native"]
-  swamp_needleleaved_mixed: ["#add19e", "native"]
-  swamp_needleleaved_unknown: ["#add19e", "native"]
-  mangrove: ["#f2efe9", "native"]
-  wetland_bog: ["#dae2ac", "native"]
-  wetland_marsh: ["#d1efb4", "native"]
-  wetland_reed: ["#f2efe9", "native"]
-  wetland_fen: ["#d1efb4", "native"]
+  swamp_broadleaved_deciduous: ["#add19e", "#98a371", "#4aa5fa"]
+  swamp_broadleaved_evergreen: ["#add19e", "#6dae48", "#4aa5fa"]
+  swamp_broadleaved_mixed: ["#add19e", "#7fa972", "#4aa5fa"]
+  swamp_broadleaved_unknown: ["#add19e", "#93a0a0", "#4aa5fa"]
+  swamp_mixed_deciduous: ["#add19e", "#98a371", "#4aa5fa"]
+  swamp_mixed_evergreen: ["#add19e", "#6dae48", "#4aa5fa"]
+  swamp_mixed_mixed: ["#add19e", "#7fa972", "#4aa5fa"]
+  swamp_mixed_unknown: ["#add19e", "#93a0a0", "#4aa5fa"]
+  swamp_needleleaved_deciduous: ["#add19e", "#98a371", "#4aa5fa"]
+  swamp_needleleaved_evergreen: ["#add19e", "#6dae48", "#4aa5fa"]
+  swamp_needleleaved_mixed: ["#add19e", "#7fa972", "#4aa5fa"]
+  swamp_needleleaved_unknown: ["#add19e", "#93a0a0", "#4aa5fa"]
+  mangrove: ["#f2efe9", "#6dae48", "#4aa5fa"]
+  wetland_bog: ["#dae2ac", "#73b386", "#4aa5fa"]
+  wetland_marsh: ["#d1efb4", "#73b386", "#4aa5fa"]
+  wetland_reed: ["#f2efe9", "#73b386", "#4aa5fa"]
+  wetland_fen: ["#d1efb4", "#73b386", "#4aa5fa"]
   treerow: ["#f2efe9", "#419b3b", 0.5]
   treerow_broadleaved: ["#f2efe9", "#419b3b", 0.6]
   treerow_needleleaved: ["#f2efe9", "#419b3b", 0.6]
-  breakwater_stone: ["#bbbbbb", "#909090"]
-  aquaculture: ["#a2d1e0", "#549ccd"]
   meadow_agricultural: ["#d1efb4", "#a4cd7d", 0.6]
   meadow_orchard: ["#d1efb4", "#a4cd7d"]
   meadow_pasture: ["#d1efb4", "#a4cd7d", 0.6]
   meadow_paddock: ["#d1efb4", "#a4cd7d", 0.6]
   dog_park: ["#f5dcba", "#e1c9a3"]
-
-
+  apiary: ["#f5dcba", "#e0c297"]
+  breakwater_stone: ["#bbbbbb", "#909090"]

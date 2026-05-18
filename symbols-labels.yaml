@@ -7,7 +7,7 @@
 #  for file syntax see comments below
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2026 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -174,6 +174,9 @@ colors:
   content_iron_ore: "#a13f33"
   content_gold: "#ecbc00"
   content_copper: "#d86212"
+  fodder_salt: "#ffffff"
+  fodder_grain: "#e3b20f"
+  fodder_hay: "#93c150"
 
 # styling types for symbols and labels
 
@@ -1573,7 +1576,6 @@ attributes:
                                            'living_street', 'pedestrian', 'steps', 'road', 'bridleway', 'footway', 'cycleway', 'path',
                                            'track', 'busway', 'bus_guideway')
                         )
-
                     ) AS lines_raw
                 ) AS directions
             ) AS direction_avg
@@ -1632,6 +1634,39 @@ attributes:
       - "roof:shape"
       - "tower:type"
       - "tower:construction"
+  int_animal:
+    sql: >-
+      (CASE
+        WHEN landuse = 'animal_keeping' THEN animal_keeping
+        WHEN amenity = 'animal_breeding' THEN animal_breeding
+        WHEN amenity = 'animal_shelter' THEN animal_shelter
+        WHEN amenity = 'animal_boarding' THEN animal_boarding
+        WHEN amenity = 'feeding_place' THEN
+          (CASE
+            WHEN "feeding:fodder" IN ('hay', 'salt', 'grain') THEN
+              "feeding:fodder" ||
+              (CASE
+                WHEN "feeding:for" IN ('horse', 'goat', 'sheep', 'pig', 'dog', 'cat', 'bird', 'rabbit', 'wildlife', 'game') THEN '+' || "feeding:for"
+                WHEN "feeding:for" IN ('chicken', 'poultry') THEN '+chicken'
+                WHEN "feeding:for" IN ('cow', 'cattle') THEN '+cow'
+               ELSE ''
+              END)
+           ELSE
+              (CASE
+                WHEN "feeding:for" IN ('horse', 'goat', 'sheep', 'pig', 'dog', 'cat', 'bird', 'rabbit', 'wildlife', 'game') THEN "feeding:for"
+                WHEN "feeding:for" IN ('chicken', 'poultry') THEN 'chicken'
+                WHEN "feeding:for" IN ('cow', 'cattle') THEN 'cow'
+               ELSE ''
+              END)
+          END)
+      END)
+    attributes:
+      - animal_keeping
+      - animal_breeding
+      - animal_shelter
+      - animal_boarding
+      - "feeding:fodder"
+      - "feeding:for"
   int_petroleum_well_type:
     sql: >-
       (CASE
@@ -1848,6 +1883,13 @@ templates:
 #                symbols/key/value.svg if exists
 #   start_symbol: Starting zoom level for symbol, default: infinity
 #   start_label: Starting zoom level for label, default: infinity
+#   way_pixels_min: minimum way_pixels value for symbol, default: none
+#   way_pixels_min_symbol: synonym for way_pixels_min
+#   way_pixels_min_label: minimum way_pixels value for label, default: way_pixels_min
+#   way_pixels_start_all: zoom level from which way_pixels_min is removed
+#   way_pixels_start_all_symbol: synonym for way_pixels_start_all
+#   way_pixels_start_all_label: zoom level from which way_pixels_min_label is removed
+#     way_pixels parameters cannot be used in modifications or variants
 #   zoom_limit: Upper zoom level limit for rendering this feature, default: infinity
 #   style: default: standard
 #   symbol_color: symbol color (replacing #000000 in symbol source), default: unchanged (for SVG), black (for MSS)
@@ -2359,6 +2401,499 @@ features:
     symbol_file: symbols/sources/amenity/telephone.svg
     symbol_color: amenity-icon
     start_symbol: 17
+  landuse=animal_keeping/small:
+    symbol_file: symbols/sources/animal/keeping_animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 15
+    start_label: 16
+    way_pixels_min_symbol: 900
+    way_pixels_start_all_symbol: 17
+    way_pixels_min_label: 3600
+    way_pixels_start_all_label: 18
+    condition: (int_animal IS NULL OR int_animal NOT IN ('horse', 'cow', 'goat', 'sheep', 'pig', 'wildlife', 'game'))
+    modifications:
+      dog:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_dog.svg
+      cat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_cat.svg
+      chicken:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_chicken.svg
+      poultry:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_chicken.svg
+      bird:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_bird.svg
+      rabbit:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_rabbit.svg
+    attributes:
+      - int_animal
+  landuse=animal_keeping/large:
+    symbol_file: symbols/sources/animal/keeping_animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 15
+    start_label: 16
+    way_pixels_min_symbol: 900
+    way_pixels_start_all_symbol: 16
+    way_pixels_min_label: 3600
+    way_pixels_start_all_label: 17
+    condition: int_animal IN ('horse', 'cow', 'goat', 'sheep', 'pig', 'wildlife', 'game')
+    modifications:
+      horse:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_horse.svg
+      cow:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_cow.svg
+      goat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_goat.svg
+      sheep:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_sheep.svg
+      pig:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_pig.svg
+      wildlife:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_wildlife.svg
+      game:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/keeping_wildlife.svg
+    attributes:
+      - int_animal
+  amenity=animal_breeding/small:
+    symbol_file: symbols/sources/animal/animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 15
+    start_label: 16
+    way_pixels_min_symbol: 900
+    way_pixels_start_all_symbol: 17
+    way_pixels_min_label: 3600
+    way_pixels_start_all_label: 18
+    condition: (int_animal IS NULL OR int_animal NOT IN ('horse', 'cow', 'goat', 'sheep', 'pig', 'wildlife', 'game'))
+    modifications:
+      dog:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/dog.svg
+      cat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/cat.svg
+      chicken:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/chicken.svg
+      poultry:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/chicken.svg
+      bird:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/bird.svg
+      rabbit:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/rabbit.svg
+    attributes:
+      - int_animal
+  amenity=animal_breeding/large:
+    symbol_file: symbols/sources/animal/animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 15
+    start_label: 16
+    way_pixels_min_symbol: 900
+    way_pixels_start_all_symbol: 16
+    way_pixels_min_label: 3600
+    way_pixels_start_all_label: 17
+    condition: int_animal IN ('horse', 'cow', 'goat', 'sheep', 'pig', 'wildlife', 'game')
+    modifications:
+      horse:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/horse.svg
+      cow:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/cow.svg
+      goat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/goat.svg
+      sheep:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/sheep.svg
+      pig:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/pig.svg
+      wildlife:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/wildlife.svg
+      game:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/wildlife.svg
+    attributes:
+      - int_animal
+  amenity=animal_shelter/small:
+    symbol_file: symbols/sources/animal/shelter_animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 15
+    start_label: 16
+    way_pixels_min_symbol: 900
+    way_pixels_start_all_symbol: 18
+    way_pixels_min_label: 3600
+    way_pixels_start_all_label: 19
+    condition: (int_animal IS NULL OR int_animal NOT IN ('horse', 'cow', 'goat', 'sheep', 'pig', 'wildlife', 'game'))
+    modifications:
+      dog:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_dog.svg
+      cat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_cat.svg
+      chicken:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_chicken.svg
+      poultry:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_chicken.svg
+      bird:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_bird.svg
+      rabbit:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_rabbit.svg
+    attributes:
+      - int_animal
+  amenity=animal_shelter/large:
+    symbol_file: symbols/sources/animal/shelter_animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 15
+    start_label: 16
+    way_pixels_min_symbol: 900
+    way_pixels_start_all_symbol: 17
+    way_pixels_min_label: 3600
+    way_pixels_start_all_label: 18
+    condition: int_animal IN ('horse', 'cow', 'goat', 'sheep', 'pig', 'wildlife', 'game')
+    modifications:
+      horse:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_horse.svg
+      cow:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_cow.svg
+      goat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_goat.svg
+      sheep:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_sheep.svg
+      pig:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_pig.svg
+      wildlife:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_wildlife.svg
+      game:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/shelter_wildlife.svg
+    attributes:
+      - int_animal
+  amenity=animal_boarding:
+    symbol_file: symbols/sources/animal/boarding_animal.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 17
+    start_label: 18
+    modifications:
+      horse:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/boarding_horse.svg
+      cat:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/boarding_cat.svg
+      dog:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/boarding_dog.svg
+      bird:
+        attribute: int_animal
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/animal/boarding_bird.svg
+    attributes:
+      - int_animal
+  amenity=watering_place:
+    style: symbol-only
+    symbol_file: symbols/sources/animal/feeding.svg
+    symbol_color: water-icon
+    start_symbol: 16
+    condition: (("natural" IS NULL OR "natural" NOT IN ('spring', 'hot_spring')) AND (man_made IS NULL OR man_made NOT IN ('water_well')))
+  amenity=game_feeding:
+    style: symbol-only
+    symbol_file: symbols/sources/animal/feeding_game.svg
+    symbol_color: amenity-icon
+    start_symbol: 17
+  amenity=feeding_place:
+    style: symbol-only
+    symbol_file: symbols/sources/animal/feeding.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
+    modifications:
+      hay:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_fodder.svg
+      salt:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_fodder.svg
+      grain:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_fodder.svg
+      horse:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_horse.svg
+      hay+horse:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_horse_fodder.svg
+      salt+horse:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_horse_fodder.svg
+      grain+horse:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_horse_fodder.svg
+      cow:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_cow.svg
+      hay+cow:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_cow_fodder.svg
+      salt+cow:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_cow_fodder.svg
+      grain+cow:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_cow_fodder.svg
+      goat:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_goat.svg
+      hay+goat:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_goat_fodder.svg
+      salt+goat:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_goat_fodder.svg
+      grain+goat:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_goat_fodder.svg
+      sheep:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_sheep.svg
+      hay+sheep:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_sheep_fodder.svg
+      salt+sheep:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_sheep_fodder.svg
+      grain+sheep:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_sheep_fodder.svg
+      pig:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_pig.svg
+      hay+pig:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_pig_fodder.svg
+      salt+pig:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_pig_fodder.svg
+      grain+pig:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_pig_fodder.svg
+      dog:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_dog.svg
+      cat:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_cat.svg
+      chicken:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_chicken.svg
+      grain+chicken:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_chicken_fodder.svg
+      bird:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_bird.svg
+      grain+bird:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_bird_fodder.svg
+      rabbit:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_rabbit.svg
+      hay+rabbit:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_rabbit_fodder.svg
+      salt+rabbit:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_rabbit_fodder.svg
+      grain+rabbit:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_rabbit_fodder.svg
+      wildlife:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_wildlife.svg
+      hay+wildlife:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_hay
+        symbol_file: symbols/sources/animal/feeding_wildlife_fodder.svg
+      salt+wildlife:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_wildlife_fodder.svg
+      grain+wildlife:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_wildlife_fodder.svg
+      game:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_game.svg
+      hay+game:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_file: symbols/sources/animal/feeding_game.svg
+      salt+game:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_salt
+        symbol_file: symbols/sources/animal/feeding_wildlife_fodder.svg
+      grain+game:
+        attribute: int_animal
+        style: symbol-only-attribute-variant
+        symbol_color2: fodder_grain
+        symbol_file: symbols/sources/animal/feeding_wildlife_fodder.svg
+    variants:
+      large:
+        condition: int_animal IN ('horse', 'hay+horse', 'grain+horse', 'cow', 'hay+cow', 'grain+cow', 'goat', 'hay+goat', 'grain+goat', 'sheep', 'hay+sheep', 'grain+sheep', 'pig', 'hay+pig', 'grain+pig', 'wildlife', 'hay+wildlife', 'grain+wildlife')
+        start_symbol: 18
+      game:
+        condition: int_animal IN ('game', 'hay+game', 'grain+game')
+        start_symbol: 17
+    attributes:
+      - int_animal
+  man_made=insect_hotel:
+    style: symbol-only
+    symbol_file: symbols/sources/animal/insect_hotel.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
+  man_made=beehive:
+    style: symbol-only
+    symbol_file: symbols/sources/animal/beehive.svg
+    symbol_color: amenity-icon
+    start_symbol: 19
   highway=elevator:
     style: symbol-only
     symbol_file: symbols/sources/transport/elevator.svg
@@ -4700,17 +5235,6 @@ features:
     start_label: 17
     text_dy: 13
 
-  leisure=dog_park:
-    style: label-variable-size
-    label_color: darken(@farmyard, 50%)
-    start_label: 10
-    font_type: oblique
-    halo_radius: 1.5
-    way_pixels_min: 3000
-    way_pixels_start_all: 17
-    condition: (building IS NULL OR building = 'no')
-    attributes:
-      - building
   leisure=swimming_pool:
     style: label-variable-size
     label_color: "@marina-text"
@@ -4837,6 +5361,12 @@ features:
     template: label-variable-size-nobuilding
     label_color: darken(@allotments, 50%)
   landuse=farmyard:
+    template: label-variable-size-nobuilding
+    label_color: darken(@farmyard, 50%)
+  landuse=apiary:
+    template: label-variable-size-nobuilding
+    label_color: darken(@farmyard, 50%)
+  leisure=dog_park:
     template: label-variable-size-nobuilding
     label_color: darken(@farmyard, 50%)
   landuse=farmland:
