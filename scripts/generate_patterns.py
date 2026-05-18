@@ -6,7 +6,7 @@
 #  SVG and PNG.
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2018-2025 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2018-2026 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -75,9 +75,31 @@ def generate_pattern(basedir, pattern, colors, inkscape, rsvg, dpi, nopreviews):
         png_name = os.path.join(basedir, pattern + ".png")
         svg_name = os.path.join(basedir, pattern + ".svg")
 
-        if colors[pattern][1] == "native":
+        scolors = list()
+        opacity = None
 
-            print (pattern+" (native)...")
+        for col in colors[pattern]:
+           if str(col).startswith('#'):
+               scolors.append(col)
+           else:
+               opacity = col
+               break
+
+        colsubst = list()
+        colsubst.append("#ffffff")
+        colsubst.append("#000000")
+        colsubst.append("#ff0000")
+        colsubst.append("#00ff00")
+        colsubst.append("#0000ff")
+
+        colsubst_bw = list()
+        colsubst_bw.append("#ffffff")
+        colsubst_bw.append("#000000")
+        colsubst_bw.append("#404040")
+        colsubst_bw.append("#808080")
+        colsubst_bw.append("#c0c0c0")
+
+        if scolors[1] == "native":
 
             copyfile(source_name, svg_name)
 
@@ -86,11 +108,13 @@ def generate_pattern(basedir, pattern, colors, inkscape, rsvg, dpi, nopreviews):
             im = Image.open(png_name)
             (width, height) = im.size
 
+            print (pattern+" (native, %dx%d)" % (width, height))
+
             if not(nopreviews):
                 sys.stdout.flush()
 
                 if subprocess.call(
-                    ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][0], 
+                    ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+scolors[0],
                         png_name, "-composite", "-depth", "8", preview_name ],
                         stderr=subprocess.STDOUT) != 0:
                     sys.exit("\n\n   'magick' error: preview generation failed.\n")
@@ -101,18 +125,32 @@ def generate_pattern(basedir, pattern, colors, inkscape, rsvg, dpi, nopreviews):
                     sys.exit("\n\n   'magick' error: preview generation failed.\n")
 
         else:
-            print (pattern+" (colorized)...")
 
             fin = open(source_name, "rt")
             fout = open(svg_bw_name, "wt")
             fout2 = open(svg_name, "wt")
+
             for line in fin:
-                if len(colors[pattern]) > 2:
-                    fout.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:#000000;fill-opacity:'+str(colors[pattern][2]), line))
-                    fout2.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:'+colors[pattern][1]+';fill-opacity:'+str(colors[pattern][2]), line))
+                if len(scolors) < 3:
+                    if opacity is not None:
+                        fout.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:#000000;fill-opacity:'+str(opacity), line))
+                        fout2.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:'+scolors[1]+';fill-opacity:'+str(opacity), line))
+                    else:
+                        fout.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:#000000', line))
+                        fout2.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:'+scolors[1], line))
                 else:
-                    fout.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:#000000', line))
-                    fout2.write(re.sub('fill:#(?:[0-9a-fA-F]{3}){1,2}', 'fill:'+colors[pattern][1], line))
+                    line_out = line
+                    line_out2 = line
+                    for i in range(1,len(scolors)):
+                        if opacity is not None:
+                            line_out = line_out.replace('fill:'+colsubst[i], 'fill:'+colsubst[i]+';fill-opacity:'+str(opacity))
+                            line_out2 = line_out2.replace('fill:'+colsubst[i], 'fill:'+scolors[i]+';fill-opacity:'+str(opacity))
+                        else:
+                            line_out = line_out.replace('fill:'+colsubst[i], 'fill:'+colsubst[i])
+                            line_out2 = line_out2.replace('fill:'+colsubst[i], 'fill:'+scolors[i])
+
+                    fout.write(line_out)
+                    fout2.write(line_out2)
 
             fin.close()
             fout.close()
@@ -122,29 +160,22 @@ def generate_pattern(basedir, pattern, colors, inkscape, rsvg, dpi, nopreviews):
 
             svg_convert(svg_bw_name, png_bw_name, False, inkscape, rsvg, dpi)
 
-            im = Image.open(png_bw_name)
+            svg_convert(svg_name, png_name, True, inkscape, rsvg, dpi)
+
+            im = Image.open(png_name)
             (width, height) = im.size
 
-            sys.stdout.flush()
-
-            if subprocess.call(
-                ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][1], 
-                    "(", png_bw_name, "-negate", ")", "-alpha", "Off", 
-                    "-compose", "CopyOpacity", "-composite", "-depth", "8", 
-                    png_name ],
-                    stderr=subprocess.STDOUT) != 0:
-                sys.exit("\n\n   'convert' error: PNG colorization failed.\n")
+            if opacity is not None:
+                print (pattern+" (colorized, %d color(s) + opacity, %dx%d)" % (len(scolors)-1, width, height))
+            else:
+                print (pattern+" (colorized, %d color(s), %dx%d)" % (len(scolors)-1, width, height))
 
             sys.stdout.flush()
-
-            if not(os.path.exists(png_name)):
-                sys.exit("\n\n   'convert' error: PNG colorization failed.\n")
 
             if not(nopreviews):
-                sys.stdout.flush()
 
                 if subprocess.call(
-                    ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+colors[pattern][0], 
+                    ["magick", "-size", ("%dx%d" % (width, height)), "xc:"+scolors[0],
                         png_name, "-composite", "-flatten", "-depth", "8", preview_name ],
                         stderr=subprocess.STDOUT) != 0:
                     sys.exit("\n\n   'magick' error: preview generation failed.\n")
@@ -153,7 +184,6 @@ def generate_pattern(basedir, pattern, colors, inkscape, rsvg, dpi, nopreviews):
 
                 if not(os.path.exists(preview_name)):
                     sys.exit("\n\n   'magick' error: preview generation failed.\n")
-
 
 def main():
     parser = argparse.ArgumentParser(description='Generates patterns')

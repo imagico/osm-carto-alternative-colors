@@ -8,7 +8,7 @@
 #  levels.
 #
 #  Copyright 2012-2023 by OSM-Carto contributors
-#  Copyright 2017-2025 by Christoph Hormann <chris_hormann@gmx.de>
+#  Copyright 2017-2026 by Christoph Hormann <chris_hormann@gmx.de>
 # ---------------------------------------------------------------------------
 #  This file is part of the OSM-Carto alternative colors map style.
 #
@@ -204,6 +204,8 @@ def main():
     columns_polygons = set()
     columns_polygons_direct = set()
 
+    columns_raw = set()
+
     expansion_depencencies = dict()
     expansions = dict()
     score_attributes = list()
@@ -252,6 +254,7 @@ def main():
 
         if 'attributes' in params:
             for attr2 in params['attributes']:
+                columns_raw.add(attr2)
                 if attr2 in columns_points_db:
                     columns_points.add("\""+attr2+"\"")
                 else:
@@ -270,6 +273,7 @@ def main():
     for attr, params in default_attributes.items():
         if 'sql' not in params:
             if not (attr.startswith('int_')) and not (attr.startswith('tmp_')) and not (attr.startswith('_')):
+                columns_raw.add(attr)
                 if attr in columns_points_db:
                     columns_points.add("\""+attr+"\"")
                 else:
@@ -423,6 +427,8 @@ def main():
             feature_types[fkey][cond][fval] = set()
 
         feature_types[fkey][cond][fval].add(variant)
+
+        columns_raw.add(fkey)
 
         if fkey in columns_points_db:
             columns_points.add("\""+fkey+"\"")
@@ -734,26 +740,89 @@ def main():
                         modifications[fn][modification]['label_color'] = label_color_mod
 
                         for pn, default in config['defaults'].items():
-                            if pn not in ['symbol_color', 'label_color', 'style', 'type', 'way_pixels_min']:
+                            if pn not in ['symbol_color', 'label_color', 'style', 'type', 'way_pixels_min', 'way_pixels_min_symbol', 'way_pixels_min_label', 'way_pixels_start_all', 'way_pixels_start_all_symbol', 'way_pixels_start_all_label']:
                                 if pn in params_m:
                                     modifications[fn][modification][pn] = params_m[pn]
 
+        way_pixels_min_symbol = None
+        way_pixels_min_label = None
+
         if 'way_pixels_min' in params:
+            if 'start_symbol' in params:
+                way_pixels_min_symbol = params['way_pixels_min']
+            if 'start_label' in params:
+                way_pixels_min_label = params['way_pixels_min']
+
+        if 'way_pixels_min_symbol' in params:
+            if 'start_symbol' in params:
+                way_pixels_min_symbol = params['way_pixels_min_symbol']
+            if 'start_label' in params:
+                way_pixels_min_label = params['way_pixels_min_symbol']
+
+        if 'way_pixels_min_label' in params:
+            if 'start_label' in params:
+                way_pixels_min_label = params['way_pixels_min_label']
+
+        way_pixels_start_all_symbol = None
+        way_pixels_start_all_label = None
+
+        if 'way_pixels_start_all' in params:
+            if 'start_symbol' in params:
+                way_pixels_start_all_symbol = params['way_pixels_start_all']
+            if 'start_label' in params:
+                way_pixels_start_all_label = params['way_pixels_start_all']
+
+        if 'way_pixels_start_all_symbol' in params:
+            if 'start_symbol' in params:
+                way_pixels_start_all_symbol = params['way_pixels_start_all_symbol']
+            if 'start_label' in params:
+                way_pixels_start_all_label = params['way_pixels_start_all_symbol']
+
+        if 'way_pixels_start_all_label' in params:
+            if 'start_label' in params:
+                way_pixels_start_all_label = params['way_pixels_start_all_label']
+
+        if way_pixels_min_symbol is not None:
             if fn not in way_pixels_thresholds:
                 way_pixels_thresholds[fn] = dict()
-                way_pixels_thresholds[fn]['way_pixels_min'] = params['way_pixels_min']
-                if 'way_pixels_start_all' in params:
-                    way_pixels_thresholds[fn]['way_pixels_start_all'] = params['way_pixels_start_all']
+
+            way_pixels_thresholds[fn]['way_pixels_min_symbol'] = way_pixels_min_symbol
+            if way_pixels_start_all_symbol is not None:
+                way_pixels_thresholds[fn]['way_pixels_start_all_symbol'] = way_pixels_start_all_symbol
 
             if kv not in way_pixels_thresholds_kv:
                 way_pixels_thresholds_kv[kv] = dict()
-                wpmin = int(params['way_pixels_min'])
+                wpmin = int(way_pixels_min_symbol)
                 if 'way_pixels_min' not in way_pixels_thresholds_kv[kv]:
                     way_pixels_thresholds_kv[kv]['way_pixels_min'] = wpmin
                 elif wpmin < way_pixels_thresholds_kv[kv]['way_pixels_min']:
                     way_pixels_thresholds_kv[kv]['way_pixels_min'] = wpmin
-                if 'way_pixels_start_all' in params:
-                    wpsa = int(params['way_pixels_start_all'])
+                if way_pixels_start_all_symbol is not None:
+                    wpsa = int(way_pixels_start_all_symbol)
+                    if 'way_pixels_start_all' not in way_pixels_thresholds_kv[kv]:
+                        way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = wpsa
+                    elif wpsa < way_pixels_thresholds_kv[kv]['way_pixels_start_all']:
+                        way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = wpsa
+                elif 'way_pixels_start_all' not in way_pixels_thresholds_kv[kv]:
+                    way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = 100
+
+        if way_pixels_min_label is not None:
+            if fn not in way_pixels_thresholds:
+                way_pixels_thresholds[fn] = dict()
+
+            way_pixels_thresholds[fn]['way_pixels_min_label'] = way_pixels_min_label
+            if way_pixels_start_all_symbol is not None:
+                way_pixels_thresholds[fn]['way_pixels_start_all_label'] = way_pixels_start_all_label
+
+            if kv not in way_pixels_thresholds_kv:
+                way_pixels_thresholds_kv[kv] = dict()
+                wpmin = int(way_pixels_min_label)
+                if 'way_pixels_min' not in way_pixels_thresholds_kv[kv]:
+                    way_pixels_thresholds_kv[kv]['way_pixels_min'] = wpmin
+                elif wpmin < way_pixels_thresholds_kv[kv]['way_pixels_min']:
+                    way_pixels_thresholds_kv[kv]['way_pixels_min'] = wpmin
+                if way_pixels_start_all_label is not None:
+                    wpsa = int(way_pixels_start_all_label)
                     if 'way_pixels_start_all' not in way_pixels_thresholds_kv[kv]:
                         way_pixels_thresholds_kv[kv]['way_pixels_start_all'] = wpsa
                     elif wpsa < way_pixels_thresholds_kv[kv]['way_pixels_start_all']:
@@ -868,7 +937,7 @@ def main():
                     zooms[fn][variant]['label_color'] = label_color_variant
 
                     for pn, default in config['defaults'].items():
-                        if pn not in ['symbol_color', 'label_color', 'style', 'way_pixels_min']:
+                        if pn not in ['symbol_color', 'label_color', 'style', 'way_pixels_min', 'way_pixels_min_symbol', 'way_pixels_min_label', 'way_pixels_start_all', 'way_pixels_start_all_symbol', 'way_pixels_start_all_label']:
                             if pn in params_v:
                                 zooms[fn][variant][pn] = params_v[pn]
                             elif pn in params:
@@ -1175,31 +1244,57 @@ def main():
 
     # zoom_threshold column
     if len(way_pixels_thresholds) == 0:
-        cols_combined.append("NULL AS zoom_threshold")
+        cols_combined.append("NULL AS zoom_threshold_symbol")
+        cols_combined.append("NULL AS zoom_threshold_label")
     else:
-        zoom_threshold_groups = dict()
+        zoom_threshold_groups_symbol = dict()
         for fn, params in way_pixels_thresholds.items():
-            if 'way_pixels_start_all' in params:
-                expr = "LEAST(zoom_from_pixelsize(SQRT(way_area/"+str(params['way_pixels_min'])+")::numeric), "+str(params['way_pixels_start_all'])+")"
-                if expr not in zoom_threshold_groups:
-                    zoom_threshold_groups[expr] = set()
-                zoom_threshold_groups[expr].add(fn)
-            else:
-                expr = "zoom_from_pixelsize(SQRT(way_area/"+str(params['way_pixels_min'])+")::numeric)"
-                if expr not in zoom_threshold_groups:
-                    zoom_threshold_groups[expr] = set()
-                zoom_threshold_groups[expr].add(fn)
+            if 'way_pixels_min_symbol' in params:
+                if 'way_pixels_start_all_symbol' in params:
+                    expr = "LEAST(zoom_from_pixelsize(SQRT(way_area/"+str(params['way_pixels_min_symbol'])+")::numeric), "+str(params['way_pixels_start_all_symbol'])+")"
+                    if expr not in zoom_threshold_groups_symbol:
+                        zoom_threshold_groups_symbol[expr] = set()
+                    zoom_threshold_groups_symbol[expr].add(fn)
+                else:
+                    expr = "zoom_from_pixelsize(SQRT(way_area/"+str(params['way_pixels_min_symbol'])+")::numeric)"
+                    if expr not in zoom_threshold_groups_symbol:
+                        zoom_threshold_groups_symbol[expr] = set()
+                    zoom_threshold_groups_symbol[expr].add(fn)
 
         line = "CASE\n"
-        for expr, fns in zoom_threshold_groups.items():
+        for expr, fns in zoom_threshold_groups_symbol.items():
             fns_comb = "\', \'".join(sorted(fns))
             line += indent_base+"            WHEN feature IN (\'"+fns_comb+"\') THEN "+expr+"\n"
-        line += indent_base+"          END AS zoom_threshold"
+        line += indent_base+"          END AS zoom_threshold_symbol"
+        cols_combined.append(line)
+
+        zoom_threshold_groups_label = dict()
+        for fn, params in way_pixels_thresholds.items():
+            if 'way_pixels_min_label' in params:
+                if 'way_pixels_start_all_label' in params:
+                    expr = "LEAST(zoom_from_pixelsize(SQRT(way_area/"+str(params['way_pixels_min_label'])+")::numeric), "+str(params['way_pixels_start_all_label'])+")"
+                    if expr not in zoom_threshold_groups_label:
+                        zoom_threshold_groups_label[expr] = set()
+                    zoom_threshold_groups_label[expr].add(fn)
+                else:
+                    expr = "zoom_from_pixelsize(SQRT(way_area/"+str(params['way_pixels_min_label'])+")::numeric)"
+                    if expr not in zoom_threshold_groups_label:
+                        zoom_threshold_groups_label[expr] = set()
+                    zoom_threshold_groups_label[expr].add(fn)
+
+        line = "CASE\n"
+        for expr, fns in zoom_threshold_groups_label.items():
+            fns_comb = "\', \'".join(sorted(fns))
+            line += indent_base+"            WHEN feature IN (\'"+fns_comb+"\') THEN "+expr+"\n"
+        line += indent_base+"          END AS zoom_threshold_label"
         cols_combined.append(line)
 
 
     # zoom level thresholds
-    for attr in ['start_symbol', 'start_label']:
+    for component in ['symbol', 'label']:
+
+        attr = 'start_'+component
+        thr_attr = 'zoom_threshold_'+component
 
         zoom_threshold_feature_groups = dict()
         for fn, variant in zooms.items():
@@ -1207,7 +1302,7 @@ def main():
             if (len(variant) == 1) and (None in variant):
                 if variant[None][attr] != 'NULL':
                     if fn in way_pixels_thresholds:
-                        expr = "GREATEST("+str(variant[None][attr])+", zoom_threshold)"
+                        expr = "GREATEST("+str(variant[None][attr])+", "+thr_attr+")"
                     else:
                         expr = str(variant[None][attr])
             else:
@@ -1220,7 +1315,7 @@ def main():
                 if not(has_variant):
                     if variant[None][attr] != 'NULL':
                         if fn in way_pixels_thresholds:
-                            expr = "GREATEST("+str(variant[None][attr])+", zoom_threshold)"
+                            expr = "GREATEST("+str(variant[None][attr])+", "+thr_attr+")"
                         else:
                             expr = str(variant[None][attr])
 
@@ -1239,14 +1334,14 @@ def main():
                     if vn is not None:
                         if params[attr] != variant[None][attr]:
                             if fn in way_pixels_thresholds:
-                                line2 += indent_base+"              WHEN combined.variant = \'"+vn+"\' THEN GREATEST("+str(params[attr])+", zoom_threshold)\n"
+                                line2 += indent_base+"              WHEN combined.variant = \'"+vn+"\' THEN GREATEST("+str(params[attr])+", "+thr_attr+")\n"
                             else:
                                 line2 += indent_base+"              WHEN combined.variant = \'"+vn+"\' THEN "+str(params[attr])+"\n"
                             has_variant = True
                 if None in variant:
                     if variant[None][attr] != 'NULL':
                         if fn in way_pixels_thresholds:
-                            line2 += indent_base+"              ELSE GREATEST("+str(variant[None][attr])+", zoom_threshold)\n"
+                            line2 += indent_base+"              ELSE GREATEST("+str(variant[None][attr])+", "+thr_attr+")\n"
                         else:
                             line2 += indent_base+"              ELSE "+str(variant[None][attr])+"\n"
                 line2 += indent_base+"            END\n"
@@ -1434,15 +1529,13 @@ def main():
         print (indent_base+"          way,", file=file_mml)
 
     print (indent_base+"          "+((",\n"+indent_base+"          ").join(cols_combined)), file=file_mml)
+
     print (indent_base+"        FROM", file=file_mml)
     print (indent_base+"        (SELECT -- This subselect generates the feature column allows filtering on it", file=file_mml)
     print (indent_base+"            way,", file=file_mml)
 
     for attr, params in default_attributes.items():
-        if 'sql' in params:
-            print (indent_base+"            "+params['sql']+" AS \""+attr+"\",", file=file_mml)
-        else:
-            print (indent_base+"            \""+attr+"\",", file=file_mml)
+        print (indent_base+"            \""+attr+"\",", file=file_mml)
 
     print (indent_base+"            COALESCE(", file=file_mml)
 
@@ -1532,11 +1625,38 @@ def main():
     print (indent_base+"            ) AS feature,", file=file_mml)
 
     for attr, params in attributes.items():
+        print (indent_base+"            \""+attr+"\",", file=file_mml)
+
+    print (indent_base+"            way_length,", file=file_mml)
+    print (indent_base+"            way_area,", file=file_mml)
+    print (indent_base+"            way_pixels", file=file_mml)
+
+    print (indent_base+"          FROM", file=file_mml)
+    print (indent_base+"          (SELECT -- This subselect generates the custom attribute columns", file=file_mml)
+    print (indent_base+"              way,", file=file_mml)
+
+    for attr, params in default_attributes.items():
+        if 'sql' in params:
+            print (indent_base+"              "+params['sql']+" AS \""+attr+"\",", file=file_mml)
+        else:
+            print (indent_base+"              \""+attr+"\",", file=file_mml)
+
+    for attr, params in attributes.items():
         for sql, params2 in params.items():
+            # lookup set to skip duplicate conditions
+            fconds_lookup = set()
             fconds_all = None
             have_cond = False
             for cond, params3 in params2.items():
                 fconds = None
+
+                # avoid self referential conditions on generated columns
+                # this is inprecise since it just tests if string is in string without single quote before or after and does not actually consider SQL syntax
+                if (cond is not None) and (cond != ''):
+                    if attr not in columns_raw:
+                        if attr in cond.replace("'"+attr, "").replace(attr+"'", ""):
+                            cond = None
+
                 for fkey, fvals in params3.items():
                     vals_plain = set()
                     for fval, variants in fvals.items():
@@ -1553,30 +1673,43 @@ def main():
                         else:
                             fconds = fconds+" OR "+fcond
                 if fconds is None:
-                    if fconds_all is None:
-                        if (cond is not None) and (cond != ''):
-                            fconds_all = "("+cond+")"
-                            have_cond = True
-                    else:
-                        if (cond is not None) and (cond != ''):
-                            fconds_all += " OR\n"+indent_base+"                    ("+cond+")"
-                            have_cond = True
+                    if (cond is not None) and (cond != ''):
+                        if cond not in fconds_lookup:
+                            fconds_lookup.add(cond)
+                            if fconds_all is None:
+                                fconds_all = "("+cond+")"
+                                have_cond = True
+                            else:
+                                fconds_all += " OR\n"+indent_base+"                     ("+cond+")"
+                                have_cond = True
                 else:
                     if fconds_all is None:
                         if (cond is not None) and (cond != ''):
-                            fconds_all = "(("+fconds+") AND "+cond+")"
-                            have_cond = True
+                            ccond = "("+fconds+") AND "+cond
+                            if ccond not in fconds_lookup:
+                                fconds_lookup.add(ccond)
+                                fconds_all = "("+ccond+")"
+                                have_cond = True
                         else:
-                            fconds_all = fconds
+                            ccond = "("+fconds+")"
+                            if ccond not in fconds_lookup:
+                                fconds_lookup.add(ccond)
+                                fconds_all = ccond
                     else:
                         if (cond is not None) and (cond != ''):
-                            fconds_all += " OR\n"+indent_base+"                    (("+fconds+") AND "+cond+")"
-                            have_cond = True
+                            ccond = "("+fconds+") AND "+cond
+                            if ccond not in fconds_lookup:
+                                fconds_lookup.add(ccond)
+                                fconds_all += " OR\n"+indent_base+"                     ("+ccond+")"
+                                have_cond = True
                         else:
-                            fconds_all += " OR\n"+indent_base+"                    ("+fconds+")"
+                            ccond = "("+fconds+")"
+                            if ccond not in fconds_lookup:
+                                fconds_lookup.add(ccond)
+                                fconds_all += " OR\n"+indent_base+"                     "+ccond
 
             if (sql is None) or (sql == ''):
-                print (indent_base+"            \""+attr+"\",", file=file_mml)
+                print (indent_base+"              \""+attr+"\",", file=file_mml)
                 # do not make attributes conditional unless they are customized with an SQL expression
                 #if not(have_cond):
                 #    print (indent_base+"            \""+attr+"\",", file=file_mml)
@@ -1590,45 +1723,53 @@ def main():
                     # this is a heuristic if to make this column conditional or not:
                     # if the sql code is longer than the condition make it conditional, otherwise always evaluate the sql
                     if fconds_all is None:
-                        sqlx = ("\n"+indent_base+"            ").join(sql.splitlines())
-                        print (indent_base+"            "+sqlx+" AS \""+attr+"\",", file=file_mml)
+                        sqlx = ("\n"+indent_base+"              ").join(sql.splitlines())
+                        print (indent_base+"              "+sqlx+" AS \""+attr+"\",", file=file_mml)
                     elif len(sql) > len(fconds_all):
-                        sqlx = ("\n"+indent_base+"                ").join(sql.splitlines())
-                        print (indent_base+"            CASE", file=file_mml)
-                        print (indent_base+"              WHEN "+fconds_all+" THEN\n"+indent_base+"                "+sqlx, file=file_mml)
-                        print (indent_base+"            END AS \""+attr+"\",", file=file_mml)
+                        sqlx = ("\n"+indent_base+"                  ").join(sql.splitlines())
+                        print (indent_base+"              CASE", file=file_mml)
+                        print (indent_base+"                WHEN "+fconds_all+" THEN\n"+indent_base+"                  "+sqlx, file=file_mml)
+                        print (indent_base+"              END AS \""+attr+"\",", file=file_mml)
                     else:
-                        sqlx = ("\n"+indent_base+"            ").join(sql.splitlines())
-                        print (indent_base+"            "+sqlx+" AS \""+attr+"\",", file=file_mml)
+                        sqlx = ("\n"+indent_base+"              ").join(sql.splitlines())
+                        print (indent_base+"              "+sqlx+" AS \""+attr+"\",", file=file_mml)
                 else:
-                    sqlx = ("\n"+indent_base+"                ").join(sql.splitlines())
-                    print (indent_base+"            CASE", file=file_mml)
-                    print (indent_base+"              WHEN "+fconds_all+" THEN\n"+indent_base+"                "+sqlx, file=file_mml)
-                    print (indent_base+"            END AS \""+attr+"\",", file=file_mml)
+                    sqlx = ("\n"+indent_base+"                  ").join(sql.splitlines())
+                    print (indent_base+"              CASE", file=file_mml)
+                    print (indent_base+"                WHEN "+fconds_all+" THEN\n"+indent_base+"                  "+sqlx, file=file_mml)
+                    print (indent_base+"              END AS \""+attr+"\",", file=file_mml)
 
-    print (indent_base+"            way_length,", file=file_mml)
-    print (indent_base+"            way_area,", file=file_mml)
-    print (indent_base+"            COALESCE(way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0), 0) AS way_pixels", file=file_mml)
-    print (indent_base+"          FROM", file=file_mml)
+    print (indent_base+"              -- these are the remaining of the original columns - which are possibly still needed for generating the feature column", file=file_mml)
 
-    print (indent_base+"          (", file=file_mml)
+    for attr in sorted(columns_raw):
+        if attr not in default_attributes:
+            if attr not in attributes:
+                print (indent_base+"              \""+attr+"\",", file=file_mml)
+
+    print (indent_base+"              tags,", file=file_mml)
+    print (indent_base+"              way_length,", file=file_mml)
+    print (indent_base+"              way_area,", file=file_mml)
+    print (indent_base+"              COALESCE(way_area/NULLIF(POW(!scale_denominator!*0.001*0.28,2),0), 0) AS way_pixels", file=file_mml)
+    print (indent_base+"            FROM", file=file_mml)
+
+    print (indent_base+"            (", file=file_mml)
     if have_points:
-        print (indent_base+"            SELECT", file=file_mml)
-        print (indent_base+"                way,", file=file_mml)
-        print (indent_base+"                {},".format((",\n"+indent_base+"                ").join(sorted(columns_points))), file=file_mml)
-        print (indent_base+"                tags,", file=file_mml)
-        print (indent_base+"                NULL AS way_length,", file=file_mml)
-        print (indent_base+"                NULL AS way_area", file=file_mml)
-        print (indent_base+"              FROM planet_osm_point", file=file_mml)
-        print (indent_base+"              WHERE way && !bbox! AND", file=file_mml)
-        print (indent_base+"                CASE", file=file_mml)
+        print (indent_base+"              SELECT", file=file_mml)
+        print (indent_base+"                  way,", file=file_mml)
+        print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_points))), file=file_mml)
+        print (indent_base+"                  tags,", file=file_mml)
+        print (indent_base+"                  NULL AS way_length,", file=file_mml)
+        print (indent_base+"                  NULL AS way_area", file=file_mml)
+        print (indent_base+"                FROM planet_osm_point", file=file_mml)
+        print (indent_base+"                WHERE way && !bbox! AND", file=file_mml)
+        print (indent_base+"                  CASE", file=file_mml)
 
         filter_first = True
         kvs = dict()
 
         for z in sorted(prefilters_points):
             if filter_first:
-                print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
+                print (indent_base+"                    WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
                 filter_first = False
 
             for filter_key, filter_vals in prefilters_points[z].items():
@@ -1663,37 +1804,37 @@ def main():
                     if fconds_all is None:
                         fconds_all = ""
                     else:
-                        fconds_all += " OR\n"+indent_base+"                    "
+                        fconds_all += " OR\n"+indent_base+"                      "
                     fconds_all += "("+fconds_nowp+")"
 
             if fconds_all is not None:
                 if z == sorted(prefilters_points)[-1]:
-                    print (indent_base+"                  ELSE", file=file_mml)
+                    print (indent_base+"                    ELSE", file=file_mml)
                 else:
-                    print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
-                print (indent_base+"                    "+fconds_all, file=file_mml)
+                    print (indent_base+"                    WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
+                print (indent_base+"                      "+fconds_all, file=file_mml)
 
-        print (indent_base+"                END", file=file_mml)
+        print (indent_base+"                  END", file=file_mml)
 
     if have_lines:
         if have_points:
-            print (indent_base+"            UNION ALL", file=file_mml)
-        print (indent_base+"            SELECT", file=file_mml)
-        print (indent_base+"                ST_LineInterpolatePoint(way, 0.5) AS way,", file=file_mml)
-        print (indent_base+"                {},".format((",\n"+indent_base+"                ").join(sorted(columns_lines))), file=file_mml)
-        print (indent_base+"                tags,", file=file_mml)
-        print (indent_base+"                ST_Length(way) AS way_length,", file=file_mml)
-        print (indent_base+"                NULL AS way_area", file=file_mml)
-        print (indent_base+"              FROM planet_osm_line", file=file_mml)
-        print (indent_base+"              WHERE way && !bbox! AND", file=file_mml)
-        print (indent_base+"                CASE", file=file_mml)
+            print (indent_base+"              UNION ALL", file=file_mml)
+        print (indent_base+"              SELECT", file=file_mml)
+        print (indent_base+"                  ST_LineInterpolatePoint(way, 0.5) AS way,", file=file_mml)
+        print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_lines))), file=file_mml)
+        print (indent_base+"                  tags,", file=file_mml)
+        print (indent_base+"                  ST_Length(way) AS way_length,", file=file_mml)
+        print (indent_base+"                  NULL AS way_area", file=file_mml)
+        print (indent_base+"                FROM planet_osm_line", file=file_mml)
+        print (indent_base+"                WHERE way && !bbox! AND", file=file_mml)
+        print (indent_base+"                  CASE", file=file_mml)
 
         filter_first = True
         kvs = dict()
 
         for z in sorted(prefilters_lines):
             if filter_first:
-                print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
+                print (indent_base+"                    WHEN z(!scale_denominator!) <= "+str(z-1)+" THEN FALSE", file=file_mml)
                 filter_first = False
 
             for filter_key, filter_vals in prefilters_lines[z].items():
@@ -1733,25 +1874,25 @@ def main():
 
             if fconds_all is not None:
                 if z == sorted(prefilters_lines)[-1]:
-                    print (indent_base+"                  ELSE", file=file_mml)
+                    print (indent_base+"                    ELSE", file=file_mml)
                 else:
-                    print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
-                print (indent_base+"                    "+fconds_all, file=file_mml)
+                    print (indent_base+"                    WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
+                print (indent_base+"                      "+fconds_all, file=file_mml)
 
-        print (indent_base+"                END", file=file_mml)
+        print (indent_base+"                  END", file=file_mml)
 
     if have_polygons:
         if have_points or have_lines:
-            print (indent_base+"            UNION ALL", file=file_mml)
-        print (indent_base+"            SELECT", file=file_mml)
-        print (indent_base+"                ST_PointOnSurface(way) AS way,", file=file_mml)
-        print (indent_base+"                {},".format((",\n"+indent_base+"                ").join(sorted(columns_polygons))), file=file_mml)
-        print (indent_base+"                tags,", file=file_mml)
-        print (indent_base+"                NULL AS way_length,", file=file_mml)
-        print (indent_base+"                way_area", file=file_mml)
-        print (indent_base+"              FROM planet_osm_polygon", file=file_mml)
-        print (indent_base+"              WHERE way && !bbox!", file=file_mml)
-        print (indent_base+"                AND way_area < 768000*POW(!scale_denominator!*0.001*0.28,2)", file=file_mml)
+            print (indent_base+"              UNION ALL", file=file_mml)
+        print (indent_base+"              SELECT", file=file_mml)
+        print (indent_base+"                  ST_PointOnSurface(way) AS way,", file=file_mml)
+        print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_polygons))), file=file_mml)
+        print (indent_base+"                  tags,", file=file_mml)
+        print (indent_base+"                  NULL AS way_length,", file=file_mml)
+        print (indent_base+"                  way_area", file=file_mml)
+        print (indent_base+"                FROM planet_osm_polygon", file=file_mml)
+        print (indent_base+"                WHERE way && !bbox!", file=file_mml)
+        print (indent_base+"                  AND way_area < 768000*POW(!scale_denominator!*0.001*0.28,2)", file=file_mml)
         if have_convex_hulls:
             for attr, vals_plain in convex_hull_features.items():
                 if attr in columns_polygons_db:
@@ -1759,9 +1900,9 @@ def main():
                 else:
                     col = "tags->\'"+attr+"\'"
                 vals = "\'"+("\', \'".join(sorted(vals_plain)))+"\'"
-                print (indent_base+"                AND ("+col+" NOT IN ("+vals+") OR "+col+" IS NULL)", file=file_mml)
-        print (indent_base+"                AND", file=file_mml)
-        print (indent_base+"                CASE", file=file_mml)
+                print (indent_base+"                  AND ("+col+" NOT IN ("+vals+") OR "+col+" IS NULL)", file=file_mml)
+        print (indent_base+"                  AND", file=file_mml)
+        print (indent_base+"                  CASE", file=file_mml)
 
         filter_first = True
         kvs = dict()
@@ -1828,53 +1969,53 @@ def main():
                     if fconds_all is None:
                         fconds_all = ""
                     else:
-                        fconds_all += " OR\n"+indent_base+"                    "
+                        fconds_all += " OR\n"+indent_base+"                      "
                     fconds_all += "("+fconds_wp+")"
                 if fconds_nowp is not None:
                     if fconds_all is None:
                         fconds_all = ""
                     else:
-                        fconds_all += " OR\n"+indent_base+"                    "
+                        fconds_all += " OR\n"+indent_base+"                      "
                     fconds_all += "("+fconds_nowp+")"
 
             if fconds_all is not None:
                 if z == sorted(prefilters_polygons)[-1]:
-                    print (indent_base+"                  ELSE", file=file_mml)
+                    print (indent_base+"                    ELSE", file=file_mml)
                 else:
-                    print (indent_base+"                  WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
-                print (indent_base+"                    "+fconds_all, file=file_mml)
+                    print (indent_base+"                    WHEN z(!scale_denominator!) <= "+str(z)+" THEN", file=file_mml)
+                print (indent_base+"                      "+fconds_all, file=file_mml)
 
-        print (indent_base+"                END", file=file_mml)
+        print (indent_base+"                  END", file=file_mml)
 
     if have_convex_hulls:
         if have_points or have_lines or have_polygons:
-            print (indent_base+"            UNION ALL", file=file_mml)
-        print (indent_base+"            SELECT -- This is separately the archipelagos with the convex hull geometry processing", file=file_mml)
-        print (indent_base+"                ST_ClosestPoint(oway,ST_PointOnSurface(way)) AS way,", file=file_mml)
-        print (indent_base+"                {},".format((",\n"+indent_base+"                ").join(sorted(columns_polygons))), file=file_mml)
-        print (indent_base+"                tags,", file=file_mml)
-        print (indent_base+"                NULL AS way_length,", file=file_mml)
-        print (indent_base+"                ST_Area(ST_Envelope(oway)) AS way_area", file=file_mml)
-        print (indent_base+"              FROM", file=file_mml)
-        print (indent_base+"                (SELECT", file=file_mml)
-        print (indent_base+"                    (ST_Dump(", file=file_mml)
-        print (indent_base+"                      -- this detects multipolygons extending over the 180 degree meridian to split them", file=file_mml)
-        print (indent_base+"                      CASE WHEN (ST_XMax(way)-ST_XMin(way)) < 20037508 THEN", file=file_mml)
-        print (indent_base+"                        ST_ConvexHull(way)", file=file_mml)
-        print (indent_base+"                      ELSE", file=file_mml)
-        print (indent_base+"                        -- splits the polygon into the two hemisphere parts", file=file_mml)
-        print (indent_base+"                        ST_Collect(", file=file_mml)
-        print (indent_base+"                          ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((-20037508 -20037508, -20037508 20037508, 0  20037508, 0 -20037508, -20037508 -20037508))'), 3857))),", file=file_mml)
-        print (indent_base+"                          ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((0 -20037508, 0 20037508, 20037508 20037508, 20037508 -20037508, 0 -20037508))'), 3857)))", file=file_mml)
-        print (indent_base+"                        )", file=file_mml)
-        print (indent_base+"                      END", file=file_mml)
-        print (indent_base+"                    )).geom AS way,", file=file_mml)
-        print (indent_base+"                    way AS oway,", file=file_mml)
-        print (indent_base+"                    {},".format((",\n"+indent_base+"                    ").join(sorted(columns_polygons_direct))), file=file_mml)
-        print (indent_base+"                    tags", file=file_mml)
-        print (indent_base+"                  FROM planet_osm_polygon", file=file_mml)
-        print (indent_base+"                  WHERE way && !bbox!", file=file_mml)
-        print (indent_base+"                    AND building IS NULL", file=file_mml)
+            print (indent_base+"              UNION ALL", file=file_mml)
+        print (indent_base+"              SELECT -- This is separately the archipelagos with the convex hull geometry processing", file=file_mml)
+        print (indent_base+"                  ST_ClosestPoint(oway,ST_PointOnSurface(way)) AS way,", file=file_mml)
+        print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_polygons))), file=file_mml)
+        print (indent_base+"                  tags,", file=file_mml)
+        print (indent_base+"                  NULL AS way_length,", file=file_mml)
+        print (indent_base+"                  ST_Area(ST_Envelope(oway)) AS way_area", file=file_mml)
+        print (indent_base+"                FROM", file=file_mml)
+        print (indent_base+"                  (SELECT", file=file_mml)
+        print (indent_base+"                      (ST_Dump(", file=file_mml)
+        print (indent_base+"                        -- this detects multipolygons extending over the 180 degree meridian to split them", file=file_mml)
+        print (indent_base+"                        CASE WHEN (ST_XMax(way)-ST_XMin(way)) < 20037508 THEN", file=file_mml)
+        print (indent_base+"                          ST_ConvexHull(way)", file=file_mml)
+        print (indent_base+"                        ELSE", file=file_mml)
+        print (indent_base+"                          -- splits the polygon into the two hemisphere parts", file=file_mml)
+        print (indent_base+"                          ST_Collect(", file=file_mml)
+        print (indent_base+"                            ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((-20037508 -20037508, -20037508 20037508, 0  20037508, 0 -20037508, -20037508 -20037508))'), 3857))),", file=file_mml)
+        print (indent_base+"                            ST_ConvexHull(ST_Intersection(way, ST_SetSRID(ST_GeomFromText('POLYGON((0 -20037508, 0 20037508, 20037508 20037508, 20037508 -20037508, 0 -20037508))'), 3857)))", file=file_mml)
+        print (indent_base+"                          )", file=file_mml)
+        print (indent_base+"                        END", file=file_mml)
+        print (indent_base+"                      )).geom AS way,", file=file_mml)
+        print (indent_base+"                      way AS oway,", file=file_mml)
+        print (indent_base+"                      {},".format((",\n"+indent_base+"                      ").join(sorted(columns_polygons_direct))), file=file_mml)
+        print (indent_base+"                      tags", file=file_mml)
+        print (indent_base+"                    FROM planet_osm_polygon", file=file_mml)
+        print (indent_base+"                    WHERE way && !bbox!", file=file_mml)
+        print (indent_base+"                      AND building IS NULL", file=file_mml)
 
         for attr, vals_plain in convex_hull_features.items():
             if attr in columns_polygons_db:
@@ -1882,12 +2023,12 @@ def main():
             else:
                 col = "tags->\'"+attr+"\'"
             vals = "\'"+("\', \'".join(sorted(vals_plain)))+"\'"
-            print (indent_base+"                    AND "+col+" IN ("+vals+")", file=file_mml)
+            print (indent_base+"                      AND "+col+" IN ("+vals+")", file=file_mml)
 
-        print (indent_base+"                ) AS archipelagos", file=file_mml)
+        print (indent_base+"                  ) AS archipelagos", file=file_mml)
 
-    print (indent_base+"          ) AS points_all", file=file_mml)
-
+    print (indent_base+"            ) AS points_all", file=file_mml)
+    print (indent_base+"          ) AS points_attributes", file=file_mml)
     print (indent_base+"        ) AS features", file=file_mml)
     print (indent_base+"        WHERE feature IS NOT NULL", file=file_mml)
 
