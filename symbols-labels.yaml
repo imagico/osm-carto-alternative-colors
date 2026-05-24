@@ -2670,7 +2670,7 @@ features:
     style: symbol-only
     symbol_file: symbols/sources/animal/feeding.svg
     symbol_color: water-icon
-    start_symbol: 16
+    start_symbol: 17
     condition: (("natural" IS NULL OR "natural" NOT IN ('spring', 'hot_spring')) AND (man_made IS NULL OR man_made NOT IN ('water_well')))
   amenity=game_feeding:
     style: symbol-only
