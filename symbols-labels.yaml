@@ -1851,8 +1851,8 @@ templates:
     style: label-variable-size
     start_label: 10
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 17
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 17
     condition: (building IS NULL OR building = 'no')
     attributes:
       - building
@@ -1861,8 +1861,8 @@ templates:
     style: label-variable-size-water
     start_label: 10
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 17
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 17
     condition: (building IS NULL OR building = 'no')
     attributes:
       - building
@@ -4762,7 +4762,7 @@ features:
     style: bridges
     label_color: bridge-text
     start_label: 12
-    way_pixels_min: 62.5
+    way_pixels_min_label: 62.5
   amenity=hospital:
     symbol_file: symbols/sources/health/hospital.svg
     symbol_color: health-icon
@@ -5240,8 +5240,8 @@ features:
     label_color: "@marina-text"
     start_label: 14
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 17
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 17
     condition: (building IS NULL OR building = 'no')
     attributes:
       - building
@@ -5251,8 +5251,8 @@ features:
     label_color: darken(@retail, 50%)
     start_label: 10
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 17
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 17
 
   place=archipelago:
     style: label-variable-size
@@ -5260,22 +5260,22 @@ features:
     label_color: island-text
     start_label: 10
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 16
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 16
   place=island:
     style: label-variable-size
     label_color: island-text
     start_label: 10
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 16
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 16
   place=islet:
     style: label-variable-size
     label_color: island-text
     start_label: 11
     font_type: oblique
-    way_pixels_min: 3000
-    way_pixels_start_all: 17
+    way_pixels_min_label: 3000
+    way_pixels_start_all_label: 17
 
   landuse=military:
     template: label-variable-size-nobuilding

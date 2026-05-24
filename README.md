@@ -81,6 +81,15 @@ The following are the major design differences of this style compared to OpenStr
 * rendering of `man_made=quay`
 * rendering of `emergency=life_ring`
 * rendering of `man_made=adit`/`man_made=mineshaft` with differentiation of disused/abandoned and `resource=*`
+* rendering of meadow orchards
+* different rendering of `leisure=dog_park`
+* rendering of animal related features:
+  - `meadow=agricultural`, `meadow=pasturel` and `meadow=paddock` on `landuse=meadow`
+  - `landuse=animal_keeping`, `amenity=animal_breeding`, `amenity=animal_boarding` and `amenity=animal_shelter`, differentiated by animal type
+  - `amenity=feeding_place` differentiated by `feeding:for` and `feeding:fodder` (plus `aminity=game_feeding`)
+  - `amenity=watering_place`, including augmentation when combined with other water related primary tags
+  - `landuse=apiary` and `man_made=beehive`
+  - `man_made=insect_hotel`
 
 
 # Samples

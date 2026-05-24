@@ -811,7 +811,7 @@ def main():
                 way_pixels_thresholds[fn] = dict()
 
             way_pixels_thresholds[fn]['way_pixels_min_label'] = way_pixels_min_label
-            if way_pixels_start_all_symbol is not None:
+            if way_pixels_start_all_label is not None:
                 way_pixels_thresholds[fn]['way_pixels_start_all_label'] = way_pixels_start_all_label
 
             if kv not in way_pixels_thresholds_kv:
@@ -1794,11 +1794,24 @@ def main():
                 fconds_nowp = None
 
                 if (len(filter_vals) > 0) and (None not in filter_vals):
-                    vals = "\'"+("\', \'".join(sorted(filter_vals)))+"\'"
-                    fconds_nowp = filter_col+" IN ("+vals+")"
+                    vals_wp = set()
+                    for fval in filter_vals:
+                        if filter_key+"="+fval in way_pixels_thresholds_kv:
+                            if way_pixels_thresholds_kv[filter_key+"="+fval]['way_pixels_start_all'] <= z:
+                                vals_wp.add(fval)
+                        else:
+                            vals_wp.add(fval)
+
+                    if len(vals_wp) > 0:
+                        vals = "\'"+("\', \'".join(sorted(vals_wp)))+"\'"
+                        fconds_nowp = filter_col+" IN ("+vals+")"
 
                 else:
-                    fconds_nowp = filter_col+" IS NOT NULL"
+                    if filter_key in way_pixels_thresholds_kv:
+                        if way_pixels_thresholds_kv[filter_key]['way_pixels_start_all'] <= z:
+                            fconds_nowp = filter_col+" IS NOT NULL"
+                    else:
+                        fconds_nowp = filter_col+" IS NOT NULL"
 
                 if fconds_nowp is not None:
                     if fconds_all is None:
