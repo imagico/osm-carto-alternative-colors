@@ -4310,16 +4310,16 @@ features:
         symbol_file: symbols/sources/towers/mast_guyed_tube_radar.svg
     variants:
       height=160:
-        condition: (height >= 160) AND "tower:type" NOT IN ('lighting')
+        condition: (height >= 160) AND ("tower:type" NOT IN ('lighting') OR "tower:type" IS NULL)
         start_symbol: 14
       height=80:
-        condition: (height >= 80) AND "tower:type" NOT IN ('lighting')
+        condition: (height >= 80) AND ("tower:type" NOT IN ('lighting') OR "tower:type" IS NULL)
         start_symbol: 15
       height=40:
-        condition: (height >= 40) AND "tower:type" NOT IN ('lighting')
+        condition: (height >= 40) AND ("tower:type" NOT IN ('lighting') OR "tower:type" IS NULL)
         start_symbol: 16
       height=20:
-        condition: (height >= 20) AND "tower:type" NOT IN ('lighting')
+        condition: (height >= 20) AND ("tower:type" NOT IN ('lighting') OR "tower:type" IS NULL)
         start_symbol: 17
     attributes:
       height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
@@ -4346,6 +4346,10 @@ features:
         attribute: "tower:type"
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/towers/tower_minaret.svg
+      pagoda:
+        attribute: "tower:type"
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/towers/tower_pagoda.svg
       bell_tower:
         attribute: int_tower_type
         style: standard-symbol-attribute-variant
@@ -4481,16 +4485,20 @@ features:
         symbol_file: symbols/sources/towers/tower_dish.svg
         text_dy: 12
     variants:
-      height=160:
-        condition: (height >= 160) AND "tower:type" NOT IN ('lighting', 'bell_tower')
+      large:
+        condition: (way_pixels > 300)
         start_symbol: 14
-        start_label: 17
+        start_label: 15
+      height=160:
+        condition: (height >= 160) AND ("tower:type" NOT IN ('lighting', 'bell_tower') OR "tower:type" IS NULL)
+        start_symbol: 14
+        start_label: 16
       height=80:
-        condition: (height >= 80) AND "tower:type" NOT IN ('lighting', 'bell_tower')
+        condition: (height >= 80) AND ("tower:type" NOT IN ('lighting', 'bell_tower') OR "tower:type" IS NULL)
         start_symbol: 15
         start_label: 17
       height=40:
-        condition: (height >= 40) AND "tower:type" NOT IN ('lighting', 'bell_tower')
+        condition: (height >= 40) AND ("tower:type" NOT IN ('lighting', 'bell_tower') OR "tower:type" IS NULL)
         start_symbol: 16
         start_label: 17
       minor_types:
@@ -4502,6 +4510,40 @@ features:
       height: (tags->'location' NOT IN ('roof', 'rooftop') OR (tags->'location') IS NULL)
       "tower:type":
       int_tower_type:
+  man_made=stupa:
+    symbol_file: symbols/sources/man_made/stupa.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 18
+    text_dy: 10
+    variants:
+      large:
+        condition: (way_pixels > 300)
+        start_symbol: 14
+        start_label: 15
+      height=160:
+        condition: (height >= 160)
+        start_symbol: 14
+        start_label: 15
+      height=80:
+        condition: (height >= 80)
+        start_symbol: 15
+        start_label: 16
+      height=40:
+        condition: (height >= 40)
+        start_symbol: 16
+        start_label: 17
+      height=10:
+        condition: (height < 10)
+        start_symbol: 18
+        start_label: 19
+      height=4:
+        condition: (height < 4)
+        start_symbol: 19
+        start_label: 20
+    attributes:
+      - height
   man_made=communications_tower:
     symbol_file: symbols/sources/towers/communications_tower.svg
     symbol_color: man-made-icon
@@ -4590,6 +4632,40 @@ features:
     start_symbol: 17
     start_label: 17
     text_dy: 10
+  man_made=ceremonial_gate:
+    type: all
+    symbol_file: symbols/sources/man_made/ceremonial_gate.svg
+    symbol_color: man-made-icon
+    label_color: man-made-text
+    start_symbol: 17
+    start_label: 17
+    modifications:
+      torii:
+        attribute: ceremonial_gate
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/torii.svg
+      paifang:
+        attribute: ceremonial_gate
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/paifang.svg
+      hongsalmun:
+        attribute: ceremonial_gate
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/hongsalmun.svg
+      iljumun:
+        attribute: ceremonial_gate
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/iljumun.svg
+      tam_quan:
+        attribute: ceremonial_gate
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/tam_quan.svg
+      torana:
+        attribute: ceremonial_gate
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/torana.svg
+    attributes:
+      - ceremonial_gate
   historic=memorial:
     symbol_file: symbols/sources/historic/memorial.svg
     symbol_color: memorial-icon

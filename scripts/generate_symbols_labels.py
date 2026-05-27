@@ -149,7 +149,7 @@ def main():
         columns_polygons_db.append(col[0])
 
     for col in columns_lines_raw:
-        columns_polygons_db.append(col[0])
+        columns_lines_db.append(col[0])
 
     file_mml = open(mml_fnm, "w")
     file_mss = open(mss_fnm, "w")
@@ -1244,8 +1244,8 @@ def main():
 
     # zoom_threshold column
     if len(way_pixels_thresholds) == 0:
-        cols_combined.append("NULL AS zoom_threshold_symbol")
-        cols_combined.append("NULL AS zoom_threshold_label")
+        cols_combined.append("NULL::integer AS zoom_threshold_symbol")
+        cols_combined.append("NULL::integer AS zoom_threshold_label")
     else:
         zoom_threshold_groups_symbol = dict()
         for fn, params in way_pixels_thresholds.items():
@@ -1562,7 +1562,10 @@ def main():
                             if fval is not None:
                                 vals_plain.add(fval_real)
                             else: # key only feature
-                                line = indent_base+"              \'"+fkey+"\' || CASE WHEN "+cond+" THEN \'\' END"
+                                if cond is '':
+                                    line = indent_base+"              \'"+fkey+"\'"
+                                else:
+                                    line = indent_base+"              \'"+fkey+"\' || CASE WHEN "+cond+" THEN \'\' END"
                                 feature_lines.append(line)
                                 # variants have priority
                                 for fn2, variant2 in variants.items():
@@ -1571,7 +1574,10 @@ def main():
                                             feature_priorities.append(fkey+"+"+vn)
                                 feature_priorities.append(fkey)
                         elif fval is not None:
-                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"\' END"
+                            if cond is '':
+                                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') THEN \'"+fval+"\' END"
+                            else:
+                                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"\' END"
                             feature_lines.append(line)
                             # variants have priority
                             for fn2, variant2 in variants.items():
@@ -1580,7 +1586,10 @@ def main():
                                         feature_priorities.append(fkey+"_"+fval+"+"+vn)
                             feature_priorities.append(fkey+"_"+fval)
                         else:
-                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'/"+fval_mod+"\' END"
+                            if cond is '':
+                                line = indent_base+"              \'"+fkey+"_\' || \'/"+fval_mod+"\'"
+                            else:
+                                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'/"+fval_mod+"\' END"
                             feature_lines.append(line)
                             # variants have priority
                             for fn2, variant2 in variants.items():
@@ -1590,7 +1599,10 @@ def main():
                             feature_priorities.append(fkey)
                     else:
                         if fval is not None:
-                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"_"+variant+"\' END"
+                            if cond is '':
+                                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') THEN \'"+fval+"_"+variant+"\' END"
+                            else:
+                                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"_"+variant+"\' END"
                             feature_lines.append(line)
                             # variants have priority
                             for fn2, variant2 in variants.items():
@@ -1599,7 +1611,10 @@ def main():
                                         feature_priorities.append(fkey+"_"+fval+"_"+variant+"+"+vn)
                             feature_priorities.append(fkey+"_"+fval+"_"+variant)
                         else:
-                            line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'"+variant+"\' END"
+                            if cond is '':
+                                line = indent_base+"              \'"+fkey+"_\' || \'"+variant+"\'"
+                            else:
+                                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'"+variant+"\' END"
                             feature_lines.append(line)
                             # variants have priority
                             for fn2, variant2 in variants.items():
@@ -1610,7 +1625,10 @@ def main():
 
             if len(vals_plain) > 0:
                 vals = "\'"+("\', \'".join(sorted(vals_plain)))+"\'"
-                line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN ("+vals+") AND "+cond+" THEN "+key+" END"
+                if cond is '':
+                    line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN ("+vals+") THEN "+key+" END"
+                else:
+                    line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN ("+vals+") AND "+cond+" THEN "+key+" END"
                 feature_lines.append(line)
                 for fval, fvariants in fvals.items():
                     if variant is None:
@@ -1758,8 +1776,8 @@ def main():
         print (indent_base+"                  way,", file=file_mml)
         print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_points))), file=file_mml)
         print (indent_base+"                  tags,", file=file_mml)
-        print (indent_base+"                  NULL AS way_length,", file=file_mml)
-        print (indent_base+"                  NULL AS way_area", file=file_mml)
+        print (indent_base+"                  NULL::float AS way_length,", file=file_mml)
+        print (indent_base+"                  NULL::float AS way_area", file=file_mml)
         print (indent_base+"                FROM planet_osm_point", file=file_mml)
         print (indent_base+"                WHERE way && !bbox! AND", file=file_mml)
         print (indent_base+"                  CASE", file=file_mml)
@@ -1837,7 +1855,7 @@ def main():
         print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_lines))), file=file_mml)
         print (indent_base+"                  tags,", file=file_mml)
         print (indent_base+"                  ST_Length(way) AS way_length,", file=file_mml)
-        print (indent_base+"                  NULL AS way_area", file=file_mml)
+        print (indent_base+"                  NULL::float AS way_area", file=file_mml)
         print (indent_base+"                FROM planet_osm_line", file=file_mml)
         print (indent_base+"                WHERE way && !bbox! AND", file=file_mml)
         print (indent_base+"                  CASE", file=file_mml)
@@ -1901,7 +1919,7 @@ def main():
         print (indent_base+"                  ST_PointOnSurface(way) AS way,", file=file_mml)
         print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_polygons))), file=file_mml)
         print (indent_base+"                  tags,", file=file_mml)
-        print (indent_base+"                  NULL AS way_length,", file=file_mml)
+        print (indent_base+"                  NULL::float AS way_length,", file=file_mml)
         print (indent_base+"                  way_area", file=file_mml)
         print (indent_base+"                FROM planet_osm_polygon", file=file_mml)
         print (indent_base+"                WHERE way && !bbox!", file=file_mml)
@@ -2007,7 +2025,7 @@ def main():
         print (indent_base+"                  ST_ClosestPoint(oway,ST_PointOnSurface(way)) AS way,", file=file_mml)
         print (indent_base+"                  {},".format((",\n"+indent_base+"                  ").join(sorted(columns_polygons))), file=file_mml)
         print (indent_base+"                  tags,", file=file_mml)
-        print (indent_base+"                  NULL AS way_length,", file=file_mml)
+        print (indent_base+"                  NULL::float AS way_length,", file=file_mml)
         print (indent_base+"                  ST_Area(ST_Envelope(oway)) AS way_area", file=file_mml)
         print (indent_base+"                FROM", file=file_mml)
         print (indent_base+"                  (SELECT", file=file_mml)
