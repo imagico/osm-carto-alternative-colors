@@ -1562,7 +1562,7 @@ def main():
                             if fval is not None:
                                 vals_plain.add(fval_real)
                             else: # key only feature
-                                if cond is '':
+                                if cond == '':
                                     line = indent_base+"              \'"+fkey+"\'"
                                 else:
                                     line = indent_base+"              \'"+fkey+"\' || CASE WHEN "+cond+" THEN \'\' END"
@@ -1574,7 +1574,7 @@ def main():
                                             feature_priorities.append(fkey+"+"+vn)
                                 feature_priorities.append(fkey)
                         elif fval is not None:
-                            if cond is '':
+                            if cond == '':
                                 line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') THEN \'"+fval+"\' END"
                             else:
                                 line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"\' END"
@@ -1586,7 +1586,7 @@ def main():
                                         feature_priorities.append(fkey+"_"+fval+"+"+vn)
                             feature_priorities.append(fkey+"_"+fval)
                         else:
-                            if cond is '':
+                            if cond == '':
                                 line = indent_base+"              \'"+fkey+"_\' || \'/"+fval_mod+"\'"
                             else:
                                 line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'/"+fval_mod+"\' END"
@@ -1599,7 +1599,7 @@ def main():
                             feature_priorities.append(fkey)
                     else:
                         if fval is not None:
-                            if cond is '':
+                            if cond == '':
                                 line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') THEN \'"+fval+"_"+variant+"\' END"
                             else:
                                 line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN (\'"+fval_real+"\') AND "+cond+" THEN \'"+fval+"_"+variant+"\' END"
@@ -1611,7 +1611,7 @@ def main():
                                         feature_priorities.append(fkey+"_"+fval+"_"+variant+"+"+vn)
                             feature_priorities.append(fkey+"_"+fval+"_"+variant)
                         else:
-                            if cond is '':
+                            if cond == '':
                                 line = indent_base+"              \'"+fkey+"_\' || \'"+variant+"\'"
                             else:
                                 line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+cond+" THEN \'"+variant+"\' END"
@@ -1625,7 +1625,7 @@ def main():
 
             if len(vals_plain) > 0:
                 vals = "\'"+("\', \'".join(sorted(vals_plain)))+"\'"
-                if cond is '':
+                if cond == '':
                     line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN ("+vals+") THEN "+key+" END"
                 else:
                     line = indent_base+"              \'"+fkey+"_\' || CASE WHEN "+key+" IN ("+vals+") AND "+cond+" THEN "+key+" END"
