@@ -102,6 +102,7 @@ keys:
 # need to be colored for use in shield symbolizers
 
 colors:
+  land-color: "#f2efe9"
   marina-text: "#576ddf"
   # darken(#4aa5fa, 25%);
   wetland-text: "#0665bf"
@@ -177,6 +178,9 @@ colors:
   fodder_salt: "#ffffff"
   fodder_grain: "#e3b20f"
   fodder_hay: "#93c150"
+
+  power-medium: "#db27e1"
+  power-high: "#f6610e"
 
 # styling types for symbols and labels
 
@@ -1507,8 +1511,10 @@ attributes:
   osm_id:
     always: true
   int_access:
+    # parkings have their own addon symbols for customer access
+    # for charging_station access=customers is ambiguous because any payable charging station might be considered access=customers
     sql: >-
-      CASE WHEN amenity IN ('parking', 'parking_entrance', 'bicycle_parking', 'motorcycle_parking') THEN
+      CASE WHEN amenity IN ('parking', 'parking_entrance', 'bicycle_parking', 'motorcycle_parking', 'charging_station') THEN
         CASE WHEN "access" IN ('private', 'no', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
       ELSE
         CASE WHEN "access" IN ('private', 'no', 'customers', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END
@@ -1742,6 +1748,28 @@ attributes:
     attributes:
       - disused
       - abandoned
+  int_mineshaft:
+    sql: >-
+      (CASE
+        WHEN headframe = 'yes' THEN
+          (CASE
+            WHEN abandoned = 'yes' THEN 'headframe+abandoned'
+            WHEN disused = 'yes' THEN 'headframe+disused'
+            WHEN resource IN ('coal', 'iron_ore', 'gold', 'copper', 'salt') THEN 'headframe+' || resource
+            ELSE 'headframe'
+          END)
+        ELSE
+          (CASE
+            WHEN abandoned = 'yes' THEN 'abandoned'
+            WHEN disused = 'yes' THEN 'disused'
+            WHEN resource IN ('coal', 'iron_ore', 'gold', 'copper', 'salt') THEN resource
+          END)
+      END)
+    attributes:
+      - disused
+      - abandoned
+      - resource
+      - headframe
   shop:
     sql: >-
       CASE WHEN shop IN ('supermarket', 'bag', 'bakery', 'beauty', 'bed', 'bookmaker', 'books', 'butcher', 'carpet', 'clothes', 'computer',
@@ -2361,11 +2389,17 @@ features:
     start_label: 17
     text_dy: 10
   amenity=charging_station:
+    style: symbol-only-access-light
     symbol_file: symbols/sources/transport/charging_station.svg
     symbol_color: transportation-icon
-    label_color: transportation-text
-    start_symbol: 17
-    start_label: 17
+    start_symbol: 18
+    snap: even
+    variants:
+      access_yes:
+        condition: int_access = 'yes'
+        start_symbol: 17
+    attributes:
+      - int_access
   amenity=fuel:
     symbol_file: symbols/sources/transport/fuel.svg
     symbol_color: transportation-icon
@@ -2378,7 +2412,6 @@ features:
     label_color: transportation-text
     start_symbol: 17
     start_label: 17
-
   emergency=life_ring:
     type: point
     style: symbol-only
@@ -3998,47 +4031,95 @@ features:
     start_label: 17
     text_dy: 9
     modifications:
+      disused:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/mineshaft_disused.svg
       abandoned:
-        attribute: int_lifecycle
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/man_made/mineshaft_abandoned.svg
       disused:
-        attribute: int_lifecycle
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_file: symbols/sources/man_made/mineshaft_disused.svg
       coal:
-        attribute: resource
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_color2: content_coal
         symbol_file: symbols/sources/man_made/mineshaft_resource.svg
         text_dy: 10
       iron_ore:
-        attribute: resource
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_color2: content_iron_ore
         symbol_file: symbols/sources/man_made/mineshaft_resource.svg
         text_dy: 10
       gold:
-        attribute: resource
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_color2: content_gold
         symbol_file: symbols/sources/man_made/mineshaft_resource.svg
         text_dy: 10
       copper:
-        attribute: resource
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_color2: content_copper
         symbol_file: symbols/sources/man_made/mineshaft_resource.svg
         text_dy: 10
       salt:
-        attribute: resource
+        attribute: int_mineshaft
         style: standard-symbol-attribute-variant
         symbol_color2: content_salt
         symbol_file: symbols/sources/man_made/mineshaft_resource.svg
         text_dy: 10
+      headframe:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/mineshaft_headframe.svg
+        text_dy: 12
+      headframe+abandoned:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_abandoned.svg
+        text_dy: 10
+      headframe+disused:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_disused.svg
+        text_dy: 12
+      headframe+coal:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_coal
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_resource.svg
+        text_dy: 12
+      headframe+iron_ore:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_iron_ore
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_resource.svg
+        text_dy: 12
+      headframe+gold:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_gold
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_resource.svg
+        text_dy: 12
+      headframe+copper:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_copper
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_resource.svg
+        text_dy: 12
+      headframe+salt:
+        attribute: int_mineshaft
+        style: standard-symbol-attribute-variant
+        symbol_color2: content_salt
+        symbol_file: symbols/sources/man_made/mineshaft_headframe_resource.svg
+        text_dy: 12
     attributes:
-      - int_lifecycle
-      - resource
+      - int_mineshaft
   man_made=heap:
     symbol_file: symbols/sources/man_made/heap_small.svg
     symbol_color: man-made-icon
@@ -4628,10 +4709,28 @@ features:
   historic=city_gate:
     symbol_file: symbols/sources/historic/city_gate.svg
     symbol_color: man-made-icon
+    symbol_color2: land-color
     label_color: man-made-text
     start_symbol: 17
     start_label: 17
     text_dy: 10
+    modifications:
+      entrance:
+        attribute: barrier
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/historic/city_gate_entrance.svg
+      gate:
+        attribute: barrier
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/historic/city_gate_barrier.svg
+      noaccess:
+        filters: >-
+          [int_access = 'restricted']
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/historic/city_gate_noaccess.svg
+    attributes:
+      - barrier
+      - int_access
   man_made=ceremonial_gate:
     type: all
     symbol_file: symbols/sources/man_made/ceremonial_gate.svg
@@ -4762,6 +4861,24 @@ features:
     label_color: culture-text
     start_symbol: 16
     start_label: 17
+  amenity=monastery:
+    symbol_file: symbols/sources/religion/monastery.svg
+    symbol_color: amenity-icon
+    label_color: amenity-text
+    start_symbol: 16
+    start_label: 17
+    text_dy: 12
+    modifications:
+      christian:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/religion/monastery_christian.svg
+      buddhist:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/religion/monastery_buddhist.svg
+    attributes:
+      - religion
   amenity=place_of_worship:
     symbol_file: symbols/sources/religion/place_of_worship.svg
     symbol_color: place-of-worship-icon
@@ -4810,7 +4927,7 @@ features:
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
     start_symbol: 16
-    start_label: 17
+    start_label: 18
     text_dy: 6
   historic=wayside_cross:
     type: point
@@ -4818,17 +4935,33 @@ features:
     symbol_color: place-of-worship-icon
     label_color: place-of-worship-text
     start_symbol: 16
-    start_label: 17
+    start_label: 18
     text_dy: 6
   historic=wayside_shrine:
     type: point
-    symbol_file: symbols/sources/religion/shrine.svg
+    symbol_file: symbols/sources/religion/shrine_small.svg
     symbol_color: man-made-icon
-    label_color: place-of-worship-text
+    label_color: man-made-text
     start_symbol: 16
-    start_label: 17
+    start_label: 18
     text_dy: 10
-
+    modifications:
+      large:
+        style: standard-symbol-zoom-variant
+        start_symbol: 17
+        symbol_file: symbols/sources/religion/shrine.svg
+      christian:
+        attribute: religion
+        style: standard-symbol-attribute-variant
+        symbol_file: symbols/sources/religion/shrine_christian_small.svg
+      large+christian:
+        filters: >-
+          [religion = 'christian']
+        style: standard-symbol-zoom-attribute-variant
+        start_symbol: 17
+        symbol_file: symbols/sources/religion/shrine_christian.svg
+    attributes:
+      - religion
   waterway=waterfall:
     style: label-offset
     label_color: water-text
@@ -5559,3 +5692,87 @@ features:
   aeroway=apron:
     template: label-variable-size-nobuilding
     label_color: darken(@apron, 50%)
+
+# These are additional symbols to be color processed
+# for use in other layers of the style (in particular symbol augmentation)
+# Possible parameters and defaults:
+#
+#   symbol_file: SVG filename
+#   symbol_file: SVG filename, default: symbols/sources/<symbol-name>.svg
+#   symbol_color: symbol color (replacing #000000 in symbol source), default: unchanged (for SVG)
+#   symbol_color2: second symbol color to substitute in SVGs (replacing #ff0000 in symbol source)
+#                  default: symbol_color
+
+symbols:
+  socket_type1:
+    symbol_file: symbols/sources/addon/socket_type1.svg
+    symbol_color: transportation-icon
+    symbol_color2: transportation-icon
+  socket_type1_medium:
+    symbol_file: symbols/sources/addon/socket_type1.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-medium
+  socket_type1_high:
+    symbol_file: symbols/sources/addon/socket_type1.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-high
+  socket_type1_combo:
+    symbol_file: symbols/sources/addon/socket_type1_combo.svg
+    symbol_color: transportation-icon
+    symbol_color2: transportation-icon
+  socket_type1_combo_medium:
+    symbol_file: symbols/sources/addon/socket_type1_combo.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-medium
+  socket_type1_combo_high:
+    symbol_file: symbols/sources/addon/socket_type1_combo.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-high
+  socket_type2:
+    symbol_file: symbols/sources/addon/socket_type2.svg
+    symbol_color: transportation-icon
+    symbol_color2: transportation-icon
+  socket_type2_medium:
+    symbol_file: symbols/sources/addon/socket_type2.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-medium
+  socket_type2_high:
+    symbol_file: symbols/sources/addon/socket_type2.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-high
+  socket_type2_combo:
+    symbol_file: symbols/sources/addon/socket_type2_combo.svg
+    symbol_color: transportation-icon
+    symbol_color2: transportation-icon
+  socket_type2_combo_medium:
+    symbol_file: symbols/sources/addon/socket_type2_combo.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-medium
+  socket_type2_combo_high:
+    symbol_file: symbols/sources/addon/socket_type2_combo.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-high
+  socket_chademo:
+    symbol_file: symbols/sources/addon/socket_chademo.svg
+    symbol_color: transportation-icon
+    symbol_color2: transportation-icon
+  socket_chademo_medium:
+    symbol_file: symbols/sources/addon/socket_chademo.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-medium
+  socket_chademo_high:
+    symbol_file: symbols/sources/addon/socket_chademo.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-high
+  socket_nacs:
+    symbol_file: symbols/sources/addon/socket_nacs.svg
+    symbol_color: transportation-icon
+    symbol_color2: land-color
+  socket_nacs_medium:
+    symbol_file: symbols/sources/addon/socket_nacs.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-medium
+  socket_nacs_high:
+    symbol_file: symbols/sources/addon/socket_nacs.svg
+    symbol_color: transportation-icon
+    symbol_color2: power-high

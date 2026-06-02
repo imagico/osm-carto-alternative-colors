@@ -128,6 +128,7 @@
                   ELSE
                     amenity
                   END AS feature,
+                  CASE WHEN access IN ('private', 'no', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS int_access,
                   CASE WHEN access = 'customers' THEN 'yes' ELSE 'no' END AS shopping,
                   CASE WHEN fee = 'yes' THEN carto_currency_symbol(carto_local_currency(way)) ELSE 'no' END AS fee,
                   CASE WHEN lit = 'yes' THEN 'yes' ELSE 'no' END AS lit,
@@ -173,29 +174,47 @@
                     FROM planet_osm_polygon
                     WHERE way && !bbox!) AS p
                 WHERE
-                  (amenity IN ('parking') AND (access IS NULL OR access NOT IN ('private', 'no', 'permit', 'delivery')) AND
-                    (access = 'customers' OR 
-                      covered = 'yes' OR 
-                      fee = 'yes' OR 
-                      lit = 'yes' OR 
-                      supervised = 'yes' OR 
-                      disabled IS NOT NULL OR 
-                      women IS NOT NULL OR 
-                      parent IS NOT NULL OR 
-                      capacity IS NOT NULL OR 
+                  (amenity IN ('parking') AND
+                    (access IN ('customers', 'private', 'no', 'permit', 'delivery') OR
+                      covered = 'yes' OR
+                      fee = 'yes' OR
+                      lit = 'yes' OR
+                      supervised = 'yes' OR
+                      disabled IS NOT NULL OR
+                      women IS NOT NULL OR
+                      parent IS NOT NULL OR
+                      capacity IS NOT NULL OR
                       parking = 'multi-storey')) OR
-                  (amenity IN ('motorcycle_parking', 'bicycle_parking') AND (access IS NULL OR access NOT IN ('private', 'no', 'permit', 'delivery')) AND
-                    (access = 'customers' OR 
-                      covered = 'yes' OR 
-                      fee = 'yes' OR 
-                      lit = 'yes' OR 
-                      supervised = 'yes' OR 
+                  (amenity IN ('motorcycle_parking', 'bicycle_parking') AND
+                    (access IN ('customers', 'private', 'no', 'permit', 'delivery') OR
+                      covered = 'yes' OR
+                      fee = 'yes' OR
+                      lit = 'yes' OR
+                      supervised = 'yes' OR
                       capacity IS NOT NULL))
               )
               SELECT
                   way,
                   feature,
                   1 AS priority,
+                  'private' AS addon,
+                  shopping,
+                  fee,
+                  lit,
+                  supervised,
+                  disabled,
+                  women,
+                  parent,
+                  capacity,
+                  covered,
+                  osm_id
+                FROM parking_points
+                WHERE int_access = 'restricted'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  2 AS priority,
                   'covered' AS addon,
                   shopping,
                   fee,
@@ -208,12 +227,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE covered != 'no'
+                WHERE covered != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  2 AS priority,
+                  3 AS priority,
                   'disabled' AS addon,
                   shopping,
                   fee,
@@ -226,12 +245,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE disabled != 'no'
+                WHERE disabled != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  3 AS priority,
+                  4 AS priority,
                   'parent' AS addon,
                   shopping,
                   fee,
@@ -244,12 +263,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE parent != 'no'
+                WHERE parent != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  4 AS priority,
+                  5 AS priority,
                   'women' AS addon,
                   shopping,
                   fee,
@@ -262,12 +281,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE women != 'no'
+                WHERE women != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  5 AS priority,
+                  6 AS priority,
                   'lit' AS addon,
                   shopping,
                   fee,
@@ -280,12 +299,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE lit != 'no'
+                WHERE lit != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  6 AS priority,
+                  7 AS priority,
                   'shopping' AS addon,
                   shopping,
                   fee,
@@ -298,12 +317,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE shopping != 'no'
+                WHERE shopping != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  7 AS priority,
+                  8 AS priority,
                   'supervised' AS addon,
                   shopping,
                   fee,
@@ -316,12 +335,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE supervised != 'no'
+                WHERE supervised != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  8 AS priority,
+                  9 AS priority,
                   'fee' AS addon,
                   shopping,
                   fee,
@@ -334,12 +353,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE fee != 'no'
+                WHERE fee != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  9 AS priority,
+                  10 AS priority,
                   'capacity' AS addon,
                   shopping,
                   fee,
@@ -352,12 +371,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE capacity > 0
+                WHERE capacity > 0 AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  10 AS priority,
+                  11 AS priority,
                   'disabled_text' AS addon,
                   shopping,
                   fee,
@@ -370,12 +389,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE disabled NOT IN('yes', 'no')
+                WHERE disabled NOT IN('yes', 'no') AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  11 AS priority,
+                  12 AS priority,
                   'parent_text' AS addon,
                   shopping,
                   fee,
@@ -388,12 +407,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE parent NOT IN('yes', 'no')
+                WHERE parent NOT IN('yes', 'no') AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  12 AS priority,
+                  13 AS priority,
                   'women_text' AS addon,
                   shopping,
                   fee,
@@ -406,12 +425,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE women NOT IN('yes', 'no')
+                WHERE women NOT IN('yes', 'no') AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  13 AS priority,
+                  14 AS priority,
                   'lit2' AS addon,
                   shopping,
                   fee,
@@ -424,12 +443,12 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE lit != 'no'
+                WHERE lit != 'no' AND int_access = 'yes'
               UNION ALL
               SELECT
                   way,
                   feature,
-                  14 AS priority,
+                  15 AS priority,
                   'shopping2' AS addon,
                   shopping,
                   fee,
@@ -442,10 +461,379 @@
                   covered,
                   osm_id
                 FROM parking_points
-                WHERE shopping != 'no'
+                WHERE shopping != 'no' AND int_access = 'yes'
             ) AS _
           ORDER BY priority
         ) AS addon_symbols_parking
+    properties:
+      minzoom: 17
+  - id: addon-symbols-chargingstation
+    geometry: point
+    <<: *extents
+    Datasource:
+      geometry_table: planet_osm_point
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+            way,
+            feature,
+            addon,
+            capacity,
+            covered,
+            vehicles,
+            parking,
+            socket_output,
+            socket_capacity,
+            osm_id
+          FROM
+            (WITH chargingstation_points AS
+              (SELECT
+                  ST_SnapToGrid(
+                    way,
+                    NULLIF(!scale_denominator!*0.001*0.28,0), NULLIF(!scale_denominator!*0.001*0.28,0)) AS way,
+                  amenity AS feature,
+                  int_access,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  -- only set when value differs from total capacity (so we only show a separate label in that case)
+                  CASE WHEN socket_type1 NOT IN ('yes', 'no') AND socket_type1::INTEGER != capacity THEN socket_type1 ELSE 'no' END AS socket_type1,
+                  CASE WHEN socket_type1_combo NOT IN ('yes', 'no') AND socket_type1_combo::INTEGER != capacity THEN socket_type1_combo ELSE 'no' END AS socket_type1_combo,
+                  CASE WHEN socket_type2 NOT IN ('yes', 'no') AND socket_type2::INTEGER != capacity THEN socket_type2 ELSE 'no' END AS socket_type2,
+                  CASE WHEN socket_type2_combo NOT IN ('yes', 'no') AND socket_type2_combo::INTEGER != capacity THEN socket_type2_combo ELSE 'no' END AS socket_type2_combo,
+                  CASE WHEN socket_chademo NOT IN ('yes', 'no') AND socket_chademo::INTEGER != capacity THEN socket_chademo ELSE 'no' END AS socket_chademo,
+                  CASE WHEN socket_nacs NOT IN ('yes', 'no') AND socket_nacs::INTEGER != capacity THEN socket_nacs ELSE 'no' END AS socket_nacs,
+                  -- power classification decides the socket symbol vis - so we only set it if the socket type is present
+                  CASE WHEN socket_type1 != 'no' THEN
+                    CASE
+                      WHEN socket_type1_output > 200 THEN 'high'
+                      WHEN socket_type1_output > 50 THEN 'medium'
+                      ELSE 'low'
+                    END
+                  END AS socket_type1_output,
+                  CASE WHEN socket_type1_combo != 'no' THEN
+                    CASE
+                      WHEN socket_type1_combo_output > 200 THEN 'high'
+                      WHEN socket_type1_combo_output > 50 THEN 'medium'
+                      ELSE 'low'
+                    END
+                  END AS socket_type1_combo_output,
+                  CASE WHEN socket_type2 != 'no' THEN
+                    CASE
+                      WHEN socket_type2_output > 200 THEN 'high'
+                      WHEN socket_type2_output > 50 THEN 'medium'
+                      ELSE 'low'
+                    END
+                  END AS socket_type2_output,
+                  CASE WHEN socket_type2_combo != 'no' THEN
+                    CASE
+                      WHEN socket_type2_combo_output > 200 THEN 'high'
+                      WHEN socket_type2_combo_output > 50 THEN 'medium'
+                      ELSE 'low'
+                    END
+                  END AS socket_type2_combo_output,
+                  CASE WHEN socket_chademo != 'no' THEN
+                    CASE
+                      WHEN socket_chademo_output > 200 THEN 'high'
+                      WHEN socket_chademo_output > 50 THEN 'medium'
+                      ELSE 'low'
+                    END
+                  END AS socket_chademo_output,
+                  CASE WHEN socket_nacs != 'no' THEN
+                    CASE
+                      WHEN socket_nacs_output > 200 THEN 'high'
+                      WHEN socket_nacs_output > 50 THEN 'medium'
+                      ELSE 'low'
+                    END
+                  END AS socket_nacs_output,
+                  osm_id
+                FROM
+                  (SELECT
+                      way,
+                      amenity,
+                      CASE WHEN access IN ('private', 'no', 'permit', 'delivery') THEN 'restricted' ELSE 'yes' END AS int_access,
+                      COALESCE(capacity::INTEGER, 0) AS capacity,
+                      CASE WHEN covered = 'yes' THEN 'yes' ELSE 'no' END AS covered,
+                      CASE
+                        WHEN bicycle IN ('yes', 'designated') THEN (CASE WHEN motorcar = 'no' THEN 'bicycle' ELSE 'bicycle+car' END)
+                        WHEN motorcycle IN ('yes', 'designated') THEN (CASE WHEN motorcar = 'no' THEN 'motorcycle' ELSE 'motorcycle+car' END)
+                      END AS vehicles,
+                      CASE WHEN parking_fee = 'no' OR maxstay IN ('no', 'unlimited') THEN 'yes' ELSE 'no' END AS parking,
+                      CASE
+                        WHEN (socket_type1 ~ '^[0-9]{1,4}$' AND socket_type1 != '0') OR socket_type1 = 'yes' THEN socket_type1 ELSE 'no'
+                      END AS socket_type1,
+                      CASE
+                        WHEN (socket_type1_combo ~ '^[0-9]{1,4}$' AND socket_type1_combo != '0') OR socket_type1_combo = 'yes' THEN socket_type1_combo ELSE 'no'
+                      END AS socket_type1_combo,
+                      CASE
+                        WHEN (socket_type2 ~ '^[0-9]{1,4}$' AND socket_type2 != '0') OR socket_type2 = 'yes' THEN socket_type2 ELSE 'no'
+                      END AS socket_type2,
+                      CASE
+                        WHEN (socket_type2_combo ~ '^[0-9]{1,4}$' AND socket_type2_combo != '0') OR socket_type2_combo = 'yes' THEN socket_type2_combo ELSE 'no'
+                      END AS socket_type2_combo,
+                      CASE
+                        WHEN (socket_chademo ~ '^[0-9]{1,4}$' AND socket_chademo != '0') OR socket_chademo = 'yes' THEN socket_chademo ELSE 'no'
+                      END AS socket_chademo,
+                      CASE
+                        WHEN (socket_nacs ~ '^[0-9]{1,4}$' AND socket_nacs != '0') OR socket_nacs = 'yes' THEN socket_nacs ELSE 'no'
+                      END AS socket_nacs,
+                      -- expect either plain decimal number (in kW) or semicolon separated list of numbers (take only first) or number + unit (with unit bein kW)
+                      CASE
+                        WHEN socket_type1_output ~ '^\d{1,4}(\.\d+)?$' THEN socket_type1_output::float
+                        WHEN socket_type1_output ~ '^\d{1,4}(\.\d+)?;' THEN substring(socket_type1_output from '(^\d{1,4}(\.\d+)?)')::float
+                        WHEN socket_type1_output ~ '^\d{1,4}(\.\d+)?( )?kW' THEN substring(socket_type1_output from '(^\d{1,4}(\.\d+)?)')::float
+                      END AS socket_type1_output,
+                      CASE
+                        WHEN socket_type1_combo_output ~ '^\d{1,4}(\.\d+)?$' THEN socket_type1_combo_output::float
+                        WHEN socket_type1_combo_output ~ '^\d{1,4}(\.\d+)?;' THEN substring(socket_type1_combo_output from '(^\d{1,4}(\.\d+)?)')::float
+                        WHEN socket_type1_combo_output ~ '^\d{1,4}(\.\d+)?( )?kW' THEN substring(socket_type1_combo_output from '(^\d{1,4}(\.\d+)?)')::float
+                      END AS socket_type1_combo_output,
+                      CASE
+                        WHEN socket_type2_output ~ '^\d{1,4}(\.\d+)?$' THEN socket_type2_output::float
+                        WHEN socket_type2_output ~ '^\d{1,4}(\.\d+)?;' THEN substring(socket_type2_output from '(^\d{1,4}(\.\d+)?)')::float
+                        WHEN socket_type2_output ~ '^\d{1,4}(\.\d+)?( )?kW' THEN substring(socket_type2_output from '(^\d{1,4}(\.\d+)?)')::float
+                      END AS socket_type2_output,
+                      CASE
+                        WHEN socket_type2_combo_output ~ '^\d{1,4}(\.\d+)?$' THEN socket_type2_combo_output::float
+                        WHEN socket_type2_combo_output ~ '^\d{1,4}(\.\d+)?;' THEN substring(socket_type2_combo_output from '(^\d{1,4}(\.\d+)?)')::float
+                        WHEN socket_type2_combo_output ~ '^\d{1,4}(\.\d+)?( )?kW' THEN substring(socket_type2_combo_output from '(^\d{1,4}(\.\d+)?)')::float
+                      END AS socket_type2_combo_output,
+                      CASE
+                        WHEN socket_chademo_output ~ '^\d{1,4}(\.\d+)?$' THEN socket_chademo_output::float
+                        WHEN socket_chademo_output ~ '^\d{1,4}(\.\d+)?;' THEN substring(socket_chademo_output from '(^\d{1,4}(\.\d+)?)')::float
+                        WHEN socket_chademo_output ~ '^\d{1,4}(\.\d+)?( )?kW' THEN substring(socket_chademo_output from '(^\d{1,4}(\.\d+)?)')::float
+                      END AS socket_chademo_output,
+                      CASE
+                        WHEN socket_nacs_output ~ '^\d{1,4}(\.\d+)?$' THEN socket_nacs_output::float
+                        WHEN socket_nacs_output ~ '^\d{1,4}(\.\d+)?;' THEN substring(socket_nacs_output from '(^\d{1,4}(\.\d+)?)')::float
+                        WHEN socket_nacs_output ~ '^\d{1,4}(\.\d+)?( )?kW' THEN substring(socket_nacs_output from '(^\d{1,4}(\.\d+)?)')::float
+                      END AS socket_nacs_output,
+                      osm_id
+                    FROM
+                      (SELECT
+                          way,
+                          amenity,
+                          access,
+                          tags->'covered' AS covered,
+                          tags->'capacity' AS capacity,
+                          tags->'parking:fee' AS parking_fee,
+                          tags->'motorcar' AS motorcar,
+                          tags->'motorcycle' AS motorcycle,
+                          tags->'bicycle' AS bicycle,
+                          tags->'maxstay' AS maxstay,
+                          tags->'socket:type1' AS socket_type1,
+                          tags->'socket:type1:output' AS socket_type1_output,
+                          tags->'socket:type1_combo' AS socket_type1_combo,
+                          tags->'socket:type1_combo:output' AS socket_type1_combo_output,
+                          tags->'socket:type2' AS socket_type2,
+                          tags->'socket:type2:output' AS socket_type2_output,
+                          tags->'socket:type2_combo' AS socket_type2_combo,
+                          tags->'socket:type2_combo:output' AS socket_type2_combo_output,
+                          tags->'socket:chademo' AS socket_chademo,
+                          tags->'socket:chademo:output' AS socket_chademo_output,
+                          tags->'socket:nacs' AS socket_nacs,
+                          tags->'socket:nacs:output' AS socket_nacs_output,
+                          osm_id
+                        FROM planet_osm_point
+                        WHERE way && !bbox!
+                      UNION ALL
+                      SELECT
+                          ST_PointOnSurface(way) AS way,
+                          amenity,
+                          access,
+                          tags->'covered' AS covered,
+                          tags->'capacity' AS capacity,
+                          tags->'parking:fee' AS parking_fee,
+                          tags->'motorcar' AS motorcar,
+                          tags->'motorcycle' AS motorcycle,
+                          bicycle,
+                          tags->'maxstay' AS maxstay,
+                          tags->'socket:type1' AS socket_type1_output,
+                          tags->'socket:type1:output' AS socket_type1_output,
+                          tags->'socket:type1_combo' AS socket_type1_combo,
+                          tags->'socket:type1_combo:output' AS socket_type1_combo_output,
+                          tags->'socket:type2' AS socket_type2_output,
+                          tags->'socket:type2:output' AS socket_type2_output,
+                          tags->'socket:type2_combo' AS socket_type2_combo,
+                          tags->'socket:type2_combo:output' AS socket_type2_combo_output,
+                          tags->'socket:chademo' AS socket_chademo,
+                          tags->'socket:chademo:output' AS socket_chademo_output,
+                          tags->'socket:nacs' AS socket_nacs,
+                          tags->'socket:nacs:output' AS socket_nacs_output,
+                          osm_id
+                        FROM planet_osm_polygon
+                        WHERE way && !bbox!) AS p
+                    WHERE amenity = 'charging_station'
+                  ) AS _
+              )
+              SELECT
+                  way,
+                  feature,
+                  1 AS priority,
+                  'private' AS addon,
+                  0 AS capacity,
+                  'no' AS covered,
+                  NULL AS vehicles,
+                  'no' AS parking,
+                  NULL AS socket_output,
+                  'no' AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE int_access = 'restricted'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  2 AS priority,
+                  'covered' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  NULL AS socket_output,
+                  'no' AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE covered != 'no' AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  3 AS priority,
+                  'capacity' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  NULL AS socket_output,
+                  'no' AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE capacity > 0 AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  4 AS priority,
+                  'vehicles' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  NULL AS socket_output,
+                  'no' AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE vehicles IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  5 AS priority,
+                  'socket_type2_combo' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  socket_type2_combo_output AS socket_output,
+                  socket_type2_combo AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE socket_type2_combo_output IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  6 AS priority,
+                  'socket_type2' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  socket_type2_output AS socket_output,
+                  socket_type2 AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE socket_type2_output IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  7 AS priority,
+                  'socket_nacs' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  socket_nacs_output AS socket_output,
+                  socket_nacs AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE socket_nacs_output IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  8 AS priority,
+                  'socket_type1_combo' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  socket_type1_combo_output AS socket_output,
+                  socket_type1_combo AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE socket_type1_combo_output IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  9 AS priority,
+                  'socket_type1' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  socket_type1_output AS socket_output,
+                  socket_type1 AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE socket_type1_output IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  10 AS priority,
+                  'socket_chademo' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  socket_chademo_output AS socket_output,
+                  socket_chademo AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE socket_chademo_output IS NOT NULL AND int_access = 'yes'
+              UNION ALL
+              SELECT
+                  way,
+                  feature,
+                  11 AS priority,
+                  'parking' AS addon,
+                  capacity,
+                  covered,
+                  vehicles,
+                  parking,
+                  NULL AS socket_output,
+                  'no' AS socket_capacity,
+                  osm_id
+                FROM chargingstation_points
+                WHERE parking = 'yes' AND int_access = 'yes'
+            ) AS _
+          ORDER BY priority
+        ) AS addon_symbols_chargingstation
     properties:
       minzoom: 17
   - id: addon-symbols-water

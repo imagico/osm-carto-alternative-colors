@@ -2150,6 +2150,41 @@ def main():
     print ("}", file=file_mss)
     file_mss.close()
 
+    contactsheet_files_addon = []
+
+    # colorize extra symbols
+    for fn, params in config['symbols'].items():
+
+        if 'symbol_color' in params:
+            symbol_color = resolve_color(params['symbol_color'], config['colors'])
+        elif 'symbol_color' in config['defaults']:
+            symbol_color = config['defaults']['symbol_color']
+        else:
+            symbol_color = None
+
+        if 'symbol_color2' in params:
+            symbol_color2 = resolve_color(params['symbol_color2'], config['colors'])
+        else:
+            symbol_color2 = symbol_color
+
+        symbol_file = None
+        if 'symbol_file' in params:
+            symbol_file = params['symbol_file']
+        if symbol_file is None:
+            if os.path.exists(basedir+"/sources/"+fn+".svg"):
+                symbol_file = basedir+"/sources/"+fn+".svg"
+
+        if symbol_file is not None:
+            if 'symbol_color' in params:
+                colorize_svg(symbol_file, basedir, fn, symbol_color, symbol_color2)
+            else:
+                logging.info("Copying symbol for {}...".format(fn))
+                copyfile(symbol_file, basedir+"/colored/"+fn+".svg")
+
+            if not(opts.nopreviews):
+                svg_convert(basedir+"/colored/"+fn+".svg", basedir+"/previews/"+fn+'.png', True, opts.inkscape, opts.rsvg, opts.dpi)
+                contactsheet_files_addon.append(basedir+"/previews/"+fn+".png")
+
     if not(opts.nopreviews):
 
         if contactsheet_files:
@@ -2162,6 +2197,21 @@ def main():
                 ["montage" ] + contactsheet_files +
                 ["-tile", "16x", "-geometry", "1x1+4+4<", "-background", "#f2efe9",
                  "doc/contactsheet_symbols.png"],
+                stderr=subprocess.STDOUT) != 0:
+                logging.warning("'montage' error: contaxt sheet generation failed")
+
+            sys.stdout.flush()
+
+        if contactsheet_files_addon:
+
+            logging.info("Assembling colorized addon symbols contact sheet...")
+
+            sys.stdout.flush()
+
+            if subprocess.call(
+                ["montage" ] + contactsheet_files_addon +
+                ["-tile", "16x", "-geometry", "1x1+4+4<", "-background", "#f2efe9",
+                 "doc/contactsheet_symbols_addon.png"],
                 stderr=subprocess.STDOUT) != 0:
                 logging.warning("'montage' error: contaxt sheet generation failed")
 
@@ -2183,20 +2233,21 @@ def main():
 
                     if "marker-file" in line:
                         if "url(" in line:
+                            if "symbols/colored/" not in line:
 
-                            m = re.match(r".*url\([\"']*([^\"')]+)[\"']*\)", line)
+                                m = re.match(r".*url\([\"']*([^\"')]+)[\"']*\)", line)
 
-                            fnm = m.group(1)
-                            fnm_base = os.path.splitext(os.path.basename(fnm))[0]
-                            fnm_preview = basedir+"/previews/addon_"+fnm_base+'.png'
+                                fnm = m.group(1)
+                                fnm_base = os.path.splitext(os.path.basename(fnm))[0]
+                                fnm_preview = basedir+"/previews/addon_"+fnm_base+'.png'
 
-                            if os.path.exists(fnm):
-                                if not(fnm_preview in contactsheet_files_all):
-                                    logging.info("Rasterizing preview of "+fnm_base)
-                                    svg_convert(fnm, fnm_preview, True, opts.inkscape, opts.rsvg, opts.dpi)
-                                    if os.path.exists(fnm_preview):
-                                        contactsheet_files2.append(fnm_preview)
-                                        contactsheet_files_all.append(fnm_preview)
+                                if os.path.exists(fnm):
+                                    if not(fnm_preview in contactsheet_files_all):
+                                        logging.info("Rasterizing preview of "+fnm_base)
+                                        svg_convert(fnm, fnm_preview, True, opts.inkscape, opts.rsvg, opts.dpi)
+                                        if os.path.exists(fnm_preview):
+                                            contactsheet_files2.append(fnm_preview)
+                                            contactsheet_files_all.append(fnm_preview)
 
                 fin.close()
 

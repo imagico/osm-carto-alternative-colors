@@ -31,6 +31,9 @@
 // shadows of planters and piers
 @shadow-color: #505060;
 
+@power-medium: #db27e1;
+@power-high: #f6610e;
+
 @landcover-font-size: 10;
 @landcover-wrap-width-size: 30; // 3 em
 @landcover-line-spacing-size: -1.5; // -0.15 em
@@ -346,8 +349,1653 @@
   }
 }
 
+#addon-symbols-chargingstation[zoom >= 17] {
+  [feature = 'charging_station'] {
+    [addon = 'private'][zoom >= 18] {
+      private/marker-anchor-cond: "[osm_id]";
+      private/marker-allow-overlap-anchor: "[osm_id]";
+      private/marker-anchor-set: "'private_'+[osm_id]";
+      private/marker-file: url('symbols/transport/private.svg');
+      private/marker-fill: @transportation-icon;
+      private/marker-opacity: @private-opacity;
+      private/marker-transform: 'translate(10,3)';
+      private/marker-placement: interior;
+      private/marker-clip: false;
+    }
+    [addon = 'covered'] {
+      cover/marker-anchor-cond: "[osm_id]";
+      cover/marker-allow-overlap-anchor: "[osm_id]";
+      cover/marker-anchor-set: "'cover_'+[osm_id]";
+      cover/marker-file: url('symbols/transport/roof_large.svg');
+      cover/marker-fill: @transportation-icon;
+      cover/marker-transform: 'translate(0,-9)';
+      cover/marker-placement: interior;
+      cover/marker-clip: false;
+    }
+    [addon = 'capacity'][zoom >= 18] {
+      capacity/text-anchor-cond: "[osm_id]";
+      capacity/text-allow-overlap-anchor: "[osm_id]+',cover_'+[osm_id]";
+      capacity/text-anchor-set: "'capacity_'+[osm_id]";
+      capacity/text-name: "[capacity]";
+      capacity/text-size: 9;
+      capacity/text-fill: @transportation-text;
+      capacity/text-face-name: @standard-font;
+      capacity/text-halo-radius: @standard-halo-radius;
+      capacity/text-halo-fill: @standard-halo-fill;
+      capacity/text-dy: -6;
+      capacity/text-dx: -8;
+      capacity/text-horizontal-alignment: left;
+      capacity/text-vertical-alignment: bottom;
+
+      capacity2/text-anchor-cond: "[osm_id]+',!capacity_'+[osm_id]";
+      capacity2/text-allow-overlap-anchor: "[osm_id]+',cover_'+[osm_id]";
+      capacity2/text-anchor-set: "'capacity_'+[osm_id]";
+      capacity2/text-name: "[capacity]";
+      capacity2/text-size: 9;
+      capacity2/text-fill: @transportation-text;
+      capacity2/text-face-name: @standard-font;
+      capacity2/text-halo-radius: @standard-halo-radius;
+      capacity2/text-halo-fill: @standard-halo-fill;
+      capacity2/text-dy: -8;
+      capacity2/text-dx: -8;
+      capacity2/text-horizontal-alignment: left;
+      capacity2/text-vertical-alignment: bottom;
+
+      capacity3/text-anchor-cond: "[osm_id]+',!capacity_'+[osm_id]";
+      capacity3/text-allow-overlap-anchor: "[osm_id]";
+      capacity3/text-anchor-set: "'capacity3_'+[osm_id]";
+      capacity3/text-name: "[capacity]";
+      capacity3/text-size: 9;
+      capacity3/text-fill: @transportation-text;
+      capacity3/text-face-name: @standard-font;
+      capacity3/text-halo-radius: @standard-halo-radius;
+      capacity3/text-halo-fill: @standard-halo-fill;
+      capacity3/text-dy: -12;
+      capacity3/text-dx: -8;
+      capacity3/text-horizontal-alignment: left;
+      capacity3/text-vertical-alignment: bottom;
+
+      capacity4/text-anchor-cond: "[osm_id]+',!capacity_'+[osm_id]+',!capacity3_'+[osm_id]";
+      capacity4/text-allow-overlap-anchor: "[osm_id]";
+      capacity4/text-anchor-set: "'capacity4_'+[osm_id]";
+      capacity4/text-name: "[capacity]";
+      capacity4/text-size: 9;
+      capacity4/text-fill: @transportation-text;
+      capacity4/text-face-name: @standard-font;
+      capacity4/text-halo-radius: @standard-halo-radius;
+      capacity4/text-halo-fill: @standard-halo-fill;
+      capacity4/text-dy: -11;
+      capacity4/text-dx: 0;
+      capacity4/text-horizontal-alignment: middle;
+      capacity4/text-vertical-alignment: top;
+
+      capacity5/text-anchor-cond: "[osm_id]+',!capacity_'+[osm_id]+',!capacity3_'+[osm_id]+',!capacity4_'+[osm_id]";
+      capacity5/text-allow-overlap-anchor: "[osm_id]";
+      capacity5/text-anchor-set: "'capacity5_'+[osm_id]";
+      capacity5/text-name: "[capacity]";
+      capacity5/text-size: 9;
+      capacity5/text-fill: @transportation-text;
+      capacity5/text-face-name: @standard-font;
+      capacity5/text-halo-radius: @standard-halo-radius;
+      capacity5/text-halo-fill: @standard-halo-fill;
+      capacity5/text-dy: 15;
+      capacity5/text-dx: -7;
+      capacity5/text-horizontal-alignment: left;
+      capacity5/text-vertical-alignment: top;
+    }
+    [addon = 'vehicles'] {
+      [vehicles = 'bicycle'],
+      [vehicles = 'bicycle+car'] {
+        bicycle/marker-anchor-cond: "[osm_id]";
+        bicycle/marker-allow-overlap-anchor: '[osm_id]';
+        bicycle/marker-anchor-set: "'bicycle_'+[osm_id]";
+        bicycle/marker-file: url('symbols/transport/bicycle.svg');
+        bicycle/marker-fill: @transportation-icon;
+        bicycle/marker-transform: 'translate(-12,4)';
+        bicycle/marker-placement: interior;
+        bicycle/marker-clip: false;
+
+        bicycle2/marker-anchor-cond: "[osm_id]+',!bicycle_'+[osm_id]+',!capacity_'+[osm_id]";
+        bicycle2/marker-allow-overlap-anchor: '[osm_id]';
+        bicycle2/marker-anchor-set: "'bicycle2_'+[osm_id]";
+        bicycle2/marker-file: url('symbols/transport/bicycle.svg');
+        bicycle2/marker-fill: @transportation-icon;
+        bicycle2/marker-transform: 'translate(-12,-4)';
+        bicycle2/marker-placement: interior;
+        bicycle2/marker-clip: false;
+
+        bicycle3/marker-anchor-cond: "[osm_id]+',!bicycle_'+[osm_id]+',!bicycle2_'+[osm_id]";
+        bicycle3/marker-allow-overlap-anchor: '[osm_id]';
+        bicycle3/marker-anchor-set: "'bicycle_'+[osm_id]";
+        bicycle3/marker-file: url('symbols/transport/bicycle.svg');
+        bicycle3/marker-fill: @transportation-icon;
+        bicycle3/marker-transform: 'translate(-12,6)';
+        bicycle3/marker-placement: interior;
+        bicycle3/marker-clip: false;
+
+        bicycle4/marker-anchor-cond: "[osm_id]+',!bicycle_'+[osm_id]+',!bicycle2_'+[osm_id]";
+        bicycle4/marker-allow-overlap-anchor: "[osm_id]";
+        bicycle4/marker-anchor-set: "'bicycle4_'+[osm_id]";
+        bicycle4/marker-file: url('symbols/transport/bicycle.svg');
+        bicycle4/marker-fill: @transportation-icon;
+        bicycle4/marker-transform: 'translate(11,9)';
+        bicycle4/marker-placement: interior;
+        bicycle4/marker-clip: false;
+
+        bicycle5/marker-anchor-cond: "[osm_id]+',!bicycle_'+[osm_id]+',!bicycle2_'+[osm_id]+',!bicycle4_'+[osm_id]";
+        bicycle5/marker-allow-overlap-anchor: "[osm_id]";
+        bicycle5/marker-anchor-set: "'bicycle5_'+[osm_id]";
+        bicycle5/marker-file: url('symbols/transport/bicycle.svg');
+        bicycle5/marker-fill: @transportation-icon;
+        bicycle5/marker-transform: 'translate(11,-9)';
+        bicycle5/marker-placement: interior;
+        bicycle5/marker-clip: false;
+      }
+
+
+      [vehicles = 'motorcycle'],
+      [vehicles = 'motorcycle+car'] {
+        motorcycle/marker-anchor-cond: "[osm_id]";
+        motorcycle/marker-allow-overlap-anchor: '[osm_id]';
+        motorcycle/marker-anchor-set: "'motorcycle_'+[osm_id]";
+        motorcycle/marker-file: url('symbols/transport/motorcycle.svg');
+        motorcycle/marker-fill: @transportation-icon;
+        motorcycle/marker-transform: 'translate(-12,4)';
+        motorcycle/marker-placement: interior;
+        motorcycle/marker-clip: false;
+
+        motorcycle2/marker-anchor-cond: "[osm_id]+',!motorcycle_'+[osm_id]+',!capacity_'+[osm_id]";
+        motorcycle2/marker-allow-overlap-anchor: '[osm_id]';
+        motorcycle2/marker-anchor-set: "'motorcycle_'+[osm_id]";
+        motorcycle2/marker-file: url('symbols/transport/motorcycle.svg');
+        motorcycle2/marker-fill: @transportation-icon;
+        motorcycle2/marker-transform: 'translate(-12,-4)';
+        motorcycle2/marker-placement: interior;
+        motorcycle2/marker-clip: false;
+      }
+
+      [vehicles = 'bicycle+car'],
+      [vehicles = 'motorcycle+car'] {
+        car/marker-anchor-cond: "[osm_id]+',!capacity_'+[osm_id]";
+        car/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',motorcycle_'+[osm_id]";
+        car/marker-anchor-set: "'car_'+[osm_id]";
+        car/marker-file: url('symbols/transport/car.svg');
+        car/marker-fill: @transportation-icon;
+        car/marker-transform: 'translate(-12,-3)';
+        car/marker-placement: interior;
+        car/marker-clip: false;
+
+        car1/marker-anchor-cond: "[osm_id]+',!car_'+[osm_id]";
+        car1/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',motorcycle_'+[osm_id]";
+        car1/marker-anchor-set: "'car_'+[osm_id]";
+        car1/marker-file: url('symbols/transport/car.svg');
+        car1/marker-fill: @transportation-icon;
+        car1/marker-transform: 'translate(0,12)';
+        car1/marker-placement: interior;
+        car1/marker-clip: false;
+
+        car2/marker-anchor-cond: "[osm_id]+',!car_'+[osm_id]";
+        car2/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',motorcycle_'+[osm_id]";
+        car2/marker-anchor-set: "'car2_'+[osm_id]";
+        car2/marker-file: url('symbols/transport/car.svg');
+        car2/marker-fill: @transportation-icon;
+        car2/marker-transform: 'translate(-8,13)';
+        car2/marker-placement: interior;
+        car2/marker-clip: false;
+
+        car3/marker-anchor-cond: "[osm_id]+',!car_'+[osm_id]+',!car2_'+[osm_id]";
+        car3/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',motorcycle_'+[osm_id]";
+        car3/marker-anchor-set: "'car_'+[osm_id]";
+        car3/marker-file: url('symbols/transport/car.svg');
+        car3/marker-fill: @transportation-icon;
+        car3/marker-transform: 'translate(9,12)';
+        car3/marker-placement: interior;
+        car3/marker-clip: false;
+
+        car4/marker-anchor-cond: "[osm_id]+',!car_'+[osm_id]+',!car2_'+[osm_id]";
+        car4/marker-allow-overlap-anchor: "[osm_id]";
+        car4/marker-anchor-set: "'car4_'+[osm_id]";
+        car4/marker-file: url('symbols/transport/car.svg');
+        car4/marker-fill: @transportation-icon;
+        car4/marker-transform: 'translate(11,11)';
+        car4/marker-placement: interior;
+        car4/marker-clip: false;
+
+        car5/marker-anchor-cond: "[osm_id]+',!car_'+[osm_id]+',!car2_'+[osm_id]+',!car4_'+[osm_id]";
+        car5/marker-allow-overlap-anchor: "[osm_id]";
+        car5/marker-anchor-set: "'car5_'+[osm_id]";
+        car5/marker-file: url('symbols/transport/car.svg');
+        car5/marker-fill: @transportation-icon;
+        car5/marker-transform: 'translate(12,-10)';
+        car5/marker-placement: interior;
+        car5/marker-clip: false;
+      }
+    }
+
+    [addon = 'socket_type2_combo'][zoom >= 18] {
+
+      socket2_combo/marker-anchor-cond: "[osm_id]";
+      socket2_combo/marker-allow-overlap-anchor: "[osm_id]";
+      socket2_combo/marker-anchor-set: "'socket2_combo_'+[osm_id]";
+      socket2_combo/marker-file: url('symbols/colored/socket_type2_combo.svg');
+      [socket_output = 'medium'] { socket2_combo/marker-file: url('symbols/colored/socket_type2_combo_medium.svg'); }
+      [socket_output = 'high'] { socket2_combo/marker-file: url('symbols/colored/socket_type2_combo_high.svg'); }
+      socket2_combo/marker-transform: 'translate(12,3)';
+      socket2_combo/marker-placement: interior;
+      socket2_combo/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2_combo_capacity/text-anchor-cond: "[osm_id]+',socket2_combo_'+[osm_id]";
+        socket2_combo_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_combo_'+[osm_id]";
+        socket2_combo_capacity/text-anchor-set: "'socket2_combo_capacity_'+[osm_id]";
+        socket2_combo_capacity/text-name: "[socket_capacity]";
+        socket2_combo_capacity/text-size: 8;
+        socket2_combo_capacity/text-fill: @transportation-text;
+        socket2_combo_capacity/text-face-name: @standard-font;
+        socket2_combo_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2_combo_capacity/text-halo-fill: @standard-halo-fill;
+        socket2_combo_capacity/text-dy: 2;
+        socket2_combo_capacity/text-dx: 17;
+        socket2_combo_capacity/text-horizontal-alignment: right;
+        socket2_combo_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2_combo_b/marker-anchor-cond: "[osm_id]+',!socket2_combo_'+[osm_id]";
+      socket2_combo_b/marker-allow-overlap-anchor: "[osm_id]";
+      socket2_combo_b/marker-anchor-set: "'socket2_combo_'+[osm_id]+',socket2_combo_b_'+[osm_id]";
+      socket2_combo_b/marker-file: url('symbols/colored/socket_type2_combo.svg');
+      [socket_output = 'medium'] { socket2_combo_b/marker-file: url('symbols/colored/socket_type2_combo_medium.svg'); }
+      [socket_output = 'high'] { socket2_combo_b/marker-file: url('symbols/colored/socket_type2_combo_high.svg'); }
+      socket2_combo_b/marker-transform: 'translate(12,8)';
+      socket2_combo_b/marker-placement: interior;
+      socket2_combo_b/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2_combo_b_capacity/text-anchor-cond: "[osm_id]+',socket2_combo_b_'+[osm_id]";
+        socket2_combo_b_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_combo_'+[osm_id]+',socket2_combo_b_'+[osm_id]";
+        socket2_combo_b_capacity/text-anchor-set: "'socket2_combo_capacity_'+[osm_id]";
+        socket2_combo_b_capacity/text-name: "[socket_capacity]";
+        socket2_combo_b_capacity/text-size: 8;
+        socket2_combo_b_capacity/text-fill: @transportation-text;
+        socket2_combo_b_capacity/text-face-name: @standard-font;
+        socket2_combo_b_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2_combo_b_capacity/text-halo-fill: @standard-halo-fill;
+        socket2_combo_b_capacity/text-dy: 7;
+        socket2_combo_b_capacity/text-dx: 17;
+        socket2_combo_b_capacity/text-horizontal-alignment: right;
+        socket2_combo_b_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2_combo_c/marker-anchor-cond: "[osm_id]+',!socket2_combo_'+[osm_id]";
+      socket2_combo_c/marker-allow-overlap-anchor: "[osm_id]";
+      socket2_combo_c/marker-anchor-set: "'socket2_combo_'+[osm_id]+',socket2_combo_c_'+[osm_id]";
+      socket2_combo_c/marker-file: url('symbols/colored/socket_type2_combo.svg');
+      [socket_output = 'medium'] { socket2_combo_c/marker-file: url('symbols/colored/socket_type2_combo_medium.svg'); }
+      [socket_output = 'high'] { socket2_combo_c/marker-file: url('symbols/colored/socket_type2_combo_high.svg'); }
+      socket2_combo_c/marker-transform: 'translate(12,-2)';
+      socket2_combo_c/marker-placement: interior;
+      socket2_combo_c/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2_combo_c_capacity/text-anchor-cond: "[osm_id]+',socket2_combo_c_'+[osm_id]";
+        socket2_combo_c_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_combo_'+[osm_id]+',socket2_combo_c_'+[osm_id]";
+        socket2_combo_c_capacity/text-anchor-set: "'socket2_combo_capacity_'+[osm_id]";
+        socket2_combo_c_capacity/text-name: "[socket_capacity]";
+        socket2_combo_c_capacity/text-size: 8;
+        socket2_combo_c_capacity/text-fill: @transportation-text;
+        socket2_combo_c_capacity/text-face-name: @standard-font;
+        socket2_combo_c_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2_combo_c_capacity/text-halo-fill: @standard-halo-fill;
+        socket2_combo_c_capacity/text-dy: -3;
+        socket2_combo_c_capacity/text-dx: 17;
+        socket2_combo_c_capacity/text-horizontal-alignment: right;
+        socket2_combo_c_capacity/text-vertical-alignment: middle;
+      }
+
+    }
+
+    [addon = 'socket_type2'][zoom >= 18] {
+
+      socket2a/marker-anchor-cond: "[osm_id]";
+      socket2a/marker-allow-overlap-anchor: "[osm_id]";
+      socket2a/marker-anchor-set: "'socket2_'+[osm_id]+',socket2a_'+[osm_id]";
+      socket2a/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2a/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2a/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2a/marker-transform: 'translate(12,3)';
+      socket2a/marker-placement: interior;
+      socket2a/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2a_capacity/text-anchor-cond: "[osm_id]+',socket2a_'+[osm_id]";
+        socket2a_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2a_'+[osm_id]";
+        socket2a_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2a_capacity/text-name: "[socket_capacity]";
+        socket2a_capacity/text-size: 8;
+        socket2a_capacity/text-fill: @transportation-text;
+        socket2a_capacity/text-face-name: @standard-font;
+        socket2a_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2a_capacity/text-halo-fill: @standard-halo-fill;
+        socket2a_capacity/text-dy: 2;
+        socket2a_capacity/text-dx: 17;
+        socket2a_capacity/text-horizontal-alignment: right;
+        socket2a_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2b/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2b/marker-allow-overlap-anchor: "[osm_id]";
+      socket2b/marker-anchor-set: "'socket2_'+[osm_id]+',socket2b_'+[osm_id]";
+      socket2b/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2b/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2b/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2b/marker-transform: 'translate(12,6)';
+      socket2b/marker-placement: interior;
+      socket2b/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2b_capacity/text-anchor-cond: "[osm_id]+',socket2b_'+[osm_id]";
+        socket2b_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2b_'+[osm_id]";
+        socket2b_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2b_capacity/text-name: "[socket_capacity]";
+        socket2b_capacity/text-size: 8;
+        socket2b_capacity/text-fill: @transportation-text;
+        socket2b_capacity/text-face-name: @standard-font;
+        socket2b_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2b_capacity/text-halo-fill: @standard-halo-fill;
+        socket2b_capacity/text-dy: 5;
+        socket2b_capacity/text-dx: 17;
+        socket2b_capacity/text-horizontal-alignment: right;
+        socket2b_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2c/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2c/marker-allow-overlap-anchor: "[osm_id]";
+      socket2c/marker-anchor-set: "'socket2_'+[osm_id]+',socket2c_'+[osm_id]";
+      socket2c/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2c/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2c/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2c/marker-transform: 'translate(12,0)';
+      socket2c/marker-placement: interior;
+      socket2c/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2c_capacity/text-anchor-cond: "[osm_id]+',socket2c_'+[osm_id]";
+        socket2c_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2c_'+[osm_id]";
+        socket2c_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2c_capacity/text-name: "[socket_capacity]";
+        socket2c_capacity/text-size: 8;
+        socket2c_capacity/text-fill: @transportation-text;
+        socket2c_capacity/text-face-name: @standard-font;
+        socket2c_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2c_capacity/text-halo-fill: @standard-halo-fill;
+        socket2c_capacity/text-dy: -1;
+        socket2c_capacity/text-dx: 17;
+        socket2c_capacity/text-horizontal-alignment: right;
+        socket2c_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2d/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2d/marker-allow-overlap-anchor: "[osm_id]";
+      socket2d/marker-anchor-set: "'socket2_'+[osm_id]+',socket2d_'+[osm_id]";
+      socket2d/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2d/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2d/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2d/marker-transform: 'translate(12,15)';
+      socket2d/marker-placement: interior;
+      socket2d/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2d_capacity/text-anchor-cond: "[osm_id]+',socket2d_'+[osm_id]";
+        socket2d_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2d_'+[osm_id]";
+        socket2d_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2d_capacity/text-name: "[socket_capacity]";
+        socket2d_capacity/text-size: 8;
+        socket2d_capacity/text-fill: @transportation-text;
+        socket2d_capacity/text-face-name: @standard-font;
+        socket2d_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2d_capacity/text-halo-fill: @standard-halo-fill;
+        socket2d_capacity/text-dy: 14;
+        socket2d_capacity/text-dx: 17;
+        socket2d_capacity/text-horizontal-alignment: right;
+        socket2d_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2e/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2e/marker-allow-overlap-anchor: "[osm_id]";
+      socket2e/marker-anchor-set: "'socket2_'+[osm_id]+',socket2e_'+[osm_id]";
+      socket2e/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2e/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2e/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2e/marker-transform: 'translate(12,-9)';
+      socket2e/marker-placement: interior;
+      socket2e/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2e_capacity/text-anchor-cond: "[osm_id]+',socket2e_'+[osm_id]";
+        socket2e_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2e_'+[osm_id]";
+        socket2e_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2e_capacity/text-name: "[socket_capacity]";
+        socket2e_capacity/text-size: 8;
+        socket2e_capacity/text-fill: @transportation-text;
+        socket2e_capacity/text-face-name: @standard-font;
+        socket2e_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2e_capacity/text-halo-fill: @standard-halo-fill;
+        socket2e_capacity/text-dy: -10;
+        socket2e_capacity/text-dx: 17;
+        socket2e_capacity/text-horizontal-alignment: right;
+        socket2e_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2f/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2f/marker-allow-overlap-anchor: "[osm_id]";
+      socket2f/marker-anchor-set: "'socket2_'+[osm_id]+',socket2f_'+[osm_id]";
+      socket2f/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2f/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2f/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2f/marker-transform: 'translate(12,17)';
+      socket2f/marker-placement: interior;
+      socket2f/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2f_capacity/text-anchor-cond: "[osm_id]+',socket2f_'+[osm_id]";
+        socket2f_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2f_'+[osm_id]";
+        socket2f_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2f_capacity/text-name: "[socket_capacity]";
+        socket2f_capacity/text-size: 8;
+        socket2f_capacity/text-fill: @transportation-text;
+        socket2f_capacity/text-face-name: @standard-font;
+        socket2f_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2f_capacity/text-halo-fill: @standard-halo-fill;
+        socket2f_capacity/text-dy: 16;
+        socket2f_capacity/text-dx: 17;
+        socket2f_capacity/text-horizontal-alignment: right;
+        socket2f_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2g/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2g/marker-allow-overlap-anchor: "[osm_id]";
+      socket2g/marker-anchor-set: "'socket2_'+[osm_id]+',socket2g_'+[osm_id]";
+      socket2g/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2g/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2g/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2g/marker-transform: 'translate(12,-11)';
+      socket2g/marker-placement: interior;
+      socket2g/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2g_capacity/text-anchor-cond: "[osm_id]+',socket2g_'+[osm_id]";
+        socket2g_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2g_'+[osm_id]";
+        socket2g_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2g_capacity/text-name: "[socket_capacity]";
+        socket2g_capacity/text-size: 8;
+        socket2g_capacity/text-fill: @transportation-text;
+        socket2g_capacity/text-face-name: @standard-font;
+        socket2g_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2g_capacity/text-halo-fill: @standard-halo-fill;
+        socket2g_capacity/text-dy: -12;
+        socket2g_capacity/text-dx: 17;
+        socket2g_capacity/text-horizontal-alignment: right;
+        socket2g_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2h/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2h/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',car_'+[osm_id]";
+      socket2h/marker-anchor-set: "'socket2_'+[osm_id]+',socket2h_'+[osm_id]";
+      socket2h/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2h/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2h/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2h/marker-transform: 'translate(-5,-12)';
+      socket2h/marker-placement: interior;
+      socket2h/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2h_capacity/text-anchor-cond: "[osm_id]+',socket2h_'+[osm_id]";
+        socket2h_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2h_'+[osm_id]";
+        socket2h_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2h_capacity/text-name: "[socket_capacity]";
+        socket2h_capacity/text-size: 8;
+        socket2h_capacity/text-fill: @transportation-text;
+        socket2h_capacity/text-face-name: @standard-font;
+        socket2h_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2h_capacity/text-halo-fill: @standard-halo-fill;
+        socket2h_capacity/text-dy: -13;
+        socket2h_capacity/text-dx: -11;
+        socket2h_capacity/text-horizontal-alignment: left;
+        socket2h_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2j/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2j/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',cover_'+[osm_id]";
+      socket2j/marker-anchor-set: "'socket2_'+[osm_id]+',socket2j_'+[osm_id]";
+      socket2j/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2j/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2j/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2j/marker-transform: 'translate(-11,-11)';
+      socket2j/marker-placement: interior;
+      socket2j/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2j_capacity/text-anchor-cond: "[osm_id]+',socket2j_'+[osm_id]";
+        socket2j_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2j_'+[osm_id]";
+        socket2j_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2j_capacity/text-name: "[socket_capacity]";
+        socket2j_capacity/text-size: 8;
+        socket2j_capacity/text-fill: @transportation-text;
+        socket2j_capacity/text-face-name: @standard-font;
+        socket2j_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2j_capacity/text-halo-fill: @standard-halo-fill;
+        socket2j_capacity/text-dy: -12;
+        socket2j_capacity/text-dx: -17;
+        socket2j_capacity/text-horizontal-alignment: left;
+        socket2j_capacity/text-vertical-alignment: middle;
+      }
+
+      socket2i/marker-anchor-cond: "[osm_id]+',!socket2_'+[osm_id]";
+      socket2i/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',car_'+[osm_id]";
+      socket2i/marker-anchor-set: "'socket2_'+[osm_id]+',socket2i_'+[osm_id]";
+      socket2i/marker-file: url('symbols/colored/socket_type2.svg');
+      [socket_output = 'medium'] { socket2i/marker-file: url('symbols/colored/socket_type2_medium.svg'); }
+      [socket_output = 'high'] { socket2i/marker-file: url('symbols/colored/socket_type2_high.svg'); }
+      socket2i/marker-transform: 'translate(-9,14)';
+      socket2i/marker-placement: interior;
+      socket2i/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket2i_capacity/text-anchor-cond: "[osm_id]+',socket2i_'+[osm_id]";
+        socket2i_capacity/text-allow-overlap-anchor: "[osm_id]+',socket2_'+[osm_id]+',socket2i_'+[osm_id]";
+        socket2i_capacity/text-anchor-set: "'socket2_capacity_'+[osm_id]";
+        socket2i_capacity/text-name: "[socket_capacity]";
+        socket2i_capacity/text-size: 8;
+        socket2i_capacity/text-fill: @transportation-text;
+        socket2i_capacity/text-face-name: @standard-font;
+        socket2i_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket2i_capacity/text-halo-fill: @standard-halo-fill;
+        socket2i_capacity/text-dy: 14;
+        socket2i_capacity/text-dx: -15;
+        socket2i_capacity/text-horizontal-alignment: left;
+        socket2i_capacity/text-vertical-alignment: middle;
+      }
+    }
+
+    [addon = 'socket_nacs'][zoom >= 18] {
+      socket_nacs_a/marker-anchor-cond: "[osm_id]";
+      socket_nacs_a/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_a/marker-anchor-set: "'socket_nacs_a_'+[osm_id]+',socket_nacs_'+[osm_id]";
+      socket_nacs_a/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_a/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_a/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_a/marker-transform: 'translate(12,3)';
+      socket_nacs_a/marker-placement: interior;
+      socket_nacs_a/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_a_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_'+[osm_id]";
+        socket_nacs_a_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_a_'+[osm_id]";
+        socket_nacs_a_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_a_capacity/text-name: "[socket_capacity]";
+        socket_nacs_a_capacity/text-size: 8;
+        socket_nacs_a_capacity/text-fill: @transportation-text;
+        socket_nacs_a_capacity/text-face-name: @standard-font;
+        socket_nacs_a_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_a_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_a_capacity/text-dy: 2;
+        socket_nacs_a_capacity/text-dx: 19;
+        socket_nacs_a_capacity/text-horizontal-alignment: right;
+        socket_nacs_a_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_b/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_b/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_b/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_b_'+[osm_id]";
+      socket_nacs_b/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_b/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_b/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_b/marker-transform: 'translate(13,6)';
+      socket_nacs_b/marker-placement: interior;
+      socket_nacs_b/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_b_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_b_'+[osm_id]";
+        socket_nacs_b_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_b_'+[osm_id]";
+        socket_nacs_b_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_b_capacity/text-name: "[socket_capacity]";
+        socket_nacs_b_capacity/text-size: 8;
+        socket_nacs_b_capacity/text-fill: @transportation-text;
+        socket_nacs_b_capacity/text-face-name: @standard-font;
+        socket_nacs_b_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_b_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_b_capacity/text-dy: 5;
+        socket_nacs_b_capacity/text-dx: 19;
+        socket_nacs_b_capacity/text-horizontal-alignment: right;
+        socket_nacs_b_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_c/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_c/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_c/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_c_'+[osm_id]";
+      socket_nacs_c/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_c/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_c/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_c/marker-transform: 'translate(13,0)';
+      socket_nacs_c/marker-placement: interior;
+      socket_nacs_c/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_c_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_c_'+[osm_id]";
+        socket_nacs_c_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_c_'+[osm_id]";
+        socket_nacs_c_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_c_capacity/text-name: "[socket_capacity]";
+        socket_nacs_c_capacity/text-size: 8;
+        socket_nacs_c_capacity/text-fill: @transportation-text;
+        socket_nacs_c_capacity/text-face-name: @standard-font;
+        socket_nacs_c_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_c_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_c_capacity/text-dy: -1;
+        socket_nacs_c_capacity/text-dx: 19;
+        socket_nacs_c_capacity/text-horizontal-alignment: right;
+        socket_nacs_c_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_d/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_d/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_d/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_d_'+[osm_id]";
+      socket_nacs_d/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_d/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_d/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_d/marker-transform: 'translate(13,13)';
+      socket_nacs_d/marker-placement: interior;
+      socket_nacs_d/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_d_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_d_'+[osm_id]";
+        socket_nacs_d_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_d_'+[osm_id]";
+        socket_nacs_d_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_d_capacity/text-name: "[socket_capacity]";
+        socket_nacs_d_capacity/text-size: 8;
+        socket_nacs_d_capacity/text-fill: @transportation-text;
+        socket_nacs_d_capacity/text-face-name: @standard-font;
+        socket_nacs_d_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_d_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_d_capacity/text-dy: 12;
+        socket_nacs_d_capacity/text-dx: 19;
+        socket_nacs_d_capacity/text-horizontal-alignment: right;
+        socket_nacs_d_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_e/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_e/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_e/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_e_'+[osm_id]";
+      socket_nacs_e/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_e/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_e/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_e/marker-transform: 'translate(13,-7)';
+      socket_nacs_e/marker-placement: interior;
+      socket_nacs_e/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_e_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_e_'+[osm_id]";
+        socket_nacs_e_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_e_'+[osm_id]";
+        socket_nacs_e_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_e_capacity/text-name: "[socket_capacity]";
+        socket_nacs_e_capacity/text-size: 8;
+        socket_nacs_e_capacity/text-fill: @transportation-text;
+        socket_nacs_e_capacity/text-face-name: @standard-font;
+        socket_nacs_e_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_e_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_e_capacity/text-dy: -8;
+        socket_nacs_e_capacity/text-dx: 19;
+        socket_nacs_e_capacity/text-horizontal-alignment: right;
+        socket_nacs_e_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_f/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_f/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_f/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_f_'+[osm_id]";
+      socket_nacs_f/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_f/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_f/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_f/marker-transform: 'translate(13,15)';
+      socket_nacs_f/marker-placement: interior;
+      socket_nacs_f/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_f_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_f_'+[osm_id]";
+        socket_nacs_f_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_f_'+[osm_id]";
+        socket_nacs_f_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_f_capacity/text-name: "[socket_capacity]";
+        socket_nacs_f_capacity/text-size: 8;
+        socket_nacs_f_capacity/text-fill: @transportation-text;
+        socket_nacs_f_capacity/text-face-name: @standard-font;
+        socket_nacs_f_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_f_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_f_capacity/text-dy: 14;
+        socket_nacs_f_capacity/text-dx: 19;
+        socket_nacs_f_capacity/text-horizontal-alignment: right;
+        socket_nacs_f_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_g/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_g/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_g/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_g_'+[osm_id]";
+      socket_nacs_g/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_g/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_g/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_g/marker-transform: 'translate(13,-9)';
+      socket_nacs_g/marker-placement: interior;
+      socket_nacs_g/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_g_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_g_'+[osm_id]";
+        socket_nacs_g_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_g_'+[osm_id]";
+        socket_nacs_g_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_g_capacity/text-name: "[socket_capacity]";
+        socket_nacs_g_capacity/text-size: 8;
+        socket_nacs_g_capacity/text-fill: @transportation-text;
+        socket_nacs_g_capacity/text-face-name: @standard-font;
+        socket_nacs_g_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_g_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_g_capacity/text-dy: -10;
+        socket_nacs_g_capacity/text-dx: 19;
+        socket_nacs_g_capacity/text-horizontal-alignment: right;
+        socket_nacs_g_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_h/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_h/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_h/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_h_'+[osm_id]";
+      socket_nacs_h/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_h/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_h/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_h/marker-transform: 'translate(13,17)';
+      socket_nacs_h/marker-placement: interior;
+      socket_nacs_h/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_h_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_h_'+[osm_id]";
+        socket_nacs_h_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_h_'+[osm_id]";
+        socket_nacs_h_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_h_capacity/text-name: "[socket_capacity]";
+        socket_nacs_h_capacity/text-size: 8;
+        socket_nacs_h_capacity/text-fill: @transportation-text;
+        socket_nacs_h_capacity/text-face-name: @standard-font;
+        socket_nacs_h_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_h_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_h_capacity/text-dy: 16;
+        socket_nacs_h_capacity/text-dx: 19;
+        socket_nacs_h_capacity/text-horizontal-alignment: right;
+        socket_nacs_h_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_i/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_i/marker-allow-overlap-anchor: "[osm_id]";
+      socket_nacs_i/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_i_'+[osm_id]";
+      socket_nacs_i/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_i/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_i/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_i/marker-transform: 'translate(13,-11)';
+      socket_nacs_i/marker-placement: interior;
+      socket_nacs_i/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_i_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_i_'+[osm_id]";
+        socket_nacs_i_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_i_'+[osm_id]";
+        socket_nacs_i_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_i_capacity/text-name: "[socket_capacity]";
+        socket_nacs_i_capacity/text-size: 8;
+        socket_nacs_i_capacity/text-fill: @transportation-text;
+        socket_nacs_i_capacity/text-face-name: @standard-font;
+        socket_nacs_i_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_i_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_i_capacity/text-dy: -12;
+        socket_nacs_i_capacity/text-dx: 19;
+        socket_nacs_i_capacity/text-horizontal-alignment: right;
+        socket_nacs_i_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_j/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_j/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',car_'+[osm_id]";
+      socket_nacs_j/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_j_'+[osm_id]";
+      socket_nacs_j/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_j/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_j/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_j/marker-transform: 'translate(-5,-12)';
+      socket_nacs_j/marker-placement: interior;
+      socket_nacs_j/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_j_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_j_'+[osm_id]";
+        socket_nacs_j_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_j_'+[osm_id]";
+        socket_nacs_j_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_j_capacity/text-name: "[socket_capacity]";
+        socket_nacs_j_capacity/text-size: 8;
+        socket_nacs_j_capacity/text-fill: @transportation-text;
+        socket_nacs_j_capacity/text-face-name: @standard-font;
+        socket_nacs_j_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_j_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_j_capacity/text-dy: -13;
+        socket_nacs_j_capacity/text-dx: -12;
+        socket_nacs_j_capacity/text-horizontal-alignment: left;
+        socket_nacs_j_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_l/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_l/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',cover_'+[osm_id]";
+      socket_nacs_l/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_l_'+[osm_id]";
+      socket_nacs_l/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_l/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_l/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_l/marker-transform: 'translate(-11,-11)';
+      socket_nacs_l/marker-placement: interior;
+      socket_nacs_l/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_l_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_l_'+[osm_id]";
+        socket_nacs_l_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_l_'+[osm_id]";
+        socket_nacs_l_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_l_capacity/text-name: "[socket_capacity]";
+        socket_nacs_l_capacity/text-size: 8;
+        socket_nacs_l_capacity/text-fill: @transportation-text;
+        socket_nacs_l_capacity/text-face-name: @standard-font;
+        socket_nacs_l_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_l_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_l_capacity/text-dy: -12;
+        socket_nacs_l_capacity/text-dx: -18;
+        socket_nacs_l_capacity/text-horizontal-alignment: left;
+        socket_nacs_l_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_nacs_k/marker-anchor-cond: "[osm_id]+',!socket_nacs_'+[osm_id]";
+      socket_nacs_k/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',car_'+[osm_id]";
+      socket_nacs_k/marker-anchor-set: "'socket_nacs_'+[osm_id]+',socket_nacs_k_'+[osm_id]";
+      socket_nacs_k/marker-file: url('symbols/colored/socket_nacs.svg');
+      [socket_output = 'medium'] { socket_nacs_k/marker-file: url('symbols/colored/socket_nacs_medium.svg'); }
+      [socket_output = 'high'] { socket_nacs_k/marker-file: url('symbols/colored/socket_nacs_high.svg'); }
+      socket_nacs_k/marker-transform: 'translate(-10,14)';
+      socket_nacs_k/marker-placement: interior;
+      socket_nacs_k/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_nacs_k_capacity/text-anchor-cond: "[osm_id]+',socket_nacs_k_'+[osm_id]";
+        socket_nacs_k_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_nacs_'+[osm_id]+',socket_nacs_k_'+[osm_id]";
+        socket_nacs_k_capacity/text-anchor-set: "'socket_nacs_capacity_'+[osm_id]";
+        socket_nacs_k_capacity/text-name: "[socket_capacity]";
+        socket_nacs_k_capacity/text-size: 8;
+        socket_nacs_k_capacity/text-fill: @transportation-text;
+        socket_nacs_k_capacity/text-face-name: @standard-font;
+        socket_nacs_k_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_nacs_k_capacity/text-halo-fill: @standard-halo-fill;
+        socket_nacs_k_capacity/text-dy: 14;
+        socket_nacs_k_capacity/text-dx: -17;
+        socket_nacs_k_capacity/text-horizontal-alignment: left;
+        socket_nacs_k_capacity/text-vertical-alignment: middle;
+      }
+    }
+
+    [addon = 'socket_type1_combo'][zoom >= 18] {
+
+      socket1_combo/marker-anchor-cond: "[osm_id]";
+      socket1_combo/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo/marker-anchor-set: "'socket1_combo_'+[osm_id]";
+      socket1_combo/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo/marker-transform: 'translate(12,3)';
+      socket1_combo/marker-placement: interior;
+      socket1_combo/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_'+[osm_id]";
+        socket1_combo_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]";
+        socket1_combo_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_capacity/text-name: "[socket_capacity]";
+        socket1_combo_capacity/text-size: 8;
+        socket1_combo_capacity/text-fill: @transportation-text;
+        socket1_combo_capacity/text-face-name: @standard-font;
+        socket1_combo_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_capacity/text-dy: 2;
+        socket1_combo_capacity/text-dx: 17;
+        socket1_combo_capacity/text-horizontal-alignment: right;
+        socket1_combo_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1_combo_combo_b/marker-anchor-cond: "[osm_id]+',!socket1_combo_'+[osm_id]";
+      socket1_combo_combo_b/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo_combo_b/marker-anchor-set: "'socket1_combo_'+[osm_id]+',socket1_combo_combo_b_'+[osm_id]";
+      socket1_combo_combo_b/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo_combo_b/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo_combo_b/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo_combo_b/marker-transform: 'translate(12,6)';
+      socket1_combo_combo_b/marker-placement: interior;
+      socket1_combo_combo_b/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_combo_b_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_combo_b_'+[osm_id]";
+        socket1_combo_combo_b_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]+',socket1_combo_combo_b_'+[osm_id]";
+        socket1_combo_combo_b_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_combo_b_capacity/text-name: "[socket_capacity]";
+        socket1_combo_combo_b_capacity/text-size: 8;
+        socket1_combo_combo_b_capacity/text-fill: @transportation-text;
+        socket1_combo_combo_b_capacity/text-face-name: @standard-font;
+        socket1_combo_combo_b_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_combo_b_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_combo_b_capacity/text-dy: 5;
+        socket1_combo_combo_b_capacity/text-dx: 17;
+        socket1_combo_combo_b_capacity/text-horizontal-alignment: right;
+        socket1_combo_combo_b_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1_combo_combo_c/marker-anchor-cond: "[osm_id]+',!socket1_combo_'+[osm_id]";
+      socket1_combo_combo_c/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo_combo_c/marker-anchor-set: "'socket1_combo_'+[osm_id]+',socket1_combo_combo_c_'+[osm_id]";
+      socket1_combo_combo_c/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo_combo_c/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo_combo_c/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo_combo_c/marker-transform: 'translate(12,0)';
+      socket1_combo_combo_c/marker-placement: interior;
+      socket1_combo_combo_c/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_combo_c_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_combo_c_'+[osm_id]";
+        socket1_combo_combo_c_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]+',socket1_combo_combo_c_'+[osm_id]";
+        socket1_combo_combo_c_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_combo_c_capacity/text-name: "[socket_capacity]";
+        socket1_combo_combo_c_capacity/text-size: 8;
+        socket1_combo_combo_c_capacity/text-fill: @transportation-text;
+        socket1_combo_combo_c_capacity/text-face-name: @standard-font;
+        socket1_combo_combo_c_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_combo_c_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_combo_c_capacity/text-dy: -1;
+        socket1_combo_combo_c_capacity/text-dx: 17;
+        socket1_combo_combo_c_capacity/text-horizontal-alignment: right;
+        socket1_combo_combo_c_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1_combo_combo_d/marker-anchor-cond: "[osm_id]+',!socket1_combo_'+[osm_id]";
+      socket1_combo_combo_d/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo_combo_d/marker-anchor-set: "'socket1_combo_'+[osm_id]+',socket1_combo_combo_d_'+[osm_id]";
+      socket1_combo_combo_d/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo_combo_d/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo_combo_d/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo_combo_d/marker-transform: 'translate(12,17)';
+      socket1_combo_combo_d/marker-placement: interior;
+      socket1_combo_combo_d/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_combo_d_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_combo_d_'+[osm_id]";
+        socket1_combo_combo_d_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]+',socket1_combo_combo_d_'+[osm_id]";
+        socket1_combo_combo_d_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_combo_d_capacity/text-name: "[socket_capacity]";
+        socket1_combo_combo_d_capacity/text-size: 8;
+        socket1_combo_combo_d_capacity/text-fill: @transportation-text;
+        socket1_combo_combo_d_capacity/text-face-name: @standard-font;
+        socket1_combo_combo_d_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_combo_d_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_combo_d_capacity/text-dy: 14;
+        socket1_combo_combo_d_capacity/text-dx: 19;
+        socket1_combo_combo_d_capacity/text-horizontal-alignment: right;
+        socket1_combo_combo_d_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1_combo_combo_e/marker-anchor-cond: "[osm_id]+',!socket1_combo_'+[osm_id]";
+      socket1_combo_combo_e/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo_combo_e/marker-anchor-set: "'socket1_combo_'+[osm_id]+',socket1_combo_combo_e_'+[osm_id]";
+      socket1_combo_combo_e/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo_combo_e/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo_combo_e/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo_combo_e/marker-transform: 'translate(12,-11)';
+      socket1_combo_combo_e/marker-placement: interior;
+      socket1_combo_combo_e/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_combo_e_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_combo_e_'+[osm_id]";
+        socket1_combo_combo_e_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]+',socket1_combo_combo_e_'+[osm_id]";
+        socket1_combo_combo_e_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_combo_e_capacity/text-name: "[socket_capacity]";
+        socket1_combo_combo_e_capacity/text-size: 8;
+        socket1_combo_combo_e_capacity/text-fill: @transportation-text;
+        socket1_combo_combo_e_capacity/text-face-name: @standard-font;
+        socket1_combo_combo_e_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_combo_e_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_combo_e_capacity/text-dy: -12;
+        socket1_combo_combo_e_capacity/text-dx: 17;
+        socket1_combo_combo_e_capacity/text-horizontal-alignment: right;
+        socket1_combo_combo_e_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1_combo_combo_f/marker-anchor-cond: "[osm_id]+',!socket1_combo_'+[osm_id]";
+      socket1_combo_combo_f/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo_combo_f/marker-anchor-set: "'socket1_combo_'+[osm_id]+',socket1_combo_combo_f_'+[osm_id]";
+      socket1_combo_combo_f/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo_combo_f/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo_combo_f/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo_combo_f/marker-transform: 'translate(12,20)';
+      socket1_combo_combo_f/marker-placement: interior;
+      socket1_combo_combo_f/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_combo_f_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_combo_f_'+[osm_id]";
+        socket1_combo_combo_f_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]+',socket1_combo_combo_f_'+[osm_id]";
+        socket1_combo_combo_f_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_combo_f_capacity/text-name: "[socket_capacity]";
+        socket1_combo_combo_f_capacity/text-size: 8;
+        socket1_combo_combo_f_capacity/text-fill: @transportation-text;
+        socket1_combo_combo_f_capacity/text-face-name: @standard-font;
+        socket1_combo_combo_f_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_combo_f_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_combo_f_capacity/text-dy: 19;
+        socket1_combo_combo_f_capacity/text-dx: 17;
+        socket1_combo_combo_f_capacity/text-horizontal-alignment: right;
+        socket1_combo_combo_f_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1_combo_combo_g/marker-anchor-cond: "[osm_id]+',!socket1_combo_'+[osm_id]";
+      socket1_combo_combo_g/marker-allow-overlap-anchor: "[osm_id]";
+      socket1_combo_combo_g/marker-anchor-set: "'socket1_combo_'+[osm_id]+',socket1_combo_combo_g_'+[osm_id]";
+      socket1_combo_combo_g/marker-file: url('symbols/colored/socket_type1_combo.svg');
+      [socket_output = 'medium'] { socket1_combo_combo_g/marker-file: url('symbols/colored/socket_type1_combo_medium.svg'); }
+      [socket_output = 'high'] { socket1_combo_combo_g/marker-file: url('symbols/colored/socket_type1_combo_high.svg'); }
+      socket1_combo_combo_g/marker-transform: 'translate(12,-14)';
+      socket1_combo_combo_g/marker-placement: interior;
+      socket1_combo_combo_g/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1_combo_combo_g_capacity/text-anchor-cond: "[osm_id]+',socket1_combo_combo_g_'+[osm_id]";
+        socket1_combo_combo_g_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_combo_'+[osm_id]+',socket1_combo_combo_g_'+[osm_id]";
+        socket1_combo_combo_g_capacity/text-anchor-set: "'socket1_combo_capacity_'+[osm_id]";
+        socket1_combo_combo_g_capacity/text-name: "[socket_capacity]";
+        socket1_combo_combo_g_capacity/text-size: 8;
+        socket1_combo_combo_g_capacity/text-fill: @transportation-text;
+        socket1_combo_combo_g_capacity/text-face-name: @standard-font;
+        socket1_combo_combo_g_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1_combo_combo_g_capacity/text-halo-fill: @standard-halo-fill;
+        socket1_combo_combo_g_capacity/text-dy: -15;
+        socket1_combo_combo_g_capacity/text-dx: 17;
+        socket1_combo_combo_g_capacity/text-horizontal-alignment: right;
+        socket1_combo_combo_g_capacity/text-vertical-alignment: middle;
+      }
+
+    }
+
+    [addon = 'socket_type1'][zoom >= 18] {
+
+      socket1a/marker-anchor-cond: "[osm_id]";
+      socket1a/marker-allow-overlap-anchor: "[osm_id]";
+      socket1a/marker-anchor-set: "'socket1_'+[osm_id]+',socket1a_'+[osm_id]";
+      socket1a/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1a/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1a/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1a/marker-transform: 'translate(12,3)';
+      socket1a/marker-placement: interior;
+      socket1a/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1a_capacity/text-anchor-cond: "[osm_id]+',socket1a_'+[osm_id]";
+        socket1a_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1a_'+[osm_id]";
+        socket1a_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1a_capacity/text-name: "[socket_capacity]";
+        socket1a_capacity/text-size: 8;
+        socket1a_capacity/text-fill: @transportation-text;
+        socket1a_capacity/text-face-name: @standard-font;
+        socket1a_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1a_capacity/text-halo-fill: @standard-halo-fill;
+        socket1a_capacity/text-dy: 2;
+        socket1a_capacity/text-dx: 17;
+        socket1a_capacity/text-horizontal-alignment: right;
+        socket1a_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1b/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1b/marker-allow-overlap-anchor: "[osm_id]";
+      socket1b/marker-anchor-set: "'socket1_'+[osm_id]+',socket1b_'+[osm_id]";
+      socket1b/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1b/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1b/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1b/marker-transform: 'translate(12,6)';
+      socket1b/marker-placement: interior;
+      socket1b/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1b_capacity/text-anchor-cond: "[osm_id]+',socket1b_'+[osm_id]";
+        socket1b_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1b_'+[osm_id]";
+        socket1b_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1b_capacity/text-name: "[socket_capacity]";
+        socket1b_capacity/text-size: 8;
+        socket1b_capacity/text-fill: @transportation-text;
+        socket1b_capacity/text-face-name: @standard-font;
+        socket1b_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1b_capacity/text-halo-fill: @standard-halo-fill;
+        socket1b_capacity/text-dy: 5;
+        socket1b_capacity/text-dx: 17;
+        socket1b_capacity/text-horizontal-alignment: right;
+        socket1b_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1c/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1c/marker-allow-overlap-anchor: "[osm_id]";
+      socket1c/marker-anchor-set: "'socket1_'+[osm_id]+',socket1c_'+[osm_id]";
+      socket1c/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1c/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1c/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1c/marker-transform: 'translate(12,0)';
+      socket1c/marker-placement: interior;
+      socket1c/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1c_capacity/text-anchor-cond: "[osm_id]+',socket1c_'+[osm_id]";
+        socket1c_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1c_'+[osm_id]";
+        socket1c_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1c_capacity/text-name: "[socket_capacity]";
+        socket1c_capacity/text-size: 8;
+        socket1c_capacity/text-fill: @transportation-text;
+        socket1c_capacity/text-face-name: @standard-font;
+        socket1c_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1c_capacity/text-halo-fill: @standard-halo-fill;
+        socket1c_capacity/text-dy: -1;
+        socket1c_capacity/text-dx: 17;
+        socket1c_capacity/text-horizontal-alignment: right;
+        socket1c_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1d/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1d/marker-allow-overlap-anchor: "[osm_id]";
+      socket1d/marker-anchor-set: "'socket1_'+[osm_id]+',socket1d_'+[osm_id]";
+      socket1d/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1d/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1d/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1d/marker-transform: 'translate(12,15)';
+      socket1d/marker-placement: interior;
+      socket1d/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1d_capacity/text-anchor-cond: "[osm_id]+',socket1d_'+[osm_id]";
+        socket1d_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1d_'+[osm_id]";
+        socket1d_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1d_capacity/text-name: "[socket_capacity]";
+        socket1d_capacity/text-size: 8;
+        socket1d_capacity/text-fill: @transportation-text;
+        socket1d_capacity/text-face-name: @standard-font;
+        socket1d_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1d_capacity/text-halo-fill: @standard-halo-fill;
+        socket1d_capacity/text-dy: 14;
+        socket1d_capacity/text-dx: 17;
+        socket1d_capacity/text-horizontal-alignment: right;
+        socket1d_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1e/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1e/marker-allow-overlap-anchor: "[osm_id]";
+      socket1e/marker-anchor-set: "'socket1_'+[osm_id]+',socket1e_'+[osm_id]";
+      socket1e/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1e/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1e/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1e/marker-transform: 'translate(12,-9)';
+      socket1e/marker-placement: interior;
+      socket1e/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1e_capacity/text-anchor-cond: "[osm_id]+',socket1e_'+[osm_id]";
+        socket1e_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1e_'+[osm_id]";
+        socket1e_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1e_capacity/text-name: "[socket_capacity]";
+        socket1e_capacity/text-size: 8;
+        socket1e_capacity/text-fill: @transportation-text;
+        socket1e_capacity/text-face-name: @standard-font;
+        socket1e_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1e_capacity/text-halo-fill: @standard-halo-fill;
+        socket1e_capacity/text-dy: -10;
+        socket1e_capacity/text-dx: 17;
+        socket1e_capacity/text-horizontal-alignment: right;
+        socket1e_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1f/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1f/marker-allow-overlap-anchor: "[osm_id]";
+      socket1f/marker-anchor-set: "'socket1_'+[osm_id]+',socket1f_'+[osm_id]";
+      socket1f/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1f/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1f/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1f/marker-transform: 'translate(12,17)';
+      socket1f/marker-placement: interior;
+      socket1f/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1f_capacity/text-anchor-cond: "[osm_id]+',socket1f_'+[osm_id]";
+        socket1f_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1f_'+[osm_id]";
+        socket1f_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1f_capacity/text-name: "[socket_capacity]";
+        socket1f_capacity/text-size: 8;
+        socket1f_capacity/text-fill: @transportation-text;
+        socket1f_capacity/text-face-name: @standard-font;
+        socket1f_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1f_capacity/text-halo-fill: @standard-halo-fill;
+        socket1f_capacity/text-dy: 16;
+        socket1f_capacity/text-dx: 17;
+        socket1f_capacity/text-horizontal-alignment: right;
+        socket1f_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1g/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1g/marker-allow-overlap-anchor: "[osm_id]";
+      socket1g/marker-anchor-set: "'socket1_'+[osm_id]+',socket1g_'+[osm_id]";
+      socket1g/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1g/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1g/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1g/marker-transform: 'translate(12,-11)';
+      socket1g/marker-placement: interior;
+      socket1g/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1g_capacity/text-anchor-cond: "[osm_id]+',socket1g_'+[osm_id]";
+        socket1g_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1g_'+[osm_id]";
+        socket1g_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1g_capacity/text-name: "[socket_capacity]";
+        socket1g_capacity/text-size: 8;
+        socket1g_capacity/text-fill: @transportation-text;
+        socket1g_capacity/text-face-name: @standard-font;
+        socket1g_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1g_capacity/text-halo-fill: @standard-halo-fill;
+        socket1g_capacity/text-dy: -12;
+        socket1g_capacity/text-dx: 17;
+        socket1g_capacity/text-horizontal-alignment: right;
+        socket1g_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1h/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1h/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',car_'+[osm_id]";
+      socket1h/marker-anchor-set: "'socket1_'+[osm_id]+',socket1h_'+[osm_id]";
+      socket1h/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1h/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1h/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1h/marker-transform: 'translate(-5,-12)';
+      socket1h/marker-placement: interior;
+      socket1h/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1h_capacity/text-anchor-cond: "[osm_id]+',socket1h_'+[osm_id]";
+        socket1h_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1h_'+[osm_id]";
+        socket1h_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1h_capacity/text-name: "[socket_capacity]";
+        socket1h_capacity/text-size: 8;
+        socket1h_capacity/text-fill: @transportation-text;
+        socket1h_capacity/text-face-name: @standard-font;
+        socket1h_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1h_capacity/text-halo-fill: @standard-halo-fill;
+        socket1h_capacity/text-dy: -13;
+        socket1h_capacity/text-dx: -11;
+        socket1h_capacity/text-horizontal-alignment: left;
+        socket1h_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1j/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1j/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',cover_'+[osm_id]";
+      socket1j/marker-anchor-set: "'socket1_'+[osm_id]+',socket1j_'+[osm_id]";
+      socket1j/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1j/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1j/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1j/marker-transform: 'translate(-11,-11)';
+      socket1j/marker-placement: interior;
+      socket1j/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1j_capacity/text-anchor-cond: "[osm_id]+',socket1j_'+[osm_id]";
+        socket1j_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1j_'+[osm_id]";
+        socket1j_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1j_capacity/text-name: "[socket_capacity]";
+        socket1j_capacity/text-size: 8;
+        socket1j_capacity/text-fill: @transportation-text;
+        socket1j_capacity/text-face-name: @standard-font;
+        socket1j_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1j_capacity/text-halo-fill: @standard-halo-fill;
+        socket1j_capacity/text-dy: -12;
+        socket1j_capacity/text-dx: -17;
+        socket1j_capacity/text-horizontal-alignment: left;
+        socket1j_capacity/text-vertical-alignment: middle;
+      }
+
+      socket1i/marker-anchor-cond: "[osm_id]+',!socket1_'+[osm_id]";
+      socket1i/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',car_'+[osm_id]";
+      socket1i/marker-anchor-set: "'socket1_'+[osm_id]+',socket1i_'+[osm_id]";
+      socket1i/marker-file: url('symbols/colored/socket_type1.svg');
+      [socket_output = 'medium'] { socket1i/marker-file: url('symbols/colored/socket_type1_medium.svg'); }
+      [socket_output = 'high'] { socket1i/marker-file: url('symbols/colored/socket_type1_high.svg'); }
+      socket1i/marker-transform: 'translate(-9,15)';
+      socket1i/marker-placement: interior;
+      socket1i/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket1i_capacity/text-anchor-cond: "[osm_id]+',socket1i_'+[osm_id]";
+        socket1i_capacity/text-allow-overlap-anchor: "[osm_id]+',socket1_'+[osm_id]+',socket1i_'+[osm_id]";
+        socket1i_capacity/text-anchor-set: "'socket1_capacity_'+[osm_id]";
+        socket1i_capacity/text-name: "[socket_capacity]";
+        socket1i_capacity/text-size: 8;
+        socket1i_capacity/text-fill: @transportation-text;
+        socket1i_capacity/text-face-name: @standard-font;
+        socket1i_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket1i_capacity/text-halo-fill: @standard-halo-fill;
+        socket1i_capacity/text-dy: 15;
+        socket1i_capacity/text-dx: -15;
+        socket1i_capacity/text-horizontal-alignment: left;
+        socket1i_capacity/text-vertical-alignment: middle;
+      }
+    }
+
+    [addon = 'socket_chademo'][zoom >= 18] {
+      socket_chademo_a/marker-anchor-cond: "[osm_id]";
+      socket_chademo_a/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_a/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_a_'+[osm_id]";
+      socket_chademo_a/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_a/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_a/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_a/marker-transform: 'translate(12,3)';
+      socket_chademo_a/marker-placement: interior;
+      socket_chademo_a/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_a_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_a_'+[osm_id]";
+        socket_chademo_a_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_a_'+[osm_id]";
+        socket_chademo_a_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_a_capacity/text-name: "[socket_capacity]";
+        socket_chademo_a_capacity/text-size: 8;
+        socket_chademo_a_capacity/text-fill: @transportation-text;
+        socket_chademo_a_capacity/text-face-name: @standard-font;
+        socket_chademo_a_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_a_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_a_capacity/text-dy: 2;
+        socket_chademo_a_capacity/text-dx: 17;
+        socket_chademo_a_capacity/text-horizontal-alignment: right;
+        socket_chademo_a_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_b/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_b/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_b/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_b_'+[osm_id]";
+      socket_chademo_b/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_b/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_b/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_b/marker-transform: 'translate(12,6)';
+      socket_chademo_b/marker-placement: interior;
+      socket_chademo_b/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_b_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_b_'+[osm_id]";
+        socket_chademo_b_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_b_'+[osm_id]";
+        socket_chademo_b_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_b_capacity/text-name: "[socket_capacity]";
+        socket_chademo_b_capacity/text-size: 8;
+        socket_chademo_b_capacity/text-fill: @transportation-text;
+        socket_chademo_b_capacity/text-face-name: @standard-font;
+        socket_chademo_b_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_b_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_b_capacity/text-dy: 5;
+        socket_chademo_b_capacity/text-dx: 17;
+        socket_chademo_b_capacity/text-horizontal-alignment: right;
+        socket_chademo_b_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_c/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_c/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_c/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_c_'+[osm_id]";
+      socket_chademo_c/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_c/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_c/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_c/marker-transform: 'translate(12,0)';
+      socket_chademo_c/marker-placement: interior;
+      socket_chademo_c/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_c_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_c_'+[osm_id]";
+        socket_chademo_c_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_c_'+[osm_id]";
+        socket_chademo_c_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_c_capacity/text-name: "[socket_capacity]";
+        socket_chademo_c_capacity/text-size: 8;
+        socket_chademo_c_capacity/text-fill: @transportation-text;
+        socket_chademo_c_capacity/text-face-name: @standard-font;
+        socket_chademo_c_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_c_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_c_capacity/text-dy: -1;
+        socket_chademo_c_capacity/text-dx: 17;
+        socket_chademo_c_capacity/text-horizontal-alignment: right;
+        socket_chademo_c_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_d/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_d/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_d/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_d_'+[osm_id]";
+      socket_chademo_d/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_d/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_d/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_d/marker-transform: 'translate(12,15)';
+      socket_chademo_d/marker-placement: interior;
+      socket_chademo_d/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_d_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_d_'+[osm_id]";
+        socket_chademo_d_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_d_'+[osm_id]";
+        socket_chademo_d_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_d_capacity/text-name: "[socket_capacity]";
+        socket_chademo_d_capacity/text-size: 8;
+        socket_chademo_d_capacity/text-fill: @transportation-text;
+        socket_chademo_d_capacity/text-face-name: @standard-font;
+        socket_chademo_d_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_d_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_d_capacity/text-dy: 14;
+        socket_chademo_d_capacity/text-dx: 17;
+        socket_chademo_d_capacity/text-horizontal-alignment: right;
+        socket_chademo_d_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_e/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_e/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_e/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_e_'+[osm_id]";
+      socket_chademo_e/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_e/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_e/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_e/marker-transform: 'translate(12,-9)';
+      socket_chademo_e/marker-placement: interior;
+      socket_chademo_e/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_e_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_e_'+[osm_id]";
+        socket_chademo_e_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_e_'+[osm_id]";
+        socket_chademo_e_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_e_capacity/text-name: "[socket_capacity]";
+        socket_chademo_e_capacity/text-size: 8;
+        socket_chademo_e_capacity/text-fill: @transportation-text;
+        socket_chademo_e_capacity/text-face-name: @standard-font;
+        socket_chademo_e_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_e_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_e_capacity/text-dy: -10;
+        socket_chademo_e_capacity/text-dx: 17;
+        socket_chademo_e_capacity/text-horizontal-alignment: right;
+        socket_chademo_e_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_f/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_f/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_f/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_f_'+[osm_id]";
+      socket_chademo_f/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_f/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_f/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_f/marker-transform: 'translate(12,17)';
+      socket_chademo_f/marker-placement: interior;
+      socket_chademo_f/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_f_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_f_'+[osm_id]";
+        socket_chademo_f_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_f_'+[osm_id]";
+        socket_chademo_f_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_f_capacity/text-name: "[socket_capacity]";
+        socket_chademo_f_capacity/text-size: 8;
+        socket_chademo_f_capacity/text-fill: @transportation-text;
+        socket_chademo_f_capacity/text-face-name: @standard-font;
+        socket_chademo_f_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_f_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_f_capacity/text-dy: 16;
+        socket_chademo_f_capacity/text-dx: 17;
+        socket_chademo_f_capacity/text-horizontal-alignment: right;
+        socket_chademo_f_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_g/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_g/marker-allow-overlap-anchor: "[osm_id]";
+      socket_chademo_g/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_g_'+[osm_id]";
+      socket_chademo_g/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_g/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_g/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_g/marker-transform: 'translate(12,-11)';
+      socket_chademo_g/marker-placement: interior;
+      socket_chademo_g/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_g_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_g_'+[osm_id]";
+        socket_chademo_g_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_g_'+[osm_id]";
+        socket_chademo_g_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_g_capacity/text-name: "[socket_capacity]";
+        socket_chademo_g_capacity/text-size: 8;
+        socket_chademo_g_capacity/text-fill: @transportation-text;
+        socket_chademo_g_capacity/text-face-name: @standard-font;
+        socket_chademo_g_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_g_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_g_capacity/text-dy: -12;
+        socket_chademo_g_capacity/text-dx: 17;
+        socket_chademo_g_capacity/text-horizontal-alignment: right;
+        socket_chademo_g_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_h/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_h/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',car_'+[osm_id]";
+      socket_chademo_h/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_h_'+[osm_id]";
+      socket_chademo_h/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_h/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_h/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_h/marker-transform: 'translate(-5,-12)';
+      socket_chademo_h/marker-placement: interior;
+      socket_chademo_h/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_h_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_h_'+[osm_id]";
+        socket_chademo_h_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_h_'+[osm_id]";
+        socket_chademo_h_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_h_capacity/text-name: "[socket_capacity]";
+        socket_chademo_h_capacity/text-size: 8;
+        socket_chademo_h_capacity/text-fill: @transportation-text;
+        socket_chademo_h_capacity/text-face-name: @standard-font;
+        socket_chademo_h_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_h_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_h_capacity/text-dy: -13;
+        socket_chademo_h_capacity/text-dx: -11;
+        socket_chademo_h_capacity/text-horizontal-alignment: left;
+        socket_chademo_h_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_j/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_j/marker-allow-overlap-anchor: "[osm_id]+',capacity_'+[osm_id]+',cover_'+[osm_id]";
+      socket_chademo_j/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_j_'+[osm_id]";
+      socket_chademo_j/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_j/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_j/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_j/marker-transform: 'translate(-11,-11)';
+      socket_chademo_j/marker-placement: interior;
+      socket_chademo_j/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_j_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_j_'+[osm_id]";
+        socket_chademo_j_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_j_'+[osm_id]";
+        socket_chademo_j_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_j_capacity/text-name: "[socket_capacity]";
+        socket_chademo_j_capacity/text-size: 8;
+        socket_chademo_j_capacity/text-fill: @transportation-text;
+        socket_chademo_j_capacity/text-face-name: @standard-font;
+        socket_chademo_j_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_j_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_j_capacity/text-dy: -12;
+        socket_chademo_j_capacity/text-dx: -17;
+        socket_chademo_j_capacity/text-horizontal-alignment: left;
+        socket_chademo_j_capacity/text-vertical-alignment: middle;
+      }
+
+      socket_chademo_i/marker-anchor-cond: "[osm_id]+',!socket_chademo_'+[osm_id]";
+      socket_chademo_i/marker-allow-overlap-anchor: "[osm_id]+',bicycle_'+[osm_id]+',car_'+[osm_id]";
+      socket_chademo_i/marker-anchor-set: "'socket_chademo_'+[osm_id]+',socket_chademo_i_'+[osm_id]";
+      socket_chademo_i/marker-file: url('symbols/colored/socket_chademo.svg');
+      [socket_output = 'medium'] { socket_chademo_i/marker-file: url('symbols/colored/socket_chademo_medium.svg'); }
+      [socket_output = 'high'] { socket_chademo_i/marker-file: url('symbols/colored/socket_chademo_high.svg'); }
+      socket_chademo_i/marker-transform: 'translate(-9,14)';
+      socket_chademo_i/marker-placement: interior;
+      socket_chademo_i/marker-clip: false;
+
+      [socket_capacity != 'no'][zoom >= 19] {
+        socket_chademo_i_capacity/text-anchor-cond: "[osm_id]+',socket_chademo_i_'+[osm_id]";
+        socket_chademo_i_capacity/text-allow-overlap-anchor: "[osm_id]+',socket_chademo_'+[osm_id]+',socket_chademo_i_'+[osm_id]";
+        socket_chademo_i_capacity/text-anchor-set: "'socket_chademo_capacity_'+[osm_id]";
+        socket_chademo_i_capacity/text-name: "[socket_capacity]";
+        socket_chademo_i_capacity/text-size: 8;
+        socket_chademo_i_capacity/text-fill: @transportation-text;
+        socket_chademo_i_capacity/text-face-name: @standard-font;
+        socket_chademo_i_capacity/text-halo-radius: 0.75*@standard-halo-radius;
+        socket_chademo_i_capacity/text-halo-fill: @standard-halo-fill;
+        socket_chademo_i_capacity/text-dy: 14;
+        socket_chademo_i_capacity/text-dx: -15;
+        socket_chademo_i_capacity/text-horizontal-alignment: left;
+        socket_chademo_i_capacity/text-vertical-alignment: middle;
+      }
+    }
+
+    [addon = 'parking'][zoom >= 18] {
+      parking/marker-anchor-cond: "[osm_id]";
+      parking/marker-allow-overlap-anchor: "[osm_id]";
+      parking/marker-anchor-set: "'parking_'+[osm_id]";
+      parking/marker-file: url('symbols/transport/parking.svg');
+      parking/marker-fill: @transportation-icon;
+      parking/marker-transform: 'translate(10,-3)';
+      parking/marker-placement: interior;
+      parking/marker-clip: false;
+
+      parking2/marker-anchor-cond: "[osm_id]+',!parking_'+[osm_id]";
+      parking2/marker-allow-overlap-anchor: "[osm_id]";
+      parking2/marker-anchor-set: "'parking_'+[osm_id]";
+      parking2/marker-file: url('symbols/transport/parking.svg');
+      parking2/marker-fill: @transportation-icon;
+      parking2/marker-transform: 'translate(0,11)';
+      parking2/marker-placement: interior;
+      parking2/marker-clip: false;
+
+      parking3/marker-anchor-cond: "[osm_id]+',!parking_'+[osm_id]";
+      parking3/marker-allow-overlap-anchor: "[osm_id]";
+      parking3/marker-anchor-set: "'parking_'+[osm_id]";
+      parking3/marker-file: url('symbols/transport/parking.svg');
+      parking3/marker-fill: @transportation-icon;
+      parking3/marker-transform: 'translate(4,-9)';
+      parking3/marker-placement: interior;
+      parking3/marker-clip: false;
+
+      parking4/marker-anchor-cond: "[osm_id]+',!parking_'+[osm_id]";
+      parking4/marker-allow-overlap-anchor: "[osm_id]+',car_'+[osm_id]+',bicycle_'+[osm_id]+',motorcycle_'+[osm_id]";
+      parking4/marker-anchor-set: "'parking_'+[osm_id]";
+      parking4/marker-file: url('symbols/transport/parking.svg');
+      parking4/marker-fill: @transportation-icon;
+      parking4/marker-transform: 'translate(-8,12)';
+      parking4/marker-placement: interior;
+      parking4/marker-clip: false;
+    }
+  }
+
+}
+
 #addon-symbols-parking[zoom >= 17] {
   [feature = 'parking'] {
+    [addon = 'private'][zoom >= 18] {
+      private/marker-anchor-cond: "[osm_id]";
+      private/marker-allow-overlap-anchor: "[osm_id]";
+      private/marker-anchor-set: "'private_'+[osm_id]";
+      private/marker-file: url('symbols/transport/private.svg');
+      private/marker-fill: @transportation-icon;
+      private/marker-opacity: @private-opacity;
+      private/marker-transform: 'translate(7,4)';
+      private/marker-placement: interior;
+      private/marker-clip: false;
+    }
     [addon = 'covered'] {
       cover/marker-anchor-cond: "[osm_id]";
       cover/marker-allow-overlap-anchor: "[osm_id]";
@@ -933,6 +2581,17 @@
   [feature = 'bicycle_parking'],
   [feature = 'motorcycle_parking'] {
     [zoom >= 18] {
+      [addon = 'private'] {
+        private/marker-anchor-cond: "[osm_id]";
+        private/marker-allow-overlap-anchor: "[osm_id]";
+        private/marker-anchor-set: "'private_'+[osm_id]";
+        private/marker-file: url('symbols/transport/private.svg');
+        private/marker-fill: @transportation-icon;
+        private/marker-opacity: @private-opacity;
+        private/marker-transform: 'translate(5,-4)';
+        private/marker-placement: interior;
+        private/marker-clip: false;
+      }
       [addon = 'covered'] {
         cover/marker-anchor-cond: "[osm_id]";
         cover/marker-allow-overlap-anchor: "[osm_id]";

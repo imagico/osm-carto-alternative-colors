@@ -5338,100 +5338,12 @@
     }
   }
   [feature = 'amenity_charging_station'] {
-    [vis_type = 'symbol-for-label'],
-    [vis_type = 'symbol-only'] {
-      marker-anchor-set: '[osm_id]';
-      marker-placement: interior;
-      marker-clip: false;
-      marker-file: url('symbols/colored/amenity_charging_station.svg');
-    }
-    [vis_type = 'symbol-label'] {
-      shield-placement: interior;
-      shield-clip: false;
-      shield-name: '[name]';
-      shield-size: 10;
-      shield-face-name: @book-fonts;
-      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
-      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
-      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
-      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
-      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
-      shield-halo-radius: @standard-halo-radius * 1.0;
-      shield-halo-fill: @standard-halo-fill;
-      shield-wrap-width: @standard-wrap-width;
-      shield-line-spacing: @standard-line-spacing-size;
-      shield-fill: #6942b0;
-      shield-text-dy: 11;
-      shield-unlock-image: true;
-      shield-file: url('symbols/colored/amenity_charging_station.svg');
-      symbolonly/marker-placement: interior;
-      symbolonly/marker-clip: false;
-      symbolonly/marker-file: url('symbols/colored/amenity_charging_station.svg');
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-    }
-    [vis_type = 'label-for-symbol'] {
-      text-anchor-cond: '[osm_id]';
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-dy: 11;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
-      textonly/text-anchor-cond: "'!'+[osm_id]";
-      textonly/text-placement: interior;
-      textonly/text-name: '[name]';
-      textonly/text-size: 10;
-      textonly/text-wrap-width: @standard-wrap-width;
-      textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #6942b0;
-      textonly/text-face-name: @book-fonts;
-      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
-      textonly/text-halo-radius: @standard-halo-radius * 1.0;
-      textonly/text-halo-fill: @standard-halo-fill;
-      textonly/text-avoid-edges: true;
-    }
-    [vis_type = 'label-only'] {
-      text-placement: interior;
-      text-name: '[name]';
-      text-size: 10;
-      text-wrap-width: @standard-wrap-width;
-      text-line-spacing: @standard-line-spacing-size;
-      text-fill: #6942b0;
-      text-face-name: @book-fonts;
-      [font = 'jp'] { text-face-name: @book-fonts-jp; }
-      [font = 'tc'] { text-face-name: @book-fonts-tc; }
-      [font = 'kr'] { text-face-name: @book-fonts-kr; }
-      [font = 'ur'] { text-face-name: @book-fonts-ur; }
-      [font = 'bg'] { text-face-name: @book-fonts-bg; }
-      text-halo-radius: @standard-halo-radius * 1.0;
-      text-halo-fill: @standard-halo-fill;
+    marker-anchor-set: '[osm_id]';
+    marker-placement: interior;
+    marker-clip: false;
+    marker-file: url('symbols/colored/amenity_charging_station.svg');
+    [int_access = 'restricted'] {
+      marker-opacity: @private-opacity;
     }
   }
   [feature = 'amenity_fuel'] {
@@ -12723,24 +12635,8 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
-    // modification man_made_mineshaft+abandoned based on style standard-symbol-attribute-variant
-    ["int_lifecycle" = 'abandoned'] {
-      [vis_type = 'symbol-for-label'],
-      [vis_type = 'symbol-only'] {
-        marker-anchor-set: '[osm_id]';
-        marker-file: url('symbols/colored/man_made_mineshaft_abandoned.svg');
-      }
-      [vis_type = 'symbol-label'] {
-        shield-file: url('symbols/colored/man_made_mineshaft_abandoned.svg');
-        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_abandoned.svg');
-      }
-      [vis_type = 'label-for-symbol'] {
-        text-anchor-cond: '[osm_id]';
-        textonly/text-anchor-cond: "'!'+[osm_id]";
-      }
-    }
     // modification man_made_mineshaft+disused based on style standard-symbol-attribute-variant
-    ["int_lifecycle" = 'disused'] {
+    ["int_mineshaft" = 'disused'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -12755,8 +12651,24 @@
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
+    // modification man_made_mineshaft+abandoned based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'abandoned'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_abandoned.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_abandoned.svg');
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_abandoned.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
     // modification man_made_mineshaft+coal based on style standard-symbol-attribute-variant
-    ["resource" = 'coal'] {
+    ["int_mineshaft" = 'coal'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -12774,7 +12686,7 @@
       }
     }
     // modification man_made_mineshaft+iron_ore based on style standard-symbol-attribute-variant
-    ["resource" = 'iron_ore'] {
+    ["int_mineshaft" = 'iron_ore'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -12792,7 +12704,7 @@
       }
     }
     // modification man_made_mineshaft+gold based on style standard-symbol-attribute-variant
-    ["resource" = 'gold'] {
+    ["int_mineshaft" = 'gold'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -12810,7 +12722,7 @@
       }
     }
     // modification man_made_mineshaft+copper based on style standard-symbol-attribute-variant
-    ["resource" = 'copper'] {
+    ["int_mineshaft" = 'copper'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -12828,7 +12740,7 @@
       }
     }
     // modification man_made_mineshaft+salt based on style standard-symbol-attribute-variant
-    ["resource" = 'salt'] {
+    ["int_mineshaft" = 'salt'] {
       [vis_type = 'symbol-for-label'],
       [vis_type = 'symbol-only'] {
         marker-anchor-set: '[osm_id]';
@@ -12842,6 +12754,150 @@
       [vis_type = 'label-for-symbol'] {
         text-anchor-cond: '[osm_id]';
         text-dy: 10;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+abandoned based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+abandoned'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+abandoned.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+abandoned.svg');
+        shield-text-dy: 10;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+abandoned.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 10;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+disused based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+disused'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+disused.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+disused.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+disused.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+coal based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+coal'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+coal.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+coal.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+coal.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+iron_ore based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+iron_ore'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+iron_ore.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+iron_ore.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+iron_ore.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+gold based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+gold'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+gold.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+gold.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+gold.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+copper based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+copper'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+copper.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+copper.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+copper.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification man_made_mineshaft+headframe+salt based on style standard-symbol-attribute-variant
+    ["int_mineshaft" = 'headframe+salt'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/man_made_mineshaft_headframe+salt.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/man_made_mineshaft_headframe+salt.svg');
+        shield-text-dy: 12;
+        symbolonly/marker-file: url('symbols/colored/man_made_mineshaft_headframe+salt.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        text-dy: 12;
         textonly/text-anchor-cond: "'!'+[osm_id]";
       }
     }
@@ -15594,6 +15650,54 @@
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
     }
+    // modification historic_city_gate+entrance based on style standard-symbol-attribute-variant
+    ["barrier" = 'entrance'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/historic_city_gate_entrance.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/historic_city_gate_entrance.svg');
+        symbolonly/marker-file: url('symbols/colored/historic_city_gate_entrance.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification historic_city_gate+gate based on style standard-symbol-attribute-variant
+    ["barrier" = 'gate'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/historic_city_gate_gate.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/historic_city_gate_gate.svg');
+        symbolonly/marker-file: url('symbols/colored/historic_city_gate_gate.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification historic_city_gate+noaccess based on style standard-symbol-attribute-variant
+    [int_access = 'restricted'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/historic_city_gate_noaccess.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/historic_city_gate_noaccess.svg');
+        symbolonly/marker-file: url('symbols/colored/historic_city_gate_noaccess.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
   }
   [feature = 'man_made_ceremonial_gate'] {
     [vis_type = 'symbol-for-label'],
@@ -16595,6 +16699,135 @@
       text-halo-fill: @standard-halo-fill;
     }
   }
+  [feature = 'amenity_monastery'] {
+    [vis_type = 'symbol-for-label'],
+    [vis_type = 'symbol-only'] {
+      marker-anchor-set: '[osm_id]';
+      marker-placement: interior;
+      marker-clip: false;
+      marker-file: url('symbols/colored/amenity_monastery.svg');
+    }
+    [vis_type = 'symbol-label'] {
+      shield-placement: interior;
+      shield-clip: false;
+      shield-name: '[name]';
+      shield-size: 10;
+      shield-face-name: @book-fonts;
+      [font = 'jp'] { shield-face-name: @book-fonts-jp; }
+      [font = 'tc'] { shield-face-name: @book-fonts-tc; }
+      [font = 'kr'] { shield-face-name: @book-fonts-kr; }
+      [font = 'ur'] { shield-face-name: @book-fonts-ur; }
+      [font = 'bg'] { shield-face-name: @book-fonts-bg; }
+      shield-halo-radius: @standard-halo-radius * 1.0;
+      shield-halo-fill: @standard-halo-fill;
+      shield-wrap-width: @standard-wrap-width;
+      shield-line-spacing: @standard-line-spacing-size;
+      shield-fill: #734a08;
+      shield-text-dy: 12;
+      shield-unlock-image: true;
+      shield-file: url('symbols/colored/amenity_monastery.svg');
+      symbolonly/marker-placement: interior;
+      symbolonly/marker-clip: false;
+      symbolonly/marker-file: url('symbols/colored/amenity_monastery.svg');
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-for-symbol'] {
+      text-anchor-cond: '[osm_id]';
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-dy: 12;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+      textonly/text-anchor-cond: "'!'+[osm_id]";
+      textonly/text-placement: interior;
+      textonly/text-name: '[name]';
+      textonly/text-size: 10;
+      textonly/text-wrap-width: @standard-wrap-width;
+      textonly/text-line-spacing: @standard-line-spacing-size;
+      textonly/text-fill: #734a08;
+      textonly/text-face-name: @book-fonts;
+      [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { textonly/text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { textonly/text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { textonly/text-face-name: @book-fonts-bg; }
+      textonly/text-halo-radius: @standard-halo-radius * 1.0;
+      textonly/text-halo-fill: @standard-halo-fill;
+      textonly/text-avoid-edges: true;
+    }
+    [vis_type = 'label-only'] {
+      text-placement: interior;
+      text-name: '[name]';
+      text-size: 10;
+      text-wrap-width: @standard-wrap-width;
+      text-line-spacing: @standard-line-spacing-size;
+      text-fill: #734a08;
+      text-face-name: @book-fonts;
+      [font = 'jp'] { text-face-name: @book-fonts-jp; }
+      [font = 'tc'] { text-face-name: @book-fonts-tc; }
+      [font = 'kr'] { text-face-name: @book-fonts-kr; }
+      [font = 'ur'] { text-face-name: @book-fonts-ur; }
+      [font = 'bg'] { text-face-name: @book-fonts-bg; }
+      text-halo-radius: @standard-halo-radius * 1.0;
+      text-halo-fill: @standard-halo-fill;
+    }
+    // modification amenity_monastery+christian based on style standard-symbol-attribute-variant
+    ["religion" = 'christian'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_monastery_christian.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_monastery_christian.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_monastery_christian.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification amenity_monastery+buddhist based on style standard-symbol-attribute-variant
+    ["religion" = 'buddhist'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/amenity_monastery_buddhist.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/amenity_monastery_buddhist.svg');
+        symbolonly/marker-file: url('symbols/colored/amenity_monastery_buddhist.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+  }
   [feature = 'amenity_place_of_worship'] {
     [vis_type = 'symbol-for-label'],
     [vis_type = 'symbol-only'] {
@@ -17037,7 +17270,7 @@
       shield-halo-fill: @standard-halo-fill;
       shield-wrap-width: @standard-wrap-width;
       shield-line-spacing: @standard-line-spacing-size;
-      shield-fill: #000033;
+      shield-fill: #000000;
       shield-text-dy: 10;
       shield-unlock-image: true;
       shield-file: url('symbols/colored/historic_wayside_shrine.svg');
@@ -17049,7 +17282,7 @@
       textonly/text-size: 10;
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #000033;
+      textonly/text-fill: #000000;
       textonly/text-face-name: @book-fonts;
       [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
@@ -17067,7 +17300,7 @@
       text-size: 10;
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
-      text-fill: #000033;
+      text-fill: #000000;
       text-dy: 10;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
@@ -17083,7 +17316,7 @@
       textonly/text-size: 10;
       textonly/text-wrap-width: @standard-wrap-width;
       textonly/text-line-spacing: @standard-line-spacing-size;
-      textonly/text-fill: #000033;
+      textonly/text-fill: #000000;
       textonly/text-face-name: @book-fonts;
       [font = 'jp'] { textonly/text-face-name: @book-fonts-jp; }
       [font = 'tc'] { textonly/text-face-name: @book-fonts-tc; }
@@ -17100,7 +17333,7 @@
       text-size: 10;
       text-wrap-width: @standard-wrap-width;
       text-line-spacing: @standard-line-spacing-size;
-      text-fill: #000033;
+      text-fill: #000000;
       text-face-name: @book-fonts;
       [font = 'jp'] { text-face-name: @book-fonts-jp; }
       [font = 'tc'] { text-face-name: @book-fonts-tc; }
@@ -17109,6 +17342,54 @@
       [font = 'bg'] { text-face-name: @book-fonts-bg; }
       text-halo-radius: @standard-halo-radius * 1.0;
       text-halo-fill: @standard-halo-fill;
+    }
+    // modification historic_wayside_shrine+large based on style standard-symbol-zoom-variant
+    [zoom >= 17] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/historic_wayside_shrine_large.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/historic_wayside_shrine_large.svg');
+        symbolonly/marker-file: url('symbols/colored/historic_wayside_shrine_large.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification historic_wayside_shrine+christian based on style standard-symbol-attribute-variant
+    ["religion" = 'christian'] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/historic_wayside_shrine_christian.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/historic_wayside_shrine_christian.svg');
+        symbolonly/marker-file: url('symbols/colored/historic_wayside_shrine_christian.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
+    }
+    // modification historic_wayside_shrine+large+christian based on style standard-symbol-zoom-attribute-variant
+    [religion = 'christian'][zoom >= 17] {
+      [vis_type = 'symbol-for-label'],
+      [vis_type = 'symbol-only'] {
+        marker-anchor-set: '[osm_id]';
+        marker-file: url('symbols/colored/historic_wayside_shrine_large+christian.svg');
+      }
+      [vis_type = 'symbol-label'] {
+        shield-file: url('symbols/colored/historic_wayside_shrine_large+christian.svg');
+        symbolonly/marker-file: url('symbols/colored/historic_wayside_shrine_large+christian.svg');
+      }
+      [vis_type = 'label-for-symbol'] {
+        text-anchor-cond: '[osm_id]';
+        textonly/text-anchor-cond: "'!'+[osm_id]";
+      }
     }
   }
   [feature = 'waterway_waterfall'] {
