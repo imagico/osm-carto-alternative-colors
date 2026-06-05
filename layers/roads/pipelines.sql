@@ -79,7 +79,6 @@
                             ST_Split(
                               way,
                               COALESCE(
-
                                 (SELECT
                                     ST_Collect(way) AS way
                                   FROM
@@ -100,6 +99,9 @@
                                               man_made = 'goods_conveyor')
                                         AND (man_made IS NULL OR man_made != 'pipeline')
                                         AND way && p1.way
+                                    UNION ALL
+                                    SELECT
+                                      ST_Boundary(!unbuffered_bbox!) -- split at the tile edge in addition to avoid tile edge artefacts
                                     ) AS _
                                 ),
                                 ST_SetSRID('MULTILINESTRING EMPTY'::geometry, 3857)
