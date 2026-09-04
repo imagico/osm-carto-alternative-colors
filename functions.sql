@@ -152,3 +152,45 @@ BEGIN
   RETURN listtext;
 END;
 $$;
+
+/* Remove antimeridian closure segments from a boundary linestring.
+
+   Boundary relations that cross the antimeridian are closed with artificial
+   member ways (tagged closure_segment=yes) running along lon +/-180. Those ways
+   carry no boundary tags of their own, and line_merge() folds them into the
+   relation geometry, so the tag is not present on the rendered row and cannot be
+   filtered directly. Instead drop every segment with BOTH endpoints on the
+   antimeridian; a segment with only one endpoint there is real boundary linework
+   meeting it, and is kept.
+
+   The 0.5m tolerance is deliberate. OSM stores coordinates as integers at 1e-7
+   degrees, so one unit in the last place is 1.11cm in Web Mercator, and nodes
+   intended to sit at 180 are frequently stored as 179.9999999. Across the
+   antimeridian data tested no vertex falls between 2cm and 1m of +/-180, while
+   the nearest genuine boundary node is 13m out, so 0.5m separates them cleanly.
+
+   The guard uses the && operator rather than the more obvious ST_XMax/ST_XMin
+   because ST_XMax(geometry) casts to box3d, which reads every vertex, and
+   the caller evaluates this expression once per output plus once per NULL/empty
+   check. On a dense admin tile that measured ~3x the cost of the whole query,
+   while && compares only the cached bounding box.
+
+   Returns NULL when every segment was removed - ST_Collect over zero rows is
+   NULL, so the result is never an empty geometry - and callers only need to
+   discard NULL. */
+CREATE OR REPLACE FUNCTION carto_filter_antimeridian(way geometry)
+  RETURNS geometry
+  LANGUAGE SQL
+  IMMUTABLE PARALLEL SAFE
+AS $$
+SELECT
+	CASE
+		WHEN way && ST_MakeEnvelope(20037507.84, -20037509, 20037509, 20037509, 3857)
+		  OR way && ST_MakeEnvelope(-20037509, -20037509, -20037507.84, 20037509, 3857) THEN
+			(SELECT ST_LineMerge(ST_Collect(s.geom))
+				FROM ST_DumpSegments(way) s
+				WHERE NOT (abs(abs(ST_X(ST_StartPoint(s.geom))) - 20037508.342789244) < 0.5
+					AND abs(abs(ST_X(ST_EndPoint(s.geom))) - 20037508.342789244) < 0.5))
+		ELSE way
+	END
+$$;
