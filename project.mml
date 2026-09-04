@@ -1040,8 +1040,8 @@ Layer:
           FROM planet_osm_line
           WHERE aerialway IS NOT NULL
             OR (man_made = 'pipeline'
-                AND tags-> 'location' IN ('overground', 'overhead', 'surface', 'outdoor')
-                OR bridge IN ('yes', 'aqueduct', 'cantilever', 'covered', 'trestle', 'viaduct'))
+                AND (tags-> 'location' IN ('overground', 'overhead', 'surface', 'outdoor')
+                     OR bridge IN ('yes', 'aqueduct', 'cantilever', 'covered', 'trestle', 'viaduct')))
             OR (man_made = 'goods_conveyor'
                 AND (tags->'location' NOT IN ('underground') OR (tags->'location') IS NULL)
                 AND (tunnel NOT IN ('yes') OR tunnel IS NULL))
@@ -2149,8 +2149,8 @@ Layer:
           FROM planet_osm_line
           WHERE ((man_made IN ('pier', 'breakwater', 'groyne', 'embankment')
               OR (man_made = 'pipeline'
-                 AND tags-> 'location' IN ('overground', 'overhead', 'surface', 'outdoor')
-                 OR bridge IN ('yes', 'aqueduct', 'cantilever', 'covered', 'trestle', 'viaduct'))
+                 AND (tags-> 'location' IN ('overground', 'overhead', 'surface', 'outdoor')
+                      OR bridge IN ('yes', 'aqueduct', 'cantilever', 'covered', 'trestle', 'viaduct')))
               OR tags @> 'attraction=>water_slide'
               OR aerialway IN ('cable_car', 'gondola', 'mixed_lift', 'goods', 'chair_lift', 'drag_lift', 't-bar', 'j-bar', 'platter', 'rope_tow', 'zip_line')
               OR leisure IN ('slipway', 'track')
