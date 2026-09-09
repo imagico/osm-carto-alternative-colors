@@ -1410,7 +1410,7 @@ Layer:
               railway,
               aerialway,
               tags->'station' AS station,
-              NULL::float as way_area,
+              NULL::real AS way_area,
               osm_id
             FROM planet_osm_point
             WHERE way && !bbox!
@@ -1581,7 +1581,7 @@ Layer:
             *
           FROM
           (SELECT -- This subselect allows filtering on the feature column
-              way,
+              CASE WHEN way_area IS NOT NULL THEN ST_PointOnSurface(way) ELSE way END AS way,
               CASE
                 WHEN amenity = 'parcel_locker'
                 THEN CONCAT_WS(E'\n', COALESCE(tags->'brand', tags->'operator', name), ref)
@@ -1732,7 +1732,7 @@ Layer:
               osm_id
             FROM
               (SELECT
-                  ST_PointOnSurface(way) AS way,
+                  way,
                   name,
                   access,
                   aeroway,
@@ -1785,7 +1785,7 @@ Layer:
                   tourism,
                   waterway,
                   tags,
-                  NULL::float AS way_area,
+                  NULL::real AS way_area,
                   osm_id
                 FROM planet_osm_point
                 WHERE way && !bbox!
@@ -2402,7 +2402,7 @@ Layer:
                   historic,
                   man_made,
                   tags,
-                  NULL::float AS way_area
+                  NULL::real AS way_area
                 FROM planet_osm_point
                 WHERE way && !bbox!
               ) _
