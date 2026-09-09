@@ -490,8 +490,9 @@ Layer:
             SELECT
                 way,
                 'railway_' || (CASE
-                                 WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-spur-siding-yard'
-                                 WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'tram-service'
+                                 -- spur/siding/yard tracks get a feature per railway class, e.g. INT-light_rail-service
+                                 WHEN (railway IN ('rail', 'tram', 'light_rail', 'subway', 'funicular', 'narrow_gauge', 'monorail')
+                                       AND service IN ('spur', 'siding', 'yard')) THEN 'INT-' || railway || '-service'
                                  ELSE railway END) AS feature,
                 NULL AS tracktype,
                 NULL AS int_surface,
@@ -514,7 +515,8 @@ Layer:
             layernotnull,
             z_order,
             CASE WHEN substring(feature for 8) = 'railway_' THEN 2 ELSE 1 END,
-            CASE WHEN feature IN ('railway_INT-spur-siding-yard', 'railway_tram-service') THEN 0 ELSE 1 END,
+            CASE WHEN feature IN ('railway_INT-rail-service', 'railway_INT-tram-service', 'railway_INT-light_rail-service', 'railway_INT-subway-service',
+                                  'railway_INT-funicular-service', 'railway_INT-narrow_gauge-service', 'railway_INT-monorail-service') THEN 0 ELSE 1 END,
             CASE int_access WHEN 'no' THEN 0 WHEN 'restricted' THEN 1 ELSE 2 END,
             CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 1 END,
             osm_id
@@ -734,8 +736,9 @@ Layer:
             SELECT
                 way,
                 'railway_' || (CASE
-                                 WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-spur-siding-yard'
-                                 WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'tram-service'
+                                 -- spur/siding/yard tracks get a feature per railway class, e.g. INT-light_rail-service
+                                 WHEN (railway IN ('rail', 'tram', 'light_rail', 'subway', 'funicular', 'narrow_gauge', 'monorail')
+                                       AND service IN ('spur', 'siding', 'yard')) THEN 'INT-' || railway || '-service'
                                  ELSE railway END) AS feature,
                 NULL AS tracktype,
                 NULL AS int_surface,
@@ -761,7 +764,8 @@ Layer:
             layernotnull,
             z_order,
             CASE WHEN substring(feature for 8) = 'railway_' THEN 2 ELSE 1 END,
-            CASE WHEN feature IN ('railway_INT-spur-siding-yard', 'railway_tram-service') THEN 0 ELSE 1 END,
+            CASE WHEN feature IN ('railway_INT-rail-service', 'railway_INT-tram-service', 'railway_INT-light_rail-service', 'railway_INT-subway-service',
+                                  'railway_INT-funicular-service', 'railway_INT-narrow_gauge-service', 'railway_INT-monorail-service') THEN 0 ELSE 1 END,
             CASE int_access WHEN 'no' THEN 0 WHEN 'restricted' THEN 1 ELSE 2 END,
             CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 1 END,
             osm_id
@@ -899,8 +903,9 @@ Layer:
             SELECT
                 way,
                 'railway_' || (CASE
-                                 WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-spur-siding-yard'
-                                 WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'tram-service'
+                                 -- spur/siding/yard tracks get a feature per railway class, e.g. INT-light_rail-service
+                                 WHEN (railway IN ('rail', 'tram', 'light_rail', 'subway', 'funicular', 'narrow_gauge', 'monorail')
+                                       AND service IN ('spur', 'siding', 'yard')) THEN 'INT-' || railway || '-service'
                                  ELSE railway END) AS feature,
                 NULL AS tracktype,
                 NULL AS int_surface,
@@ -946,7 +951,8 @@ Layer:
             layernotnull,
             z_order,
             CASE WHEN substring(feature for 8) = 'railway_' THEN 2 ELSE 1 END,
-            CASE WHEN feature IN ('railway_INT-spur-siding-yard', 'railway_tram-service') THEN 0 ELSE 1 END,
+            CASE WHEN feature IN ('railway_INT-rail-service', 'railway_INT-tram-service', 'railway_INT-light_rail-service', 'railway_INT-subway-service',
+                                  'railway_INT-funicular-service', 'railway_INT-narrow_gauge-service', 'railway_INT-monorail-service') THEN 0 ELSE 1 END,
             CASE int_access WHEN 'no' THEN 0 WHEN 'restricted' THEN 1 ELSE 2 END,
             CASE WHEN int_surface IN ('unpaved') THEN 0 ELSE 1 END,
             osm_id
@@ -2061,8 +2067,8 @@ Layer:
         (SELECT
             way,
             CASE
-              WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-spur-siding-yard'
-              WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'tram-service'
+              WHEN (railway = 'rail' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-rail-service'
+              WHEN (railway = 'tram' AND service IN ('spur', 'siding', 'yard')) THEN 'INT-tram-service'
               ELSE railway
             END AS railway,
             tags->'highspeed' as highspeed,
