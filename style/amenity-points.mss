@@ -1498,6 +1498,23 @@
   }
 }
 
+#railway-crossings {
+  [railway = 'level_crossing'][int_isminor = 'no'],
+  [railway = 'level_crossing'][zoom >= 16],
+  [railway = 'crossing'][int_isminor = 'no'][zoom >= 15],
+  [railway = 'crossing'][zoom >= 16] {
+    marker-file: url('symbols/barrier/level_crossing.svg');
+    marker-fill: #4d4d4d;
+    marker-clip: false;
+    [int_isminor = 'no'][zoom >= 16],
+    [railway = 'level_crossing'][zoom >= 17],
+    [zoom >= 18] {
+      marker-file: url('symbols/barrier/level_crossing2.svg');
+      [int_isminor = 'incomplete'] { marker-file: url('symbols/barrier/level_crossing_incomplete.svg'); }
+    }
+  }
+}
+
 #amenity-low-priority {
   [feature = 'man_made_cross'][zoom >= 16],
   [feature = 'historic_wayside_cross'][zoom >= 16] {
@@ -1510,16 +1527,6 @@
     marker-file: url('symbols/historic/shrine.svg');
     marker-fill: @man-made-icon;
     marker-clip: false;
-  }
-
-  [feature = 'railway_level_crossing'][zoom >= 14]::railway,
-  [feature = 'railway_crossing'][zoom >= 15]::railway{
-    marker-file: url('symbols/barrier/level_crossing.svg');
-    marker-fill: #4d4d4d;
-    marker-clip: false;
-    [zoom >= 16] {
-      marker-file: url('symbols/barrier/level_crossing2.svg');
-    }
   }
 
   [feature = 'barrier_gate']::barrier {

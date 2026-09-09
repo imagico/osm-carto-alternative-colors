@@ -11,6 +11,8 @@ line:
     where: name IS NOT NULL OR (tags @> 'golf=>hole'::hstore AND ref IS NOT NULL)
   ferry:
     where: route = 'ferry' AND osm_id > 0
+  railway:
+    where: railway IS NOT NULL
   river:
     where: waterway = 'river'
   waterway:

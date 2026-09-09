@@ -1820,6 +1820,41 @@ Layer:
         ) AS amenity_line
     properties:
       minzoom: 16
+  - id: railway-crossings
+    geometry: point
+    <<: *extents
+    Datasource:
+      <<: *osm2pgsql
+      table: |-
+        (SELECT
+          *
+          FROM
+            (SELECT
+              crossing.way AS way,
+              crossing.railway AS railway,
+              CASE
+                WHEN track.railway IS NULL THEN 'incomplete'
+                WHEN track.railway IN ('disused', 'tram', 'miniature') OR track.service IN ('spur', 'siding', 'yard') THEN 'yes'
+                ELSE 'no'
+              END AS int_isminor,
+              crossing.osm_id
+            FROM planet_osm_point crossing
+            LEFT JOIN planet_osm_line track
+              ON track.railway IS NOT NULL
+              AND ST_DWithin(crossing.way, track.way, 0.1)
+            WHERE crossing.railway IN ('crossing', 'level_crossing')
+              AND crossing.way && !bbox!
+            ) _
+          ORDER BY
+            CASE int_isminor 
+              WHEN 'no' THEN 1
+              WHEN 'incomplete' THEN 2
+              ELSE 3 END,
+            CASE WHEN railway = 'crossing' THEN 1 ELSE 2 END,
+            osm_id
+        ) AS railway_crossings
+    properties:
+      minzoom: 14
   - id: power-towers
     geometry: point
     <<: *extents
@@ -2333,7 +2368,6 @@ Layer:
             way,
             name,
             COALESCE(
-              'railway_' || CASE WHEN railway IN ('level_crossing', 'crossing') AND way_area IS NULL THEN railway END,
               'amenity_' || CASE WHEN amenity IN ('bench', 'waste_basket', 'waste_disposal') AND way_area IS NULL THEN amenity END,
               'historic_' || CASE WHEN historic IN ('wayside_cross', 'wayside_shrine') AND way_area IS NULL THEN historic END,
               'man_made_' || CASE WHEN man_made IN ('cross') AND way_area IS NULL THEN man_made END,
@@ -2352,7 +2386,6 @@ Layer:
                   highway,
                   historic,
                   man_made,
-                  railway,
                   tags,
                   way_area
                 FROM planet_osm_polygon
@@ -2368,14 +2401,12 @@ Layer:
                   highway,
                   historic,
                   man_made,
-                  railway,
                   tags,
                   NULL::float AS way_area
                 FROM planet_osm_point
                 WHERE way && !bbox!
               ) _
-            WHERE railway IN ('level_crossing', 'crossing')
-               OR amenity IN ('bench', 'waste_basket', 'waste_disposal')
+            WHERE amenity IN ('bench', 'waste_basket', 'waste_disposal')
                OR historic IN ('wayside_cross', 'wayside_shrine')
                OR man_made IN ('cross')
                OR barrier IN ('bollard', 'gate', 'lift_gate', 'swing_gate', 'block', 'log', 'cattle_grid', 'stile', 'motorcycle_barrier', 'cycle_barrier', 'full-height_turnstile', 'turnstile', 'kissing_gate')

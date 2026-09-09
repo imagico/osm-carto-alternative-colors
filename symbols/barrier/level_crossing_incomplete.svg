@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="11" height="11"
+     viewBox="0 0 11 11">
+  <rect
+     id="mapnik_workaround"
+     width="11" height="11"
+     fill="none" />
+  <path
+    stroke="#ffffff" stroke-width="0.7"
+    d="M 0.65 0.65 L 0.65 2.35 L 2.65 4.35 L 4.35 4.35 L 4.35 2.65 L 2.35 0.65 Z"/>
+  <path
+    stroke="#ffffff" stroke-width="0.7"
+    d="M 8.65 0.65 L 6.65 2.65 L 6.65 4.35 L 8.35 4.35 L 10.35 2.35 L 10.35 0.65 Z"/>
+  <path
+    stroke="#ffffff" stroke-width="0.7"
+    d="M 2.65 6.65 L 0.65 8.65 L 0.65 10.35 L 2.35 10.35 L 4.35 8.35 L 4.35 6.65 Z"/>
+  <path
+    stroke="#ffffff" stroke-width="0.7"
+    d="M 6.65 6.65 L 6.65 8.35 L 8.65 10.35 L 10.35 10.35 L 10.35 8.65 L 8.35 6.65 Z"/>
+</svg>
