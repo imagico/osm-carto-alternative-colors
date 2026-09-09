@@ -145,7 +145,10 @@ BEGIN
   IF found_sep IS NOT NULL THEN
     parts := string_to_array(listtext, found_sep);
     IF array_length(parts, 1) > 2 THEN
-      RETURN parts[1] || chr(x'2026'::int) || parts[array_length(parts, 1)];
+      RETURN parts[1]
+          || chr(x'2026'::int) -- U+2026 HORIZONTAL ELLIPSIS: …
+          || chr(x'2060'::int) -- U+2060 WORD JOINER: Prevents a linebreak. Without this, it might render as: 123…\n456
+          || parts[array_length(parts, 1)];
     END IF;
   END IF;
 
