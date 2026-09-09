@@ -1,4 +1,26 @@
-## [Unreleased](https://github.com/openstreetmap-carto/openstreetmap-carto/compare/v6.0.0...master)
+## [Unreleased](https://github.com/openstreetmap-carto/openstreetmap-carto/compare/v6.1.0...master)
+
+## [v6.1.0](https://github.com/openstreetmap-carto/openstreetmap-carto/compare/v6.0.0...v6.1.0) - 2026-09-10
+### Changes
+- Unification of the fill colour for power plants etc. with the fill colour for industrial landuses for zoom levels 10-12 (#5193)
+- Move up name/ref labels of motorway junctions one zoom level (#5204)
+- Remove golf=pin rendering on polygons and clean up symbol file (#5214)
+- Remove highway=bus_guideway oneway arrow offset (#5226)
+- Rework waterway lines (#5201)
+- Deduplicate motorway junction labels (#5227)
+- Add osm_id ordering to six layers to rendering results more deterministic (#5235)
+- Remove rendering of name of amenity=charging_station (#5238)
+- Add rendering of man_made=ceremonial_gate (#5236)
+- Render fishpass and tidy waterway bridge/tunnel code (#5240)
+- Various performance optimizations from Geofabrik (#5254, #5255, #5256, #5260, #5265, #5266, #5267, #5281)
+- Merge bridge and waterway-bridge layers (#5251)
+- Delay minor accommodation text label (#5262)
+- Cleanup waterway barriers and tidy of layer ordering (#5264)
+- Shorten multi-component flat and housenumber lists (#5272)
+- Tuning rendering of man_made=dam at lower zoom levels (#5241)
+- Hide fake admin boundary segments on the 180 degree meridian (#5294)
+- Re-work railway=crossing rendering (starting zoom level, prioritization (#5285)
+- Lighten design and increase starting zoom level for minor service=* variants of some railways (#5290)
 
 ## [v6.0.0](https://github.com/openstreetmap-carto/openstreetmap-carto/compare/v5.9.0...v6.0.0) - 2026-03-11
 ### Changes
